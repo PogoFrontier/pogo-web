@@ -1,5 +1,4 @@
 import { Action } from 'redux'
-import { Socket } from 'socket.io-client'
 
 export enum SocketActionTypes {
   SET = 'SET',
@@ -8,14 +7,14 @@ export enum SocketActionTypes {
 
 type SocketSetAction = {
   type: SocketActionTypes.SET,
-  payload: Socket
+  payload: SocketIOClient.Socket
 }
 
 export type SocketAction =
   | SocketSetAction
   | Action<SocketActionTypes.RESET>
 
-export function set(payload: Socket): SocketAction {
+export function set(payload: SocketIOClient.Socket): SocketAction {
   return {
     type: SocketActionTypes.SET,
     payload

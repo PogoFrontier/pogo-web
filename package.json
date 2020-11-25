@@ -52,6 +52,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@types/socket.io-client": "^1.4.34",
     "next": "9.5.5",
     "next-redux-wrapper": "6.0.2",
     "react": "17.0.1",
