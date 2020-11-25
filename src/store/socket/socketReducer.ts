@@ -1,11 +1,11 @@
 import { SocketAction, SocketActionTypes } from './socketActions'
 
 export interface SocketState {
-  readonly socket: SocketIOClient.Socket | {}
+  readonly socket: SocketIOClient.Socket | null
 }
 
 const initialSocketState = {
-  socket: {},
+  socket: null,
 }
 
 /**
