@@ -36,7 +36,10 @@
       ],
       "@store/*": [
         "./src/store/*"
-      ]
+      ],
+      "@context/*": [
+        "./src/context/*"
+      ],
     },
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,

@@ -12,6 +12,7 @@
     "no-implicit-dependencies": false,
     "no-var-requires": false,
     "interface-name": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "no-object-literal-type-assertion": false
   }
 }
