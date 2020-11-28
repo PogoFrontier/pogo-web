@@ -40,6 +40,9 @@
       "@context/*": [
         "./src/context/*"
       ],
+      "@config/*": [
+        "./src/config/*"
+      ],
     },
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,

@@ -2,9 +2,9 @@ import { FC } from 'react'
 import { AppProps } from 'next/app'
 import io from 'socket.io-client'
 import SocketContext from '@context/SocketContext'
+import { SERVER } from '@config/index'
 import '@common/css/layout.scss'
 
-const SERVER = 'http://localhost:3000'
 const socket = io(SERVER, {
   autoConnect: false,
   transports: ['websocket', 'polling'],
