@@ -1,6 +1,6 @@
 export interface TeamMember {
   speciesId: string
-  species: string
+  speciesName: string
   hp: number
   def: number
   atk: number
@@ -8,6 +8,6 @@ export interface TeamMember {
   types: [string, string]
   fastMove: string
   chargeMoves: [string, string] | [string]
-  shiny?: boolean
+  sid: number
   name?: string
 }
