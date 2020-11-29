@@ -6,21 +6,22 @@ import { TeamMember } from 'types/team'
 import Team from '@components/team/Team'
 import { SERVER } from '@config/index'
 import Select from '@components/select/Select'
+import parseJSON from '@common/actions/parseJSON'
+
+enum STATUS {
+  CHOOSING,
+  WAITING
+}
 
 interface RoomJoinPayload {
   id: string,
   team: TeamMember[]
 }
 
-const parseJSON = (response: Response) => {
-  return response.text().then(function(text) {
-    return text ? JSON.parse(text) : {}
-  })
-}
-
 const MatchupPage = () => {
   const router = useRouter()
   const [opponentTeam, setOpponentTeam] = useState([] as TeamMember[])
+  const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
   const socket: SocketIOClient.Socket = useContext(SocketContext)
   const team: TeamMember[] = useContext(TeamContext)
@@ -50,16 +51,24 @@ const MatchupPage = () => {
     }
   }, [])
 
-  const toHome = () => {
-    router.push("/")
-  }
-
   const onSubmit = (values: number[]) => {
     const submission: TeamMember[] = []
     for (const value of values) {
       submission.push(team[value])
     }
     socket.emit("team_submit", submission)
+    setStatus(STATUS.WAITING)
+    socket.on("team_confirm", () => {
+      toGame();
+    })
+  }
+
+  const toHome = () => {
+    router.push("/")
+  }
+
+  const toGame = () => {
+    router.push(`/game/${room}`)
   }
   
   return (
@@ -73,7 +82,14 @@ const MatchupPage = () => {
         <Team team={opponentTeam} />
       }
       <Team team={team} isPlayer />
-      <Select team={team} onSubmit={onSubmit} />
+      {
+        status === STATUS.CHOOSING &&
+        <Select team={team} onSubmit={onSubmit} />
+      }
+      {
+        status === STATUS.WAITING &&
+        <p>Waiting for opponent...</p>
+      }
     </main>
   )
 }
