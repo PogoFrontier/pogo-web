@@ -9,5 +9,6 @@ export interface TeamMember {
   fastMove: string
   chargeMoves: [string, string] | [string]
   sid: number
+  shiny?: boolean
   name?: string
 }

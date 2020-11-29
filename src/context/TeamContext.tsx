@@ -16,7 +16,8 @@ export const defaultTeam: TeamMember[] = [
     fastMove: "DRAGON_BREATH",
     chargeMoves: ["DRAGON_CLAW", "HURRICANE"],
     sid: 4768,
-    name: "Henry"
+    name: "Henry",
+    shiny: true
   },
   {
     speciesId: "blastoise",
@@ -91,7 +92,7 @@ export const defaultTeam: TeamMember[] = [
     ],
     fastMove: "PSYCHO_CUT",
     chargeMoves: ["FLAMETHROWER", "PSYSTRIKE"],
-    sid: 4800,
+    sid: 4800
   },
 ]
 
