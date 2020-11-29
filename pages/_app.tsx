@@ -4,6 +4,7 @@ import io from 'socket.io-client'
 import SocketContext from '@context/SocketContext'
 import { SERVER } from '@config/index'
 import '@common/css/layout.scss'
+import TeamContext, { defaultTeam } from '@context/TeamContext'
 
 const socket = io(SERVER, {
   autoConnect: false,
@@ -17,9 +18,11 @@ const socket = io(SERVER, {
 
 const CustomApp: FC<AppProps> = ({ Component, pageProps }) => {
   return (
-    <SocketContext.Provider value={socket}>
-      <Component {...pageProps} />
-    </SocketContext.Provider>
+    <TeamContext.Provider value={defaultTeam}>
+      <SocketContext.Provider value={socket}>
+        <Component {...pageProps} />
+      </SocketContext.Provider>
+    </TeamContext.Provider>
   )
 }
 

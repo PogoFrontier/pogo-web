@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 import { TeamMember } from 'types/team'
 
-const defaultTeam: TeamMember[] = [
+export const defaultTeam: TeamMember[] = [
   {
     speciesId: "dragonite",
     speciesName: "Dragonite",
