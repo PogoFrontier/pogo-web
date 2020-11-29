@@ -81,10 +81,10 @@ const defaultTeam: TeamMember[] = [
   {
     speciesId: "mewtwo_shadow",
     speciesName: "Mewtwo (Shadow)",
-    hp: 129,
-    def: 122.09,
-    atk: 119.38,
-    cp: 1499,
+    hp: 108,
+    def: 77.4,
+    atk: 179.1,
+    cp: 1498,
     types: [
       "psychic",
       "none"
