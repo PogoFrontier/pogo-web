@@ -69,7 +69,7 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
           ))
         }
       </div>
-      <button type="submit" disabled={count === requiredAmount}>
+      <button type="submit" disabled={count !== requiredAmount}>
         Start
       </button>
     </form>
