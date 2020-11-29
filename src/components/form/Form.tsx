@@ -12,12 +12,15 @@ const Form: React.FunctionComponent = () => {
   const router = useRouter()
 
   function connect() {
+    if (socket.connected) {
+      socket.disconnect()
+    }
     socket.on('connect', () => {
       // Connected, let's sign-up for to receive messages for this room
       socket.emit('room', { room, team });
+      router.push(`/matchup/${room}`)
     })
     socket.connect();
-    router.push(`/matchup/${room}`)
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
