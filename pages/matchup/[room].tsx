@@ -5,6 +5,7 @@ import TeamContext from '@context/TeamContext'
 import { TeamMember } from 'types/team'
 import Team from '@components/team/Team'
 import { SERVER } from '@config/index'
+import Select from '@components/select/Select'
 
 interface RoomJoinPayload {
   id: string,
@@ -52,6 +53,14 @@ const MatchupPage = () => {
   const toHome = () => {
     router.push("/")
   }
+
+  const onSubmit = (values: number[]) => {
+    const submission: TeamMember[] = []
+    for (const value of values) {
+      submission.push(team[value])
+    }
+    socket.emit("team_submit", submission)
+  }
   
   return (
     <main>
@@ -64,6 +73,7 @@ const MatchupPage = () => {
         <Team team={opponentTeam} />
       }
       <Team team={team} isPlayer />
+      <Select team={team} onSubmit={onSubmit} />
     </main>
   )
 }
