@@ -14,7 +14,7 @@ const Form: React.FunctionComponent = () => {
       socket.emit('room', room);
     })
     socket.connect();
-    router.push("/matchup")
+    router.push(`/matchup/${room}`)
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
