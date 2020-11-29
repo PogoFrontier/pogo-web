@@ -6,7 +6,7 @@ import { TeamMember } from 'types/team'
 import Team from '@components/team/Team'
 
 interface RoomJoinPayload {
-  name: string,
+  id: string,
   team: TeamMember[]
 }
 
