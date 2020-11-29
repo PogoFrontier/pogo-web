@@ -47,7 +47,8 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
     setMap(deepMap)
   }
 
-  const submit = () => {
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     onSubmit(map)
   }
   
