@@ -56,7 +56,7 @@ const MatchupPage = () => {
     for (const value of values) {
       submission.push(team[value])
     }
-    socket.emit("team_submit", submission)
+    socket.emit("team_submit", { room, team: submission, id: socket.id })
     setStatus(STATUS.WAITING)
     socket.on("team_confirm", () => {
       toGame();
