@@ -4,18 +4,21 @@ import SocketContext from '@context/SocketContext'
 import TeamContext from '@context/TeamContext'
 import { TeamMember } from 'types/team'
 import Team from '@components/team/Team'
-import { SERVER } from '@config/index'
 import Select from '@components/select/Select'
-import parseJSON from '@common/actions/parseJSON'
+import { CODE } from 'types/socket'
 
 enum STATUS {
   CHOOSING,
   WAITING
 }
 
-interface RoomJoinPayload {
-  id: string,
-  team: TeamMember[]
+interface Payload {
+  team?: TeamMember[]
+}
+
+interface Data {
+  type: CODE,
+  payload?: Payload
 }
 
 const MatchupPage = () => {
@@ -23,29 +26,39 @@ const MatchupPage = () => {
   const [opponentTeam, setOpponentTeam] = useState([] as TeamMember[])
   const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
-  const socket: SocketIOClient.Socket = useContext(SocketContext)
+  const ws: WebSocket = useContext(SocketContext)
   const team: TeamMember[] = useContext(TeamContext)
 
-  useEffect(() => {
-    if (socket.connected) {
-      fetch(`${SERVER}/opponent/${room}/${socket.id}`)
-      .then((response) => parseJSON(response))
-      .then(data => {
-        if (data && data.length) {
-          setOpponentTeam(data)
-        }
-        return
-      })
-      socket.on("room_join", (payload: RoomJoinPayload) => {
-        setOpponentTeam(payload.team)
-      })
-      socket.on("room_leave", () => {
+  const onMessage = (message: MessageEvent) => {
+    const data: Data = JSON.parse(message.data)
+    switch (data.type) {
+      case CODE.room_join:
+        setOpponentTeam(data.payload!.team!)
+        break
+      case CODE.room_leave:
         setOpponentTeam([])
-      })
-      socket.on("disconnected", () => {
-        socket.removeAllListeners()
-        toHome()
-      })
+        break
+      case CODE.team_confirm:
+        toGame()
+        break
+    }
+  }
+
+  const onDisconnect = () => {
+    ws.onmessage = null
+    toHome()
+  }
+
+  useEffect(() => {
+    if (ws.OPEN) {
+      ws.send(JSON.stringify({
+        type: CODE.get_opponent,
+        payload: {
+          room
+        }
+      }))
+      ws.onmessage = onMessage
+      ws.onclose = onDisconnect
     } else {
       toHome()
     }
@@ -56,11 +69,14 @@ const MatchupPage = () => {
     for (const value of values) {
       submission.push(team[value])
     }
-    socket.emit("team_submit", { room, team: submission, id: socket.id })
+    ws.send(JSON.stringify({
+      type: CODE.team_submit,
+      payload: {
+        room,
+        team: submission
+      }
+    }))
     setStatus(STATUS.WAITING)
-    socket.on("team_confirm", () => {
-      toGame();
-    })
   }
 
   const toHome = () => {
