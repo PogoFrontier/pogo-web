@@ -4,23 +4,21 @@ import SocketContext from '@context/SocketContext'
 import style from './form.module.scss'
 import TeamContext from '@context/TeamContext'
 import { TeamMember } from 'types/team'
+import { CODE } from 'types/socket'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState("")
-  const socket: SocketIOClient.Socket = useContext(SocketContext)
+  const ws: WebSocket = useContext(SocketContext)
   const team: TeamMember[] = useContext(TeamContext)
   const router = useRouter()
 
   function connect() {
-    if (socket.connected) {
-      socket.disconnect()
-    }
-    socket.on('connect', () => {
+    if (ws.OPEN) {
       // Connected, let's sign-up for to receive messages for this room
-      socket.emit('room', { room, team });
+      const data = { type: CODE.rooms, payload: { room, team } }
+      ws.send(JSON.stringify(data));
       router.push(`/matchup/${room}`)
-    })
-    socket.connect();
+    }
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
