@@ -44,13 +44,8 @@ const MatchupPage = () => {
     }
   }
 
-  const onDisconnect = () => {
-    ws.onmessage = null
-    toHome()
-  }
-
   useEffect(() => {
-    if (ws.OPEN) {
+    if (ws.readyState === ws.OPEN) {
       ws.send(JSON.stringify({
         type: CODE.get_opponent,
         payload: {
@@ -58,9 +53,11 @@ const MatchupPage = () => {
         }
       }))
       ws.onmessage = onMessage
-      ws.onclose = onDisconnect
     } else {
       toHome()
+    }
+    return function cleanup() {
+      ws.onmessage = null
     }
   }, [])
 
