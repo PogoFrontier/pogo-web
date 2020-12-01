@@ -1,19 +1,15 @@
 import { FC } from 'react'
+import { w3cwebsocket as WebSocket } from 'websocket'
 import { AppProps } from 'next/app'
-import io from 'socket.io-client'
 import SocketContext from '@context/SocketContext'
-import { SERVER } from '@config/index'
+import { WSS } from '@config/index'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 
-const socket = io(SERVER, {
-  autoConnect: false,
-  transports: ['websocket', 'polling'],
-})
+const socket = new WebSocket(WSS)
 
 /**
- * withRedux HOC
- * NextJS wrapper for Redux
+ * NextJS wrapper
  */
 
 const CustomApp: FC<AppProps> = ({ Component, pageProps }) => {
