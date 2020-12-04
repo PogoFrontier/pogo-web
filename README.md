@@ -7,6 +7,7 @@ An open source, web-based online battle simulator for Pokémon Go. This is the c
   * [Project Status](#project-status)
   * [Contribute](#contribute)
   * [Author](#author)
+  * [Credit](#credit)
 
 ## Introduction
 Project Grookey (WIP name) aims to recreate the Pokémon Go battling feature in an online web environment. A user should open their browser, build a team, find an opponent, and have a full Pokémon battle. We plan only to simulate battling, so we heavily encourage everyone to also play the Pokémon Go mobile app. Through Project Grookey, we hope both new and current players become further invested in the game's community.
@@ -44,3 +45,8 @@ We aren't accepting any Pull Requests currently. If you are interested in this p
 
 ## Author
 Hi, I'm Adib. I've been a competitive PoGo player for a little over a year and currently (as of December 4th) the [#1 ranked player in the world](https://ibb.co/Tq2mG2N). I love the game, but its supportive, heartwarming community is what really kept me playing for so long. I'm building Project Grookey as another way the community can connect, especially for players who may not have every Pokémon or looking for stress-free practice.
+
+## Credit
+Credit to [the PvPoke team](https://github.com/pvpoke/pvpoke) for my understanding of game mechanics and this project's game data. Special thanks to Mr. PvPoke AKA Empoleon_Dynamite AKA KakunaMattata42 for spearheading the PvPoke project and answering some of my key questions.
+
+Credit to [Smogon](https://github.com/smogon/sprites) for all sprites.
