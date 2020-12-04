@@ -33,6 +33,9 @@ Our scope:
   - [ ] Fast Moves
   - [ ] Charge Moves
   - [ ] Switching
+  
+Mockups (INCOMPLETE, don't ask why the charge moves are missing, etc.):
+![mockup](https://i.ibb.co/t8SnHrw/Screen-Shot-2020-12-04-at-2-53-38-PM.png)
  
 We'll often update this repository with our progress. You can get the MOST up to date information from our [Trello board](https://trello.com/b/MTKTjFOA/pogo). Many similar projects have stalled, so we will keep our progress very public to not suffer the same fate.
 
