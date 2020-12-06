@@ -12,3 +12,11 @@ export interface TeamMember {
   shiny?: boolean
   name?: string
 }
+
+export interface ActiveMember {
+  speciesId: string
+  hp: number
+  def: number
+  atk: number
+  status: [number, number]
+}
