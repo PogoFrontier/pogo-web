@@ -11,10 +11,10 @@ export interface TeamMember {
   sid: number
   shiny?: boolean
   name?: string
+  current?: Current
 }
 
-export interface ActiveMember {
-  speciesId: string
+export interface Current {
   hp: number
   def: number
   atk: number
