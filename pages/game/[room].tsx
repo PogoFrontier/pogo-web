@@ -1,9 +1,11 @@
 import Status from "@components/status/Status"
 import SocketContext from "@context/SocketContext"
+//import TeamContext from "@context/TeamContext"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
 import { CODE } from "types/socket"
 import { TeamMember } from "types/team"
+import style from './style.module.scss';
 
 enum STATUS {
   STARTING,
@@ -84,15 +86,19 @@ const GamePage = () => {
 
   const current = active[0]
   const opp = opponent[0]
+  // const team = useContext(TeamContext)
+  // const current = team[0]
+  // const opp = team[0]
 
   return (
-    <main>
-      <h1>{room}</h1>
-      <section>
-        <Status subject={current} shields={2} remaining={2} />
-        <Status subject={opp} shields={2} remaining={2} />
-      </section>
-      <h2>{ status === STATUS.STARTED ? time : countdown }</h2>
+    <main className={style.root}>
+      <div className={style.content}>
+        <section className={style.statuses}>
+          <Status subject={current} shields={2} remaining={2} />
+          <Status subject={opp} shields={2} remaining={2} />
+        </section>
+        <h2>{ status === STATUS.STARTED ? time : countdown }</h2>
+      </div>
     </main>
   )
 }

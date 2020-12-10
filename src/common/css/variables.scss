@@ -1,1 +1,59 @@
-$size-grid-unit: 0.5rem;
+// Small tablets and large smartphones (landscape view)
+$sm: 576px;
+
+// Small tablets (portrait view)
+$md: 768px;
+
+// Tablets and small desktops
+$lg: 992px;
+
+// Large tablets and desktops
+$xl: 1200px;
+
+// Small devices
+@mixin sm {
+  @media (min-width: #{$sm}) {
+      @content;
+  }
+}
+
+// Medium devices
+@mixin md {
+  @media (min-width: #{$md}) {
+      @content;
+  }
+}
+
+// Large devices
+@mixin lg {
+  @media (min-width: #{$lg}) {
+      @content;
+  }
+}
+
+// Extra large devices
+@mixin xl {
+  @media (min-width: #{$xl}) {
+      @content;
+  }
+}
+
+@mixin bg {
+  position: relative;
+  height: 100vh;
+  background-image: url('../../assets/img/main.jpeg');
+  background-position: center;
+  background-size: cover;
+
+  ::before {    
+      content: "";
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      height: 100vh;
+      background-color: rgba($color-white, 0.04);
+      z-index: -1;
+  }
+}

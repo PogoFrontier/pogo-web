@@ -1,0 +1,46 @@
+@import 'colors';
+@import 'variables';
+
+.root {
+  margin: 0.25rem;
+  width: 100%;
+  overflow: hidden;
+  @include md {
+    margin: 1rem 2rem;
+  }
+}
+
+.container {
+  background-color: $color-white;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+
+  strong {
+    font-size: 1.1rem;
+    margin-left: 0.25rem;
+  }
+
+  @include md {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0.5rem;
+
+    small {
+      font-size: 1rem;
+    }
+
+    strong {
+      font-size: 2rem;
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+.types {
+  display: flex;
+  span + span {
+    margin-left: 0.5rem;
+  }
+}
