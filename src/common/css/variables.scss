@@ -1,12 +1,10 @@
+$border-radius: 0.1rem;
 // Small tablets and large smartphones (landscape view)
 $sm: 576px;
-
 // Small tablets (portrait view)
 $md: 768px;
-
 // Tablets and small desktops
 $lg: 992px;
-
 // Large tablets and desktops
 $xl: 1200px;
 
@@ -16,21 +14,18 @@ $xl: 1200px;
       @content;
   }
 }
-
 // Medium devices
 @mixin md {
   @media (min-width: #{$md}) {
       @content;
   }
 }
-
 // Large devices
 @mixin lg {
   @media (min-width: #{$lg}) {
       @content;
   }
 }
-
 // Extra large devices
 @mixin xl {
   @media (min-width: #{$xl}) {

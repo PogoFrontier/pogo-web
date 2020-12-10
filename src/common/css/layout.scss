@@ -1,5 +1,33 @@
+@import 'colors';
+@import 'variables';
+
 body {
   * {
     box-sizing: border-box;
+  }
+}
+
+.btn {
+  width: 8rem;
+  padding: 0.5rem 0;
+  border-radius: $border-radius;
+  border: none;
+  @include md {
+    font-size: 1.2rem;
+    width: 10rem;
+  }
+
+  &.btn-primary {
+    background-color: $color-brand-primary;
+    font-weight: bold;
+    box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
+  }
+
+  &.btn-secondary {
+    background-color: $color-brand-secondary;
+  }
+
+  &.btn-negative {
+    background-color: $color-brand-negative;
   }
 }
