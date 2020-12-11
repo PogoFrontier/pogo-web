@@ -1,12 +1,13 @@
 import Status from "@components/status/Status"
 import SocketContext from "@context/SocketContext"
-//import TeamContext from "@context/TeamContext"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
 import { CODE } from "types/socket"
 import { TeamMember } from "types/team"
 import { Icon } from "@components/icon/Icon"
 import style from './style.module.scss'
+import Field from "@components/field/Field"
+import { CharacterProps } from "@components/field/Character"
 
 interface CheckPayload {
   countdown: number
@@ -29,6 +30,7 @@ const GamePage = () => {
   const ws: WebSocket = useContext(SocketContext)
   const [ active, setActive ] = useState([] as TeamMember[])
   const [ opponent, setOpponent ] = useState([] as TeamMember[])
+  const [ characters, setCharacters ] = useState([{}, {}] as [CharacterProps, CharacterProps])
   const [ time, setTime ] = useState(150)
   const [ info, setInfo ] = useState(<div/>)
 
@@ -50,9 +52,23 @@ const GamePage = () => {
     }
     if (payload.team !== active) {
       setActive(payload.team)
+      setCharacters(prevState => {
+        prevState[0] = {
+          char: payload.team[0],
+          status: "idle"
+        }
+        return prevState
+      })
     }
     if (payload.opponent !== opponent) {
       setOpponent(payload.opponent)
+      setCharacters(prevState => {
+        prevState[1] = {
+          char: payload.opponent[0],
+          status: "idle"
+        }
+        return prevState
+      })
     }
   }
 
@@ -82,25 +98,25 @@ const GamePage = () => {
 
   const current = active[0]
   const opp = opponent[0]
-  // const team = useContext(TeamContext)
-  // const current = team[0]
-  // const opp = team[0]
 
   return (
     <main className={style.root}>
       <div className={style.content}>
+        <section className={style.nav}>
+          <button className="btn btn-negative">Exit</button>
+        </section>
         <section className={style.statuses}>
           <Status subject={current} shields={2} remaining={2} />
           <Status subject={opp} shields={2} remaining={2} />
         </section>
         <section className={style.info}>
-          <button className="btn btn-negative">Exit</button>
           <div>{ info }</div>
           <div className={style.timer}>
             <strong>{time + " "}</strong>
             <Icon name="clock" size="medium" />
           </div>
         </section>
+        <Field characters={ characters }/>
       </div>
     </main>
   )
