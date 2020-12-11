@@ -9,6 +9,12 @@ import style from './style.module.scss'
 import Field from "@components/field/Field"
 import { CharacterProps } from "@components/field/Character"
 
+enum Actions {
+  FAST_ATTACK = "fa",
+  SWITCH = "sw",
+  CHARGE_ATTACK = "ca"
+}
+
 interface CheckPayload {
   countdown: number
   team: TeamMember[]
@@ -40,16 +46,34 @@ const GamePage = () => {
   const [ active, setActive ] = useState([] as TeamMember[])
   const [ opponent, setOpponent ] = useState([] as TeamMember[])
   const [ characters, setCharacters ] = useState([{}, {}] as [CharacterProps, CharacterProps])
+  const [ charPointer,  ] = useState(0)
+  const [ oppPointer, setOppPointer ] = useState(0)
   const [ time, setTime ] = useState(240)
   const [ info, setInfo ] = useState(<div/>)
+  const [ currentMove, setCurrentMove ] = useState("")
+  const [ isStart, setIsStart ] = useState(false)
 
   const startGame = () => {
     setTime(240)
     setInfo(<strong>GO!</strong>)
+    setIsStart(true)
   }
 
   const onTurn = (payload: TurnPayload) => {
-    setTime(payload.time);
+    setTime(payload.time)
+    if (payload.update[0] !== {}) {
+      setCurrentMove("")
+      setCharacters(prev => {
+        prev[0].status = "prime"
+        return prev
+      })
+    }
+    if (payload.update[1] !== {}) {
+      setCharacters(prev => {
+        prev[1].status = "prime"
+        return prev
+      })
+    }
   }
 
   const onGameStatus = (payload: CheckPayload) => {
@@ -64,7 +88,7 @@ const GamePage = () => {
       setActive(payload.team)
       setCharacters(prevState => {
         prevState[0] = {
-          char: payload.team[0],
+          char: payload.team[charPointer],
           status: "idle"
         }
         return prevState
@@ -74,7 +98,7 @@ const GamePage = () => {
       setOpponent(payload.opponent)
       setCharacters(prevState => {
         prevState[1] = {
-          char: payload.opponent[0],
+          char: payload.opponent[oppPointer],
           status: "idle"
         }
         return prevState
@@ -82,18 +106,69 @@ const GamePage = () => {
     }
   }
 
+  const onFastMove = (move: string) => {
+    if (opponent[oppPointer]) {
+      setInfo(<>
+        {opponent[oppPointer].speciesName} used {move}!
+      </>)
+      setCharacters(prev => {
+        prev[1].status = "attack"
+        return prev
+      })
+    }
+  }
+
+  const onSwitch = (index: number) => {
+    setOppPointer(index)
+    setInfo(<>
+      Go! {opponent[index].speciesName}!
+    </>)
+    setCharacters(prev => {
+      prev[1].status = "switch"
+      return prev
+    })
+  }
+
+  const onChargeMove = (move: string) => {
+    if (opponent[oppPointer]) {
+      setInfo(<>
+        {opponent[oppPointer].speciesName} used {move}!
+      </>)
+      setCharacters(prev => {
+        prev[0].status = "charge"
+        return prev
+      })
+    }
+  }
+
   const onMessage = (message: MessageEvent) => {
-    const data: Data = JSON.parse(message.data)
-    switch (data.type) {
-      case CODE.game_check:
-        onGameStatus(data.payload! as CheckPayload)
-        break
-      case CODE.game_start:
-        startGame()
-        break
-      case CODE.turn:
-        onTurn(data.payload! as TurnPayload);
-        break
+    if (message.data.startsWith("#") && isStart) {
+      //Expected format: "#fa:Volt Switch"
+      const data: [Actions, string] = message.data.substring(1).split(":") as [Actions, string]
+      switch (data[0]) {
+        case Actions.FAST_ATTACK:
+          onFastMove(data[1])
+          break
+        case Actions.CHARGE_ATTACK:
+          onChargeMove(data[1])
+          break
+        case Actions.SWITCH:
+          onSwitch(parseInt(data[1]))
+          break
+      }
+    } else {
+      const data: Data = JSON.parse(message.data)
+      switch (data.type) {
+        case CODE.game_check:
+          onGameStatus(data.payload! as CheckPayload)
+          break
+        case CODE.game_start:
+          startGame()
+          break
+        case CODE.turn:
+          onTurn(data.payload! as TurnPayload)
+          break
+      }
     }
   }
 
@@ -109,12 +184,24 @@ const GamePage = () => {
     return (<p>Loading...</p>)
   }
 
-  const current = active[0]
-  const opp = opponent[0]
+  const current = active[charPointer]
+  const opp = opponent[oppPointer]
+
+  const onClick = () => {
+    if (currentMove === "" && isStart) {
+      setCurrentMove(current.fastMove)
+      const data = "#fa:" + current.fastMove
+      ws.send(data)
+      setCharacters(prev => {
+        prev[0].status = "attack"
+        return prev
+      })
+    }
+  }
 
   return (
     <main className={style.root}>
-      <div className={style.content}>
+      <div className={style.content} onClick={onClick}>
         <section className={style.nav}>
           <button className="btn btn-negative">Exit</button>
         </section>

@@ -21,9 +21,31 @@
   height: 15vh;
   width: 15vh;
   object-fit: contain;
+
+  //Animations
+  transition: transform 200ms;
+  &.prime {
+    transform: translateX(2rem);
+  }
+  &.attack {
+    transform: translateX(-2rem);
+  }
+  &.charge {
+    transform: translateY(-0.5rem);
+  }
+  &.switch {
+    transform: scale(0.1);
+  }
+
   &.back {
     height: 20vh;
     width: 20vh;
+    &.prime {
+      transform: translateX(-2rem);
+    }
+    &.attack {
+      transform: translateX(2rem);
+    }
   }
   @include md {
     height: 10rem;
@@ -32,20 +54,5 @@
       height: 13rem;
       width: 13rem;
     }
-  }
-
-  //Animations
-  transition: transform 200ms;
-  &.prime {
-    transform: translateX(-2rem);
-  }
-  &.attack {
-    transform: translateX(2rem);
-  }
-  &.charge {
-    transform: translateY(-0.5rem);
-  }
-  &.switch {
-    transform: scale(0.1);
   }
 }
