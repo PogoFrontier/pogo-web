@@ -1,0 +1,48 @@
+@import 'variables';
+@import 'colors';
+
+.healthbar {
+  height: 0.5rem;
+  width: 7rem;
+  background-color: $color-neutral-light;
+  border: solid $color-neutral-dark 1px;
+  margin: 0 auto 1rem auto;
+  @include md {
+    height: 1rem;
+    width: 10rem;
+  }
+}
+
+.health {
+  height: 100%;
+}
+
+.char {
+  height: 15vh;
+  width: 15vh;
+  object-fit: contain;
+  &.back {
+    height: 20vh;
+    width: 20vh;
+  }
+  @include md {
+    height: 10rem;
+    width: 10rem;
+    &.back {
+      height: 13rem;
+      width: 13rem;
+    }
+  }
+
+  //Animations
+  transition: transform 200ms;
+  &.prime {
+    transform: translateX(-2rem);
+  }
+  &.attack {
+    transform: translateX(2rem);
+  }
+  &.charge {
+    transform: translateY(-0.5rem);
+  }
+}
