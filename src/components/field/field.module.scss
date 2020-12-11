@@ -1,0 +1,25 @@
+@import 'variables';
+
+.root {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  width: 100%;
+  padding: 0 0 1rem 0;
+  margin-top: 1rem;
+  @include md {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 6rem 0 4rem;
+    margin-top: 2rem;
+  }
+}
+
+.player {
+  align-self: start;
+  @include md {
+    align-self: flex-end;
+    padding-top: 10vh;
+  }
+}
