@@ -15,8 +15,17 @@ interface CheckPayload {
   opponent: TeamMember[]
 }
 
+interface Update {
+  switch?: number
+  hp?: number
+  def?: number
+  atk?: number
+  status?: number
+}
+
 interface TurnPayload {
-  
+  time: number
+  update: [Update, Update]
 }
 
 interface Data {
@@ -31,15 +40,16 @@ const GamePage = () => {
   const [ active, setActive ] = useState([] as TeamMember[])
   const [ opponent, setOpponent ] = useState([] as TeamMember[])
   const [ characters, setCharacters ] = useState([{}, {}] as [CharacterProps, CharacterProps])
-  const [ time, setTime ] = useState(150)
+  const [ time, setTime ] = useState(240)
   const [ info, setInfo ] = useState(<div/>)
 
   const startGame = () => {
-    setTime(150)
+    setTime(240)
+    setInfo(<strong>GO!</strong>)
   }
 
-  const onTurn = () => {
-    setTime(prevState => prevState - 1);
+  const onTurn = (payload: TurnPayload) => {
+    setTime(payload.time);
   }
 
   const onGameStatus = (payload: CheckPayload) => {
@@ -79,7 +89,7 @@ const GamePage = () => {
         onGameStatus(data.payload! as CheckPayload)
         break;
       case CODE.turn:
-        onTurn();
+        onTurn(data.payload! as TurnPayload);
         break;
     }
   }
