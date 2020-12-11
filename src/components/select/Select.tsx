@@ -40,7 +40,7 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
         setCount(count + 1)
       }
       deepCopy[index] = current
-      deepMap[current - 1] = current
+      deepMap[current - 1] = index
     }
     setCurrent(findNext(deepMap, requiredAmount!))
     setValues(deepCopy)
