@@ -5,7 +5,7 @@ import style from './character.module.scss'
 import getColor from "@common/actions/getColor"
 
 export interface CharacterProps {
-  status: "prime" | "attack" | "charge" | "idle"
+  status: "prime" | "attack" | "charge" | "switch" | "idle"
   char: TeamMember
   back?: boolean
 }
@@ -31,7 +31,8 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
           [style.back]: back,
           [style.prime]: status === "prime",
           [style.attack]: status === "attack",
-          [style.charge]: status === "charge"
+          [style.charge]: status === "charge",
+          [style.switch]: status === "switch"
         })}
         src={getImage(char.sid, char.shiny, back)}
         alt={char.speciesName}

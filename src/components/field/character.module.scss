@@ -45,4 +45,7 @@
   &.charge {
     transform: translateY(-0.5rem);
   }
+  &.switch {
+    transform: scale(0.1);
+  }
 }
