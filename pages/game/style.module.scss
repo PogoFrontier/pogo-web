@@ -16,3 +16,32 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+  padding: 0 0.25rem;
+  div {
+    font-size: 1rem;
+  }
+  @include md {
+    padding: 0 2rem;
+    div {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.timer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  strong {
+    margin-right: 0.25rem;
+  }
+  @include md {
+    width: 10rem;
+  }
+}

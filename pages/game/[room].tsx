@@ -5,13 +5,8 @@ import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
 import { CODE } from "types/socket"
 import { TeamMember } from "types/team"
-import style from './style.module.scss';
-
-enum STATUS {
-  STARTING,
-  STARTED,
-  END
-}
+import { Icon } from "@components/icon/Icon"
+import style from './style.module.scss'
 
 interface CheckPayload {
   countdown: number
@@ -34,12 +29,10 @@ const GamePage = () => {
   const ws: WebSocket = useContext(SocketContext)
   const [ active, setActive ] = useState([] as TeamMember[])
   const [ opponent, setOpponent ] = useState([] as TeamMember[])
-  const [ countdown, setCountdown ] = useState(-1)
-  const [ status, setStatus ] = useState(STATUS.STARTING)
-  const [ time, setTime ] = useState(-1)
+  const [ time, setTime ] = useState(150)
+  const [ info, setInfo ] = useState(<div/>)
 
   const startGame = () => {
-    setStatus(STATUS.STARTING)
     setTime(150)
   }
 
@@ -48,9 +41,12 @@ const GamePage = () => {
   }
 
   const onGameStatus = (payload: CheckPayload) => {
-    setCountdown(payload.countdown)
     if (payload.countdown === 4) {
       startGame()
+    } else {
+      setInfo(
+        <>Starting: {payload.countdown}...</>
+      )
     }
     if (payload.team !== active) {
       setActive(payload.team)
@@ -68,7 +64,7 @@ const GamePage = () => {
         break;
       case CODE.turn:
         onTurn();
-        break
+        break;
     }
   }
 
@@ -97,7 +93,14 @@ const GamePage = () => {
           <Status subject={current} shields={2} remaining={2} />
           <Status subject={opp} shields={2} remaining={2} />
         </section>
-        <h2>{ status === STATUS.STARTED ? time : countdown }</h2>
+        <section className={style.info}>
+          <button className="btn btn-negative">Exit</button>
+          <div>{ info }</div>
+          <div className={style.timer}>
+            <strong>{time + " "}</strong>
+            <Icon name="clock" size="medium" />
+          </div>
+        </section>
       </div>
     </main>
   )
