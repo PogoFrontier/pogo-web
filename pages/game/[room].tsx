@@ -85,12 +85,15 @@ const GamePage = () => {
   const onMessage = (message: MessageEvent) => {
     const data: Data = JSON.parse(message.data)
     switch (data.type) {
-      case CODE.game_check || CODE.game_start:
+      case CODE.game_check:
         onGameStatus(data.payload! as CheckPayload)
-        break;
+        break
+      case CODE.game_start:
+        startGame()
+        break
       case CODE.turn:
         onTurn(data.payload! as TurnPayload);
-        break;
+        break
     }
   }
 
