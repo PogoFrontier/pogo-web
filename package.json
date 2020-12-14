@@ -51,7 +51,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@types/classnames": "^2.2.11",
     "classnames": "^2.2.6",
     "next": "9.5.5",
     "next-redux-wrapper": "6.0.2",
@@ -65,6 +64,7 @@
     "websocket": "^1.0.32"
   },
   "devDependencies": {
+    "@adibkhan/pogo-web-backend": "^1.0.4",
     "@babel/core": "7.9.0",
     "@types/jest": "25.1.4",
     "@types/node": "13.9.5",
@@ -72,6 +72,7 @@
     "@types/react-redux": "7.1.7",
     "@types/svg-sprite-loader": "3.9.1",
     "@types/websocket": "^1.0.1",
+    "@types/classnames": "^2.2.11",
     "acorn": "7.1.1",
     "babel-core": "6.26.3",
     "babel-jest": "25.2.4",
