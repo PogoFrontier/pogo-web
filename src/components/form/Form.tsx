@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import SocketContext from '@context/SocketContext'
 import style from './form.module.scss'
 import TeamContext from '@context/TeamContext'
-import { TeamMember } from 'types/team'
-import { CODE } from 'types/socket'
+import { TeamMember, CODE } from '@adibkhan/pogo-web-backend'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState("")
@@ -15,7 +14,7 @@ const Form: React.FunctionComponent = () => {
   function connect() {
     if (ws.OPEN) {
       // Connected, let's sign-up for to receive messages for this room
-      const data = { type: CODE.rooms, payload: { room, team } }
+      const data = { type: CODE.room, payload: { room, team } }
       ws.send(JSON.stringify(data));
       router.push(`/matchup/${room}`)
     }

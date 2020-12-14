@@ -2,10 +2,10 @@ import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import SocketContext from '@context/SocketContext'
 import TeamContext from '@context/TeamContext'
-import { TeamMember } from 'types/team'
+import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Team from '@components/team/Team'
 import Select from '@components/select/Select'
-import { CODE } from 'types/socket'
+import { CODE } from '@adibkhan/pogo-web-backend'
 
 enum STATUS {
   CHOOSING,

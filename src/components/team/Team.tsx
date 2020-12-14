@@ -1,5 +1,5 @@
 import getImage from "@common/actions/getImage";
-import { TeamMember } from "types/team";
+import { TeamMember } from "@adibkhan/pogo-web-backend";
 
 interface TeamProps {
   team: TeamMember[],

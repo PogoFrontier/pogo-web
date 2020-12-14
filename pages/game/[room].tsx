@@ -2,18 +2,11 @@ import Status from "@components/status/Status"
 import SocketContext from "@context/SocketContext"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
-import { CODE } from "types/socket"
-import { TeamMember } from "types/team"
+import { Actions, TeamMember, CODE } from "@adibkhan/pogo-web-backend"
 import { Icon } from "@components/icon/Icon"
 import style from './style.module.scss'
 import Field from "@components/field/Field"
 import { CharacterProps } from "@components/field/Character"
-
-enum Actions {
-  FAST_ATTACK = "fa",
-  SWITCH = "sw",
-  CHARGE_ATTACK = "ca"
-}
 
 interface CheckPayload {
   countdown: number

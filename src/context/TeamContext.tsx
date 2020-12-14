@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { TeamMember } from 'types/team'
+import { TeamMember } from '@adibkhan/pogo-web-backend'
 
 export const defaultTeam: TeamMember[] = [
   {

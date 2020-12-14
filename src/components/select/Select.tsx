@@ -1,6 +1,6 @@
 import { SERVER } from "@config/index";
 import { useState } from "react";
-import { TeamMember } from "types/team";
+import { TeamMember } from "@adibkhan/pogo-web-backend";
 
 interface SelectProps {
   team: TeamMember[]

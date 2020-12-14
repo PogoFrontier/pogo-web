@@ -1,4 +1,4 @@
-import { TeamMember } from "types/team"
+import { TeamMember } from "@adibkhan/pogo-web-backend"
 import style from './status.module.scss';
 
 interface StatusProps {
