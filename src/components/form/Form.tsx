@@ -3,7 +3,8 @@ import { useRouter } from 'next/router'
 import SocketContext from '@context/SocketContext'
 import style from './form.module.scss'
 import TeamContext from '@context/TeamContext'
-import { TeamMember, CODE } from '@adibkhan/pogo-web-backend'
+import { TeamMember } from '@adibkhan/pogo-web-backend'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState("")

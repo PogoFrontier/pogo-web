@@ -2,7 +2,8 @@ import Status from "@components/status/Status"
 import SocketContext from "@context/SocketContext"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
-import { Actions, TeamMember, CODE } from "@adibkhan/pogo-web-backend"
+import { TeamMember } from "@adibkhan/pogo-web-backend"
+import { CODE, Actions } from '@adibkhan/pogo-web-backend/actions'
 import { Icon } from "@components/icon/Icon"
 import style from './style.module.scss'
 import Field from "@components/field/Field"
@@ -28,7 +29,7 @@ interface TurnPayload {
 }
 
 interface Data {
-  type: CODE,
+  type: keyof typeof CODE,
   payload?: CheckPayload | TurnPayload
 }
 
@@ -137,7 +138,7 @@ const GamePage = () => {
   const onMessage = (message: MessageEvent) => {
     if (message.data.startsWith("#") && isStart) {
       //Expected format: "#fa:Volt Switch"
-      const data: [Actions, string] = message.data.substring(1).split(":") as [Actions, string]
+      const data: [keyof typeof Actions, string] = message.data.substring(1).split(":") as [keyof typeof Actions, string]
       switch (data[0]) {
         case Actions.FAST_ATTACK:
           onFastMove(data[1])

@@ -2,10 +2,10 @@ import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import SocketContext from '@context/SocketContext'
 import TeamContext from '@context/TeamContext'
-import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Team from '@components/team/Team'
 import Select from '@components/select/Select'
-import { CODE } from '@adibkhan/pogo-web-backend'
+import { TeamMember } from '@adibkhan/pogo-web-backend'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 enum STATUS {
   CHOOSING,
@@ -17,7 +17,7 @@ interface Payload {
 }
 
 interface Data {
-  type: CODE,
+  type: keyof typeof CODE,
   payload?: Payload
 }
 
