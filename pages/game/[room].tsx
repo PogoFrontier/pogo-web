@@ -26,8 +26,8 @@ const GamePage = () => {
   const ws: WebSocket = useContext(SocketContext)
   const [ active, setActive ] = useState([] as TeamMember[])
   const [ opponent, setOpponent ] = useState([] as TeamMember[])
-  const [ characters, setCharacters ] = useState([{}, {}] as [CharacterProps, CharacterProps])
-  const [ charPointer,  ] = useState(0)
+  const [ characters, setCharacters ] = useState([{status: "idle", back: true}, {status: "idle"}] as [CharacterProps, CharacterProps])
+  const [ charPointer, setCharPointer ] = useState(0)
   const [ oppPointer, setOppPointer ] = useState(0)
   const [ time, setTime ] = useState(240)
   const [ info, setInfo ] = useState(<div/>)
@@ -41,22 +41,61 @@ const GamePage = () => {
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
-    console.log(payload.update)
-    setTime(payload.time)
     if (payload.update[0] !== null) {
       setCurrentMove(() => "")
-      setInfo(() => <div />)
+      const hp = payload.update[0]!.hp
+      const shouldReturn = payload.update[0]!.shouldReturn
       setCharacters(prev => {
-        prev[0].status = "prime"
+        if (shouldReturn) {
+          prev[0].status = "prime"
+        }
+        if (hp) {
+          prev[0].char!.current!.hp = hp
+        }
         return prev
       })
+      if (hp) {
+        setActive(
+          (prev1) => {
+            setCharPointer(
+              prev2 => {
+                prev1[prev2].current!.hp = hp
+                return prev2
+              }
+            )
+            return prev1
+          }
+        )
+      }
     }
     if (payload.update[1] !== null) {
+      setInfo(() => <div />)
+      const hp = payload.update[1]!.hp
+      const shouldReturn = payload.update[1]!.shouldReturn
       setCharacters(prev => {
-        prev[1].status = "prime"
+        if (shouldReturn) {
+          prev[1].status = "prime"
+        }
+        if (hp) {
+          prev[1].char!.current!.hp = hp
+        }
         return prev
       })
+      if (hp) {
+        setOpponent(
+          (prev1) => {
+            setOppPointer(
+              prev2 => {
+                prev1[prev2].current!.hp = hp
+                return prev2
+              }
+            )
+            return prev1
+          }
+        )
+      }
     }
+    setTime(payload.time)
   }
 
   const onGameStatus = (payload: CheckPayload) => {
@@ -70,20 +109,14 @@ const GamePage = () => {
     if (payload.team !== active) {
       setActive(payload.team)
       setCharacters(prevState => {
-        prevState[0] = {
-          char: payload.team[charPointer],
-          status: "idle"
-        }
+        prevState[0].char = payload.team[charPointer]
         return prevState
       })
     }
     if (payload.opponent !== opponent) {
       setOpponent(payload.opponent)
       setCharacters(prevState => {
-        prevState[1] = {
-          char: payload.opponent[oppPointer],
-          status: "idle"
-        }
+        prevState[1].char = payload.opponent[oppPointer]
         return prevState
       })
     }
@@ -168,11 +201,6 @@ const GamePage = () => {
       payload: { room },
     }))
     ws.onmessage = onMessage
-    setCharacters(prev => {
-      prev[0].status = "prime"
-      prev[1].status = "prime"
-      return prev
-    })
   }, [])
 
   if (active.length <= 0 || opponent.length <= 0) {

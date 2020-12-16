@@ -64,7 +64,7 @@
     "websocket": "^1.0.32"
   },
   "devDependencies": {
-    "@adibkhan/pogo-web-backend": "1.0.14",
+    "@adibkhan/pogo-web-backend": "1.0.15",
     "@babel/core": "7.9.0",
     "@types/classnames": "^2.2.11",
     "@types/jest": "25.1.4",

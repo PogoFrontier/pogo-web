@@ -3,14 +3,30 @@ import { TeamMember } from "@adibkhan/pogo-web-backend"
 import classnames from 'classnames'
 import style from './character.module.scss'
 import getColor from "@common/actions/getColor"
+import { useEffect, useState } from "react"
 
 export interface CharacterProps {
   status: "prime" | "attack" | "charge" | "switch" | "idle"
-  char: TeamMember
+  char?: TeamMember
   back?: boolean
 }
 
 const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status }) => {
+  const [s, setS] = useState(status)
+  const [cooldown, setCooldown] = useState(false);
+
+  useEffect(() => {
+    if (s !== status) {
+      if (cooldown) {
+        setTimeout(() => setS(status), 200);
+      } else {
+        setS(status);
+        setCooldown(true);
+        setTimeout(() => setCooldown(false), 200);
+      }
+    }
+  })
+
   if (!char) {
     return <div />
   }
@@ -27,12 +43,8 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
         />
       </div>
       <img
-        className={classnames([style.char], { 
+        className={classnames([style.char], [style[s]], { 
           [style.back]: back,
-          [style.prime]: status === "prime",
-          [style.attack]: status === "attack",
-          [style.charge]: status === "charge",
-          [style.switch]: status === "switch"
         })}
         src={getImage(char.sid, char.shiny, back)}
         alt={char.speciesName}
