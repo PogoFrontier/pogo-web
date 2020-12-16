@@ -2,7 +2,7 @@ import Status from "@components/status/Status"
 import SocketContext from "@context/SocketContext"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
-import { TeamMember } from "@adibkhan/pogo-web-backend"
+import { TeamMember, ResolveTurnPayload } from "@adibkhan/pogo-web-backend"
 import { CODE, Actions } from '@adibkhan/pogo-web-backend/actions'
 import { Icon } from "@components/icon/Icon"
 import style from './style.module.scss'
@@ -15,22 +15,9 @@ interface CheckPayload {
   opponent: TeamMember[]
 }
 
-interface Update {
-  switch?: number
-  hp?: number
-  def?: number
-  atk?: number
-  status?: number
-}
-
-interface TurnPayload {
-  time: number
-  update: [Update, Update]
-}
-
 interface Data {
   type: keyof typeof CODE,
-  payload?: CheckPayload | TurnPayload
+  payload?: CheckPayload | ResolveTurnPayload
 }
 
 const GamePage = () => {
@@ -53,16 +40,18 @@ const GamePage = () => {
     setIsStart(true)
   }
 
-  const onTurn = (payload: TurnPayload) => {
+  const onTurn = (payload: ResolveTurnPayload) => {
+    console.log(payload.update)
     setTime(payload.time)
-    if (payload.update[0] !== {}) {
-      setCurrentMove("")
+    if (payload.update[0] !== null) {
+      setCurrentMove(() => "")
+      setInfo(() => <div />)
       setCharacters(prev => {
         prev[0].status = "prime"
         return prev
       })
     }
-    if (payload.update[1] !== {}) {
+    if (payload.update[1] !== null) {
       setCharacters(prev => {
         prev[1].status = "prime"
         return prev
@@ -101,15 +90,22 @@ const GamePage = () => {
   }
 
   const onFastMove = (move: string) => {
-    if (opponent[oppPointer]) {
-      setInfo(<>
-        {opponent[oppPointer].speciesName} used {move}!
-      </>)
-      setCharacters(prev => {
-        prev[1].status = "attack"
-        return prev
-      })
-    }
+    setOpponent(
+      prev1 => {
+        setOppPointer(prev2 => {
+          const opp = prev1[prev2]
+          setInfo(<>
+            {opp.speciesName} used {move}!
+          </>)
+          setCharacters(prev => {
+            prev[1].status = "attack"
+            return prev
+          })
+          return prev2
+        })
+        return prev1;
+      }
+    )
   }
 
   const onSwitch = (index: number) => {
@@ -136,7 +132,7 @@ const GamePage = () => {
   }
 
   const onMessage = (message: MessageEvent) => {
-    if (message.data.startsWith("#") && isStart) {
+    if (message.data.startsWith("#")) {
       //Expected format: "#fa:Volt Switch"
       const data: [keyof typeof Actions, string] = message.data.substring(1).split(":") as [keyof typeof Actions, string]
       switch (data[0]) {
@@ -160,7 +156,7 @@ const GamePage = () => {
           startGame()
           break
         case CODE.turn:
-          onTurn(data.payload! as TurnPayload)
+          onTurn(data.payload! as ResolveTurnPayload)
           break
       }
     }
@@ -172,6 +168,11 @@ const GamePage = () => {
       payload: { room },
     }))
     ws.onmessage = onMessage
+    setCharacters(prev => {
+      prev[0].status = "prime"
+      prev[1].status = "prime"
+      return prev
+    })
   }, [])
 
   if (active.length <= 0 || opponent.length <= 0) {
