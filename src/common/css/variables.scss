@@ -40,6 +40,7 @@ $xl: 1200px;
   background-image: url('../../assets/img/main.jpeg');
   background-position: center;
   background-size: cover;
+  overflow-x: hidden;
 
   ::before {    
       content: "";
