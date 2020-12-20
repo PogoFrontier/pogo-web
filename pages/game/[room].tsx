@@ -8,6 +8,7 @@ import { Icon } from "@components/icon/Icon"
 import style from './style.module.scss'
 import Field from "@components/field/Field"
 import { CharacterProps } from "@components/field/Character"
+import Switch from "@components/switch/Switch"
 
 interface CheckPayload {
   countdown: number
@@ -30,6 +31,7 @@ const GamePage = () => {
   const [ charPointer, setCharPointer ] = useState(0)
   const [ oppPointer, setOppPointer ] = useState(0)
   const [ time, setTime ] = useState(240)
+  const [ swap, setSwap ] = useState(0)
   const [ info, setInfo ] = useState(<div/>)
   const [ currentMove, setCurrentMove ] = useState("")
   const [ isStart, setIsStart ] = useState(false)
@@ -45,56 +47,61 @@ const GamePage = () => {
       setCurrentMove(() => "")
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
-      setCharacters(prev => {
-        if (shouldReturn) {
-          prev[0].status = "prime"
+      const active = payload.update[0].active
+      setActive(
+        prev1 => {
+          setCharPointer(
+            prev2 => {
+              setCharacters(prev3 => {
+                if (hp) {
+                  prev1[prev2].current!.hp = hp
+                }
+                if (active !== prev2) {
+                  prev3[0].char = prev1[active]
+                  prev3[0].status = "prime"
+                } else if (shouldReturn) {
+                  prev3[0].status = "prime"
+                }
+                return prev3
+              })
+              return active
+            }
+          )
+          return prev1
         }
-        if (hp) {
-          prev[0].char!.current!.hp = hp
-        }
-        return prev
-      })
-      if (hp) {
-        setActive(
-          (prev1) => {
-            setCharPointer(
-              prev2 => {
-                prev1[prev2].current!.hp = hp
-                return prev2
-              }
-            )
-            return prev1
-          }
-        )
-      }
+      )
     }
     if (payload.update[1] !== null) {
-      setInfo(() => <div />)
       const hp = payload.update[1]!.hp
       const shouldReturn = payload.update[1]!.shouldReturn
-      setCharacters(prev => {
-        if (shouldReturn) {
-          prev[1].status = "prime"
-        }
-        if (hp) {
-          prev[1].char!.current!.hp = hp
-        }
-        return prev
-      })
-      if (hp) {
+      const active = payload.update[1].active
+      setInfo(() => {
         setOpponent(
-          (prev1) => {
+          prev1 => {
             setOppPointer(
               prev2 => {
-                prev1[prev2].current!.hp = hp
-                return prev2
+                setCharacters(prev3 => {
+                  if (hp) {
+                    prev1[prev2].current!.hp = hp
+                  }
+                  if (active !== prev2) {
+                    prev3[1].char = prev1[active]
+                    prev3[1].status = "prime"
+                  } else if (shouldReturn) {
+                    prev3[1].status = "prime"
+                  }
+                  return prev3
+                })
+                return active
               }
             )
             return prev1
           }
         )
-      }
+        return <div />
+      })
     }
+    setSwap(payload.switch)
     setTime(payload.time)
   }
 
@@ -142,10 +149,14 @@ const GamePage = () => {
   }
 
   const onSwitch = (index: number) => {
-    setOppPointer(index)
-    setInfo(<>
-      Go! {opponent[index].speciesName}!
-    </>)
+    setOpponent(prev => {
+      if (prev[index]) {
+        setInfo(<>
+          Go! {prev[index].speciesName}!
+        </>)
+      }
+      return prev
+    })
     setCharacters(prev => {
       prev[1].status = "switch"
       return prev
@@ -222,6 +233,18 @@ const GamePage = () => {
     }
   }
 
+  const onSwitchClick = (pos: number) => {
+    if (currentMove === "" && isStart && swap <= 0) {
+      setCurrentMove("switch to " + pos)
+      const data = "#sw:" + pos
+      ws.send(data)
+      setCharacters(prev => {
+        prev[0].status = "switch"
+        return prev
+      })
+    }
+  }
+
   return (
     <main className={style.root}>
       <div className={style.content} onClick={onClick}>
@@ -240,6 +263,7 @@ const GamePage = () => {
           </div>
         </section>
         <Field characters={ characters }/>
+        <Switch team={active} pointer={charPointer} countdown={swap} onClick={onSwitchClick} />
       </div>
     </main>
   )
