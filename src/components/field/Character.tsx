@@ -25,7 +25,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
         setTimeout(() => setCooldown(false), 200);
       }
     }
-  })
+  }, [status])
 
   if (!char) {
     return <div />
