@@ -31,7 +31,8 @@ enum StatusTypes {
   MAIN,
   WAITING,
   FAINT,
-  CHARGE
+  CHARGE,
+  ENDED
 }
 
 const GamePage = () => {
@@ -58,6 +59,10 @@ const GamePage = () => {
     setTime(240)
     setInfo(<strong>GO!</strong>)
     setStatus(StatusTypes.MAIN)
+  }
+
+  const endGame = () => {
+    setStatus(StatusTypes.ENDED)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
@@ -220,7 +225,9 @@ const GamePage = () => {
   }
 
   const onMessage = (message: MessageEvent) => {
-    if (message.data.startsWith("#")) {
+    if (message.data === "$end") {
+      endGame()
+    } else if (message.data.startsWith("#")) {
       //Expected format: "#fa:Volt Switch"
       const data: [keyof typeof Actions, string] = message.data.substring(1).split(":") as [keyof typeof Actions, string]
       switch (data[0]) {
@@ -297,6 +304,14 @@ const GamePage = () => {
       prev[0].status = "switch"
       return prev
     })
+  }
+
+  if (status === StatusTypes.ENDED) {
+    return (
+      <main>
+        <h1>Game Over!</h1>
+      </main>
+    )
   }
 
   return (

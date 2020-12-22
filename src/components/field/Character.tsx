@@ -39,7 +39,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
       <div className={style.healthbar}>
         <div
           className={style.health}
-          style={{ width: `${ratio*100}%`, backgroundColor: color }}
+          style={{ width: `${ ratio * 100 }%`, backgroundColor: color }}
         />
       </div>
       <img
