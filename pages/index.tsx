@@ -6,33 +6,38 @@ const HomePage = () => {
   const ws: WebSocket = useContext(SocketContext)
   const [state, setState] = useState(ws.readyState)
 
-  const waitForSocketConnection = () => {
-    setTimeout(() => {
-      if (ws.readyState === ws.CONNECTING) {
-        waitForSocketConnection()
-      } else {
-        setState(ws.readyState)
-      }
-    }, 5)
-  }
-
   useEffect(() => {
     setState(ws.readyState)
+    let x: NodeJS.Timeout
     if (ws.readyState === ws.CONNECTING) {
-      waitForSocketConnection()
-    }
-    ws.onclose = () => {
-      setState(ws.readyState)
+      x = setInterval(() => {
+        if (ws.readyState !== ws.CONNECTING) {
+          setState(ws.readyState)
+        }
+        if (ws.readyState === ws.CLOSED) {
+          clearInterval(x)
+        }
+      }, 100)
     }
     return function cleanup() {
-      ws.onclose = null
+      if (x) {
+        clearInterval(x)
+      }
     }
   }, [])
+
+  const reconnect = () => {
+    location.reload()
+  }
+
   return (
     <main>
       <h1>Hello, world!</h1>
       {(state === ws.CLOSED || ws.readyState === ws.CLOSING) && (
-        <p>Disconnected</p>
+        <>
+          <p>Disconnected</p>
+          <button onClick={reconnect}>Reconnect</button>
+        </>
       )}
       {state === ws.CONNECTING && <p>Connecting...</p>}
       {state === ws.OPEN && <Form />}

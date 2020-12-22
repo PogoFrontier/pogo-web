@@ -257,12 +257,20 @@ const GamePage = () => {
     }
   }
 
+  const toHome = () => {
+    router.push("/")
+  }
+
   useEffect(() => {
-    ws.send(JSON.stringify({
-      type: CODE.ready_game,
-      payload: { room },
-    }))
-    ws.onmessage = onMessage
+    if (ws.readyState === ws.OPEN) {
+      ws.send(JSON.stringify({
+        type: CODE.ready_game,
+        payload: { room },
+      }))
+      ws.onmessage = onMessage
+    } else {
+      toHome()
+    }
   }, [])
 
   if (active.length <= 0 || opponent.length <= 0) {
