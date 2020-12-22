@@ -1,15 +1,14 @@
 import { TeamMember } from "@adibkhan/pogo-web-backend"
-import style from './status.module.scss';
+import style from './status.module.scss'
+import classnames from 'classnames'
 
 interface StatusProps {
   subject: TeamMember,
-  shields: 0 | 1 | 2,
-  remaining: 0 | 1 | 2 | 3,
+  shields: number,
+  remaining: number,
 }
 
 const Status: React.FC<StatusProps> = ({ subject, shields, remaining }) => {
-  const shieldComponents = new Array<JSX.Element>(shields).fill(<span>S</span>);
-  const ballComponents = new Array<JSX.Element>(remaining).fill(<span>B</span>);
   return (
     <div className={style.root}>
       <div className={style.types}>
@@ -20,15 +19,20 @@ const Status: React.FC<StatusProps> = ({ subject, shields, remaining }) => {
         }
       </div>
       <div className={style.container}>
-        <div className={style.shields}>
-          { shieldComponents }
+        <div className={style.row}>
+          <div className={classnames(style.shield, { [style.active]: 1 <= shields })} />
+          <div className={classnames(style.shield, { [style.active]: 2 <= shields })} />
         </div>
         <div>
           <small>CP { subject.cp }</small>
           <strong>{ subject.speciesName }</strong>
         </div>
       </div>
-      { ballComponents }
+      <div className={style.row}>
+        <div className={classnames(style.pokeball, { [style.active]: 1 <= remaining })} />
+        <div className={classnames(style.pokeball, { [style.active]: 2 <= remaining })} />
+        <div className={classnames(style.pokeball, { [style.active]: 3 <= remaining })} />
+      </div>
     </div>
   )
 }
