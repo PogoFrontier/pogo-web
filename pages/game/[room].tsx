@@ -9,16 +9,29 @@ import style from './style.module.scss'
 import Field from "@components/field/Field"
 import { CharacterProps } from "@components/field/Character"
 import Switch from "@components/switch/Switch"
+import Popover from "@components/popover/Popover"
 
 interface CheckPayload {
   countdown: number
   team: TeamMember[]
-  opponent: TeamMember[]
+  opponent: TeamMember[],
+  shields: number,
+  remaining: number,
+  oppShields: number,
+  oppRemaining: number
 }
 
 interface Data {
   type: keyof typeof CODE,
   payload?: CheckPayload | ResolveTurnPayload
+}
+
+enum StatusTypes {
+  STARTING,
+  MAIN,
+  WAITING,
+  FAINT,
+  CHARGE
 }
 
 const GamePage = () => {
@@ -34,12 +47,17 @@ const GamePage = () => {
   const [ swap, setSwap ] = useState(0)
   const [ info, setInfo ] = useState(<div/>)
   const [ currentMove, setCurrentMove ] = useState("")
-  const [ isStart, setIsStart ] = useState(false)
+  const [ shields, setShields ] = useState(0)
+  const [ remaining, setRemaining ] = useState(0)
+  const [ oppShields, setOppShields ] = useState(0)
+  const [ oppRemaining, setOppRemaining ] = useState(0)
+  const [ wait, setWait ] = useState(-1)
+  const [ status, setStatus ] = useState(StatusTypes.STARTING)
 
   const startGame = () => {
     setTime(240)
     setInfo(<strong>GO!</strong>)
-    setIsStart(true)
+    setStatus(StatusTypes.MAIN)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
@@ -61,6 +79,19 @@ const GamePage = () => {
                   prev3[0].status = "prime"
                 } else if (shouldReturn) {
                   prev3[0].status = "prime"
+                }
+                if (payload.update[0]?.remaining) {
+                  setRemaining(payload.update[0]!.remaining)
+                  prev1[prev2].current!.hp = 0
+                  if (active === prev2) {
+                    setStatus(StatusTypes.FAINT)
+                  }
+                }
+                if (payload.update[0]?.wait) {
+                  setWait(payload.update[0]!.wait)
+                  if (payload.update[0]!.wait <= -1) {
+                    setStatus(StatusTypes.MAIN)
+                  }
                 }
                 return prev3
               })
@@ -89,6 +120,13 @@ const GamePage = () => {
                     prev3[1].status = "prime"
                   } else if (shouldReturn) {
                     prev3[1].status = "prime"
+                  }
+                  if (payload.update[1]?.remaining) {
+                    setOppRemaining(payload.update[1]?.remaining)
+                    prev1[prev2].current!.hp = 0
+                    if (active === prev2) {
+                      setStatus(StatusTypes.WAITING)
+                    }
                   }
                   return prev3
                 })
@@ -127,6 +165,10 @@ const GamePage = () => {
         return prevState
       })
     }
+    setShields(payload.shields)
+    setRemaining(payload.remaining)
+    setOppShields(payload.oppShields)
+    setOppRemaining(payload.oppRemaining)
   }
 
   const onFastMove = (move: string) => {
@@ -143,7 +185,7 @@ const GamePage = () => {
           })
           return prev2
         })
-        return prev1;
+        return prev1
       }
     )
   }
@@ -222,7 +264,7 @@ const GamePage = () => {
   const opp = opponent[oppPointer]
 
   const onClick = () => {
-    if (currentMove === "" && isStart) {
+    if (currentMove === "" && status === StatusTypes.MAIN && wait <= -1) {
       setCurrentMove(current.fastMove)
       const data = "#fa:" + current.fastMove
       ws.send(data)
@@ -234,7 +276,7 @@ const GamePage = () => {
   }
 
   const onSwitchClick = (pos: number) => {
-    if (currentMove === "" && isStart && swap <= 0) {
+    if (currentMove === "" && status === StatusTypes.MAIN && swap <= 0 && wait <= -1) {
       setCurrentMove("switch to " + pos)
       const data = "#sw:" + pos
       ws.send(data)
@@ -245,6 +287,16 @@ const GamePage = () => {
     }
   }
 
+  const onFaintClick = (pos: number) => {
+    setCurrentMove("switch to " + pos)
+    const data = "#sw:" + pos
+    ws.send(data)
+    setCharacters(prev => {
+      prev[0].status = "switch"
+      return prev
+    })
+  }
+
   return (
     <main className={style.root}>
       <div className={style.content} onClick={onClick}>
@@ -252,11 +304,11 @@ const GamePage = () => {
           <button className="btn btn-negative">Exit</button>
         </section>
         <section className={style.statuses}>
-          <Status subject={current} shields={2} remaining={2} />
-          <Status subject={opp} shields={2} remaining={2} />
+          <Status subject={current} shields={shields} remaining={remaining} />
+          <Status subject={opp} shields={oppShields} remaining={oppRemaining} />
         </section>
         <section className={style.info}>
-          <div>{ info }</div>
+          <div>{ wait > -1 ? `Switch in ${wait}` : info }</div>
           <div className={style.timer}>
             <strong>{time + " "}</strong>
             <Icon name="clock" size="medium" />
@@ -264,6 +316,13 @@ const GamePage = () => {
         </section>
         <Field characters={ characters }/>
         <Switch team={active} pointer={charPointer} countdown={swap} onClick={onSwitchClick} />
+        <Popover closed={wait <= -1}>
+          {
+            status === StatusTypes.FAINT && (
+              <Switch team={active} pointer={charPointer} countdown={wait} onClick={onFaintClick} modal />
+            )
+          }
+        </Popover>
       </div>
     </main>
   )
