@@ -85,6 +85,7 @@ const GamePage = () => {
                   prev1[prev2].current!.hp = 0
                   if (active === prev2) {
                     setStatus(StatusTypes.FAINT)
+                    prev3[0].status = "switch"
                   }
                 }
                 if (payload.update[0]?.wait) {
@@ -126,6 +127,7 @@ const GamePage = () => {
                     prev1[prev2].current!.hp = 0
                     if (active === prev2) {
                       setStatus(StatusTypes.WAITING)
+                      prev3[1].status = "switch"
                     }
                   }
                   return prev3
