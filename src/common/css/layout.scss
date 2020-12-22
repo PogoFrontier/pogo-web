@@ -1,6 +1,36 @@
 @import 'colors';
 @import 'variables';
 
+@font-face {
+  font-family: 'Graphik';
+  font-weight: 900;
+  src: url('../../assets/fonts/GraphikBlack.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Graphik';
+  font-weight: 700;
+  src: url('../../assets/fonts/GraphikBold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Graphik';
+  font-weight: 500;
+  src: url('../../assets/fonts/GraphikMedium.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Graphik';
+  font-weight: 400;
+  src: url('../../assets/fonts/GraphikRegular.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Graphik';
+  font-weight: 600;
+  src: url('../../assets/fonts/GraphikSemibold.otf') format('opentype');
+}
+
+html {
+  font-family: Graphik,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+}
+
 body {
   * {
     box-sizing: border-box;
