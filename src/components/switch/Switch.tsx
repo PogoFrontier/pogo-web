@@ -96,7 +96,6 @@ const Switch: React.FC<SwitchProps> = ({ team, pointer, countdown, onClick }) =>
         })
       }
       <strong>{countdown}</strong>
-      <strong>{pointer}</strong>
     </div>
   )
 }
