@@ -1,22 +1,15 @@
 import { TeamMember } from "@adibkhan/pogo-web-backend"
-import classnames from 'classnames'
-import getColor from "@common/actions/getColor"
-import { SERVER } from "@config/index"
 import style from './switch.module.scss'
 import { useEffect, useState } from "react"
-
-interface SelectorProps {
-  member: TeamMember,
-  index: number,
-  active: boolean,
-  onClick: (to: number) => void,
-}
+import Selector from '../selector/Selector'
+import classnames from "classnames"
 
 interface SwitchProps {
   team: TeamMember[],
   pointer: number,
   countdown: number,
-  onClick: (to: number) => void
+  onClick: (to: number) => void,
+  modal?: boolean
 }
 
 interface CharArray {
@@ -24,48 +17,14 @@ interface CharArray {
   index: number
 }
 
-const getImage = (sid: number): string => {
-  return `${SERVER}/mini/${sid}.png`
-}
-
-const Selector: React.FC<SelectorProps> = ({ member, index, active, onClick }) => {
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    onClick(index)
-  }
-
-  const image = getImage(member.sid)
-  const ratio = member.current ? member.current.hp/member.hp : 1
-  const color = getColor(ratio)
-
-  return (
-    <button
-      onClick={handleClick}
-      className={classnames([style.selector, {
-        [style.active]: active
-      }])}>
-      <small>{index}: CP {member.cp}</small>
-      <br />
-      <img className={style.sprite} src={image} alt={member.speciesName}/>
-      <div
-        className={style.healthbar}
-        style={{ width: `${ratio*100}%`, backgroundColor: color }}
-      >
-        <div className={style.health} />
-      </div>
-    </button>
-  )
-}
-
-const Switch: React.FC<SwitchProps> = ({ team, pointer, countdown, onClick }) => {
+const Switch: React.FC<SwitchProps> = ({ team, pointer, countdown, onClick, modal }) => {
   const [arr, setArr] = useState([] as CharArray[])
 
   useEffect(() => {
     const newArr = new Array<CharArray>()
     if (team.length > 1) {
       team.map((x, i) => {
-        if (i !== pointer) {
+        if (i !== pointer && x.current && x.current?.hp > 0) {
           newArr.push({
             char: x,
             index: i
@@ -81,7 +40,9 @@ const Switch: React.FC<SwitchProps> = ({ team, pointer, countdown, onClick }) =>
   }
 
   return (
-    <div className={style.root}>
+    <div className={classnames([style.root, {
+      [style.modal]: modal
+    }])}>
       {
         arr.map((x) => {
           return (
