@@ -1,7 +1,7 @@
 {
-  "name": "nextjs-boilerplate",
+  "name": "pogo-web",
   "version": "1.0.0",
-  "description": "NextJS boilerplate with TypeScript and Redux",
+  "description": "Pokemon GO PvP Web Game",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest",
@@ -44,12 +44,12 @@
     "husky",
     "lint staged"
   ],
-  "author": "Sanjay Twisk",
+  "author": "Adib Khan",
   "repository": {
     "type": "git",
-    "url": "git@github.com:sanjaytwisk/nextjs-ts.git"
+    "url": "git@github.com:DeveloperKhan/pogo-web.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "classnames": "^2.2.6",
     "next": "9.5.5",
