@@ -31,9 +31,9 @@ Our scope:
   - [x] Join Battle Rooms
 - Battling
   - [x] Team Selection
-  - [ ] Fast Moves
+  - [x] Fast Moves
   - [ ] Charge Moves
-  - [ ] Switching
+  - [x] Switching
   
 Mockups (INCOMPLETE, don't ask why the charge moves are missing, etc.):
 ![mockup](https://i.ibb.co/t8SnHrw/Screen-Shot-2020-12-04-at-2-53-38-PM.png)
@@ -44,7 +44,7 @@ We'll often update this repository with our progress. You can get the MOST up to
 We aren't accepting any Pull Requests currently. If you are interested in this project and its tech stack, feel free to reach out to AdibKhan on Discord (ImaDerpopotimus#5314). If you have suggestions or feedback, [submit a survey](https://adibkhan127863.typeform.com/to/Ef2OER1h). <b>We are not accepting bug reports at this time.</b> If this project interests you, we'd greatly appreciate a watch or a star!
 
 ## Author
-Hi, I'm Adib. I've been a competitive PoGo player for a little over a year and currently (as of December 4th) the [#1 ranked player in the world](https://ibb.co/Tq2mG2N). I love the game, but its supportive, heartwarming community is what really kept me playing for so long. I'm building Project Grookey as another way the community can connect, especially for players who may not have every Pokémon or looking for stress-free practice.
+Hi, I'm Adib. I've been a competitive PoGo player for a little over a year and was at one point (December 4th) the [#1 ranked player in the world](https://ibb.co/Tq2mG2N). I love the game and its supportive, heartwarming community. I'm building Project Grookey as another way the community can connect, especially for players who may not have every Pokémon or looking for stress-free practice.
 
 ## Credit
 Credit to [the PvPoke team](https://github.com/pvpoke/pvpoke) for my understanding of game mechanics and this project's game data. Special thanks to Mr. PvPoke AKA Empoleon_Dynamite AKA KakunaMattata42 for spearheading the PvPoke project and answering some of my key questions.
