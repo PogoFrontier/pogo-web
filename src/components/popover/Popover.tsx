@@ -3,30 +3,29 @@ import { useEffect, useState } from "react"
 import style from './popover.module.scss'
 
 interface PopoverProps {
-  closed: boolean
+  closed: boolean,
+  showMenu?: boolean
 }
 
-const Popover: React.FC<PopoverProps> = ({ children, closed }) => {
+const Popover: React.FC<PopoverProps> = ({ children, closed, showMenu }) => {
   const [c, setC] = useState(true)
 
   useEffect(() => {
     if (c !== closed) {
-      if (closed === true) {
-        setTimeout(() => setC(closed), 200)
-      } else {
-        setC(closed)
-      }
+      setTimeout(() => setC(closed), 200)
     }
   }, [closed])
 
-  if (c) {
+  if (closed) {
     return null
   }
   return (
-    <div className={classnames([style.root, {
-      [style.closed]: closed
-    }])}>
-      {children}
+    <div className={style.root}>
+      <div className={classnames([style.menu, {
+        [style.closed]: c || !showMenu,
+      }])}>
+        {children}
+      </div>
     </div>
   )
 }

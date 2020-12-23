@@ -341,7 +341,7 @@ const GamePage = () => {
         </section>
         <Field characters={ characters }/>
         <Switch team={active} pointer={charPointer} countdown={swap} onClick={onSwitchClick} />
-        <Popover closed={wait <= -1}>
+        <Popover closed={wait <= -1} showMenu={status !== StatusTypes.WAITING}>
           {
             status === StatusTypes.FAINT && (
               <Switch team={active} pointer={charPointer} countdown={wait} onClick={onFaintClick} modal />
