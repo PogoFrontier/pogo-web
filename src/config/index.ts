@@ -1,2 +1,2 @@
-export const SERVER = 'http://800b527ba079.ngrok.io'
-export const WSS = 'ws://800b527ba079.ngrok.io'
+export const SERVER = 'http://9c84538da518.ngrok.io'
+export const WSS = 'ws://9c84538da518.ngrok.io'
