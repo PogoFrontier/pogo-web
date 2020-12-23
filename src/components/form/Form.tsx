@@ -5,6 +5,7 @@ import style from './form.module.scss'
 import TeamContext from '@context/TeamContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
+import classnames from 'classnames'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState("")
@@ -26,10 +27,24 @@ const Form: React.FunctionComponent = () => {
   }
 
   return (
-    <>
-      <input value={room} placeholder="Room Name" onChange={onChange} />
-      <button className={style.button} onClick={connect}>Make room</button>
-    </>
+    <section className={style.root}>
+      <div className={style.container}>
+        <h1>Project Grookey</h1>
+        <div className={style.code}>
+          Code: <input className={style.input} value={room} placeholder="Room Name" onChange={onChange} />
+        </div>
+      </div>
+      <button
+        className={classnames([
+          style.button,
+          "btn",
+          "btn-primary"
+        ])}
+        disabled={room === ""}
+        onClick={connect}>
+          Play
+      </button>
+    </section>
   )
 }
 

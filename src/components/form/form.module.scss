@@ -1,5 +1,38 @@
 @import 'colors';
 
+.root {
+  text-align: center;
+}
+
+.container {
+  padding: 3em 4em;
+  background-color: rgba($color: $color-white, $alpha: 0.9);
+  h1 {
+    font-size: 3em;
+  }
+}
+
+.code {
+  background-color: $color-white;
+  padding: 0.25em 0.5em;
+  text-align: left;
+  font-size: 1.4em;
+}
+
+.code, .input {
+  font-weight: 600;
+}
+
+.input {
+  font-size: 1.2em;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  color: $color-brand-primary;
+}
+
 .button {
+  margin-top: -1em;
   background-color: $color-brand-primary;
 }
