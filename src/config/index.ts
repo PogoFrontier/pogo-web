@@ -1,2 +1,2 @@
-export const SERVER = 'http://localhost:3000'
-export const WSS = 'ws://localhost:3000'
+export const SERVER = 'http://800b527ba079.ngrok.io'
+export const WSS = 'ws://800b527ba079.ngrok.io'
