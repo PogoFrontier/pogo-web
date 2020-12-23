@@ -1,0 +1,53 @@
+@import 'colors';
+@import 'variables';
+
+.root {
+  @include bg;
+}
+
+.content {
+  @include content;
+  padding-top: 0;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  @include md {
+    padding-top: 1rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  h1 {
+    background-color: $color-white;
+    padding: 0.25em 0.5em;
+    strong {
+      color: $color-brand-primary;
+    }
+  }
+}
+
+.teams {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1em;
+  @include md() {
+    margin-top: 2em;
+  }
+}
+
+.player {
+  display: none;
+  @include md() {
+    display: block;
+    margin-top: 2em;
+  }
+}
+
+.opponent {
+  align-self: flex-end;
+}

@@ -1,0 +1,48 @@
+@import 'variables';
+@import 'colors';
+
+.root {
+  text-align: center;
+}
+
+.selects {
+  display: flex;
+  justify-content: center;
+  border-radius: $border-radius;
+  border: solid $color-white 0.5em;
+  margin: 1em auto 0 auto;
+  @include md() {
+    margin: 2em auto 0 auto;
+    padding: 1em 1em;
+    max-width: 80%;
+    button + button {
+      margin-left: 1em;
+    }
+  }
+}
+
+.select {
+  border: none;
+  background: none;
+  height: 4em;
+  width: 4em;
+  img {
+    height: 2.2em;
+    object-fit: contain;
+  }
+  @include md() {
+    height: 6em;
+    width: 6em;
+    img {
+      height: 4em;
+    }
+  }
+}
+
+.submit {
+  color: $color-dark;
+  margin-top: 0.5em;
+  @include md() {
+    margin-top: -2em;
+  }
+}

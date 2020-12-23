@@ -6,6 +6,7 @@ import Team from '@components/team/Team'
 import Select from '@components/select/Select'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
+import style from './style.module.scss'
 
 enum STATUS {
   CHOOSING,
@@ -85,24 +86,32 @@ const MatchupPage = () => {
   }
   
   return (
-    <main>
-      <header>
-        <h1>Room Code: {room}</h1>
-        <button onClick={toHome}>Exit</button>
-      </header>
-      {
-        opponentTeam.length > 0 &&
-        <Team team={opponentTeam} />
-      }
-      <Team team={team} isPlayer />
-      {
-        status === STATUS.CHOOSING &&
-        <Select team={team} onSubmit={onSubmit} />
-      }
-      {
-        status === STATUS.WAITING &&
-        <p>Waiting for opponent...</p>
-      }
+    <main className={style.root}>
+      <div className={style.content}>
+        <header className={style.head}>
+          <h1>Room Code: <strong>{room}</strong></h1>
+          <button className="btn btn-negative" onClick={toHome}>Exit</button>
+        </header>
+        <div className={style.teams}>
+          {
+            opponentTeam.length > 0 &&
+            <div className={style.opponent}>
+              <Team team={opponentTeam} />
+            </div>
+          }
+          <div className={style.player}>
+            <Team team={team} isPlayer />
+          </div>
+        </div>
+        {
+          status === STATUS.CHOOSING &&
+          <Select team={team} onSubmit={onSubmit} />
+        }
+        {
+          status === STATUS.WAITING &&
+          <p>Waiting for opponent...</p>
+        }
+      </div>
     </main>
   )
 }

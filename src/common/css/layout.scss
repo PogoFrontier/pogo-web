@@ -37,17 +37,23 @@ body {
   }
 }
 
+h1 {
+  font-weight: 600;
+}
+
 .btn {
   width: 8rem;
-  padding: 0.5rem 0;
+  padding: 0.4rem 0;
   border-radius: $border-radius;
   border: none;
   @include md {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     width: 10rem;
   }
 
   &.btn-primary {
+    font-size: 1.4rem;
+    width: 10rem;
     background-color: $color-brand-primary;
     font-weight: bold;
     box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);

@@ -54,3 +54,11 @@ $xl: 1200px;
       z-index: -1;
   }
 }
+
+@mixin content {
+  position: relative;
+  z-index: 1;
+  padding: 1rem 0;
+  max-width: 1440px;
+  margin: auto;
+}

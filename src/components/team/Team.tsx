@@ -1,5 +1,6 @@
-import getImage from "@common/actions/getImage";
-import { TeamMember } from "@adibkhan/pogo-web-backend";
+import getImage from "@common/actions/getImage"
+import { TeamMember } from "@adibkhan/pogo-web-backend"
+import style from './team.module.scss'
 
 interface TeamProps {
   team: TeamMember[],
@@ -8,12 +9,13 @@ interface TeamProps {
 
 const Team: React.FC<TeamProps> = ({team, isPlayer}) => {
   return (
-    <section>
+    <section className={style.root}>
       {
         team.map(x => (
-          <span key={x.speciesId}>
+          <span className={style.member} key={x.speciesId}>
             <label>CP {x.cp}</label>
             <img
+              className={style.sprite}
               src={getImage(x.sid, x.shiny, isPlayer)}
               alt={x.speciesName}
             />
