@@ -1,2 +1,5 @@
-export const SERVER = 'http://9c84538da518.ngrok.io'
-export const WSS = 'ws://9c84538da518.ngrok.io'
+export const SERVER = 'https://pogo-web-backend.herokuapp.com/'
+export const WSS = 'ws://pogo-web-backend.herokuapp.com/'
+
+// export const SERVER = 'https://localhost:3000'
+// export const WSS = 'ws://localhost:3000'
