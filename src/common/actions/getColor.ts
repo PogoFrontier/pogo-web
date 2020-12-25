@@ -1,7 +1,7 @@
 export const colors = [
   '#65E5C2',
   '#5EDB89',
-  '#E8F276',
+  '#FDA50F',
   '#FF3100'
 ]
 
