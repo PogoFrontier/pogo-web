@@ -96,7 +96,11 @@ const GamePage = () => {
                 if (payload.update[0]?.wait) {
                   setWait(payload.update[0]!.wait)
                   if (payload.update[0]!.wait <= -1) {
-                    setStatus(StatusTypes.MAIN)
+                    if (payload.update[1] && payload.update[1].wait && payload.update[1].wait <= -1) {
+                      setStatus(StatusTypes.MAIN)
+                    } else {
+                      setStatus(StatusTypes.WAITING)
+                    }
                   }
                 }
                 return prev3
@@ -131,7 +135,14 @@ const GamePage = () => {
                     setOppRemaining(payload.update[1]?.remaining)
                     prev1[prev2].current!.hp = 0
                     if (active === prev2) {
-                      setStatus(StatusTypes.WAITING)
+                      if (!payload.update[0]?.remaining) {
+                        setStatus(prev4 => {
+                          if (prev4 === StatusTypes.FAINT) {
+                            return prev4
+                          }
+                          return StatusTypes.WAITING
+                        })
+                      }
                       prev3[1].status = "switch"
                     }
                   }
