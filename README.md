@@ -1,6 +1,8 @@
 # Project Grookey
 An open source, web-based online battle simulator for Pokémon Go. This is the client side of the project, you can find the server side repository [here](https://github.com/DeveloperKhan/pogo-web-backend).
 
+[![](http://img.youtube.com/vi/X_7nhgRWi3c/0.jpg)](http://www.youtube.com/watch?v=X_7nhgRWi3c "")
+
 ## Table of Contents
   * [Introduction](#introduction)
   * [Installation](#installation)
@@ -22,7 +24,7 @@ After cloning this repository and navigating to its directory, open up your comm
 <b>Note:</b> If you haven't used npm before, make sure to [install](https://www.npmjs.com/get-npm) it first.
 
 ## Project Status
-Currently, this project is pre-alpha. We plan to keep the initial build very minimal.
+Currently, this project is alpha. We plan to keep the initial build very minimal.
 
 Our scope:
 - Online Matchmaking
@@ -34,14 +36,11 @@ Our scope:
   - [x] Fast Moves
   - [ ] Charge Moves
   - [x] Switching
-  
-Mockups (INCOMPLETE, don't ask why the charge moves are missing, etc.):
-![mockup](https://i.ibb.co/t8SnHrw/Screen-Shot-2020-12-04-at-2-53-38-PM.png)
  
 We'll often update this repository with our progress. You can get the MOST up to date information from our [Trello board](https://trello.com/b/MTKTjFOA/pogo). Many similar projects have stalled, so we will keep our progress very public to not suffer the same fate.
 
 ## Contribute
-We aren't accepting any Pull Requests currently. If you are interested in this project and its tech stack, feel free to reach out to AdibKhan on Discord (ImaDerpopotimus#5314). If you have suggestions or feedback, [submit a survey](https://adibkhan127863.typeform.com/to/Ef2OER1h). <b>We are not accepting bug reports at this time.</b> If this project interests you, we'd greatly appreciate a watch or a star!
+If you would like to contribute, feel free to reach out to AdibKhan on Discord (ImaDerpopotimus#5314). We haven't made an issues yet, but we are happy to receive PRs if you believe you can improve the project. If you have suggestions or feedback, [submit a survey](https://adibkhan127863.typeform.com/to/Ef2OER1h).
 
 ## Author
 Hi, I'm Adib. I've been a competitive PoGo player for a little over a year and was at one point (December 4th) the [#1 ranked player in the world](https://ibb.co/Tq2mG2N). I love the game and its supportive, heartwarming community. I'm building Project Grookey as another way the community can connect, especially for players who may not have every Pokémon or looking for stress-free practice.
