@@ -36,3 +36,6 @@
   margin-top: -1em;
   background-color: $color-brand-primary;
 }
+.button:disabled{
+  background-color: $color-button-disabled;
+}
