@@ -58,7 +58,7 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
     const deepCopy = [...values]
     const deepMap = [...map]
     if (deepCopy[index] > -1) {
-      deepMap[deepMap.findIndex(x => x === deepCopy[index])] = -1
+      deepMap[deepMap.findIndex(x => x === index )] = -1
       deepCopy[index] = -1
       setCount(prev => prev - 1)
     } else {
@@ -71,9 +71,9 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
       deepCopy[index] = current
       deepMap[current - 1] = index
     }
-    setCurrent(findNext(deepMap, requiredAmount!))
     setValues(deepCopy)
     setMap(deepMap)
+    setCurrent(findNext(deepMap, requiredAmount!))
   }
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
