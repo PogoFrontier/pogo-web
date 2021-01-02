@@ -36,7 +36,20 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
 
   function ChargedButtons(){
     if(back !== true) return <div></div>
-    return <div className={style.chargedButtons}> <div className={classnames([style.chargeButton, char.types[0]])}></div>    <div className={classnames([style.chargeButton, char.types[0]])}></div></div>;
+    //loop over each attack/type. Currently using fire type for testing purposes
+    return (
+      <div className={style.chargedButtons}> 
+        <div className={style.chargeGroup}>
+          <div className={classnames([style.chargeButton, style.fire])}></div>
+          <span className={style.label}>{char?.chargeMoves[0]}</span>
+        </div>
+        <div className={style.chargeGroup}>
+          <div className={classnames([style.chargeButton, style.fire])}></div>
+          <span className={style.label}>{char?.chargeMoves[1]}</span>
+        </div>
+      </div>
+     
+    );
   }
 
   return (
