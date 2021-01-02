@@ -58,12 +58,61 @@
 }
 
 //add color variables for each type
+.normal{
+  background: $color-normal; 
+}
+.fighting{
+  background: $color-fighting; 
+}
+.flying{
+  background: $color-flying; 
+}
+.poison{
+  background: $color-poison; 
+}
+.ground{
+  background: $color-ground; 
+}
+.rock{
+  background: $color-rock; 
+}
+.bug{
+  background: $color-bug; 
+}
+.ghost{
+  background: $color-ghost; 
+}
+.electric{
+  background: $color-electric; 
+}
+.water{
+  background: $color-water; 
+}
 .fire{
-  background: red; 
+  background: $color-fire; 
 }
 .grass{
-  background: green;
+  background: $color-grass;
 }
+.steel{
+  background: $color-steel;
+}
+.psychic{
+  background: $color-psychic; 
+}
+.ice{
+  background: $color-dragon; 
+}
+.dragon{
+  background: $color-dragon; 
+}
+.fairy{
+  background: $color-fairy; 
+}
+.dark{
+  background: $color-dark; 
+}
+
 .chargeButton{
   width: 5rem;
   height: 5rem;
