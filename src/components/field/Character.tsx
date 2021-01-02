@@ -34,6 +34,11 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
   const ratio = char.current!.hp/char.hp
   const color = getColor(ratio)
 
+  function ChargedButtons(){
+    if(back !== true) return <div></div>
+    return <div className={style.chargedButtons}> <div className={classnames([style.chargeButton, char.types[0]])}></div>    <div className={classnames([style.chargeButton, char.types[0]])}></div></div>;
+  }
+
   return (
     <div>
       <div className={style.healthbar}>
@@ -49,6 +54,8 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
         src={getImage(char.sid, char.shiny, back)}
         alt={char.speciesName}
       />
+      <ChargedButtons/>
+      
     </div>
   )
 }

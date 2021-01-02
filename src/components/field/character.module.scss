@@ -56,3 +56,23 @@
     }
   }
 }
+
+.fire{
+  background: red; 
+}
+.grass{
+  background: green;
+}
+.chargeButton{
+  width: 5rem;
+  height: 5rem;
+  background: black;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+  margin: 1rem;
+}
+.chargedButtons{
+  display:flex;
+  flex-direction: row;
+}
