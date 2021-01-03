@@ -22,10 +22,11 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
     auth.onAuthStateChanged(async (userAuth: any) => {
       if (userAuth) {
+        // console.log(userAuth)
         fetch(`${SERVER}api/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(userAuth),
+          body: JSON.stringify({ userAuth }),
         }).then((res) => {
           res.json().then((createdUser) => {
             setCurrentUser(createdUser)

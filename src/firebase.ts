@@ -30,6 +30,7 @@ export const createUserProfileDocument = async (
   additionalData?: any
 ) => {
   if (!userAuth) return
+  // console.log(userAuth)
   await firestore
     .collection('users')
     .doc(userAuth.uid)
