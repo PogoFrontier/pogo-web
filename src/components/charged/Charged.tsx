@@ -2,13 +2,34 @@ import { Move } from "@adibkhan/pogo-web-backend"
 import classnames from "classnames"
 import style from './charged.module.scss'
 
+interface ChargedButtonProps {
+  move: Move,
+  energy: number,
+  onClick: (moveId: string) => void
+}
+
 interface ChargedProps {
   moves: Move[],
   energy: number,
-  onPress: (moveId: string) => void
+  onClick: (moveId: string) => void
 }
 
-const Charged: React.FunctionComponent<ChargedProps> = ({ moves }) => {
+const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({ move, onClick }) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onClick(move.moveId)
+  }
+
+  return (
+    <div className={style.chargeGroup}>
+      <button onClick={handleClick} className={classnames([style.chargeButton, style[move.type]])}/>
+      <span className={style.label}>{move.name}</span>
+    </div>
+  )
+}
+
+const Charged: React.FunctionComponent<ChargedProps> = ({ moves, onClick, energy }) => {
   /**
    * @returns an array containing the types of charge moves
    * @param elem, index of the charge move in char.chargeMoves
@@ -26,23 +47,17 @@ const Charged: React.FunctionComponent<ChargedProps> = ({ moves }) => {
   //   .then(() => setTypeStyle(t))
   // }
 
-  const move1 = moves[0]
-  const move2 = moves[1]
-
   return (
-    <div className={style.root}> 
-      <div className={style.chargeGroup}>
-        <div className={classnames([style.chargeButton, style[move1.type]])}/>
-        <span className={style.label}>{move1.name}</span>
-      </div>
+    <div className={style.root}>
       {
-        move2 &&
-        (
-          <div className={style.chargeGroup}>
-            <div className={classnames([style.chargeButton, style[move2.type]])}/>
-            <span className={style.label}>{move2.name}</span>
-          </div>
-        )
+        moves.map(x => (
+          <ChargedButton
+            key={x.moveId}
+            move={x}
+            energy={energy}
+            onClick={onClick}
+          />
+        ))
       }
     </div>
   );
