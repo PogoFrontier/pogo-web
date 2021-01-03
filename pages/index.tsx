@@ -1,6 +1,7 @@
 import Form from '@components/form/Form'
 import SocketContext from '@context/SocketContext'
 import { useContext, useEffect, useState } from 'react'
+import { signInWithGoogle } from 'src/firebase'
 import style from './style.module.scss'
 
 const HomePage = () => {
@@ -42,6 +43,7 @@ const HomePage = () => {
         )}
         {state === ws.CONNECTING && <p>Connecting...</p>}
         {state === ws.OPEN && <Form />}
+        <button onClick={signInWithGoogle}>Sign In With Google</button>
       </div>
     </main>
   )
