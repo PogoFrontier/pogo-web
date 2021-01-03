@@ -20,7 +20,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     socket.onclose = () => {
       router.push('/')
     }
-    auth.onAuthStateChanged(async (userAuth) => {
+    auth.onAuthStateChanged(async (userAuth: any) => {
       if (userAuth) {
         fetch(`${SERVER}api/users`, {
           method: 'POST',

@@ -1,7 +1,7 @@
 import Form from '@components/form/Form'
 import SocketContext from '@context/SocketContext'
 import { useContext, useEffect, useState } from 'react'
-import { signInWithGoogle } from 'src/firebase'
+import { signInWithGoogle } from '../src/firebase'
 import style from './style.module.scss'
 
 const HomePage = () => {
