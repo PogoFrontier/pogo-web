@@ -4,7 +4,6 @@ import classnames from 'classnames'
 import style from './character.module.scss'
 import getColor from "@common/actions/getColor"
 import { useEffect, useState } from "react"
-import { SERVER } from '@config/index'
 
 
 export interface CharacterProps {
@@ -15,17 +14,16 @@ export interface CharacterProps {
 
 const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status }) => {
   const [s, setS] = useState(status)
-  const [cooldown, setCooldown] = useState(false);
-  const [typeStyle, setTypeStyle] = useState(["normal", "normal"]);
+  const [cooldown, setCooldown] = useState(false)
 
   useEffect(() => {
     if (s !== status) {
       if (cooldown) {
-        setTimeout(() => setS(status), 200);
+        setTimeout(() => setS(status), 200)
       } else {
         setS(status);
         setCooldown(true);
-        setTimeout(() => setCooldown(false), 200);
+        setTimeout(() => setCooldown(false), 200)
       }
     }
   }, [status])
@@ -36,41 +34,6 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
 
   const ratio = char.current!.hp/char.hp
   const color = getColor(ratio)
-
-  /**
-   * @returns an array containing the types of charge moves
-   * @param elem, index of the charge move in char.chargeMoves
-   */
-  async function getTypesStyle(){    
-    let t: any[] = []
-    await fetch(SERVER + "api/moves/" + char?.chargeMoves[0]).then(res => res.json().then(json =>{
-      t.push(json.type)
-    }))
-    await fetch(SERVER + "api/moves/" + char?.chargeMoves[1]).then(res => res.json().then(json =>{
-      t.push(json.type)
-    }))
-    console.log(t)
-    setTypeStyle(t);
-  }
-
-  function ChargedButtons(){
-    //returns empty div when character is from opponent
-    if(back !== true) return <div></div>
-    getTypesStyle()
-    return (
-      <div className={style.chargedButtons}> 
-        <div className={style.chargeGroup}>
-          <div className={classnames([style.chargeButton, style[typeStyle[0]]])}></div>
-          <span className={style.label}>{char?.chargeMoves[0]}</span>
-        </div>
-        <div className={style.chargeGroup}>
-          <div className={classnames([style.chargeButton, style[typeStyle[1]]])}></div>
-          <span className={style.label}>{char?.chargeMoves[1]}</span>
-        </div>
-      </div>
-     
-    );
-  }
 
   return (
     <div>
@@ -87,8 +50,6 @@ const Character: React.FunctionComponent<CharacterProps> = ({ char, back, status
         src={getImage(char.sid, char.shiny, back)}
         alt={char.speciesName}
       />
-      <ChargedButtons/>
-      
     </div>
   )
 }
