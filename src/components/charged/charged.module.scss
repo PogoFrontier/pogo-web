@@ -59,10 +59,11 @@
 .chargeButton{
   width: 5rem;
   height: 5rem;
-  -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  border-radius: 50px;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
   margin: 1rem;
+  border: none;
 }
 .root{
   display:flex;
