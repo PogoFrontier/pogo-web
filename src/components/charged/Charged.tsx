@@ -1,4 +1,5 @@
 import { Move } from "@adibkhan/pogo-web-backend"
+import { Icon, IconName } from "@components/icon/Icon"
 import classnames from "classnames"
 import style from './charged.module.scss'
 
@@ -23,7 +24,9 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({ move, onCl
 
   return (
     <div className={style.chargeGroup}>
-      <button onClick={handleClick} className={classnames([style.chargeButton, style[move.type]])}/>
+      <button onClick={handleClick} className={classnames([style.chargeButton, style[move.type]])}>
+        <Icon name={move.type as IconName} size="medium" />
+      </button>
       <span className={style.label}>{move.name}</span>
     </div>
   )
