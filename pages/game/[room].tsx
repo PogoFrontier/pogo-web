@@ -10,6 +10,9 @@ import Field from "@components/field/Field"
 import { CharacterProps } from "@components/field/Character"
 import Switch from "@components/switch/Switch"
 import Popover from "@components/popover/Popover"
+import Charged from "@components/charged/Charged"
+import { Move } from "@adibkhan/pogo-web-backend"
+import { SERVER } from "@config/index"
 
 interface CheckPayload {
   countdown: number
@@ -54,6 +57,7 @@ const GamePage = () => {
   const [ oppRemaining, setOppRemaining ] = useState(0)
   const [ wait, setWait ] = useState(-1)
   const [ status, setStatus ] = useState(StatusTypes.STARTING)
+  const [ moves, setMoves ] = useState([] as (Move[])[])
 
   const startGame = () => {
     setTime(240)
@@ -174,6 +178,19 @@ const GamePage = () => {
       setCharacters(prevState => {
         prevState[0].char = payload.team[charPointer]
         return prevState
+      })
+      setMoves(() => {
+        let arr1: (Move[])[] = []
+        for (const member of payload.team) {
+          let arr2: Move[] = []
+          for (const move of member.chargeMoves) {
+            fetch(SERVER + "api/moves/" + move).then(res => res.json().then(json =>{
+              arr2.push(json)
+            }))
+          }
+          arr1.push(arr2)
+        }
+        return arr1
       })
     }
     if (payload.opponent !== opponent) {
@@ -315,6 +332,14 @@ const GamePage = () => {
     }
   }
 
+  const onChargeClick = (moveId: string) => {
+    if (currentMove === "" && status === StatusTypes.MAIN && wait <= -1) {
+      setCurrentMove(moveId)
+      const data = "#ca:" + moveId
+      ws.send(data)
+    }
+  }
+
   const onFaintClick = (pos: number) => {
     setCurrentMove("switch to " + pos)
     const data = "#sw:" + pos
@@ -352,6 +377,7 @@ const GamePage = () => {
         </section>
         <Field characters={ characters }/>
         <Switch team={active} pointer={charPointer} countdown={swap} onClick={onSwitchClick} />
+        <Charged moves={moves[charPointer]} energy={current.current?.energy || 0} onClick={onChargeClick}/>
         <Popover closed={wait <= -1} showMenu={status !== StatusTypes.WAITING}>
           {
             status === StatusTypes.FAINT && (

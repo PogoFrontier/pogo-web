@@ -30,22 +30,9 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({ move, onCl
 }
 
 const Charged: React.FunctionComponent<ChargedProps> = ({ moves, onClick, energy }) => {
-  /**
-   * @returns an array containing the types of charge moves
-   * @param elem, index of the charge move in char.chargeMoves
-   */
-  // const getTypesStyle = () => {    
-  //   const t = ["normal", "normal"]
-  //   Promise.all([
-  //     fetch(SERVER + "api/moves/" + moves[0]?.name).then(res => res.json().then(json =>{
-  //       t[0] = json.type
-  //     })),
-  //     fetch(SERVER + "api/moves/" + moves[1]?.name).then(res => res.json().then(json =>{
-  //       t[1] = json.type
-  //     }))
-  //   ])
-  //   .then(() => setTypeStyle(t))
-  // }
+  if (!moves || moves.length <= 0) {
+    return null
+  }
 
   return (
     <div className={style.root}>
