@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect /* , useState */ } from 'react'
 import { w3cwebsocket as WebSocket } from 'websocket'
 import { AppProps } from 'next/app'
 import SocketContext from '@context/SocketContext'
@@ -14,7 +14,7 @@ const socket = new WebSocket(WSS)
  */
 
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
-  const [currentUser, setCurrentUser] = useState({})
+  // const [currentUser, setCurrentUser] = useState({})
 
   useEffect(() => {
     socket.onclose = () => {
@@ -28,9 +28,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userAuth }),
         }).then((res) => {
-          res.json().then((createdUser) => {
+          res.json() /* .then((createdUser) => {
             setCurrentUser(createdUser)
-          })
+          }) */
         })
       }
     })
@@ -42,7 +42,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   return (
     <TeamContext.Provider value={defaultTeam}>
       <SocketContext.Provider value={socket}>
-        {currentUser && currentUser}
         <Component {...pageProps} />
       </SocketContext.Provider>
     </TeamContext.Provider>
