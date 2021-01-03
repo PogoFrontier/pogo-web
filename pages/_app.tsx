@@ -5,7 +5,6 @@ import SocketContext from '@context/SocketContext'
 import { WSS } from '@config/index'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
-
 const socket = new WebSocket(WSS)
 
 /**
