@@ -14,7 +14,10 @@ interface IconProps {
 /**
  * Icon
  */
-export const Icon: React.FunctionComponent<IconProps> = ({ name, size = 'small' }) => {
+export const Icon: React.FunctionComponent<IconProps> = ({
+  name,
+  size = 'small',
+}) => {
   const { viewBox, id } = icons[name]
   return (
     <span className={`${styles.icon} ${styles[`icon--${size}`]}`}>

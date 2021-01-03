@@ -10,7 +10,7 @@ import style from './style.module.scss'
 
 enum STATUS {
   CHOOSING,
-  WAITING
+  WAITING,
 }
 
 interface Payload {
@@ -18,7 +18,7 @@ interface Payload {
 }
 
 interface Data {
-  type: keyof typeof CODE,
+  type: keyof typeof CODE
   payload?: Payload
 }
 
@@ -47,12 +47,14 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {
-      ws.send(JSON.stringify({
-        type: CODE.get_opponent,
-        payload: {
-          room
-        }
-      }))
+      ws.send(
+        JSON.stringify({
+          type: CODE.get_opponent,
+          payload: {
+            room,
+          },
+        })
+      )
       ws.onmessage = onMessage
     } else {
       toHome()
@@ -67,50 +69,51 @@ const MatchupPage = () => {
     for (const value of values) {
       submission.push(team[value])
     }
-    ws.send(JSON.stringify({
-      type: CODE.team_submit,
-      payload: {
-        room,
-        team: submission
-      }
-    }))
+    ws.send(
+      JSON.stringify({
+        type: CODE.team_submit,
+        payload: {
+          room,
+          team: submission,
+        },
+      })
+    )
     setStatus(STATUS.WAITING)
   }
 
   const toHome = () => {
-    router.push("/")
+    router.push('/')
   }
 
   const toGame = () => {
     router.push(`/game/${room}`)
   }
-  
+
   return (
     <main className={style.root}>
       <div className={style.content}>
         <header className={style.head}>
-          <h1>Room Code: <strong>{room}</strong></h1>
-          <button className="btn btn-negative" onClick={toHome}>Exit</button>
+          <h1>
+            Room Code: <strong>{room}</strong>
+          </h1>
+          <button className="btn btn-negative" onClick={toHome}>
+            Exit
+          </button>
         </header>
         <div className={style.teams}>
-          {
-            opponentTeam.length > 0 &&
+          {opponentTeam.length > 0 && (
             <div className={style.opponent}>
               <Team team={opponentTeam} />
             </div>
-          }
+          )}
           <div className={style.player}>
-            <Team team={team} isPlayer />
+            <Team team={team} isPlayer={true} />
           </div>
         </div>
-        {
-          status === STATUS.CHOOSING &&
+        {status === STATUS.CHOOSING && (
           <Select team={team} onSubmit={onSubmit} />
-        }
-        {
-          status === STATUS.WAITING &&
-          <p>Waiting for opponent...</p>
-        }
+        )}
+        {status === STATUS.WAITING && <p>Waiting for opponent...</p>}
       </div>
     </main>
   )

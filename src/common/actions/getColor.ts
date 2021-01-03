@@ -1,9 +1,4 @@
-export const colors = [
-  '#65E5C2',
-  '#5EDB89',
-  '#FDA50F',
-  '#FF3100'
-]
+export const colors = ['#65E5C2', '#5EDB89', '#FDA50F', '#FF3100']
 
 const getColor = (ratio: number): string => {
   if (ratio === 1) {
