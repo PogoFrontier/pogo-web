@@ -343,8 +343,6 @@ const GamePage = () => {
     )
   }
 
-  console.log(current.current?.energy)
-
   return (
     <main className={style.root}>
       <div className={style.content} onClick={onClick}>
