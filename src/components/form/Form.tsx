@@ -48,6 +48,7 @@ const Form: React.FunctionComponent = () => {
       >
         Play
       </button>
+      <br />
       <button onClick={signInWithGoogle}>Sign In With Google</button>
     </section>
   )
