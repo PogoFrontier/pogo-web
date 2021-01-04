@@ -74,11 +74,15 @@ const GamePage = () => {
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
       const isActive = payload.update[0].active
+      const energy = payload.update[0]!.energy;
       setActive((prev1) => {
         setCharPointer((prev2) => {
           setCharacters((prev3) => {
             if (hp) {
               prev1[prev2].current!.hp = hp
+            }
+            if (energy) {
+              prev1[prev2].current!.energy = Math.min(100, prev1[prev2].current!.energy + energy)
             }
             if (isActive !== prev2) {
               prev3[0].char = prev1[isActive]
