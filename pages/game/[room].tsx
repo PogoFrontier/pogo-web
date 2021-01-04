@@ -82,7 +82,7 @@ const GamePage = () => {
               prev1[prev2].current!.hp = hp
             }
             if (energy) {
-              prev1[prev2].current!.energy = Math.min(100, prev1[prev2].current!.energy + energy)
+              prev1[prev2].current!.energy = energy
             }
             if (isActive !== prev2) {
               prev3[0].char = prev1[isActive]
@@ -342,6 +342,8 @@ const GamePage = () => {
       </main>
     )
   }
+
+  console.log(current.current?.energy)
 
   return (
     <main className={style.root}>
