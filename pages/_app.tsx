@@ -7,6 +7,7 @@ import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import { auth } from '../src/firebase'
 import UserContext from '@context/UserContext'
+import Header from '@components/header/Header'
 
 const socket = new WebSocket(WSS)
 
@@ -23,7 +24,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
     auth.onAuthStateChanged(async (userAuth: any) => {
       if (userAuth) {
-        // console.log(userAuth)
+        // fetch if user exists first
+        // if exists, redirect to sign up form
+        // else, get data to sign in
         fetch(`${SERVER}api/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -44,6 +47,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     <UserContext.Provider value={currentUser}>
       <TeamContext.Provider value={defaultTeam}>
         <SocketContext.Provider value={socket}>
+          <Header />
           <Component {...pageProps} />
         </SocketContext.Provider>
       </TeamContext.Provider>
