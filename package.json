@@ -51,6 +51,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@reach/menu-button": "^0.12.1",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "firebase": "^8.2.1",

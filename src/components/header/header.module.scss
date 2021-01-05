@@ -46,3 +46,21 @@
         }
     }
 }
+
+.hamburger {
+    @include md() {
+        display: none;
+    }
+}
+
+.menubutton {
+    border: none;
+    background: none;
+    cursor: pointer;
+    fill: $color-white;
+    padding: 0.5em 0;
+}
+
+.logout {
+    color: $color-brand-negative;
+}
