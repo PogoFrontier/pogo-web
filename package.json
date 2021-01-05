@@ -17,7 +17,7 @@
     "secrets": "npm run secrets:logout && cross-env-shell BW_SESSION=`bw login projectgrookey@gmail.com --raw` \"npm run secrets:sync\"",
     "secrets:logout": "(bw logout || exit 0)",
     "secrets:login": "bw login projectgrookey@gmail.com",
-    "secrets:sync": "bw sync && bw get item c5675478-77d1-41c3-bff3-aca7012a2a87 | fx .notes > \".env\""
+    "secrets:sync": "bw sync && bw get item c5675478-77d1-41c3-bff3-aca7012a2a87 | fx .notes > \".env.local\""
   },
   "husky": {
     "hooks": {

@@ -9,3 +9,4 @@ coverage
 .jest
 out
 .env
+.env.local
