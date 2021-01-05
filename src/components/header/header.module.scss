@@ -1,33 +1,22 @@
 @import 'colors';
+@import 'variables';
 
 .header{
-    display: block;
-    font-size: .875rem;
-    font-weight: 400;
-    line-height: 1.5;
-    text-align: left;
-}
-
-.navbar{
     position: relative;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    padding: .5rem 1rem;
+    padding: 1rem;
     background-color: $color-header;
-    border-style: solid;
-    border-width: 0 1px 4px 1px;
-    border-color: $color-header-border;
+    min-height: 4em;
 }
 
 .title{
     color: $color-white;
-    display: inline-block;
-    padding-top: .335938rem;
-    padding-bottom: .335938rem;
-    margin-right: 1rem;
-    font-size: 1.09375rem;
-    line-height: inherit;
+    font-size: 1.2em;
     white-space: nowrap;
+    @include md() {
+        font-size: 2em;
+    }
 }
