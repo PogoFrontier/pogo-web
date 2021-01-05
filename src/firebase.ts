@@ -2,6 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
 
+// this should really be in env but I can't get it to work, help lol
 const config = {
   apiKey: 'AIzaSyBb4FG2ieLWK_tAnOrYggqHFuyloqPumq0',
   authDomain: 'project-grookey.firebaseapp.com',
@@ -24,26 +25,4 @@ provider.setCustomParameters({
   promt: 'select_account',
 })
 
-// Check if user exists if not create a user
-export const createUserProfileDocument = async (
-  userAuth: any,
-  additionalData?: any
-) => {
-  if (!userAuth) return
-  // console.log(userAuth)
-  await firestore
-    .collection('users')
-    .doc(userAuth.uid)
-    .set({
-      googleId: userAuth.uid,
-      displayName: userAuth.displayName,
-      email: userAuth.email,
-      teams: [],
-      createdAt: Date.now(),
-      ...additionalData,
-    })
-  const userDoc = await firestore.collection('users').doc(userAuth.uid).get()
-  return userDoc.data()
-}
-
-export const signInWithGoogle = () => auth.signInWithPopup(provider)
+export const getSignInWithGooglePopup = () => auth.signInWithPopup(provider)

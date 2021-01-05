@@ -6,7 +6,7 @@ import TeamContext from '@context/TeamContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import classnames from 'classnames'
-import { signInWithGoogle } from 'src/firebase'
+import { getSignInWithGooglePopup } from 'src/firebase'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState('')
@@ -49,7 +49,7 @@ const Form: React.FunctionComponent = () => {
         Play
       </button>
       <br />
-      <button onClick={signInWithGoogle}>Sign In With Google</button>
+      <button onClick={getSignInWithGooglePopup}>Sign In With Google</button>
     </section>
   )
 }
