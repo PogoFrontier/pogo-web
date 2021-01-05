@@ -7,7 +7,6 @@ import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import { auth } from '../src/firebase'
 import UserContext from '@context/UserContext'
-import Header from '@components/header/Header'
 import {
   postNewGoogleUser,
   signInWithGoogleId,
@@ -56,7 +55,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     <UserContext.Provider value={currentUser}>
       <TeamContext.Provider value={defaultTeam}>
         <SocketContext.Provider value={socket}>
-          <Header />
           <Component {...pageProps} />
         </SocketContext.Provider>
       </TeamContext.Provider>
