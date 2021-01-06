@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { NICE, GREAT, EXCELLENT } from './constants'
 import style from './stepper.module.scss'
 
-const Stepper = () => {
+const Stepper: React.FunctionComponent = () => {
   const [stepperCharge, setStepperCharge] = useState(0)
   const [stepperLabel, setStepperLabel] = useState('')
 
@@ -16,7 +16,7 @@ const Stepper = () => {
         setStepperLabel(NICE)
       } else if (stepperCount >= 80 && stepperCount < 100) {
         setStepperLabel(GREAT)
-      } else if (stepperCount == 100) {
+      } else if (stepperCount === 100) {
         setStepperLabel(EXCELLENT)
       }
     }
@@ -24,7 +24,7 @@ const Stepper = () => {
   return (
     <div>
       <button
-        onClick={() => onStepperClick()}
+        onClick={onStepperClick}
         className={style[`button${stepperLabel}`]}
       >
         {stepperLabel === '' ? 'Tap to Charge' : stepperLabel}
