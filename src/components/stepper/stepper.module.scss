@@ -1,0 +1,29 @@
+@import 'colors';
+
+.button{
+    border-radius: 50%;
+    outline:none;
+    width: 10%;
+    
+}
+.buttonNice{
+    border-radius: 50%;
+    background-color:$stepper-nice;
+    outline:none;
+    width: 10%;
+
+}
+.buttonGreat{
+    border-radius: 50%;
+    background-color: $stepper-great;
+    outline:none;
+    width: 10%;
+
+}
+.buttonExcellent{
+    border-radius: 50%;
+    background-color:$stepper-excellent;
+    outline:none;
+    width: 10%;
+
+}
