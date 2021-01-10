@@ -35,12 +35,12 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                   if (newRes.error) {
                     setCurrentUser({})
                   } else {
-                    setCurrentUser(newRes.data)
+                    setCurrentUser(newRes.userData)
                   }
                 })
                 .catch(() => setCurrentUser({}))
             } else {
-              setCurrentUser(res.data)
+              setCurrentUser(res.userData)
             }
           })
           .catch(() => setCurrentUser({}))
