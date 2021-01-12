@@ -23,9 +23,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [socket, setSocket] = useState({} as WebSocket)
 
   useEffect(() => {
-    socket.onclose = () => {
-      router.push('/')
-    }
     auth.onAuthStateChanged(async (userAuth: any) => {
       if (userAuth) {
         signInWithGoogleId(userAuth.uid)
@@ -56,6 +53,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
   const connect = (id: string, payload: OnNewRoomPayload) => {
     const s = new WebSocket(`${WSS}/${id}`)
+    s.onclose = () => {
+      router.push('/')
+    }
     setSocket(s)
     const x = setInterval(() => {
       if (s.readyState === WebSocket.OPEN) {
