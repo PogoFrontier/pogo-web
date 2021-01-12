@@ -44,7 +44,7 @@ enum StatusTypes {
 const GamePage = () => {
   const router = useRouter()
   const { room } = router.query
-  const ws: WebSocket = useContext(SocketContext)
+  const ws: WebSocket = useContext(SocketContext).socket
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([

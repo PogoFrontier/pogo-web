@@ -27,7 +27,7 @@ const MatchupPage = () => {
   const [opponentTeam, setOpponentTeam] = useState([] as TeamMember[])
   const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
-  const ws: WebSocket = useContext(SocketContext)
+  const ws: WebSocket = useContext(SocketContext).socket
   const team: TeamMember[] = useContext(TeamContext)
 
   const onMessage = (message: MessageEvent) => {
