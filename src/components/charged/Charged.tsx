@@ -15,7 +15,7 @@ interface ChargedProps {
   onClick: (moveId: string) => void
 }
 
-const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({ move, onClick }) => {
+const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({ move, energy, onClick }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     e.stopPropagation()
@@ -24,8 +24,31 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({ move, onCl
 
   return (
     <div className={style.chargeGroup}>
-      <button onClick={handleClick} className={classnames([style.chargeButton, style[move.type]])}>
-        <Icon name={move.type as IconName} size="medium" />
+      <button
+        onClick={handleClick}
+        className={classnames([
+          style.chargeButton,
+          style[move.type],
+          {
+            [style.filled]: energy >= move.energy,
+            [style.alternative]: energy >= move.energy * 2
+          }
+        ])}>
+        <div
+          className={
+            classnames([
+              style.fill,
+              style[move.type],
+              style.filled,
+              {
+                [style.alternative]: energy >= move.energy
+              }
+            ])}
+            style={{ height: `${((energy / move.energy) * 100) % 100}%` }}
+          />
+        <div className={style.icon}>
+          <Icon name={move.type as IconName} size="medium" />
+        </div>
       </button>
       <span className={style.label}>{move.name}</span>
     </div>
