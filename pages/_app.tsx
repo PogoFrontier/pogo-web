@@ -5,7 +5,8 @@ import SocketContext from '@context/SocketContext'
 import { WSS } from '@config/index'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
-const socket = new WebSocket(WSS)
+import { v4 as uuidv4 } from 'uuid'
+const socket = new WebSocket(`${WSS}/${uuidv4()}`)
 
 /**
  * NextJS wrapper
