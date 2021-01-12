@@ -17,3 +17,4 @@ export { default as rock } from './rock.svg'
 export { default as steel } from './steel.svg'
 export { default as water } from './water.svg'
 
+export { default as menu } from './menu.svg'

@@ -1,4 +1,5 @@
 import Form from '@components/form/Form'
+import Layout from '@components/layout/Layout'
 import SocketContext from '@context/SocketContext'
 import { useContext, useEffect, useState } from 'react'
 import style from './style.module.scss'
@@ -32,18 +33,20 @@ const HomePage = () => {
   }
 
   return (
-    <main className={style.root}>
-      <div className={style.content}>
-        {(state === ws.CLOSED || ws.readyState === ws.CLOSING) && (
-          <>
-            <p>Disconnected</p>
-            <button onClick={reconnect}>Reconnect</button>
-          </>
-        )}
-        {state === ws.CONNECTING && <p>Connecting...</p>}
-        {state === ws.OPEN && <Form />}
-      </div>
-    </main>
+    <Layout>
+      <main className={style.root}>
+        <div className={style.content}>
+          {(state === ws.CLOSED || ws.readyState === ws.CLOSING) && (
+            <>
+              <p>Disconnected</p>
+              <button onClick={reconnect}>Reconnect</button>
+            </>
+          )}
+          {state === ws.CONNECTING && <p>Connecting...</p>}
+          {state === ws.OPEN && <Form />}
+        </div>
+      </main>
+    </Layout>
   )
 }
 
