@@ -6,6 +6,7 @@ import {
   TeamMember,
   ResolveTurnPayload,
   Move,
+  Room,
 } from '@adibkhan/pogo-web-backend'
 import { CODE, Actions } from '@adibkhan/pogo-web-backend/actions'
 import { Icon } from '@components/icon/Icon'
@@ -15,16 +16,12 @@ import { CharacterProps } from '@components/field/Character'
 import Switch from '@components/switch/Switch'
 import Popover from '@components/popover/Popover'
 import Charged from '@components/charged/Charged'
+import axios from 'axios'
 import { SERVER } from '@config/index'
+import IdContext from '@context/IdContext'
 
 interface CheckPayload {
   countdown: number
-  team: TeamMember[]
-  opponent: TeamMember[]
-  shields: number
-  remaining: number
-  oppShields: number
-  oppRemaining: number
 }
 
 interface Data {
@@ -45,6 +42,7 @@ const GamePage = () => {
   const router = useRouter()
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
+  const id: string = useContext(IdContext).id
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([
@@ -64,6 +62,7 @@ const GamePage = () => {
   const [wait, setWait] = useState(-1)
   const [status, setStatus] = useState(StatusTypes.STARTING)
   const [moves, setMoves] = useState([] as Move[][])
+  const [isLoading, setIsLoading] = useState(true)
 
   const startGame = () => {
     setTime(240)
@@ -177,39 +176,6 @@ const GamePage = () => {
     } else {
       setInfo(<>Starting: {payload.countdown}...</>)
     }
-    if (payload.team !== active) {
-      setActive(payload.team)
-      setCharacters((prevState) => {
-        prevState[0].char = payload.team[charPointer]
-        return prevState
-      })
-      setMoves(() => {
-        const arr1: Move[][] = []
-        for (const member of payload.team) {
-          const arr2: Move[] = []
-          for (const move of member.chargeMoves) {
-            fetch(SERVER + 'api/moves/' + move).then((res) =>
-              res.json().then((json) => {
-                arr2.push(json)
-              })
-            )
-          }
-          arr1.push(arr2)
-        }
-        return arr1
-      })
-    }
-    if (payload.opponent !== opponent) {
-      setOpponent(payload.opponent)
-      setCharacters((prevState) => {
-        prevState[1].char = payload.opponent[oppPointer]
-        return prevState
-      })
-    }
-    setShields(payload.shields)
-    setRemaining(payload.remaining)
-    setOppShields(payload.oppShields)
-    setOppRemaining(payload.oppRemaining)
   }
 
   const onFastMove = (move: string) => {
@@ -297,21 +263,62 @@ const GamePage = () => {
     router.push('/')
   }
 
+  const fetchRoom = () => {
+    Promise.all([
+      axios.get(`${SERVER}api/room/${room}`)
+      .then((res) => {
+        console.log(res.data)
+        const currentRoom: Room = res.data
+        const playerIndex = currentRoom.players.findIndex(x => x?.id === id)
+        const player = currentRoom.players[playerIndex]
+        const opponent = currentRoom.players[playerIndex === 0 ? 1 : 0]
+        if (player && opponent && player.current && opponent.current) {
+          setActive(player.current.team)
+          setOpponent(opponent.current.team)
+          setCharacters((prevState) => {
+            prevState[0].char = player.current?.team[0]
+            prevState[1].char = opponent.current?.team[0]
+            return prevState
+          })
+          setShields(player.current.shields)
+          setRemaining(player.current.remaining)
+          setOppShields(opponent.current.shields)
+          setOppRemaining(opponent.current.remaining)
+        } else {
+          throw new Error()
+        }
+      }),
+      axios.get(`${SERVER}api/moves/team/${room}/${id}`)
+      .then((res) => {
+        console.log(res.data)
+        const allMoves: Move[][] = res.data;
+        setMoves(allMoves)
+      })
+    ])
+    .then(
+      () => {
+        ws.send(
+          JSON.stringify({
+            type: CODE.ready_game,
+            payload: { room },
+          })
+        )
+        ws.onmessage = onMessage
+        setIsLoading(false)
+      }
+    )
+    .catch(toHome)
+  }
+
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {
-      ws.send(
-        JSON.stringify({
-          type: CODE.ready_game,
-          payload: { room },
-        })
-      )
-      ws.onmessage = onMessage
+      fetchRoom()
     } else {
       toHome()
     }
   }, [])
 
-  if (active.length <= 0 || opponent.length <= 0) {
+  if (isLoading) {
     return <p>Loading...</p>
   }
 

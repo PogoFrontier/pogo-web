@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import { w3cwebsocket as WebSocket } from 'websocket'
 import { AppProps } from 'next/app'
 import SocketContext from '@context/SocketContext'
+import IdContext from '@context/IdContext'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import { auth } from '../src/firebase'
@@ -20,6 +21,7 @@ import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState({})
+  const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
 
   useEffect(() => {
@@ -51,12 +53,13 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }, [])
 
-  const connect = (id: string, payload: OnNewRoomPayload) => {
-    const s = new WebSocket(`${WSS}/${id}`)
+  const connect = (id1: string, payload: OnNewRoomPayload) => {
+    const s = new WebSocket(`${WSS}/${id1}`)
     s.onclose = () => {
       router.push('/')
     }
     setSocket(s)
+    setId1(id1)
     const x = setInterval(() => {
       if (s.readyState === WebSocket.OPEN) {
         const data = { type: CODE.room, payload }
@@ -69,14 +72,20 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }, 100)
   }
 
+  const setId = (id1: string) => {
+    setId1(id1)
+  }
+
   return (
-    <UserContext.Provider value={currentUser}>
-      <TeamContext.Provider value={defaultTeam}>
-        <SocketContext.Provider value={{ socket, connect }}>
-          <Component {...pageProps} />
-        </SocketContext.Provider>
-      </TeamContext.Provider>
-    </UserContext.Provider>
+    <IdContext.Provider value={{ id, setId }}>
+      <UserContext.Provider value={currentUser}>
+        <TeamContext.Provider value={defaultTeam}>
+          <SocketContext.Provider value={{ socket, connect }}>
+            <Component {...pageProps} />
+          </SocketContext.Provider>
+        </TeamContext.Provider>
+      </UserContext.Provider>
+    </IdContext.Provider>
   )
 }
 
