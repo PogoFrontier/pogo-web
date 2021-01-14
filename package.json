@@ -73,7 +73,7 @@
     "websocket": "^1.0.32"
   },
   "devDependencies": {
-    "@adibkhan/pogo-web-backend": "1.0.18",
+    "@adibkhan/pogo-web-backend": "1.0.20",
     "@babel/core": "7.9.0",
     "@bitwarden/cli": "^1.13.3",
     "@types/classnames": "^2.2.11",

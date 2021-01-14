@@ -35,7 +35,8 @@ enum StatusTypes {
   WAITING,
   FAINT,
   CHARGE,
-  ENDED,
+  SHIELD,
+  ENDED
 }
 
 const GamePage = () => {
@@ -104,18 +105,11 @@ const GamePage = () => {
                 prev3[0].status = 'switch'
               }
             }
-            if (payload.update[0]?.wait) {
-              setWait(payload.update[0]!.wait)
-              if (payload.update[0]!.wait <= -1) {
-                if (
-                  payload.update[1] &&
-                  payload.update[1].wait &&
-                  payload.update[1].wait <= -1
-                ) {
-                  setStatus(StatusTypes.MAIN)
-                } else {
-                  setStatus(StatusTypes.WAITING)
-                }
+            if (payload.update[0]?.charge) {
+              if (payload.update[0].charge === 1) {
+                setStatus(StatusTypes.CHARGE)
+              } else {
+                setStatus(StatusTypes.SHIELD)
               }
             }
             return prev3
@@ -124,6 +118,29 @@ const GamePage = () => {
         })
         return prev1
       })
+      if (payload.update[0]?.wait) {
+        setWait(payload.update[0]!.wait)
+        if (payload.update[0]!.wait <= -1) {
+          setStatus(
+            prev => {
+              if (
+                payload.update[1]
+                && payload.update[1].wait
+                && payload.update[1].wait <= -1
+              ) {
+                if (prev === StatusTypes.CHARGE) {
+                  ws.send('$c1')
+                } else if (prev === StatusTypes.SHIELD) {
+                  ws.send('$s0')
+                } else {
+                  return StatusTypes.MAIN
+                }
+              }
+              return StatusTypes.WAITING
+            }
+          )
+        }
+      }
     }
     if (payload.update[1] !== null) {
       const hp = payload.update[1]!.hp
@@ -267,7 +284,6 @@ const GamePage = () => {
     Promise.all([
       axios.get(`${SERVER}api/room/${room}`)
       .then((res) => {
-        console.log(res.data)
         const currentRoom: Room = res.data
         const playerIndex = currentRoom.players.findIndex(x => x?.id === id)
         const player = currentRoom.players[playerIndex]
@@ -290,7 +306,6 @@ const GamePage = () => {
       }),
       axios.get(`${SERVER}api/moves/team/${room}/${id}`)
       .then((res) => {
-        console.log(res.data)
         const allMoves: Move[][] = res.data;
         setMoves(allMoves)
       })
@@ -391,7 +406,7 @@ const GamePage = () => {
           <Status subject={opp} shields={oppShields} remaining={oppRemaining} />
         </section>
         <section className={style.info}>
-          <div>{wait > -1 ? `Switch in ${wait}` : info}</div>
+          <div>{wait > -1 ? wait : info}</div>
           <div className={style.timer}>
             <strong>{time + ' '}</strong>
             <Icon name="clock" size="medium" />
@@ -411,7 +426,12 @@ const GamePage = () => {
           onClick={onChargeClick}
         />
 
-        <Popover closed={wait <= -1} showMenu={status !== StatusTypes.WAITING}>
+        <Popover
+          closed={status === StatusTypes.MAIN}
+          showMenu={status !== StatusTypes.WAITING
+            && status !== StatusTypes.STARTING
+          }
+        >
           {status === StatusTypes.FAINT && (
             <Switch
               team={active}
@@ -420,6 +440,12 @@ const GamePage = () => {
               onClick={onFaintClick}
               modal={true}
             />
+          )}
+          {status === StatusTypes.SHIELD && (
+            <div>Opponent Charging...</div>
+          )}
+          {status === StatusTypes.CHARGE && (
+            <div>Charge Up!</div>
           )}
         </Popover>
       </div>
