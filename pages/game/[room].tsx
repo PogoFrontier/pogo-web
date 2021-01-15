@@ -227,20 +227,6 @@ const GamePage = () => {
     })
   }
 
-  const onChargeMove = (move: string) => {
-    if (opponent[oppPointer]) {
-      setInfo(
-        <>
-          {opponent[oppPointer].speciesName} used {move}!
-        </>
-      )
-      setCharacters((prev) => {
-        prev[0].status = 'charge'
-        return prev
-      })
-    }
-  }
-
   const onMessage = (message: MessageEvent) => {
     if (message.data === '$end') {
       endGame()
@@ -252,9 +238,6 @@ const GamePage = () => {
       switch (data[0]) {
         case Actions.FAST_ATTACK:
           onFastMove(data[1])
-          break
-        case Actions.CHARGE_ATTACK:
-          onChargeMove(data[1])
           break
         case Actions.SWITCH:
           onSwitch(+data[1]) // used to be onSwitch(parseInt(data[1]))
