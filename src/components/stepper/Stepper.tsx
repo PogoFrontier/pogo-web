@@ -15,15 +15,15 @@ const Stepper: React.FC<StepperProps> = ({ onStep }) => {
   const onStepperClick = () => {
     if (stepperCharge < 100) {
       let stepperCount = stepperCharge
-      stepperCount += 10
+      stepperCount += 7;
       setStepperCharge(stepperCount)
-      if (stepperCount >= 40 && stepperCount < 80) {
+      if (stepperCount >= 30 && stepperCount < 80) {
         setStepperLabel(NICE)
         onStep(0.5)
-      } else if (stepperCount >= 80 && stepperCount < 100) {
+      } else if (stepperCount >= 70 && stepperCount < 100) {
         setStepperLabel(GREAT)
         onStep(0.75)
-      } else if (stepperCount === 100) {
+      } else if (stepperCount >= 100) {
         setStepperLabel(EXCELLENT)
         onStep(1)
       }
