@@ -352,10 +352,15 @@ const GamePage = () => {
     }
   }
 
-  const onChargeClick = (moveId: string) => {
-    if (currentMove === '' && status === StatusTypes.MAIN && wait <= -1) {
-      setCurrentMove(moveId)
-      const data = '#ca:' + moveId
+  const onChargeClick = (move: Move) => {
+    if (currentMove === ''
+      && status === StatusTypes.MAIN
+      && wait <= -1
+      && active[charPointer].current?.energy
+      && active[charPointer].current!.energy! >= move.energy
+    ) {
+      setCurrentMove(move.moveId)
+      const data = '#ca:' + move.moveId
       ws.send(data)
     }
   }

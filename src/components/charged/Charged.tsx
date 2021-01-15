@@ -6,20 +6,20 @@ import style from './charged.module.scss'
 interface ChargedButtonProps {
   move: Move,
   energy: number,
-  onClick: (moveId: string) => void
+  onClick: (move: Move) => void
 }
 
 interface ChargedProps {
   moves: Move[],
   energy: number,
-  onClick: (moveId: string) => void
+  onClick: (move: Move) => void
 }
 
 const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({ move, energy, onClick }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     e.stopPropagation()
-    onClick(move.moveId)
+    onClick(move)
   }
 
   return (
