@@ -38,7 +38,6 @@ enum StatusTypes {
   FAINT,
   CHARGE,
   SHIELD,
-  ENDED
 }
 
 const GamePage = () => {
@@ -77,7 +76,7 @@ const GamePage = () => {
   }
 
   const endGame = () => {
-    setStatus(StatusTypes.ENDED)
+    router.push(`/end/${room}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
@@ -401,14 +400,6 @@ const GamePage = () => {
 
   const onShield = () => {
     setToShield(true)
-  }
-
-  if (status === StatusTypes.ENDED) {
-    return (
-      <main>
-        <h1>Game Over!</h1>
-      </main>
-    )
   }
 
   return (
