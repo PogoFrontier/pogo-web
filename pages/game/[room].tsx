@@ -68,6 +68,7 @@ const GamePage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
+  const [message, setMessage] = useState("")
 
   const startGame = () => {
     setTime(240)
@@ -126,6 +127,10 @@ const GamePage = () => {
         })
         return prev1
       })
+      if (payload.update[0].message) {
+        setMessage(payload.update[0].message)
+        setTimeout(() => setMessage(""), 5000)
+      }
       if (payload.update[0]?.wait) {
         setWait(payload.update[0]!.wait)
         if (payload.update[0]!.wait <= -1) {
@@ -436,7 +441,12 @@ const GamePage = () => {
           energy={current.current?.energy || 0}
           onClick={onChargeClick}
         />
-
+        {
+          message !== "" &&
+          <strong className={style.message}>
+            {message}
+          </strong>
+        }
         <Popover
           closed={status === StatusTypes.MAIN}
           showMenu={status !== StatusTypes.WAITING
