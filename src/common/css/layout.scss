@@ -55,6 +55,9 @@ h1 {
   &:active {
     transform: scale(0.95);
   }
+  &:disabled {
+    cursor: default;
+  }
 
   &.btn-primary {
     color: $color-dark;
@@ -65,6 +68,10 @@ h1 {
     box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
     &:hover {
       background-color: darken($color-brand-primary, 10%);
+    }
+    &:disabled {
+      background-color: $color-neutral-light;
+      box-shadow: none;
     }
   }
 

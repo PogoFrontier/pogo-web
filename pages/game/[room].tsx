@@ -19,6 +19,8 @@ import Charged from '@components/charged/Charged'
 import axios from 'axios'
 import { SERVER } from '@config/index'
 import IdContext from '@context/IdContext'
+import Shield from '@components/shield/Shield'
+import Stepper from '@components/stepper/Stepper'
 
 interface CheckPayload {
   countdown: number
@@ -64,6 +66,8 @@ const GamePage = () => {
   const [status, setStatus] = useState(StatusTypes.STARTING)
   const [moves, setMoves] = useState([] as Move[][])
   const [isLoading, setIsLoading] = useState(true)
+  const [, setChargeMult] = useState(0.25)
+  const [toShield, setToShield] = useState(false)
 
   const startGame = () => {
     setTime(240)
@@ -82,6 +86,7 @@ const GamePage = () => {
       const shouldReturn = payload.update[0]!.shouldReturn
       const isActive = payload.update[0].active
       const energy = payload.update[0]!.energy
+      const isShields = payload.update[0].shields
       setActive((prev1) => {
         setCharPointer((prev2) => {
           setCharacters((prev3) => {
@@ -96,6 +101,9 @@ const GamePage = () => {
               prev3[0].status = 'prime'
             } else if (shouldReturn) {
               prev3[0].status = 'prime'
+            }
+            if (isShields) {
+              setShields(isShields)
             }
             if (payload.update[0]?.remaining) {
               setRemaining(payload.update[0]!.remaining)
@@ -129,9 +137,16 @@ const GamePage = () => {
                 && payload.update[1].wait <= -1
               ) {
                 if (prev === StatusTypes.CHARGE) {
-                  ws.send('$c1')
+                  setChargeMult(prev1 => {
+                    ws.send('$c' + prev1.toString())
+                    return 0.25
+                  })
                 } else if (prev === StatusTypes.SHIELD) {
-                  ws.send('$s0')
+                  setToShield(prev1 => {
+                    ws.send('$s' + (prev1 ? 1 : 0).toString())
+                    return false
+                  }
+                  )
                 } else {
                   return StatusTypes.MAIN
                 }
@@ -146,6 +161,7 @@ const GamePage = () => {
       const hp = payload.update[1]!.hp
       const shouldReturn = payload.update[1]!.shouldReturn
       const isActive = payload.update[1].active
+      const isShields = payload.update[1].shields
       setInfo(() => {
         setOpponent((prev1) => {
           setOppPointer((prev2) => {
@@ -158,6 +174,9 @@ const GamePage = () => {
                 prev3[1].status = 'prime'
               } else if (shouldReturn) {
                 prev3[1].status = 'prime'
+              }
+              if (isShields) {
+                setOppShields(isShields)
               }
               if (payload.update[1]?.remaining) {
                 setOppRemaining(payload.update[1]?.remaining)
@@ -375,6 +394,10 @@ const GamePage = () => {
     })
   }
 
+  const onShield = () => {
+    setToShield(true)
+  }
+
   if (status === StatusTypes.ENDED) {
     return (
       <main>
@@ -429,11 +452,11 @@ const GamePage = () => {
               modal={true}
             />
           )}
-          {status === StatusTypes.SHIELD && (
-            <div>Opponent Charging...</div>
-          )}
           {status === StatusTypes.CHARGE && (
-            <div>Charge Up!</div>
+            <Stepper onStep={setChargeMult} />
+          )}
+          {status === StatusTypes.SHIELD && (
+            <Shield value={toShield} onShield={onShield} shields={shields} />
           )}
         </Popover>
       </div>

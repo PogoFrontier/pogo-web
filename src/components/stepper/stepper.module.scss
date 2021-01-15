@@ -3,27 +3,19 @@
 .button{
     border-radius: 50%;
     outline:none;
-    width: 10%;
-    
+    width: 10em;
+    height: 10em;
+    background-color: $color-white;
+    text-align: center;
 }
-.buttonNice{
-    border-radius: 50%;
+.nice{
     background-color:$stepper-nice;
-    outline:none;
-    width: 10%;
 
 }
-.buttonGreat{
-    border-radius: 50%;
+.great{
     background-color: $stepper-great;
-    outline:none;
-    width: 10%;
 
 }
-.buttonExcellent{
-    border-radius: 50%;
+.excellent{
     background-color:$stepper-excellent;
-    outline:none;
-    width: 10%;
-
 }
