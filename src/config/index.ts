@@ -9,5 +9,5 @@ export const SERVER =
 export const WSS =
   process.env.NODE_ENV === 'production'
     ? 'wss://pogo-web-backend.herokuapp.com/'
-    : 'ws://localhost:3000'
+    : 'ws://localhost:3000/'
 

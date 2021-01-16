@@ -54,7 +54,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }, [])
 
   const connect = (id1: string, payload: OnNewRoomPayload) => {
-    const s = new WebSocket(`${WSS}/${id1}`)
+    const s = new WebSocket(`${WSS}${id1}`)
     s.onclose = () => {
       router.push('/')
     }
