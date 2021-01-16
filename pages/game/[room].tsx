@@ -80,7 +80,7 @@ const GamePage = () => {
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
-    if (payload.update[0] !== null) {
+    if (payload.update[0] !== null && payload.update[0].id === id) {
       setCurrentMove(() => '')
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
@@ -383,6 +383,10 @@ const GamePage = () => {
       && active[charPointer].current!.energy! >= move.energy
     ) {
       setCurrentMove(move.moveId)
+      setActive(prev => {
+        prev[charPointer].current!.energy -= move.energy
+        return prev
+      })
       const data = '#ca:' + move.moveId
       ws.send(data)
     }
@@ -400,6 +404,7 @@ const GamePage = () => {
 
   const onShield = () => {
     setToShield(true)
+    setShields(prev => prev - 1)
   }
 
   return (
