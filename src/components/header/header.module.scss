@@ -1,0 +1,66 @@
+@import 'colors';
+@import 'variables';
+
+.header{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1em;
+    background-color: $color-header;
+    min-height: 4em;
+}
+
+.title{
+    color: $color-white;
+    font-size: 1.2em;
+    white-space: nowrap;
+    @include md() {
+        font-size: 2em;
+    }
+}
+
+.links {
+    display: none;
+    @include md() {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        list-style: none;
+        width: 30em;
+    }
+    li {
+        a {
+            text-decoration: none;
+            font-size: 1.2em;
+            padding-bottom: 0.25em;
+            color: $color-white;
+            &:visited {
+                color: $color-button-disabled;
+            }
+            &:hover {
+                border-bottom: 0.1em solid;
+            }
+        }
+    }
+}
+
+.hamburger {
+    @include md() {
+        display: none;
+    }
+}
+
+.menubutton {
+    border: none;
+    background: none;
+    cursor: pointer;
+    fill: $color-white;
+    padding: 0.5em 0;
+}
+
+.logout {
+    color: $color-brand-negative;
+}

@@ -28,6 +28,7 @@ export default class CustomDocument extends Document<{
           <div dangerouslySetInnerHTML={{ __html: this.props.spriteContent }} />
           <Main />
           <NextScript />
+          <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js" />
         </body>
       </Html>
     )

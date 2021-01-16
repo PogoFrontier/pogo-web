@@ -2,7 +2,12 @@ import Status from '@components/status/Status'
 import SocketContext from '@context/SocketContext'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
-import { TeamMember, ResolveTurnPayload } from '@adibkhan/pogo-web-backend'
+import {
+  TeamMember,
+  ResolveTurnPayload,
+  Move,
+  Room,
+} from '@adibkhan/pogo-web-backend'
 import { CODE, Actions } from '@adibkhan/pogo-web-backend/actions'
 import { Icon } from '@components/icon/Icon'
 import style from './style.module.scss'
@@ -10,15 +15,15 @@ import Field from '@components/field/Field'
 import { CharacterProps } from '@components/field/Character'
 import Switch from '@components/switch/Switch'
 import Popover from '@components/popover/Popover'
+import Charged from '@components/charged/Charged'
+import axios from 'axios'
+import { SERVER } from '@config/index'
+import IdContext from '@context/IdContext'
+import Shield from '@components/shield/Shield'
+import Stepper from '@components/stepper/Stepper'
 
 interface CheckPayload {
   countdown: number
-  team: TeamMember[]
-  opponent: TeamMember[]
-  shields: number
-  remaining: number
-  oppShields: number
-  oppRemaining: number
 }
 
 interface Data {
@@ -32,13 +37,14 @@ enum StatusTypes {
   WAITING,
   FAINT,
   CHARGE,
-  ENDED,
+  SHIELD,
 }
 
 const GamePage = () => {
   const router = useRouter()
   const { room } = router.query
-  const ws: WebSocket = useContext(SocketContext)
+  const ws: WebSocket = useContext(SocketContext).socket
+  const id: string = useContext(IdContext).id
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([
@@ -57,6 +63,11 @@ const GamePage = () => {
   const [oppRemaining, setOppRemaining] = useState(0)
   const [wait, setWait] = useState(-1)
   const [status, setStatus] = useState(StatusTypes.STARTING)
+  const [moves, setMoves] = useState([] as Move[][])
+  const [isLoading, setIsLoading] = useState(true)
+  const [, setChargeMult] = useState(0.25)
+  const [toShield, setToShield] = useState(false)
+  const [message, setMessage] = useState("")
 
   const startGame = () => {
     setTime(240)
@@ -65,16 +76,17 @@ const GamePage = () => {
   }
 
   const endGame = () => {
-    setStatus(StatusTypes.ENDED)
+    router.push(`/end/${room}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
-    if (payload.update[0] !== null) {
+    if (payload.update[0] !== null && payload.update[0].id === id) {
       setCurrentMove(() => '')
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
       const isActive = payload.update[0].active
       const energy = payload.update[0]!.energy
+      const isShields = payload.update[0].shields
       setActive((prev1) => {
         setCharPointer((prev2) => {
           setCharacters((prev3) => {
@@ -90,6 +102,9 @@ const GamePage = () => {
             } else if (shouldReturn) {
               prev3[0].status = 'prime'
             }
+            if (isShields) {
+              setShields(isShields)
+            }
             if (payload.update[0]?.remaining) {
               setRemaining(payload.update[0]!.remaining)
               prev1[prev2].current!.hp = 0
@@ -98,18 +113,11 @@ const GamePage = () => {
                 prev3[0].status = 'switch'
               }
             }
-            if (payload.update[0]?.wait) {
-              setWait(payload.update[0]!.wait)
-              if (payload.update[0]!.wait <= -1) {
-                if (
-                  payload.update[1] &&
-                  payload.update[1].wait &&
-                  payload.update[1].wait <= -1
-                ) {
-                  setStatus(StatusTypes.MAIN)
-                } else {
-                  setStatus(StatusTypes.WAITING)
-                }
+            if (payload.update[0]?.charge) {
+              if (payload.update[0].charge === 1) {
+                setStatus(StatusTypes.CHARGE)
+              } else {
+                setStatus(StatusTypes.SHIELD)
               }
             }
             return prev3
@@ -118,11 +126,46 @@ const GamePage = () => {
         })
         return prev1
       })
+      if (payload.update[0].message) {
+        setMessage(payload.update[0].message)
+        setTimeout(() => setMessage(""), 5000)
+      }
+      if (payload.update[0]?.wait) {
+        setWait(payload.update[0]!.wait)
+        if (payload.update[0]!.wait <= -1) {
+          setStatus(
+            prev => {
+              if (
+                payload.update[1]
+                && payload.update[1].wait
+                && payload.update[1].wait <= -1
+              ) {
+                if (prev === StatusTypes.CHARGE) {
+                  setChargeMult(prev1 => {
+                    ws.send('$c' + prev1.toString())
+                    return 0.25
+                  })
+                } else if (prev === StatusTypes.SHIELD) {
+                  setToShield(prev1 => {
+                    ws.send('$s' + (prev1 ? 1 : 0).toString())
+                    return false
+                  }
+                  )
+                } else {
+                  return StatusTypes.MAIN
+                }
+              }
+              return StatusTypes.WAITING
+            }
+          )
+        }
+      }
     }
     if (payload.update[1] !== null) {
       const hp = payload.update[1]!.hp
       const shouldReturn = payload.update[1]!.shouldReturn
       const isActive = payload.update[1].active
+      const isShields = payload.update[1].shields
       setInfo(() => {
         setOpponent((prev1) => {
           setOppPointer((prev2) => {
@@ -135,6 +178,9 @@ const GamePage = () => {
                 prev3[1].status = 'prime'
               } else if (shouldReturn) {
                 prev3[1].status = 'prime'
+              }
+              if (isShields) {
+                setOppShields(isShields)
               }
               if (payload.update[1]?.remaining) {
                 setOppRemaining(payload.update[1]?.remaining)
@@ -170,24 +216,6 @@ const GamePage = () => {
     } else {
       setInfo(<>Starting: {payload.countdown}...</>)
     }
-    if (payload.team !== active) {
-      setActive(payload.team)
-      setCharacters((prevState) => {
-        prevState[0].char = payload.team[charPointer]
-        return prevState
-      })
-    }
-    if (payload.opponent !== opponent) {
-      setOpponent(payload.opponent)
-      setCharacters((prevState) => {
-        prevState[1].char = payload.opponent[oppPointer]
-        return prevState
-      })
-    }
-    setShields(payload.shields)
-    setRemaining(payload.remaining)
-    setOppShields(payload.oppShields)
-    setOppRemaining(payload.oppRemaining)
   }
 
   const onFastMove = (move: string) => {
@@ -222,20 +250,6 @@ const GamePage = () => {
     })
   }
 
-  const onChargeMove = (move: string) => {
-    if (opponent[oppPointer]) {
-      setInfo(
-        <>
-          {opponent[oppPointer].speciesName} used {move}!
-        </>
-      )
-      setCharacters((prev) => {
-        prev[0].status = 'charge'
-        return prev
-      })
-    }
-  }
-
   const onMessage = (message: MessageEvent) => {
     if (message.data === '$end') {
       endGame()
@@ -247,9 +261,6 @@ const GamePage = () => {
       switch (data[0]) {
         case Actions.FAST_ATTACK:
           onFastMove(data[1])
-          break
-        case Actions.CHARGE_ATTACK:
-          onChargeMove(data[1])
           break
         case Actions.SWITCH:
           onSwitch(+data[1]) // used to be onSwitch(parseInt(data[1]))
@@ -275,21 +286,60 @@ const GamePage = () => {
     router.push('/')
   }
 
+  const fetchRoom = () => {
+    Promise.all([
+      axios.get(`${SERVER}api/room/${room}`)
+      .then((res) => {
+        const currentRoom: Room = res.data
+        const playerIndex = currentRoom.players.findIndex(x => x?.id === id)
+        const player = currentRoom.players[playerIndex]
+        const opponent = currentRoom.players[playerIndex === 0 ? 1 : 0]
+        if (player && opponent && player.current && opponent.current) {
+          setActive(player.current.team)
+          setOpponent(opponent.current.team)
+          setCharacters((prevState) => {
+            prevState[0].char = player.current?.team[0]
+            prevState[1].char = opponent.current?.team[0]
+            return prevState
+          })
+          setShields(player.current.shields)
+          setRemaining(player.current.remaining)
+          setOppShields(opponent.current.shields)
+          setOppRemaining(opponent.current.remaining)
+        } else {
+          throw new Error()
+        }
+      }),
+      axios.get(`${SERVER}api/moves/team/${room}/${id}`)
+      .then((res) => {
+        const allMoves: Move[][] = res.data;
+        setMoves(allMoves)
+      })
+    ])
+    .then(
+      () => {
+        ws.send(
+          JSON.stringify({
+            type: CODE.ready_game,
+            payload: { room },
+          })
+        )
+        ws.onmessage = onMessage
+        setIsLoading(false)
+      }
+    )
+    .catch(toHome)
+  }
+
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {
-      ws.send(
-        JSON.stringify({
-          type: CODE.ready_game,
-          payload: { room },
-        })
-      )
-      ws.onmessage = onMessage
+      fetchRoom()
     } else {
       toHome()
     }
   }, [])
 
-  if (active.length <= 0 || opponent.length <= 0) {
+  if (isLoading) {
     return <p>Loading...</p>
   }
 
@@ -325,6 +375,23 @@ const GamePage = () => {
     }
   }
 
+  const onChargeClick = (move: Move) => {
+    if (currentMove === ''
+      && status === StatusTypes.MAIN
+      && wait <= -1
+      && active[charPointer].current?.energy
+      && active[charPointer].current!.energy! >= move.energy
+    ) {
+      setCurrentMove(move.moveId)
+      setActive(prev => {
+        prev[charPointer].current!.energy -= move.energy
+        return prev
+      })
+      const data = '#ca:' + move.moveId
+      ws.send(data)
+    }
+  }
+
   const onFaintClick = (pos: number) => {
     setCurrentMove('switch to ' + pos)
     const data = '#sw:' + pos
@@ -335,12 +402,9 @@ const GamePage = () => {
     })
   }
 
-  if (status === StatusTypes.ENDED) {
-    return (
-      <main>
-        <h1>Game Over!</h1>
-      </main>
-    )
+  const onShield = () => {
+    setToShield(true)
+    setShields(prev => prev - 1)
   }
 
   return (
@@ -354,12 +418,13 @@ const GamePage = () => {
           <Status subject={opp} shields={oppShields} remaining={oppRemaining} />
         </section>
         <section className={style.info}>
-          <div>{wait > -1 ? `Switch in ${wait}` : info}</div>
+          <div>{wait > -1 ? wait : info}</div>
           <div className={style.timer}>
             <strong>{time + ' '}</strong>
             <Icon name="clock" size="medium" />
           </div>
         </section>
+
         <Field characters={characters} />
         <Switch
           team={active}
@@ -367,7 +432,23 @@ const GamePage = () => {
           countdown={swap}
           onClick={onSwitchClick}
         />
-        <Popover closed={wait <= -1} showMenu={status !== StatusTypes.WAITING}>
+        <Charged
+          moves={moves[charPointer]}
+          energy={current.current?.energy || 0}
+          onClick={onChargeClick}
+        />
+        {
+          message !== "" &&
+          <strong className={style.message}>
+            {message}
+          </strong>
+        }
+        <Popover
+          closed={status === StatusTypes.MAIN}
+          showMenu={status !== StatusTypes.WAITING
+            && status !== StatusTypes.STARTING
+          }
+        >
           {status === StatusTypes.FAINT && (
             <Switch
               team={active}
@@ -376,6 +457,12 @@ const GamePage = () => {
               onClick={onFaintClick}
               modal={true}
             />
+          )}
+          {status === StatusTypes.CHARGE && (
+            <Stepper onStep={setChargeMult} />
+          )}
+          {status === StatusTypes.SHIELD && (
+            <Shield value={toShield} onShield={onShield} shields={shields} />
           )}
         </Popover>
       </div>
