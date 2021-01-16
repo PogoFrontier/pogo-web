@@ -76,6 +76,7 @@ const GamePage = () => {
   }
 
   const endGame = () => {
+    ws.close()
     router.push(`/end/${room}`)
   }
 
@@ -283,6 +284,7 @@ const GamePage = () => {
   }
 
   const toHome = () => {
+    ws.close()
     router.push('/')
   }
 

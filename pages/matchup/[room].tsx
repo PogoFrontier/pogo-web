@@ -82,6 +82,7 @@ const MatchupPage = () => {
   }
 
   const toHome = () => {
+    ws.close()
     router.push('/')
   }
 
