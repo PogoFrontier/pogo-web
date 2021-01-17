@@ -3,7 +3,7 @@ import style from './switch.module.scss'
 import { useEffect, useState } from 'react'
 import classnames from 'classnames'
 import getColor from '@common/actions/getColor'
-import { SERVER } from '@config/index'
+import getMini from '@common/actions/getMini'
 
 interface SwitchProps {
   team: TeamMember[]
@@ -25,10 +25,6 @@ interface SelectorProps {
   onClick: (to: number) => void
 }
 
-const getImage = (sid: number): string => {
-  return `${SERVER}/mini/${sid}.png`
-}
-
 const Selector: React.FC<SelectorProps> = ({
   member,
   index,
@@ -43,7 +39,7 @@ const Selector: React.FC<SelectorProps> = ({
     onClick(index)
   }
 
-  const image = getImage(member.sid)
+  const image = getMini(member.sid)
   const ratio = member.current ? Math.min(member.current.hp / member.hp, 1) : 1
   const color = getColor(ratio)
 
