@@ -76,6 +76,7 @@ const GamePage = () => {
   }
 
   const endGame = () => {
+    ws.onclose = null
     ws.close()
     router.push(`/end/${room}`)
   }
