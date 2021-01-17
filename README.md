@@ -34,7 +34,7 @@ Our scope:
 - Battling
   - [x] Team Selection
   - [x] Fast Moves
-  - [ ] Charge Moves
+  - [x] Charge Moves
   - [x] Switching
  
 We'll often update this repository with our progress. You can get the MOST up to date information from our [Trello board](https://trello.com/b/MTKTjFOA/pogo). Many similar projects have stalled, so we will keep our progress very public to not suffer the same fate.
