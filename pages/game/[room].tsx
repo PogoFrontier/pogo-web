@@ -410,11 +410,17 @@ const GamePage = () => {
     setShields(prev => prev - 1)
   }
 
+  const onQuit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toHome()
+  }
+
   return (
     <main className={style.root}>
       <div className={style.content} onClick={onClick}>
         <section className={style.nav}>
-          <button className="btn btn-negative">Exit</button>
+          <button className="btn btn-negative" onClick={onQuit}>Exit</button>
         </section>
         <section className={style.statuses}>
           <Status subject={current} shields={shields} remaining={remaining} />
