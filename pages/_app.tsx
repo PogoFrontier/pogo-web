@@ -37,8 +37,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
   useEffect(() => {
     // first try to load from localstorage and store in context
-    if (typeof window !== undefined && localStorage.getItem('user')) {
-      const userFromStorage: any = localStorage.getItem('user')
+    const userFromStorage: any = localStorage.getItem('user')
+    if (typeof window !== undefined && userFromStorage) {
       if (userFromStorage.googleId) {
         // user is from db
         signInWithGoogleId(userFromStorage.googleId)
@@ -87,7 +87,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       })
     }
     return function cleanup() {
-      socket.close()
+      if (socket.readyState) {
+        socket.close()
+      }
     }
   }, [])
 
