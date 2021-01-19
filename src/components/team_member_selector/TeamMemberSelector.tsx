@@ -4,7 +4,7 @@ import {
   getPokemonNames,
 } from '@common/actions/pokemonAPIActions'
 import { cpms, ivValues, levelValues } from '@config/statVals'
-import { SERVER } from '@config/index'
+import getImage from '@common/actions/getImage'
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
@@ -296,9 +296,7 @@ const TeamMemberSelector = (props: {
           </label>
           <br />
           <img
-            src={`${SERVER}/models/${addToBox.sid}${
-              addToBox.shiny ? '-s' : ''
-            }.gif`}
+            src={getImage(addToBox.sid, addToBox.shiny, false)}
             alt={addToBox.speciesName}
             className="sprite"
           />

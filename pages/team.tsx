@@ -3,7 +3,7 @@ import UserContext from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 import { updateUserTeam } from '@common/actions/userAPIActions'
-import { SERVER } from '@config/index'
+import getMini from '@common/actions/getMini'
 
 const teamPage = () => {
   const { user, refreshUser } = useContext(UserContext)
@@ -134,7 +134,7 @@ const teamPage = () => {
                           {team.members.map((member: any, index: number) => (
                             <img
                               key={index}
-                              src={`${SERVER}/mini/${member.sid}.png`}
+                              src={getMini(member.sid)}
                               alt={member.speciesName}
                             />
                           ))}

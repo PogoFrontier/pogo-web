@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { SERVER } from '@config/index'
 import TeamMemberSummary from '@components/team_member_summary/TeamMemberSummary'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
+import getMini from '@common/actions/getMini'
 
 const CraftTeam = (props: {
   selectedMeta: string
@@ -104,10 +104,7 @@ const CraftTeam = (props: {
             {workingTeam.length > 0 &&
               workingTeam.map((member: any, index: any) => (
                 <li key={index} id={index} onClick={handleSelectPokemon}>
-                  <img
-                    src={`${SERVER}/mini/${member.sid}.png`}
-                    alt={member.speciesName}
-                  />
+                  <img src={getMini(member.sid)} alt={member.speciesName} />
                 </li>
               ))}
             {workingTeam.length < 6 && (

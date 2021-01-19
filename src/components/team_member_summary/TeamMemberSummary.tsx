@@ -1,4 +1,4 @@
-import { SERVER } from '@config/index'
+import getImage from '@common/actions/getImage'
 import React from 'react'
 
 const TeamMemberSummary = (props: { member: any }) => {
@@ -30,7 +30,7 @@ const TeamMemberSummary = (props: { member: any }) => {
         </label>
         <br />
         <img
-          src={`${SERVER}/models/${member.sid}${member.shiny ? '-s' : ''}.gif`}
+          src={getImage(member.sid, member.shiny, false)}
           alt={member.speciesName}
           className="sprite"
         />
