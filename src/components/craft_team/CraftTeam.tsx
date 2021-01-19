@@ -20,8 +20,6 @@ const CraftTeam = (props: {
       setupForEditing()
     } else if (!(workingTeam && workingTeam.length > 0)) {
       setAddingMember(true)
-    } else {
-      return
     }
   }, [])
 
@@ -31,8 +29,6 @@ const CraftTeam = (props: {
     setTeamName(teamToEditCopy.name)
     setSelectedPokemon(teamToEditCopy.members[0])
   }
-
-  // cannot save an empty team!
 
   const handleSelectPokemon = (e: any) => {
     setSelectedPokemon(workingTeam[e.currentTarget.id])
