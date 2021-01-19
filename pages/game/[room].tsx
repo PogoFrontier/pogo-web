@@ -54,7 +54,7 @@ const GamePage = () => {
     switch1Key,
     switch2Key,
     shieldKey
-  } = useContext(SettingsContext).key
+  } = useContext(SettingsContext).keys
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([
