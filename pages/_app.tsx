@@ -14,15 +14,26 @@ import {
 import { WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
+import SettingsContext from '@context/SettingsContext'
 
 /**
  * NextJS wrapper
  */
 
+const defaultKeys = {
+  fastKey: ' ',
+  charge1Key: 'q',
+  charge2Key: 'w',
+  switch1Key: 'a',
+  switch2Key: 's',
+  shieldKey: 'd',
+}
+
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState({})
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
+  const [keys, setKeys1] = useState(defaultKeys)
 
   useEffect(() => {
     auth.onAuthStateChanged(async (userAuth: any) => {
@@ -76,16 +87,22 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     setId1(id1)
   }
 
+  const setKeys = (keys1: typeof defaultKeys) => {
+    setKeys1(keys1)
+  }
+
   return (
-    <IdContext.Provider value={{ id, setId }}>
-      <UserContext.Provider value={currentUser}>
-        <TeamContext.Provider value={defaultTeam}>
-          <SocketContext.Provider value={{ socket, connect }}>
-            <Component {...pageProps} />
-          </SocketContext.Provider>
-        </TeamContext.Provider>
-      </UserContext.Provider>
-    </IdContext.Provider>
+    <SettingsContext.Provider value={{ keys, setKeys }}>
+      <IdContext.Provider value={{ id, setId }}>
+        <UserContext.Provider value={currentUser}>
+          <TeamContext.Provider value={defaultTeam}>
+            <SocketContext.Provider value={{ socket, connect }}>
+              <Component {...pageProps} />
+            </SocketContext.Provider>
+          </TeamContext.Provider>
+        </UserContext.Provider>
+      </IdContext.Provider>
+    </SettingsContext.Provider>
   )
 }
 

@@ -22,6 +22,7 @@ import IdContext from '@context/IdContext'
 import Shield from '@components/shield/Shield'
 import Stepper from '@components/stepper/Stepper'
 import useKeyPress from '@common/actions/useKeyPress'
+import SettingsContext from '@context/SettingsContext'
 
 interface CheckPayload {
   countdown: number
@@ -41,18 +42,19 @@ enum StatusTypes {
   SHIELD,
 }
 
-const fastKey = " "
-const charge1Key = "q"
-const charge2Key = "w"
-const switch1Key = "a"
-const switch2Key = "s"
-const shieldKey = "d"
-
 const GamePage = () => {
   const router = useRouter()
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
+  const {
+    fastKey,
+    charge1Key,
+    charge2Key,
+    switch1Key,
+    switch2Key,
+    shieldKey
+  } = useContext(SettingsContext).key
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([
