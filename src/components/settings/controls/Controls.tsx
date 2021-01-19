@@ -1,7 +1,12 @@
+import Input from "@components/input/Input"
+
 const Controls = () => {
   return (
     <div>
-      <h1>Controls</h1>
+      <Input
+        title="Fast Attack / Charge Move Powerup"
+        highlighted={true}
+      />
     </div>
   )
 }
