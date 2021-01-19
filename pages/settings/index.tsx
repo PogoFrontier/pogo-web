@@ -1,4 +1,5 @@
 import Layout from '@components/layout/Layout'
+import Controls from '@components/settings/controls/Controls'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
@@ -9,9 +10,7 @@ const SettingsPage = () => {
       <main className={style.root}>
         <Split tabs={["Controls", "Account"]}>
           <TabPanel>
-            <h1>
-              Controls
-            </h1>
+            <Controls />
           </TabPanel>
         </Split>
       </main>
