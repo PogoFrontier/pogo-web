@@ -5,6 +5,7 @@ import style from './character.module.scss'
 import getColor from '@common/actions/getColor'
 import { useEffect, useState } from 'react'
 
+
 export interface CharacterProps {
   status: 'prime' | 'attack' | 'charge' | 'switch' | 'idle'
   char?: TeamMember
@@ -24,6 +25,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
       if (cooldown) {
         setTimeout(() => setS(status), 200)
       } else {
+
         setS(status)
         setCooldown(true)
         setTimeout(() => setCooldown(false), 200)

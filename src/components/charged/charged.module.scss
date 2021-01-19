@@ -1,0 +1,173 @@
+@import 'colors';
+
+.chargeButton {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  margin: 1rem;
+  border: none;
+  fill: $color-white;
+  background: $color-overlay-disabled;
+  overflow: hidden;
+  transition: transform 200ms;
+  &.filled {
+    border: solid 0.25em $color-white;
+    transform: scale(1.1);
+  }
+  &:hover {
+    transform: scale(0.95);
+  }
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.fill {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  &.alternative {
+    border-top: solid 0.25em $color-white;
+  }
+}
+
+.filled {
+  //add color variables for each type
+  &.normal {
+    background: $color-normal;
+    &.alternative {
+      background: $color-normal-light;
+    }
+  }
+  &.fighting {
+    background: $color-fighting;
+    &.alternative {
+      background: $color-fighting-light;
+    }
+  }
+  &.flying {
+    background: $color-flying;
+    &.alternative {
+      background: $color-flying-light;
+    }
+  }
+  &.poison {
+    background: $color-poison;
+    &.alternative {
+      background: $color-poison-light;
+    }
+  }
+  &.ground {
+    background: $color-ground;
+    &.alternative {
+      background: $color-ground-light;
+    }
+  }
+  &.rock {
+    background: $color-rock;
+    &.alternative {
+      background: $color-rock-light;
+    }
+  }
+  &.bug {
+    background: $color-bug;
+    &.alternative {
+      background: $color-bug-light;
+    }
+  }
+  &.ghost {
+    background: $color-ghost;
+    &.alternative {
+      background: $color-ghost-light;
+    }
+  }
+  &.electric {
+    background: $color-electric;
+    &.alternative {
+      background: $color-electric-light;
+    }
+  }
+  &.water {
+    background: $color-water;
+    &.alternative {
+      background: $color-water-light;
+    }
+  }
+  &.fire {
+    background: $color-fire;
+    &.alternative {
+      background: $color-fire-light;
+    }
+  }
+  &.grass {
+    background: $color-grass;
+    &.alternative {
+      background: $color-grass-light;
+    }
+  }
+  &.steel {
+    background: $color-steel;
+    &.alternative {
+      background: $color-steel-light;
+    }
+  }
+  &.psychic {
+    background: $color-psychic;
+    &.alternative {
+      background: $color-psychic-light;
+    }
+  }
+  &.ice {
+    background: $color-ice;
+    &.alternative {
+      background: $color-ice-light;
+    }
+  }
+  &.dragon {
+    background: $color-dragon;
+    &.alternative {
+      background: $color-dragon-light;
+    }
+  }
+  &.fairy {
+    background: $color-fairy;
+    &.alternative {
+      background: $color-fairy-light;
+    }
+  }
+  &.dark {
+    background: $color-dark;
+    &.alternative {
+      background: $color-dark-light;
+    }
+  }
+}
+
+.icon {
+  position: relative;
+  z-index: 1;
+}
+
+.root {
+  display:flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.label {
+  display:flex;
+  flex-direction: row;
+  font-size: 10px;
+}
+
+.chargeGroup{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

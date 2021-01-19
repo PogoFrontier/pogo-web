@@ -1,0 +1,36 @@
+@import 'colors';
+
+.button{
+    border-radius: 50%;
+    border: none;
+    width: 10em;
+    height: 10em;
+    background-color: $color-brand-secondary;
+    text-align: center;
+    transition: transform 100ms;
+    &.nice {
+        background-color:$stepper-nice;
+        transform: scale(1.1);
+        &:active {
+            transform: scale(0.85);
+        }
+    }
+    &.great {
+        background-color: $stepper-great;
+        transform: scale(1.2);
+        &:active {
+            transform: scale(0.9);
+        }
+    
+    }
+    &.excellent {
+        background-color:$stepper-excellent;
+        transform: scale(1.3);
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+}

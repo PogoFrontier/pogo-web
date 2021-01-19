@@ -1,18 +1,16 @@
-import { SERVER } from '@config/index'
-
 const getImage = (
   sid: number,
   shiny: boolean | undefined,
   back: boolean | undefined
 ): string => {
-  let s = `${SERVER}/models/${sid.toString()}`
+  let w = sid.toString()
   if (back) {
-    s = s + '-b'
+    w = w + '-b'
   }
   if (shiny) {
-    s = s + '-s'
+    w = w + '-s'
   }
-  return s + '.gif'
+  return `https://firebasestorage.googleapis.com/v0/b/project-grookey.appspot.com/o/models%2F${w}.gif?alt=media&token=a9c44e0f-fe8e-4171-850f-607c8487ae1e`
 }
 
 export default getImage

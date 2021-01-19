@@ -47,9 +47,16 @@ h1 {
   padding: 0.4rem 0;
   border-radius: $border-radius;
   border: none;
+  cursor: pointer;
   @include md {
     font-size: 1.4rem;
     width: 10rem;
+  }
+  &:active {
+    transform: scale(0.95);
+  }
+  &:disabled {
+    cursor: default;
   }
 
   &.btn-primary {
@@ -59,14 +66,27 @@ h1 {
     background-color: $color-brand-primary;
     font-weight: bold;
     box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
+    &:hover {
+      background-color: darken($color-brand-primary, 10%);
+    }
+    &:disabled {
+      background-color: $color-neutral-light;
+      box-shadow: none;
+    }
   }
 
   &.btn-secondary {
     background-color: $color-brand-secondary;
+    &:hover {
+      background-color: darken($color-brand-secondary, 10%);
+    }
   }
 
   &.btn-negative {
     background-color: $color-brand-negative;
+    &:hover {
+      background-color: darken($color-brand-negative, 10%);
+    }
   }
 }
 

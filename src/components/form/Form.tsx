@@ -5,21 +5,33 @@ import style from './form.module.scss'
 import TeamContext from '@context/TeamContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
+import { v4 as uuidv4 } from 'uuid'
 import classnames from 'classnames'
 import { getSignInWithGooglePopup } from 'src/firebase'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState('')
-  const ws: WebSocket = useContext(SocketContext)
+  const { socket, connect } = useContext(SocketContext)
   const team: TeamMember[] = useContext(TeamContext)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  function connect() {
-    if (ws.OPEN) {
-      // Connected, let's sign-up for to receive messages for this room
-      const data = { type: CODE.room, payload: { room, team } }
-      ws.send(JSON.stringify(data))
-      router.push(`/matchup/${room}`)
+  function joinRoom() {
+    // Connected, let's sign-up for to receive messages for this room
+    const data = { type: CODE.room, payload: { room, team } }
+    socket.send(JSON.stringify(data))
+    router.push(`/matchup/${room}`)
+  }
+
+  function join() {
+    if (socket.readyState && socket.readyState === WebSocket.OPEN) {
+      joinRoom()
+    } else if (!isLoading) {
+      if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
+        const payload = { room, team }
+        setIsLoading(true)
+        connect(uuidv4(), payload)
+      }
     }
   }
 
@@ -41,15 +53,22 @@ const Form: React.FunctionComponent = () => {
           />
         </div>
       </div>
-      <button
-        className={classnames([style.button, 'btn', 'btn-primary'])}
-        disabled={room === ''}
-        onClick={connect}
-      >
-        Play
-      </button>
-      <br />
-      <button onClick={getSignInWithGooglePopup}>Sign In With Google</button>
+      {
+        isLoading ?
+        <div>Loading... </div>
+        :
+        <>
+          <button
+            className={classnames([style.button, 'btn', 'btn-primary'])}
+            disabled={room === ''}
+            onClick={join}
+          >
+            Play
+          </button>
+          <br />
+          <button onClick={getSignInWithGooglePopup}>Sign In With Google</button>
+        </>
+      }
     </section>
   )
 }

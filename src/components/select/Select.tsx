@@ -1,8 +1,8 @@
-import { SERVER } from '@config/index'
 import { useState } from 'react'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './select.module.scss'
 import classnames from 'classnames'
+import getMini from '@common/actions/getMini'
 
 interface SelectProps {
   team: TeamMember[]
@@ -15,10 +15,6 @@ interface ButtonProps {
   onRegister: (index: number) => void
   i: number
   value: number
-}
-
-const getImage = (sid: number): string => {
-  return `${SERVER}/mini/${sid}.png`
 }
 
 const initialValues = [-1, -1, -1, -1, -1, -1]
@@ -36,7 +32,7 @@ const Button: React.FC<ButtonProps> = ({ x, onRegister, i, value }) => {
 
   return (
     <button className={style.select} type="button" onClick={onClick}>
-      <img src={getImage(x.sid)} alt={x.speciesName} />
+      <img src={getMini(x.sid)} alt={x.speciesName} />
       {value > -1 && <div>{value}</div>}
     </button>
   )
