@@ -52,18 +52,18 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
     const deepCopy = [...values]
     const deepMap = [...map]
     if (deepCopy[index] > -1) {
-      deepMap[deepMap.findIndex(x => x === index)] = -1
+      deepMap[deepMap.findIndex((x) => x === index)] = -1
       deepCopy[index] = -1
       setCount((prev) => prev - 1)
     } else {
       if (count === requiredAmount) {
-        deepCopy[deepCopy.findIndex(x => x === count)] = -1
+        deepCopy[deepCopy.findIndex((x) => x === count)] = -1
         deepMap[requiredAmount - 1] = -1
       } else {
         setCount((prev) => prev + 1)
       }
       deepCopy[index] = current
-      deepMap[current - 1] = index;
+      deepMap[current - 1] = index
     }
     setValues(deepCopy)
     setMap(deepMap)
