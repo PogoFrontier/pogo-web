@@ -62,3 +62,14 @@ $xl: 1200px;
   max-width: 1440px;
   margin: auto;
 }
+
+@mixin twocolumn {
+  width: 100%;
+  padding: 1em;
+  @include md() {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 8%;
+    padding: 2em 8%;
+  }
+}

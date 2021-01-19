@@ -21,7 +21,7 @@ const Split: React.FC<SplitProps> = ({ tabs, children }) => {
           ))
         }
       </TabList>
-      <TabPanels>
+      <TabPanels className={style.panels}>
         { children }
       </TabPanels>
     </Tabs>
