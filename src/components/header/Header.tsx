@@ -1,16 +1,22 @@
-import React, { useContext } from 'react'
+import React /* , { useContext } */ from 'react'
 import style from './header.module.scss'
 import Link from 'next/link'
-import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button'
-import "@reach/menu-button/styles.css"
+import {
+  Menu,
+  MenuButton,
+  /* MenuItem, */
+  MenuList,
+  MenuLink,
+} from '@reach/menu-button'
+import '@reach/menu-button/styles.css'
 import { Icon } from '@components/icon/Icon'
-import UserContext from '@context/UserContext'
+// import UserContext from '@context/UserContext'
 
 const Header: React.FunctionComponent = () => {
-  const user = useContext(UserContext)
+  /* const user = useContext(UserContext)
   const handleAuth = () => {
     user.auth().logout() // No idea if this works cause the context isn't type defined
-  }
+  } */
 
   return (
     <header className={style.header}>
@@ -31,13 +37,15 @@ const Header: React.FunctionComponent = () => {
             <a>Settings</a>
           </Link>
         </li>
-        <button className="btn btn-negative" onClick={handleAuth}>
+        <button className="btn btn-negative" /* onClick={handleAuth} */>
           Log out
         </button>
       </ul>
       <div className={style.hamburger}>
         <Menu>
-          <MenuButton className={style.menubutton}><Icon name="menu" size="medium" /></MenuButton>
+          <MenuButton className={style.menubutton}>
+            <Icon name="menu" size="medium" />
+          </MenuButton>
           <MenuList>
             <Link href="/">
               <MenuLink>Home</MenuLink>
@@ -48,9 +56,9 @@ const Header: React.FunctionComponent = () => {
             <Link href="/settings">
               <MenuLink>Settings</MenuLink>
             </Link>
-            <MenuItem onSelect={handleAuth} className={style.logout}>
+            {/* <MenuItem onSelect={handleAuth} className={style.logout}>
               Log out
-            </MenuItem>
+            </MenuItem> */}
           </MenuList>
         </Menu>
       </div>

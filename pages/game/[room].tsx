@@ -74,7 +74,7 @@ const GamePage = () => {
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
       const isActive = payload.update[0].active
-      const energy = payload.update[0]!.energy;
+      const energy = payload.update[0]!.energy
       setActive((prev1) => {
         setCharPointer((prev2) => {
           setCharacters((prev3) => {

@@ -1,5 +1,10 @@
 import { createContext } from 'react'
 
-const UserContext = createContext({} as any)
+const UserContext = createContext({
+  user: {} as any,
+  refreshUser: () => {
+    return
+  },
+})
 
 export default UserContext

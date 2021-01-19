@@ -41,3 +41,19 @@ export const getUserProfile = async (token: string) => {
     return err
   }
 }
+
+export const updateUserTeam = async (team: any, token: string) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+    const res = await axios.put(`${SERVER}api/users/teams`, team, config)
+    return res.data
+  } catch (err) {
+    // console.log(err)
+    return err
+  }
+}
