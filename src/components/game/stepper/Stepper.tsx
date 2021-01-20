@@ -1,14 +1,15 @@
 import classnames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { NICE, GREAT, EXCELLENT } from './constants'
 import style from './stepper.module.scss'
 
 interface StepperProps {
-  onStep: (x: number) => void
+  onStep: (x: number) => void,
+  step: number
 }
 
-const Stepper: React.FC<StepperProps> = ({ onStep }) => {
+const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
   const [stepperCharge, setStepperCharge] = useState(0)
   const [stepperLabel, setStepperLabel] = useState('')
 
@@ -29,6 +30,17 @@ const Stepper: React.FC<StepperProps> = ({ onStep }) => {
       }
     }
   }
+
+  useEffect(() => {
+    if (step >= 1) {
+      setStepperLabel(EXCELLENT)
+    } else if (step >= 0.75) {
+      setStepperLabel(GREAT)
+    } else if (step >= 0.5) {
+      setStepperLabel(NICE)
+    }
+  }, [step])
+
   return (
     <div>
       <button

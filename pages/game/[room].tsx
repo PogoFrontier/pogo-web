@@ -1,4 +1,4 @@
-import Status from '@components/status/Status'
+import Status from '@components/game/status/Status'
 import SocketContext from '@context/SocketContext'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
@@ -11,16 +11,18 @@ import {
 import { CODE, Actions } from '@adibkhan/pogo-web-backend/actions'
 import { Icon } from '@components/icon/Icon'
 import style from './style.module.scss'
-import Field from '@components/field/Field'
-import { CharacterProps } from '@components/field/Character'
-import Switch from '@components/switch/Switch'
-import Popover from '@components/popover/Popover'
-import Charged from '@components/charged/Charged'
+import Field from '@components/game/field/Field'
+import { CharacterProps } from '@components/game/field/Character'
+import Switch from '@components/game/switch/Switch'
+import Popover from '@components/game/popover/Popover'
+import Charged from '@components/game/charged/Charged'
 import axios from 'axios'
 import { SERVER } from '@config/index'
 import IdContext from '@context/IdContext'
-import Shield from '@components/shield/Shield'
-import Stepper from '@components/stepper/Stepper'
+import Shield from '@components/game/shield/Shield'
+import Stepper from '@components/game/stepper/Stepper'
+import useKeyPress from '@common/actions/useKeyPress'
+import SettingsContext from '@context/SettingsContext'
 
 interface CheckPayload {
   countdown: number
@@ -45,6 +47,14 @@ const GamePage = () => {
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
+  const {
+    fastKey,
+    charge1Key,
+    charge2Key,
+    switch1Key,
+    switch2Key,
+    shieldKey
+  } = useContext(SettingsContext).keys
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([
@@ -65,7 +75,7 @@ const GamePage = () => {
   const [status, setStatus] = useState(StatusTypes.STARTING)
   const [moves, setMoves] = useState([] as Move[][])
   const [isLoading, setIsLoading] = useState(true)
-  const [, setChargeMult] = useState(0.25)
+  const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
   const [message, setMessage] = useState("")
 
@@ -334,21 +344,6 @@ const GamePage = () => {
     .catch(toHome)
   }
 
-  useEffect(() => {
-    if (ws.readyState === ws.OPEN) {
-      fetchRoom()
-    } else {
-      toHome()
-    }
-  }, [])
-
-  if (isLoading) {
-    return <p>Loading...</p>
-  }
-
-  const current = active[charPointer]
-  const opp = opponent[oppPointer]
-
   const onClick = () => {
     if (currentMove === '' && status === StatusTypes.MAIN && wait <= -1) {
       setCurrentMove(current.fastMove)
@@ -358,7 +353,9 @@ const GamePage = () => {
         prev[0].status = 'attack'
         return prev
       })
+      return true
     }
+    return false
   }
 
   const onSwitchClick = (pos: number) => {
@@ -366,7 +363,9 @@ const GamePage = () => {
       currentMove === '' &&
       status === StatusTypes.MAIN &&
       swap <= 0 &&
-      wait <= -1
+      wait <= -1 &&
+      active[pos].current?.hp &&
+      active[pos].current!.hp > 0
     ) {
       setCurrentMove('switch to ' + pos)
       const data = '#sw:' + pos
@@ -375,7 +374,9 @@ const GamePage = () => {
         prev[0].status = 'switch'
         return prev
       })
+      return true
     }
+    return false
   }
 
   const onChargeClick = (move: Move) => {
@@ -392,22 +393,39 @@ const GamePage = () => {
       })
       const data = '#ca:' + move.moveId
       ws.send(data)
+      return true
     }
+    return false
   }
 
   const onFaintClick = (pos: number) => {
-    setCurrentMove('switch to ' + pos)
-    const data = '#sw:' + pos
-    ws.send(data)
-    setCharacters((prev) => {
-      prev[0].status = 'switch'
-      return prev
-    })
+    if (
+      (status === StatusTypes.FAINT
+      || status === StatusTypes.WAITING)
+      && active[pos].current?.hp
+      && active[pos].current!.hp > 0
+    ) {
+      setCurrentMove('switch to ' + pos)
+      const data = '#sw:' + pos
+      ws.send(data)
+      setCharacters((prev) => {
+        prev[0].status = 'switch'
+        return prev
+      })
+      return true
+    }
+    return false
   }
 
   const onShield = () => {
-    setToShield(true)
-    setShields(prev => prev - 1)
+    if (
+      status === StatusTypes.SHIELD
+      && shields > 0
+      && !toShield
+    ) {
+      setToShield(true)
+      setShields(prev => prev - 1)
+    }
   }
 
   const onQuit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -415,6 +433,60 @@ const GamePage = () => {
     e.stopPropagation()
     toHome()
   }
+
+  const fastKeyClick = useKeyPress(fastKey)
+  const charge1KeyClick = useKeyPress(charge1Key)
+  const charge2KeyClick = useKeyPress(charge2Key)
+  const switch1KeyClick = useKeyPress(switch1Key)
+  const switch2KeyClick = useKeyPress(switch2Key)
+  const shieldKeyClick = useKeyPress(shieldKey)
+
+  useEffect(() => {
+    if (fastKeyClick) {
+      if (!onClick()) {
+        if (status === StatusTypes.CHARGE) {
+          setChargeMult(prev => Math.min(prev + 0.25, 1))
+        }
+      }
+    } else if (charge1KeyClick) {
+      const move = moves[charPointer][0]
+      if (!onChargeClick(move)) {
+        onClick()
+      }
+    } else if (charge2KeyClick) {
+      const move = moves[charPointer][1]
+      if (!onChargeClick(move)) {
+        onClick()
+      }
+    } else if (switch1KeyClick) {
+      const pos = charPointer === 0 ? 1 : 0
+      if (!onSwitchClick(pos)) {
+        onFaintClick(pos)
+      }
+    } else if (switch2KeyClick) {
+      const pos = charPointer === 1 ? 2 : 1
+      if (!onSwitchClick(pos)) {
+        onFaintClick(pos)
+      }
+    } else if (shieldKeyClick) {
+      onShield()
+    }
+  }, [fastKeyClick, charge1KeyClick, charge2KeyClick, switch1KeyClick, switch2KeyClick, shieldKeyClick])
+
+  useEffect(() => {
+    if (ws.readyState === ws.OPEN) {
+      fetchRoom()
+    } else {
+      toHome()
+    }
+  }, [])
+
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
+
+  const current = active[charPointer]
+  const opp = opponent[oppPointer]
 
   return (
     <main className={style.root}>
@@ -468,7 +540,7 @@ const GamePage = () => {
             />
           )}
           {status === StatusTypes.CHARGE && (
-            <Stepper onStep={setChargeMult} />
+            <Stepper onStep={setChargeMult} step={chargeMult} />
           )}
           {status === StatusTypes.SHIELD && (
             <Shield value={toShield} onShield={onShield} shields={shields} />

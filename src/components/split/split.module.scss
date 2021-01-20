@@ -1,0 +1,45 @@
+@import 'variables';
+@import 'colors';
+
+.root {
+  height: 100%;
+  @include md() {
+    display: flex;
+  }
+}
+
+.tablist {
+  background-color: $color-neutral-light;
+  padding-top: 1em;
+  overflow-y: scroll;
+  @include md() {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    min-width: 12em;
+    height: 100%;
+    padding-top: 0;
+    overflow-y: none;
+    overflow-x: scroll;
+  }
+}
+
+.tab {
+  @include md() {
+    font-size: 1.8em;
+    font-weight: 500;
+    text-align: left;
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+    background-color: $color-white;
+    margin-bottom: 0.1em;
+    border-bottom: none;
+    &[data-selected] {
+      background-color: $color-brand-primary;
+    }
+  }
+}
+
+.panels {
+  width: 100%;
+}
