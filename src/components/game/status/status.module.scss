@@ -55,9 +55,9 @@
   width: 1.2rem;
   margin-left: 0.4rem;
   background-size: contain;
-  background-image: url('../../assets/img/pokeball-i.png');
+  background-image: url('../../../assets/img/pokeball-i.png');
   &.active {
-    background-image: url('../../assets/img/pokeball.png');
+    background-image: url('../../../assets/img/pokeball.png');
   }
   @include md() {
     height: 1.5rem;
@@ -71,9 +71,9 @@
   width: 1.2rem;
   margin-right: 0.4rem;
   background-size: contain;
-  background-image: url('../../assets/img/shield-i.png');
+  background-image: url('../../../assets/img/shield-i.png');
   &.active {
-    background-image: url('../../assets/img/shield.png');
+    background-image: url('../../../assets/img/shield.png');
   }
   @include md() {
     height: 2rem;
