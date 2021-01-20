@@ -49,7 +49,11 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   useEffect(() => {
     // first try to load from localstorage and store in context
     const userFromStorage: any = localStorage.getItem('user')
-    if (typeof window !== undefined && userFromStorage) {
+    if (
+      typeof window !== undefined &&
+      userFromStorage &&
+      userFromStorage !== 'undefined'
+    ) {
       if (userFromStorage.googleId) {
         // user is from db
         signInWithGoogleId(userFromStorage.googleId)
