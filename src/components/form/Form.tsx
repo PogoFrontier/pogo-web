@@ -12,7 +12,7 @@ import { getSignInWithGooglePopup } from 'src/firebase'
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState('')
   const { socket, connect } = useContext(SocketContext)
-  const team: TeamMember[] = useContext(TeamContext)
+  const team: TeamMember[] = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 

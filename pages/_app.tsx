@@ -16,6 +16,7 @@ import { WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
+import { TeamMember } from '@adibkhan/pogo-web-backend'
 
 interface User {
   googleId?: string
@@ -42,6 +43,7 @@ const defaultKeys = {
 
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [currentTeam, setCurrentTeam] = useState(defaultTeam)
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
@@ -58,12 +60,23 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         // user is from db
         signInWithGoogleId(userFromStorage.googleId)
           .then((res) => {
-            res.error ? setCurrentUser(null) : setCurrentUser(res.userData)
+            if (res.error) {
+              setCurrentUser(null)
+            } else {
+              setCurrentUser(res.userData)
+              if (res.userData.teams && res.userData.teams[0]) {
+                setCurrentTeam(res.userData.teams[0].members)
+              }
+            }
           })
           .catch(() => setCurrentUser(null))
       } else {
         // its just a local guest
-        setCurrentUser(JSON.parse(userFromStorage))
+        const userJSON = JSON.parse(userFromStorage)
+        if (userJSON.teams && userJSON.teams[0]) {
+          setCurrentTeam(userJSON.teams[0].members)
+        }
+        setCurrentUser(userJSON)
       }
     } else {
       // sign in user and store in context
@@ -87,8 +100,10 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                   })
                   .catch(() => setCurrentUser(null))
               } else {
-                // console.log(res)
                 setCurrentUser(res.userData)
+                if (res.userData.teams && res.userData.teams[0]) {
+                  setCurrentTeam(res.userData.teams[0].members)
+                }
                 if (typeof window !== undefined) {
                   localStorage.setItem('user', JSON.stringify(res.userData))
                   localStorage.setItem('token', res.token)
@@ -117,6 +132,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         .then((res) => {
           if (!res.error) {
             setCurrentUser(res)
+            if (res.teams && res.teams[0]) {
+              setCurrentTeam(res.teams[0])
+            }
             localStorage.setItem('user', JSON.stringify(res))
           }
         })
@@ -151,11 +169,15 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     setKeys1(keys1)
   }
 
+  const setTeam = (t: TeamMember[]) => {
+    setCurrentTeam(t)
+  }
+
   return (
     <SettingsContext.Provider value={{ keys, setKeys }}>
       <IdContext.Provider value={{ id, setId }}>
         <UserContext.Provider value={{ user: currentUser, refreshUser }}>
-          <TeamContext.Provider value={defaultTeam}>
+          <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
             <SocketContext.Provider value={{ socket, connect }}>
               <Component {...pageProps} />
             </SocketContext.Provider>

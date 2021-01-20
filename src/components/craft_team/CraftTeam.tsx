@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import TeamMemberSummary from '@components/team_member_summary/TeamMemberSummary'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
 import getMini from '@common/actions/getMini'
+import TeamContext from '@context/TeamContext'
 
 const CraftTeam = (props: {
   selectedMeta: string
@@ -14,6 +15,7 @@ const CraftTeam = (props: {
   const [addingMember, setAddingMember] = useState(false)
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
+  const setTeam = useContext(TeamContext).setTeam
 
   useEffect(() => {
     if (teamToEdit) {
@@ -69,6 +71,7 @@ const CraftTeam = (props: {
             members: workingTeam,
           }
     updateTeam(teamToUpdate)
+    setTeam(teamToUpdate.members)
   }
 
   const handleTeamNameChange = (e: any) => {

@@ -28,7 +28,7 @@ const MatchupPage = () => {
   const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
-  const team: TeamMember[] = useContext(TeamContext)
+  const team: TeamMember[] = useContext(TeamContext).team
 
   const onMessage = (message: MessageEvent) => {
     const data: Data = JSON.parse(message.data)
@@ -46,7 +46,7 @@ const MatchupPage = () => {
   }
 
   useEffect(() => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws.readyState === ws.OPEN && ws.send) {
       ws.send(
         JSON.stringify({
           type: CODE.get_opponent,
@@ -82,7 +82,9 @@ const MatchupPage = () => {
   }
 
   const toHome = () => {
-    ws.close()
+    if (ws.close) {
+      ws.close()
+    }
     router.push('/')
   }
 
