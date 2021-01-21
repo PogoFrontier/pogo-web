@@ -24,6 +24,14 @@
   }
 }
 
+.btn {
+  min-width: 5em;
+  @include md() {
+    width: 100%;
+    margin: 0.25em 0;
+  }
+}
+
 .tab {
   @include md() {
     font-size: 1.8em;
