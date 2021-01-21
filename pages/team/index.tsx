@@ -6,6 +6,8 @@ import { updateUserTeam } from '@common/actions/userAPIActions'
 import getMini from '@common/actions/getMini'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
+import style from './style.module.scss'
+import classnames from 'classnames'
 
 interface ContentProps {
   meta: string
@@ -70,29 +72,39 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   }
 
   return (
-    <div className="team-list">
+    <div className={style.root}>
       {
         user.teams.length > 0
         ? (
           user.teams.map((team: any, i: number) => {
             if (team.format === meta) {
               return (
-                <div className="team-item" key={team.id}>
-                  <label className="team-name">{team.name}</label>
-                  <div className="team-box">
-                    {team.members.map((member: any, index: number) => (
-                      <img
-                        key={index}
-                        src={getMini(member.sid)}
-                        alt={member.speciesName}
-                      />
-                    ))}
+                <div className={style.wrapper} key={team.id}>
+                  <div className={style.box}>
+                    <label className={style.label}>{team.name}</label>
+                    <div className={style.members}>
+                      {team.members.map((member: any, index: number) => (
+                        <img
+                          key={index}
+                          src={getMini(member.sid)}
+                          alt={member.speciesName}
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <div className="team-btns">
-                    <button value={i} onClick={handleEditTeam}>
+                  <div className={style.btns}>
+                    <button
+                      value={i}
+                      onClick={handleEditTeam}
+                      className={classnames([style.btn, style.edit])}
+                    >
                       Edit
                     </button>
-                    <button>Delete</button>
+                    <button
+                      className={classnames([style.btn, style.delete])}
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               )
@@ -101,7 +113,12 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         )
         : <p>No Teams to display</p>
       }
-      <button onClick={handleOnClickAddTeam}>Add Team</button>
+      <button
+        className="btn btn-primary"
+        onClick={handleOnClickAddTeam}
+      >
+        Add Team
+      </button>
     </div>
   )
 }
