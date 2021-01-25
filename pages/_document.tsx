@@ -1,6 +1,5 @@
 import Document, {
   Html,
-  Head,
   Main,
   NextScript,
   DocumentContext,
@@ -23,7 +22,6 @@ export default class CustomDocument extends Document<{
   public render() {
     return (
       <Html>
-        <Head>{/* your head if needed */}</Head>
         <body>
           <div dangerouslySetInnerHTML={{ __html: this.props.spriteContent }} />
           <Main />

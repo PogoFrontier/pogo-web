@@ -3,6 +3,7 @@ import { w3cwebsocket as WebSocket } from 'websocket'
 import { AppProps } from 'next/app'
 import SocketContext from '@context/SocketContext'
 import IdContext from '@context/IdContext'
+import { Head } from 'next/document'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import { auth } from '../src/firebase'
@@ -179,6 +180,12 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         <UserContext.Provider value={{ user: currentUser, refreshUser }}>
           <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
             <SocketContext.Provider value={{ socket, connect }}>
+              <Head>
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+                />
+              </Head>
               <Component {...pageProps} />
             </SocketContext.Provider>
           </TeamContext.Provider>
