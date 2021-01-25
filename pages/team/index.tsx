@@ -8,6 +8,7 @@ import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
 import classnames from 'classnames'
+import TeamContext from '@context/TeamContext'
 
 interface ContentProps {
   meta: string
@@ -17,6 +18,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const { user, refreshUser, setTeams } = useContext(UserContext)
   const [craftingTeam, setCraftingTeam] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<any | null>(null)
+  const setTeam = useContext(TeamContext).setTeam
 
   const updateTeam = (team: any) => {
     if (localStorage.getItem('token')) {
@@ -51,6 +53,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     user.teams.splice(i, 1)
     user.teams.unshift(data)
     setTeams(user.teams)
+    setTeam(data.members)
   }
 
   const onExit = () => {
