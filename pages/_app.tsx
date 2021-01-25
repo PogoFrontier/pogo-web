@@ -17,6 +17,7 @@ import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
+import Head from 'next/head'
 
 interface User {
   googleId?: string
@@ -174,17 +175,25 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   return (
-    <SettingsContext.Provider value={{ keys, setKeys }}>
-      <IdContext.Provider value={{ id, setId }}>
-        <UserContext.Provider value={{ user: currentUser, refreshUser }}>
-          <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
-            <SocketContext.Provider value={{ socket, connect }}>
-              <Component {...pageProps} />
-            </SocketContext.Provider>
-          </TeamContext.Provider>
-        </UserContext.Provider>
-      </IdContext.Provider>
-    </SettingsContext.Provider>
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+      </Head>
+      <SettingsContext.Provider value={{ keys, setKeys }}>
+        <IdContext.Provider value={{ id, setId }}>
+          <UserContext.Provider value={{ user: currentUser, refreshUser }}>
+            <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
+              <SocketContext.Provider value={{ socket, connect }}>
+                <Component {...pageProps} />
+              </SocketContext.Provider>
+            </TeamContext.Provider>
+          </UserContext.Provider>
+        </IdContext.Provider>
+      </SettingsContext.Provider>
+    </>
   )
 }
 
