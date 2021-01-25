@@ -14,7 +14,7 @@ interface ContentProps {
 }
 
 const Content: React.FC<ContentProps> = ({ meta }) => {
-  const { user, refreshUser } = useContext(UserContext)
+  const { user, refreshUser, setTeams } = useContext(UserContext)
   const [craftingTeam, setCraftingTeam] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<any | null>(null)
 
@@ -43,6 +43,14 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const handleEditTeam = (e: any) => {
     setTeamToEdit(user.teams[e.target.value])
     setCraftingTeam(true)
+  }
+
+  const handleChooseTeam = (e: any) => {
+    const i = e.target.value
+    const data = user.teams[i]
+    user.teams.splice(i, 1)
+    user.teams.unshift(data)
+    setTeams(user.teams)
   }
 
   const onExit = () => {
@@ -87,7 +95,11 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
             if (team.format === meta) {
               return (
                 <div className={style.wrapper} key={team.id}>
-                  <div className={style.box}>
+                  <button
+                    className={style.box}
+                    value={i}
+                    onClick={handleEditTeam}
+                  >
                     <label className={style.label}>{team.name}</label>
                     <div className={style.members}>
                       {team.members.map((member: any, index: number) => (
@@ -98,15 +110,18 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                         />
                       ))}
                     </div>
-                  </div>
+                  </button>
                   <div className={style.btns}>
-                    <button
-                      value={i}
-                      onClick={handleEditTeam}
-                      className={classnames([style.btn, style.edit])}
-                    >
-                      Edit
-                    </button>
+                    {
+                      i > 0 &&
+                      <button
+                        value={i}
+                        onClick={handleChooseTeam}
+                        className={classnames([style.btn, style.edit])}
+                      >
+                        Choose
+                      </button>
+                    }
                     <button
                       className={classnames([style.btn, style.delete])}
                     >

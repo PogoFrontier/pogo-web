@@ -6,7 +6,7 @@ import IdContext from '@context/IdContext'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import { auth } from '../src/firebase'
-import UserContext from '@context/UserContext'
+import UserContext, { User } from '@context/UserContext'
 import {
   getUserProfile,
   postNewGoogleUser,
@@ -18,16 +18,6 @@ import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Head from 'next/head'
-
-interface User {
-  googleId?: string
-  displayName: string
-  email?: string
-  teams: any[]
-  createdAt?: string
-  lasLogin?: string
-  isDeleted?: boolean
-}
 
 /**
  * NextJS wrapper
@@ -143,6 +133,12 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
+  const setTeams = (teams: any[]) => {
+    const curr: User = { ...currentUser! }
+    curr.teams = teams
+    setCurrentUser(curr)
+  }
+
   const connect = (id1: string, payload: OnNewRoomPayload) => {
     const s = new WebSocket(`${WSS}${id1}`)
     s.onclose = () => {
@@ -184,7 +180,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       </Head>
       <SettingsContext.Provider value={{ keys, setKeys }}>
         <IdContext.Provider value={{ id, setId }}>
-          <UserContext.Provider value={{ user: currentUser, refreshUser }}>
+          <UserContext.Provider
+            value={{ user: currentUser!, refreshUser, setTeams }}
+          >
             <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
               <SocketContext.Provider value={{ socket, connect }}>
                 <Component {...pageProps} />

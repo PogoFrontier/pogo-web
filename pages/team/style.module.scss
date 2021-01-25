@@ -17,9 +17,13 @@
 }
 
 .box {
+  background-color: $color-white;
   padding: 0.5em 1em;
   border: solid 1px $color-neutral-light;
+  width: 100%;
   margin-bottom: 1em;
+  cursor: pointer;
+  text-align: left;
   @include md() {
     display: flex;
     flex: 1 1;
