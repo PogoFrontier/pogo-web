@@ -36,6 +36,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   }
 
   const handleOnClickAddTeam = () => {
+    setTeamToEdit(null)
     setCraftingTeam(true)
   }
 
