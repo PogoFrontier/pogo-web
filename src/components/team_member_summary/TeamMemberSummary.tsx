@@ -32,6 +32,7 @@ const TeamMemberSummary = (props: { member: any }) => {
         <img
           src={getImage(member.sid, member.shiny, false)}
           alt={member.speciesName}
+          key={getImage(member.sid, member.shiny, false)}
           className="sprite"
         />
         <br />
