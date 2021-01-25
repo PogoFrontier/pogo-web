@@ -1,5 +1,6 @@
 import Document, {
   Html,
+  Head,
   Main,
   NextScript,
   DocumentContext,
@@ -22,6 +23,12 @@ export default class CustomDocument extends Document<{
   public render() {
     return (
       <Html>
+        <Head>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+          />
+        </Head>
         <body>
           <div dangerouslySetInnerHTML={{ __html: this.props.spriteContent }} />
           <Main />
