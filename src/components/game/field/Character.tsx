@@ -53,6 +53,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
           [style.back]: back,
         })}
         src={getImage(char.sid, char.shiny, back)}
+        key={getImage(char.sid, char.shiny, back)}
         alt={char.speciesName}
       />
     </div>
