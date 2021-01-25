@@ -3,13 +3,23 @@ import TeamMemberSummary from '@components/team_member_summary/TeamMemberSummary
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
 import getMini from '@common/actions/getMini'
 import TeamContext from '@context/TeamContext'
+import Input from '@components/input/Input'
+import style from './craft.module.scss'
+import classnames from 'classnames'
 
-const CraftTeam = (props: {
+interface CraftTeamProps {
   selectedMeta: string
   teamToEdit?: any
   updateTeam: (team: any) => void
+  onExit: () => void
+}
+
+const CraftTeam: React.FC<CraftTeamProps> = ({
+  selectedMeta,
+  teamToEdit,
+  updateTeam,
+  onExit
 }) => {
-  const { selectedMeta, teamToEdit, updateTeam } = props
   const [workingTeam, setWorkingTeam] = useState([] as any)
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
   const [addingMember, setAddingMember] = useState(false)
@@ -34,7 +44,7 @@ const CraftTeam = (props: {
 
   const handleSelectPokemon = (e: any) => {
     setSelectedPokemon(workingTeam[e.currentTarget.id])
-    // setEditingIndex(workingTeam.indexOf(member)); only do this when they hit the edit button
+    // setEditingIndex(Number(e.currentTarget.id));
     setAddingMember(false)
   }
 
@@ -85,28 +95,34 @@ const CraftTeam = (props: {
 
   return (
     <div>
-      <h3>
-        {selectedMeta} Team:{' '}
-        <input
-          type="text"
-          value={teamName}
-          placeholder="Team Name"
-          onChange={handleTeamNameChange}
-        />
-      </h3>
-      <div className="choice-btns">
+      <Input
+        title="Name"
+        type="text"
+        value={teamName}
+        placeholder="Team Name"
+        onChange={handleTeamNameChange}
+      />
+      <div className={style.btns}>
+        <button className="btn btn-negative" onClick={onExit}>
+          Exit
+        </button>
         {workingTeam && workingTeam.length > 0 && (
-          <button className="save-btn" onClick={saveTeam}>
+          <button className="btn btn-primary" onClick={saveTeam}>
             Save Team
           </button>
         )}
       </div>
-      <div className="team-members">
+      <div>
         {workingTeam && (
-          <ul className="team-tabs" style={{ listStyleType: 'none' }}>
+          <ul className={style.members}>
             {workingTeam.length > 0 &&
               workingTeam.map((member: any, index: any) => (
-                <li key={index} id={index} onClick={handleSelectPokemon}>
+                <li
+                  className={classnames([style.member, {[style.selected]: member === selectedPokemon}])}
+                  key={index}
+                  id={index}
+                  onClick={handleSelectPokemon}
+                >
                   <img src={getMini(member.sid)} alt={member.speciesName} />
                 </li>
               ))}

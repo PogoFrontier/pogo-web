@@ -44,13 +44,17 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     setCraftingTeam(true)
   }
 
+  const onExit = () => {
+    setCraftingTeam(false)
+  }
+
   if (!user || !user.teams) {
     return <p>Please sign in to use the teambuilder</p>
   }
 
   if (craftingTeam) {
     return (
-      <div className="crafting-team">
+      <div className={style.root}>
       {
         teamToEdit
         ? (
@@ -58,12 +62,14 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
             selectedMeta={meta}
             updateTeam={updateTeam}
             teamToEdit={teamToEdit}
+            onExit={onExit}
           />
         )
         : (
           <CraftTeam
             selectedMeta={meta}
             updateTeam={updateTeam}
+            onExit={onExit}
           />
         )
       }
