@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { w3cwebsocket as WebSocket } from 'websocket'
+import { setWsHeartbeat } from "ws-heartbeat/client";
 import { AppProps } from 'next/app'
 import SocketContext from '@context/SocketContext'
 import IdContext from '@context/IdContext'
@@ -66,6 +67,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
   const connect = (id1: string, payload: OnNewRoomPayload) => {
     const s = new WebSocket(`${WSS}${id1}`)
+    setWsHeartbeat(s, '{"kind":"ping"}', {
+      pingInterval: 30000, // every 25 seconds, send a ping message to the server.
+  });
     s.onclose = () => {
       router.push('/')
     }

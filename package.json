@@ -71,7 +71,8 @@
     "redux-thunk": "2.3.0",
     "svg-sprite-loader": "4.2.1",
     "uuid": "^8.3.2",
-    "websocket": "^1.0.32"
+    "websocket": "^1.0.32",
+    "ws-heartbeat": "^1.2.0"
   },
   "devDependencies": {
     "@adibkhan/pogo-web-backend": "1.0.20",
