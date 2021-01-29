@@ -1,6 +1,10 @@
 @import 'variables';
 @import 'colors';
 
+.root{
+  margin-right: 2rem;
+}
+
 .healthbar {
   height: 0.5rem;
   width: 7rem;
@@ -18,10 +22,8 @@
 }
 
 .char {
-  height: 15vh;
-  width: 15vh;
-  object-fit: contain;
-
+  display: block;
+  margin: auto;
   //Animations
   transition: transform 200ms;
   &.prime {
@@ -38,8 +40,6 @@
   }
 
   &.back {
-    height: 20vh;
-    width: 20vh;
     &.prime {
       transform: translateX(-2rem);
     }
@@ -47,12 +47,19 @@
       transform: translateX(2rem);
     }
   }
-  @include md {
-    height: 10rem;
-    width: 10rem;
-    &.back {
-      height: 13rem;
-      width: 13rem;
+  
+}
+
+.imgcontainer{
+  transform: scale(0.9);
+  &.back{
+    transform: scale(1.1);
+  }
+  @include md() {
+    padding-top: 1em;
+    transform: scale(1.4);
+    &.back{
+      transform: scale(1.6);
     }
   }
 }

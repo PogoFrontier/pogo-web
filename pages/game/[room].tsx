@@ -505,14 +505,13 @@ const GamePage = () => {
             <Icon name="clock" size="medium" />
           </div>
         </section>
-
         <Field characters={characters} />
         <Switch
           team={active}
           pointer={charPointer}
           countdown={swap}
           onClick={onSwitchClick}
-        />
+        /> 
         <Charged
           moves={moves[charPointer]}
           energy={current.current?.energy || 0}
