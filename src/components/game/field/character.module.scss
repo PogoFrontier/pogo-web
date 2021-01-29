@@ -1,6 +1,9 @@
 @import 'variables';
 @import 'colors';
 
+.root{
+  margin-right: 2rem;
+}
 
 .healthbar {
   height: 0.5rem;
@@ -53,4 +56,5 @@
     transform: scale(1.5);
   }
   margin-top: 3rem;
+  margin-bottom: 3rem;
 }

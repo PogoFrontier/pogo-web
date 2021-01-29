@@ -507,12 +507,14 @@ const GamePage = () => {
         </section>
 
         <Field characters={characters} />
+        <div className={style.switch}>
         <Switch
           team={active}
           pointer={charPointer}
           countdown={swap}
           onClick={onSwitchClick}
-        />
+        /> 
+        </div>
         <Charged
           moves={moves[charPointer]}
           energy={current.current?.energy || 0}
