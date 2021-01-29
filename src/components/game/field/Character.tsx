@@ -41,21 +41,22 @@ const Character: React.FunctionComponent<CharacterProps> = ({
   const color = getColor(ratio)
 
   return (
-    <div>
+    <div className={style.root}>
       <div className={style.healthbar}>
         <div
           className={style.health}
           style={{ width: `${ratio * 100}%`, backgroundColor: color }}
         />
       </div>
-      <img
+      <div className={classnames(style.imgcontainer, style[s], {[style.back]:back})}><img
         className={classnames([style.char], [style[s]], {
           [style.back]: back,
         })}
         src={getImage(char.sid, char.shiny, back)}
         key={getImage(char.sid, char.shiny, back)}
         alt={char.speciesName}
-      />
+      /></div>
+      
     </div>
   )
 }

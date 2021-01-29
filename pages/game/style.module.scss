@@ -3,10 +3,13 @@
 
 .root {
   @include bg;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .content {
   @include content;
+  height: 100%;
 }
 
 .nav {
