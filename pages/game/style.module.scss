@@ -3,10 +3,13 @@
 
 .root {
   @include bg;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .content {
   @include content;
+  height: 100%;
 }
 
 .nav {
@@ -53,8 +56,4 @@
   justify-content: center;
   text-align: center;
   margin-top: 2em;
-}
-
-.switch{
-  margin-top: 3rem;
 }
