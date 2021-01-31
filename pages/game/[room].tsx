@@ -23,6 +23,7 @@ import Shield from '@components/game/shield/Shield'
 import Stepper from '@components/game/stepper/Stepper'
 import useKeyPress from '@common/actions/useKeyPress'
 import SettingsContext from '@context/SettingsContext'
+import useWindowSize from '@common/actions/useWindowSize'
 
 interface CheckPayload {
   countdown: number
@@ -55,6 +56,7 @@ const GamePage = () => {
     switch2Key,
     shieldKey
   } = useContext(SettingsContext).keys
+  const { height } = useWindowSize()
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([
@@ -489,7 +491,7 @@ const GamePage = () => {
   const opp = opponent[oppPointer]
 
   return (
-    <main className={style.root} style={{ height: window.innerHeight }}>
+    <main className={style.root} style={{ height }}>
       <div className={style.content} onClick={onClick}>
         <section className={style.nav}>
           <button className="btn btn-negative" onClick={onQuit}>Exit</button>

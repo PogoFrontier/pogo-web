@@ -7,6 +7,7 @@ import Select from '@components/select/Select'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import style from './style.module.scss'
+import useWindowSize from '@common/actions/useWindowSize'
 
 enum STATUS {
   CHOOSING,
@@ -29,6 +30,7 @@ const MatchupPage = () => {
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
   const team: TeamMember[] = useContext(TeamContext)
+  const { height } = useWindowSize()
 
   const onMessage = (message: MessageEvent) => {
     const data: Data = JSON.parse(message.data)
@@ -91,7 +93,7 @@ const MatchupPage = () => {
   }
 
   return (
-    <main className={style.root}>
+    <main className={style.root} style={{ height }}>
       <div className={style.content}>
         <header className={style.head}>
           <h1>
