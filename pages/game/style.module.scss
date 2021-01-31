@@ -3,7 +3,7 @@
 
 .root {
   @include bg;
-  height: 100vh;
+  min-height: 100%;
   overflow: hidden;
 }
 

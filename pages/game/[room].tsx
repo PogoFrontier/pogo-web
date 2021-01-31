@@ -489,7 +489,7 @@ const GamePage = () => {
   const opp = opponent[oppPointer]
 
   return (
-    <main className={style.root}>
+    <main className={style.root} style={{ height: window.innerHeight }}>
       <div className={style.content} onClick={onClick}>
         <section className={style.nav}>
           <button className="btn btn-negative" onClick={onQuit}>Exit</button>
