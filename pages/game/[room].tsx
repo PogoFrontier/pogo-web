@@ -79,7 +79,8 @@ const GamePage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState([""])
+  const [currentType, setCurrentType] = useState("")
 
   const startGame = () => {
     setTime(240)
@@ -141,8 +142,8 @@ const GamePage = () => {
         return prev1
       })
       if (payload.update[0].message) {
-        setMessage(payload.update[0].message)
-        setTimeout(() => setMessage(""), 5000)
+        setMessage([payload.update[0].message.split("used")[0] + "used", payload.update[0].message.split("used")[1]]);
+        setTimeout(() => setMessage([""]), 5000)
       }
       if (payload.update[0]?.wait) {
         setWait(payload.update[0]!.wait)
@@ -389,6 +390,7 @@ const GamePage = () => {
       && active[charPointer].current!.energy! >= move.energy
     ) {
       setCurrentMove(move.moveId)
+      setCurrentType(move.type);
       setActive(prev => {
         prev[charPointer].current!.energy -= move.energy
         return prev
@@ -507,6 +509,14 @@ const GamePage = () => {
             <Icon name="clock" size="medium" />
           </div>
         </section>
+        
+        <strong style={{visibility: message.length === 1 ? "hidden" : "visible"}} className={style.message}>
+            {message[0]}&nbsp;
+          <span className={style[currentType]}>
+            {message[1]}
+          </span>
+        </strong> 
+        
         <Field characters={characters} />
         <Switch
           team={active}
@@ -519,12 +529,7 @@ const GamePage = () => {
           energy={current.current?.energy || 0}
           onClick={onChargeClick}
         />
-        {
-          message !== "" &&
-          <strong className={style.message}>
-            {message}
-          </strong>
-        }
+        
         <Popover
           closed={status === StatusTypes.MAIN}
           showMenu={status !== StatusTypes.WAITING
