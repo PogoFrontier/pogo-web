@@ -47,7 +47,7 @@ const EndPage = () => {
         <h2>You {result} the game</h2>
         <div className={style.buttons}>
           <button onClick={join} className='btn btn-primary'>Play again</button>
-          <button onClick={toHome} className='btn btn-secondary'>Home</button>
+          <button onClick={toHome} className='btn btn-primary'>Home</button>
         </div>
       </div>
     </Layout>
