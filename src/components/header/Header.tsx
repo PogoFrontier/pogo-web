@@ -14,7 +14,7 @@ const Header: React.FunctionComponent = () => {
 
   return (
     <header className={style.header}>
-      <div className={style.title}>Project Grookey</div>
+      <div ><a href="/" className={style.title}>Project Grookey</a></div>
       <ul className={style.links}>
         <li>
           <Link href="/">

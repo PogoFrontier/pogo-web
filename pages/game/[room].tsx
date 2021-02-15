@@ -88,10 +88,10 @@ const GamePage = () => {
     setStatus(StatusTypes.MAIN)
   }
 
-  const endGame = () => {
+  const endGame = (result: string) => {
     ws.onclose = null
     ws.close()
-    router.push(`/end/${room}`)
+    router.push(`/end/${room}?result=${result}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
@@ -266,8 +266,9 @@ const GamePage = () => {
   }
 
   const onMessage = (message: MessageEvent) => {
-    if (message.data === '$end') {
-      endGame()
+    if (message.data.startsWith('$end')) {
+      const data = message.data.slice(4)
+      endGame(data)
     } else if (message.data.startsWith('#')) {
       // Expected format: "#fa:Volt Switch"
       const data: [keyof typeof Actions, string] = message.data
