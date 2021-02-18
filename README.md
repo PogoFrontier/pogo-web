@@ -48,7 +48,7 @@ Credit to [the PvPoke team](https://github.com/pvpoke/pvpoke) for my understandi
 
 Credit to [Smogon](https://github.com/smogon/sprites) for all sprites.
 
-Credit to all the project contributors! They've shaved months off development and improved the project in ways I wouldn't have though of:
+Credit to all the project contributors! They've shaved months off development and improved the project in ways I hadn't imagined:
 - @jarthur22 ⭐
 - @theking465 ⭐
 - @tony-xuyf
