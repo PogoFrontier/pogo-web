@@ -24,6 +24,7 @@ import Stepper from '@components/game/stepper/Stepper'
 import useKeyPress from '@common/actions/useKeyPress'
 import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
+import Loader from "react-loader-spinner"
 
 interface CheckPayload {
   countdown: number
@@ -487,7 +488,7 @@ const GamePage = () => {
   }, [])
 
   if (isLoading) {
-    return <p>Loading...</p>
+    return <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
   }
 
   const current = active[charPointer]
