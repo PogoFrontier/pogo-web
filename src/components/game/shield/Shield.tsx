@@ -13,7 +13,7 @@ const Shield: React.FC<ShieldProps> = ({ value, onShield, shields }) => {
   const disabled = value || shields <= 0
   return (
     <button className="btn btn-primary" onClick={onClick} disabled={disabled}>
-      {disabled ? "Waiting..." : "Shield?"}
+      {disabled ? 'Waiting...' : 'Shield?'}
     </button>
   )
 }
