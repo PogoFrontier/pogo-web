@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from 'uuid'
 import Layout from '@components/layout/Layout'
 
 const EndPage = () => {
-
   const router = useRouter()
   const { room, result } = router.query
   const { socket, connect } = useContext(SocketContext)
@@ -36,9 +35,8 @@ const EndPage = () => {
   }
 
   const toHome = () => {
-    router.push("/")
+    router.push('/')
   }
-
 
   return (
     <Layout>
@@ -46,8 +44,12 @@ const EndPage = () => {
         <h1>Game over</h1>
         <h2>You {result} the game</h2>
         <div className={style.buttons}>
-          <button onClick={join} className='btn btn-primary'>Play again</button>
-          <button onClick={toHome} className='btn btn-primary'>Home</button>
+          <button onClick={join} className="btn btn-primary">
+            Play again
+          </button>
+          <button onClick={toHome} className="btn btn-primary">
+            Home
+          </button>
         </div>
       </div>
     </Layout>

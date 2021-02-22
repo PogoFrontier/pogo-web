@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 
 function useKeyPress(targetKey: string) {
   // State for keeping track of whether key is pressed
@@ -16,7 +16,7 @@ function useKeyPress(targetKey: string) {
     if (key === targetKey) {
       setKeyPressed(false)
     }
-  };
+  }
 
   // Add event listeners
   useEffect(() => {
@@ -26,10 +26,10 @@ function useKeyPress(targetKey: string) {
     return () => {
       window.removeEventListener('keydown', downHandler)
       window.removeEventListener('keyup', upHandler)
-    };
-  }, []); // Empty array ensures that effect is only run on mount and unmount
+    }
+  }, []) // Empty array ensures that effect is only run on mount and unmount
 
-  return keyPressed;
+  return keyPressed
 }
 
 export default useKeyPress

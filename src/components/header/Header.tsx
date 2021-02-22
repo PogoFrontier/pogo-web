@@ -1,8 +1,14 @@
 import React, { useContext } from 'react'
 import style from './header.module.scss'
 import Link from 'next/link'
-import { Menu, MenuButton, MenuItem, MenuList, MenuLink } from '@reach/menu-button'
-import "@reach/menu-button/styles.css"
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  MenuLink,
+} from '@reach/menu-button'
+import '@reach/menu-button/styles.css'
 import { Icon } from '@components/icon/Icon'
 import UserContext from '@context/UserContext'
 
@@ -14,7 +20,11 @@ const Header: React.FunctionComponent = () => {
 
   return (
     <header className={style.header}>
-      <div ><a href="/" className={style.title}>Project Grookey</a></div>
+      <div>
+        <a href="/" className={style.title}>
+          Project Grookey
+        </a>
+      </div>
       <ul className={style.links}>
         <li>
           <Link href="/">
@@ -37,7 +47,9 @@ const Header: React.FunctionComponent = () => {
       </ul>
       <div className={style.hamburger}>
         <Menu>
-          <MenuButton className={style.menubutton}><Icon name="menu" size="medium" /></MenuButton>
+          <MenuButton className={style.menubutton}>
+            <Icon name="menu" size="medium" />
+          </MenuButton>
           <MenuList>
             <Link href="/">
               <MenuLink>Home</MenuLink>

@@ -8,6 +8,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import style from './style.module.scss'
 import useWindowSize from '@common/actions/useWindowSize'
+import Loader from 'react-loader-spinner'
 
 enum STATUS {
   CHOOSING,
@@ -116,7 +117,17 @@ const MatchupPage = () => {
         {status === STATUS.CHOOSING && (
           <Select team={team} onSubmit={onSubmit} />
         )}
-        {status === STATUS.WAITING && <p>Waiting for opponent...</p>}
+        {status === STATUS.WAITING && (
+          <div>
+            <p>Waiting for opponent...</p>
+            <Loader
+              type="TailSpin"
+              color="#68BFF5"
+              height={80}
+              width={80}
+            />{' '}
+          </div>
+        )}
       </div>
     </main>
   )
