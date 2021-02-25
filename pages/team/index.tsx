@@ -100,7 +100,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                   >
                     <label className={style.label}>{team.name}</label>
                     <div className={style.members}>
-                      {team.members.map((member: any, index: number) => (
+                      {team.members.length > 0 && team.members.map((member: any, index: number) => (
                         <img
                           key={index}
                           src={getMini(member.sid)}
