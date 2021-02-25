@@ -1,5 +1,5 @@
-import useWindowSize from "@common/actions/useWindowSize"
-import Header from "@components/header/Header"
+import useWindowSize from '@common/actions/useWindowSize'
+import Header from '@components/header/Header'
 import style from './layout.module.scss'
 
 const Layout: React.FunctionComponent = ({ children }) => {
@@ -8,9 +8,7 @@ const Layout: React.FunctionComponent = ({ children }) => {
   return (
     <main className={style.root} style={{ height }}>
       <Header />
-      <div className={style.content}>
-        { children }
-      </div>
+      <div className={style.content}>{children}</div>
     </main>
   )
 }

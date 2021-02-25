@@ -8,7 +8,7 @@ const SettingsPage = () => {
   return (
     <Layout>
       <main className={style.root}>
-        <Split tabs={["Controls", "Account"]}>
+        <Split tabs={['Controls', 'Account']}>
           <TabPanel>
             <Controls />
           </TabPanel>

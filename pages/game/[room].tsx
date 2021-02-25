@@ -24,6 +24,7 @@ import Stepper from '@components/game/stepper/Stepper'
 import useKeyPress from '@common/actions/useKeyPress'
 import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
+import Loader from 'react-loader-spinner'
 
 interface CheckPayload {
   countdown: number
@@ -54,7 +55,7 @@ const GamePage = () => {
     charge2Key,
     switch1Key,
     switch2Key,
-    shieldKey
+    shieldKey,
   } = useContext(SettingsContext).keys
   const { height } = useWindowSize()
   const [active, setActive] = useState([] as TeamMember[])
@@ -80,8 +81,8 @@ const GamePage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
-  const [message, setMessage] = useState([""])
-  // const [currentType, setCurrentType] = useState("") TODO: Make this work on both perspectives
+  const [message, setMessage] = useState([''])
+  // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const startGame = () => {
     setTime(240)
@@ -174,31 +175,28 @@ const GamePage = () => {
       if (payload.update[0]?.wait) {
         setWait(payload.update[0]!.wait)
         if (payload.update[0]!.wait <= -1) {
-          setStatus(
-            prev => {
-              if (
-                payload.update[1]
-                && payload.update[1].wait
-                && payload.update[1].wait <= -1
-              ) {
-                if (prev === StatusTypes.CHARGE) {
-                  setChargeMult(prev1 => {
-                    ws.send('$c' + prev1.toString())
-                    return 0.25
-                  })
-                } else if (prev === StatusTypes.SHIELD) {
-                  setToShield(prev1 => {
-                    ws.send('$s' + (prev1 ? 1 : 0).toString())
-                    return false
-                  }
-                  )
-                } else {
-                  return StatusTypes.MAIN
-                }
+          setStatus((prev) => {
+            if (
+              payload.update[1] &&
+              payload.update[1].wait &&
+              payload.update[1].wait <= -1
+            ) {
+              if (prev === StatusTypes.CHARGE) {
+                setChargeMult((prev1) => {
+                  ws.send('$c' + prev1.toString())
+                  return 0.25
+                })
+              } else if (prev === StatusTypes.SHIELD) {
+                setToShield((prev1) => {
+                  ws.send('$s' + (prev1 ? 1 : 0).toString())
+                  return false
+                })
+              } else {
+                return StatusTypes.MAIN
               }
-              return StatusTypes.WAITING
             }
-          )
+            return StatusTypes.WAITING
+          })
         }
       }
     }
@@ -292,13 +290,13 @@ const GamePage = () => {
     })
   }
 
-  const onMessage = (message: MessageEvent) => {
-    if (message.data.startsWith('$end')) {
-      const data = message.data.slice(4)
+  const onMessage = (msg: MessageEvent) => {
+    if (msg.data.startsWith('$end')) {
+      const data = msg.data.slice(4)
       endGame(data)
-    } else if (message.data.startsWith('#')) {
+    } else if (msg.data.startsWith('#')) {
       // Expected format: "#fa:Volt Switch"
-      const data: [keyof typeof Actions, string] = message.data
+      const data: [keyof typeof Actions, string] = msg.data
         .substring(1)
         .split(':') as [keyof typeof Actions, string]
       switch (data[0]) {
@@ -310,7 +308,7 @@ const GamePage = () => {
           break
       }
     } else {
-      const data: Data = JSON.parse(message.data)
+      const data: Data = JSON.parse(msg.data)
       switch (data.type) {
         case CODE.game_check:
           onGameStatus(data.payload! as CheckPayload)
@@ -332,36 +330,33 @@ const GamePage = () => {
 
   const fetchRoom = () => {
     Promise.all([
-      axios.get(`${SERVER}api/room/${room}`)
-      .then((res) => {
+      axios.get(`${SERVER}api/room/${room}`).then((res) => {
         const currentRoom: Room = res.data
-        const playerIndex = currentRoom.players.findIndex(x => x?.id === id)
+        const playerIndex = currentRoom.players.findIndex((x) => x?.id === id)
         const player = currentRoom.players[playerIndex]
-        const opponent = currentRoom.players[playerIndex === 0 ? 1 : 0]
-        if (player && opponent && player.current && opponent.current) {
+        const oppon = currentRoom.players[playerIndex === 0 ? 1 : 0]
+        if (player && oppon && player.current && oppon.current) {
           setActive(player.current.team)
-          setOpponent(opponent.current.team)
+          setOpponent(oppon.current.team)
           setCharacters((prevState) => {
             prevState[0].char = player.current?.team[0]
-            prevState[1].char = opponent.current?.team[0]
+            prevState[1].char = oppon.current?.team[0]
             return prevState
           })
           setShields(player.current.shields)
           setRemaining(player.current.remaining)
-          setOppShields(opponent.current.shields)
-          setOppRemaining(opponent.current.remaining)
+          setOppShields(oppon.current.shields)
+          setOppRemaining(oppon.current.remaining)
         } else {
           throw new Error()
         }
       }),
-      axios.get(`${SERVER}api/moves/team/${room}/${id}`)
-      .then((res) => {
-        const allMoves: Move[][] = res.data;
+      axios.get(`${SERVER}api/moves/team/${room}/${id}`).then((res) => {
+        const allMoves: Move[][] = res.data
         setMoves(allMoves)
-      })
+      }),
     ])
-    .then(
-      () => {
+      .then(() => {
         ws.send(
           JSON.stringify({
             type: CODE.ready_game,
@@ -370,9 +365,8 @@ const GamePage = () => {
         )
         ws.onmessage = onMessage
         setIsLoading(false)
-      }
-    )
-    .catch(toHome)
+      })
+      .catch(toHome)
   }
 
   const onClick = () => {
@@ -452,10 +446,9 @@ const GamePage = () => {
 
   const onFaintClick = (pos: number) => {
     if (
-      (status === StatusTypes.FAINT
-      || status === StatusTypes.WAITING)
-      && active[pos].current?.hp
-      && active[pos].current!.hp > 0
+      (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
+      active[pos].current?.hp &&
+      active[pos].current!.hp > 0
     ) {
       const data = '#sw:' + pos
       setCurrentMove(data)
@@ -470,13 +463,9 @@ const GamePage = () => {
   }
 
   const onShield = () => {
-    if (
-      status === StatusTypes.SHIELD
-      && shields > 0
-      && !toShield
-    ) {
+    if (status === StatusTypes.SHIELD && shields > 0 && !toShield) {
       setToShield(true)
-      setShields(prev => prev - 1)
+      setShields((prev) => prev - 1)
     }
   }
 
@@ -497,7 +486,7 @@ const GamePage = () => {
     if (fastKeyClick) {
       if (!onClick()) {
         if (status === StatusTypes.CHARGE) {
-          setChargeMult(prev => Math.min(prev + 0.25, 1))
+          setChargeMult((prev) => Math.min(prev + 0.25, 1))
         }
       }
     } else if (charge1KeyClick) {
@@ -523,7 +512,14 @@ const GamePage = () => {
     } else if (shieldKeyClick) {
       onShield()
     }
-  }, [fastKeyClick, charge1KeyClick, charge2KeyClick, switch1KeyClick, switch2KeyClick, shieldKeyClick])
+  }, [
+    fastKeyClick,
+    charge1KeyClick,
+    charge2KeyClick,
+    switch1KeyClick,
+    switch2KeyClick,
+    shieldKeyClick,
+  ])
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {
@@ -534,7 +530,7 @@ const GamePage = () => {
   }, [])
 
   if (isLoading) {
-    return <p>Loading...</p>
+    return <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
   }
 
   const current = active[charPointer]
@@ -544,7 +540,9 @@ const GamePage = () => {
     <main className={style.root} style={{ height }}>
       <div className={style.content} onClick={onClick}>
         <section className={style.nav}>
-          <button className="btn btn-negative" onClick={onQuit}>Exit</button>
+          <button className="btn btn-negative" onClick={onQuit}>
+            Exit
+          </button>
         </section>
         <section className={style.statuses}>
           <Status subject={current} shields={shields} remaining={remaining} />
@@ -572,17 +570,17 @@ const GamePage = () => {
           pointer={charPointer}
           countdown={swap}
           onClick={onSwitchClick}
-        /> 
+        />
         <Charged
           moves={moves[charPointer]}
           energy={current.current?.energy || 0}
           onClick={onChargeClick}
         />
-        
+
         <Popover
           closed={status === StatusTypes.MAIN}
-          showMenu={status !== StatusTypes.WAITING
-            && status !== StatusTypes.STARTING
+          showMenu={
+            status !== StatusTypes.WAITING && status !== StatusTypes.STARTING
           }
         >
           {status === StatusTypes.FAINT && (
