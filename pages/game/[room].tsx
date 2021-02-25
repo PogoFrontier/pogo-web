@@ -229,7 +229,7 @@ const GamePage = () => {
               } else if (shouldReturn) {
                 prev3[1].status = 'prime'
               }
-              if (isShields) {
+              if (isShields !== undefined) {
                 setOppShields(isShields)
               }
               if (payload.update[1]?.remaining) {
