@@ -98,29 +98,6 @@ const GamePage = () => {
 
   const onTurn = (payload: ResolveTurnPayload) => {
     if (payload.update[0] !== null && payload.update[0].id === id) {
-      setCurrentMove(() => {
-        let p = ''
-        setBufferedMove((prev) => {
-          p = prev
-          if (prev !== '') {
-            setTimeout(
-              () => {
-                setCharacters(x => {
-                  let y = { ...x }
-                  if (prev.startsWith("#fa")) {
-                    y[0].status = 'attack'
-                  } else if (prev.startsWith("#sw")) {
-                    y[0].status = 'switch'
-                  }
-                  return y
-                })
-              }, 100
-            )
-          }
-          return ''
-        })
-        return p
-      })
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
       const isActive = payload.update[0].active
@@ -130,6 +107,39 @@ const GamePage = () => {
         setCharPointer((prev2) => {
           setCharacters((prev3b) => {
             let prev3 = { ...prev3b }
+            let p = ''
+            setCurrentMove(() => {
+              setBufferedMove((prev) => {
+                p = prev
+                if (prev.startsWith('#')) {
+                  const data: [keyof typeof Actions, string] = prev
+                    .substring(1)
+                    .split(':') as [keyof typeof Actions, string]
+                  switch (data[0]) {
+                    case Actions.FAST_ATTACK:
+                      setTimeout(() => {
+                        setCharacters((prev4b) => {
+                          let prev4 = { ...prev4b }
+                          prev4[0].status = 'attack'
+                          return prev4
+                        })
+                      }, 250)
+                      break
+                    case Actions.SWITCH:
+                      setTimeout(() => {
+                        setCharacters((prev4b) => {
+                          let prev4 = { ...prev4b }
+                          prev4[0].status = 'switch'
+                          return prev4
+                        })
+                      }, 250)
+                      break
+                  }
+                }
+                return ''
+              })
+              return p
+            })
             if (hp) {
               prev1[prev2].current!.hp = hp
             }
