@@ -70,6 +70,7 @@ const GamePage = () => {
   const [swap, setSwap] = useState(0)
   const [info, setInfo] = useState(<div />)
   const [currentMove, setCurrentMove] = useState('')
+  const [bufferedMove, setBufferedMove] = useState('')
   const [shields, setShields] = useState(0)
   const [remaining, setRemaining] = useState(0)
   const [oppShields, setOppShields] = useState(0)
@@ -81,7 +82,7 @@ const GamePage = () => {
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
   const [message, setMessage] = useState([''])
-  const [currentType, setCurrentType] = useState('')
+  // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const startGame = () => {
     setTime(240)
@@ -97,7 +98,6 @@ const GamePage = () => {
 
   const onTurn = (payload: ResolveTurnPayload) => {
     if (payload.update[0] !== null && payload.update[0].id === id) {
-      setCurrentMove(() => '')
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
       const isActive = payload.update[0].active
@@ -105,7 +105,41 @@ const GamePage = () => {
       const isShields = payload.update[0].shields
       setActive((prev1) => {
         setCharPointer((prev2) => {
-          setCharacters((prev3) => {
+          setCharacters((prev3b) => {
+            let prev3 = { ...prev3b }
+            let p = ''
+            setCurrentMove(() => {
+              setBufferedMove((prev) => {
+                p = prev
+                if (prev.startsWith('#')) {
+                  const data: [keyof typeof Actions, string] = prev
+                    .substring(1)
+                    .split(':') as [keyof typeof Actions, string]
+                  switch (data[0]) {
+                    case Actions.FAST_ATTACK:
+                      setTimeout(() => {
+                        setCharacters((prev4b) => {
+                          let prev4 = { ...prev4b }
+                          prev4[0].status = 'attack'
+                          return prev4
+                        })
+                      }, 250)
+                      break
+                    case Actions.SWITCH:
+                      setTimeout(() => {
+                        setCharacters((prev4b) => {
+                          let prev4 = { ...prev4b }
+                          prev4[0].status = 'switch'
+                          return prev4
+                        })
+                      }, 250)
+                      break
+                  }
+                }
+                return ''
+              })
+              return p
+            })
             if (hp) {
               prev1[prev2].current!.hp = hp
             }
@@ -143,11 +177,10 @@ const GamePage = () => {
         return prev1
       })
       if (payload.update[0].message) {
-        setMessage([
-          payload.update[0].message.split('used')[0] + 'used',
-          payload.update[0].message.split('used')[1],
-        ])
-        setTimeout(() => setMessage(['']), 5000)
+        const d = payload.update[0].message.split("used")
+        const d2 = d[1].split(".")
+        setMessage([d[0] + "used", d2[0] + ".", d2[1]]);
+        setTimeout(() => setMessage([""]), 5000)
       }
       if (payload.update[0]?.wait) {
         setWait(payload.update[0]!.wait)
@@ -185,7 +218,8 @@ const GamePage = () => {
       setInfo(() => {
         setOpponent((prev1) => {
           setOppPointer((prev2) => {
-            setCharacters((prev3) => {
+            setCharacters((prev3b) => {
+              let prev3 = { ...prev3b }
               if (hp) {
                 prev1[prev2].current!.hp = hp
               }
@@ -346,57 +380,76 @@ const GamePage = () => {
   }
 
   const onClick = () => {
-    if (currentMove === '' && status === StatusTypes.MAIN && wait <= -1) {
-      setCurrentMove(current.fastMove)
+    if (status === StatusTypes.MAIN && wait <= -1) {
       const data = '#fa:' + current.fastMove
-      ws.send(data)
-      setCharacters((prev) => {
-        prev[0].status = 'attack'
-        return prev
-      })
-      return true
+      if (currentMove === '') {
+        setCurrentMove(data)
+        ws.send(data)
+        setCharacters((prev) => {
+          prev[0].status = 'attack'
+          return prev
+        })
+        return true
+      }
+      if (bufferedMove === '') {
+        setBufferedMove(data)
+        ws.send(data)
+        return true
+      }
     }
     return false
   }
 
   const onSwitchClick = (pos: number) => {
     if (
-      currentMove === '' &&
       status === StatusTypes.MAIN &&
       swap <= 0 &&
       wait <= -1 &&
       active[pos].current?.hp &&
       active[pos].current!.hp > 0
     ) {
-      setCurrentMove('switch to ' + pos)
       const data = '#sw:' + pos
-      ws.send(data)
-      setCharacters((prev) => {
-        prev[0].status = 'switch'
-        return prev
-      })
-      return true
+      if (currentMove === '') {
+        setCurrentMove(data)
+        ws.send(data)
+        setCharacters((prev) => {
+          prev[0].status = 'switch'
+          return prev
+        })
+        return true
+      }
+      if (bufferedMove === '' || bufferedMove.startsWith('#fa')) {
+        setBufferedMove(data)
+        ws.send(data)
+        return true
+      }
     }
     return false
   }
 
   const onChargeClick = (move: Move) => {
-    if (
-      currentMove === '' &&
-      status === StatusTypes.MAIN &&
-      wait <= -1 &&
-      active[charPointer].current?.energy &&
-      active[charPointer].current!.energy! >= move.energy
+    if (status === StatusTypes.MAIN
+      && wait <= -1
+      && active[charPointer].current?.energy
+      && active[charPointer].current!.energy! >= move.energy
     ) {
-      setCurrentMove(move.moveId)
-      setCurrentType(move.type)
-      setActive((prev) => {
-        prev[charPointer].current!.energy -= move.energy
-        return prev
-      })
       const data = '#ca:' + move.moveId
-      ws.send(data)
-      return true
+      if (currentMove === '' && bufferedMove === '') {
+        setCurrentMove(data)
+        setActive(prev => {
+          prev[charPointer].current!.energy -= move.energy
+          return prev
+        })
+        ws.send(data)
+        return true
+      }
+      if (bufferedMove === ''
+      || bufferedMove.startsWith('#fa')
+      || bufferedMove.startsWith('#sw')) {
+        setBufferedMove(data)
+        ws.send(data)
+        return true
+      }
     }
     return false
   }
@@ -407,8 +460,8 @@ const GamePage = () => {
       active[pos].current?.hp &&
       active[pos].current!.hp > 0
     ) {
-      setCurrentMove('switch to ' + pos)
       const data = '#sw:' + pos
+      setCurrentMove(data)
       ws.send(data)
       setCharacters((prev) => {
         prev[0].status = 'switch'
@@ -512,15 +565,15 @@ const GamePage = () => {
             <Icon name="clock" size="medium" />
           </div>
         </section>
-
-        <strong
-          style={{ visibility: message.length === 1 ? 'hidden' : 'visible' }}
-          className={style.message}
-        >
-          {message[0]}&nbsp;
-          <span className={style[currentType]}>{message[1]}</span>
-        </strong>
-
+        
+        <strong style={{visibility: message.length === 1 ? "hidden" : "visible"}} className={style.message}>
+            {message[0]}&nbsp;
+          {/* <span className={style[currentType]}> */}
+            {message[1]}
+          {/* </span> */}
+          {message[2]}
+        </strong> 
+        
         <Field characters={characters} />
         <Switch
           team={active}
