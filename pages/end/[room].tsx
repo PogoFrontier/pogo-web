@@ -42,7 +42,10 @@ const EndPage = () => {
     <Layout>
       <div className={style.content}>
         <h1>Game over</h1>
-        <h2>You {result} the game</h2>
+        {
+          result !== undefined
+          && <h2>You {result} the game</h2>
+        }
         <div className={style.buttons}>
           <button onClick={join} className="btn btn-primary">
             Play again
