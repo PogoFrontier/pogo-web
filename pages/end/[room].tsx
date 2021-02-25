@@ -43,7 +43,7 @@ const EndPage = () => {
       <div className={style.content}>
         <h1>Game over</h1>
         {
-          result !== undefined
+          (result === "win" || result === "lose")
           && <h2>You {result} the game</h2>
         }
         <div className={style.buttons}>
