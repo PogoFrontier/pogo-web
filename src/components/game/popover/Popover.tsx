@@ -1,3 +1,4 @@
+import useWindowSize from '@common/actions/useWindowSize'
 import classnames from 'classnames'
 import { useEffect, useState } from 'react'
 import style from './popover.module.scss'
@@ -9,6 +10,7 @@ interface PopoverProps {
 
 const Popover: React.FC<PopoverProps> = ({ children, closed, showMenu }) => {
   const [c, setC] = useState(true)
+  const { height } = useWindowSize()
 
   useEffect(() => {
     if (c !== closed) {
@@ -20,7 +22,7 @@ const Popover: React.FC<PopoverProps> = ({ children, closed, showMenu }) => {
     return null
   }
   return (
-    <div className={style.root}>
+    <div className={style.root} style={{ height }}>
       <div
         className={classnames([
           style.menu,

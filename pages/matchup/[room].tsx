@@ -7,6 +7,8 @@ import Select from '@components/select/Select'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import style from './style.module.scss'
+import useWindowSize from '@common/actions/useWindowSize'
+import Loader from 'react-loader-spinner'
 
 enum STATUS {
   CHOOSING,
@@ -28,7 +30,8 @@ const MatchupPage = () => {
   const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
-  const team: TeamMember[] = useContext(TeamContext).team
+  const team: TeamMember[] = useContext(TeamContext)
+  const { height } = useWindowSize()
 
   const onMessage = (message: MessageEvent) => {
     const data: Data = JSON.parse(message.data)
@@ -46,7 +49,7 @@ const MatchupPage = () => {
   }
 
   useEffect(() => {
-    if (ws.readyState === ws.OPEN && ws.send) {
+    if (ws.readyState === ws.OPEN) {
       ws.send(
         JSON.stringify({
           type: CODE.get_opponent,
@@ -82,9 +85,7 @@ const MatchupPage = () => {
   }
 
   const toHome = () => {
-    if (ws.close) {
-      ws.close()
-    }
+    ws.close()
     router.push('/')
   }
 
@@ -93,7 +94,7 @@ const MatchupPage = () => {
   }
 
   return (
-    <main className={style.root}>
+    <main className={style.root} style={{ height }}>
       <div className={style.content}>
         <header className={style.head}>
           <h1>
@@ -116,7 +117,17 @@ const MatchupPage = () => {
         {status === STATUS.CHOOSING && (
           <Select team={team} onSubmit={onSubmit} />
         )}
-        {status === STATUS.WAITING && <p>Waiting for opponent...</p>}
+        {status === STATUS.WAITING && (
+          <div>
+            <p>Waiting for opponent...</p>
+            <Loader
+              type="TailSpin"
+              color="#68BFF5"
+              height={80}
+              width={80}
+            />{' '}
+          </div>
+        )}
       </div>
     </main>
   )

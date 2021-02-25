@@ -5,7 +5,6 @@ import style from './character.module.scss'
 import getColor from '@common/actions/getColor'
 import { useEffect, useState } from 'react'
 
-
 export interface CharacterProps {
   status: 'prime' | 'attack' | 'charge' | 'switch' | 'idle'
   char?: TeamMember
@@ -25,7 +24,6 @@ const Character: React.FunctionComponent<CharacterProps> = ({
       if (cooldown) {
         setTimeout(() => setS(status), 200)
       } else {
-
         setS(status)
         setCooldown(true)
         setTimeout(() => setCooldown(false), 200)
@@ -48,15 +46,19 @@ const Character: React.FunctionComponent<CharacterProps> = ({
           style={{ width: `${ratio * 100}%`, backgroundColor: color }}
         />
       </div>
-      <div className={classnames(style.imgcontainer, style[s], {[style.back]:back})}><img
-        className={classnames([style.char], [style[s]], {
+      <div
+        className={classnames(style.imgcontainer, style[s], {
           [style.back]: back,
         })}
-        src={getImage(char.sid, char.shiny, back)}
-        key={getImage(char.sid, char.shiny, back)}
-        alt={char.speciesName}
-      /></div>
-      
+      >
+        <img
+          className={classnames([style.char], [style[s]], {
+            [style.back]: back,
+          })}
+          src={getImage(char.sid, char.shiny, back)}
+          alt={char.speciesName}
+        />
+      </div>
     </div>
   )
 }

@@ -23,6 +23,8 @@ import Shield from '@components/game/shield/Shield'
 import Stepper from '@components/game/stepper/Stepper'
 import useKeyPress from '@common/actions/useKeyPress'
 import SettingsContext from '@context/SettingsContext'
+import useWindowSize from '@common/actions/useWindowSize'
+import Loader from 'react-loader-spinner'
 
 interface CheckPayload {
   countdown: number
@@ -53,8 +55,9 @@ const GamePage = () => {
     charge2Key,
     switch1Key,
     switch2Key,
-    shieldKey
+    shieldKey,
   } = useContext(SettingsContext).keys
+  const { height } = useWindowSize()
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
   const [characters, setCharacters] = useState([
@@ -67,6 +70,7 @@ const GamePage = () => {
   const [swap, setSwap] = useState(0)
   const [info, setInfo] = useState(<div />)
   const [currentMove, setCurrentMove] = useState('')
+  const [bufferedMove, setBufferedMove] = useState('')
   const [shields, setShields] = useState(0)
   const [remaining, setRemaining] = useState(0)
   const [oppShields, setOppShields] = useState(0)
@@ -77,7 +81,8 @@ const GamePage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState([''])
+  // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const startGame = () => {
     setTime(240)
@@ -85,15 +90,14 @@ const GamePage = () => {
     setStatus(StatusTypes.MAIN)
   }
 
-  const endGame = () => {
+  const endGame = (result: string) => {
     ws.onclose = null
     ws.close()
-    router.push(`/end/${room}`)
+    router.push(`/end/${room}?result=${result}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
     if (payload.update[0] !== null && payload.update[0].id === id) {
-      setCurrentMove(() => '')
       const hp = payload.update[0]!.hp
       const shouldReturn = payload.update[0]!.shouldReturn
       const isActive = payload.update[0].active
@@ -101,7 +105,41 @@ const GamePage = () => {
       const isShields = payload.update[0].shields
       setActive((prev1) => {
         setCharPointer((prev2) => {
-          setCharacters((prev3) => {
+          setCharacters((prev3b) => {
+            let prev3 = { ...prev3b }
+            let p = ''
+            setCurrentMove(() => {
+              setBufferedMove((prev) => {
+                p = prev
+                if (prev.startsWith('#')) {
+                  const data: [keyof typeof Actions, string] = prev
+                    .substring(1)
+                    .split(':') as [keyof typeof Actions, string]
+                  switch (data[0]) {
+                    case Actions.FAST_ATTACK:
+                      setTimeout(() => {
+                        setCharacters((prev4b) => {
+                          let prev4 = { ...prev4b }
+                          prev4[0].status = 'attack'
+                          return prev4
+                        })
+                      }, 250)
+                      break
+                    case Actions.SWITCH:
+                      setTimeout(() => {
+                        setCharacters((prev4b) => {
+                          let prev4 = { ...prev4b }
+                          prev4[0].status = 'switch'
+                          return prev4
+                        })
+                      }, 250)
+                      break
+                  }
+                }
+                return ''
+              })
+              return p
+            })
             if (hp) {
               prev1[prev2].current!.hp = hp
             }
@@ -139,37 +177,36 @@ const GamePage = () => {
         return prev1
       })
       if (payload.update[0].message) {
-        setMessage(payload.update[0].message)
-        setTimeout(() => setMessage(""), 5000)
+        const d = payload.update[0].message.split("used")
+        const d2 = d[1].split(".")
+        setMessage([d[0] + "used", d2[0] + ".", d2[1]]);
+        setTimeout(() => setMessage([""]), 5000)
       }
       if (payload.update[0]?.wait) {
         setWait(payload.update[0]!.wait)
         if (payload.update[0]!.wait <= -1) {
-          setStatus(
-            prev => {
-              if (
-                payload.update[1]
-                && payload.update[1].wait
-                && payload.update[1].wait <= -1
-              ) {
-                if (prev === StatusTypes.CHARGE) {
-                  setChargeMult(prev1 => {
-                    ws.send('$c' + prev1.toString())
-                    return 0.25
-                  })
-                } else if (prev === StatusTypes.SHIELD) {
-                  setToShield(prev1 => {
-                    ws.send('$s' + (prev1 ? 1 : 0).toString())
-                    return false
-                  }
-                  )
-                } else {
-                  return StatusTypes.MAIN
-                }
+          setStatus((prev) => {
+            if (
+              payload.update[1] &&
+              payload.update[1].wait &&
+              payload.update[1].wait <= -1
+            ) {
+              if (prev === StatusTypes.CHARGE) {
+                setChargeMult((prev1) => {
+                  ws.send('$c' + prev1.toString())
+                  return 0.25
+                })
+              } else if (prev === StatusTypes.SHIELD) {
+                setToShield((prev1) => {
+                  ws.send('$s' + (prev1 ? 1 : 0).toString())
+                  return false
+                })
+              } else {
+                return StatusTypes.MAIN
               }
-              return StatusTypes.WAITING
             }
-          )
+            return StatusTypes.WAITING
+          })
         }
       }
     }
@@ -181,7 +218,8 @@ const GamePage = () => {
       setInfo(() => {
         setOpponent((prev1) => {
           setOppPointer((prev2) => {
-            setCharacters((prev3) => {
+            setCharacters((prev3b) => {
+              let prev3 = { ...prev3b }
               if (hp) {
                 prev1[prev2].current!.hp = hp
               }
@@ -191,7 +229,7 @@ const GamePage = () => {
               } else if (shouldReturn) {
                 prev3[1].status = 'prime'
               }
-              if (isShields) {
+              if (isShields !== undefined) {
                 setOppShields(isShields)
               }
               if (payload.update[1]?.remaining) {
@@ -262,12 +300,13 @@ const GamePage = () => {
     })
   }
 
-  const onMessage = (message: MessageEvent) => {
-    if (message.data === '$end') {
-      endGame()
-    } else if (message.data.startsWith('#')) {
+  const onMessage = (msg: MessageEvent) => {
+    if (msg.data.startsWith('$end')) {
+      const data = msg.data.slice(4)
+      endGame(data)
+    } else if (msg.data.startsWith('#')) {
       // Expected format: "#fa:Volt Switch"
-      const data: [keyof typeof Actions, string] = message.data
+      const data: [keyof typeof Actions, string] = msg.data
         .substring(1)
         .split(':') as [keyof typeof Actions, string]
       switch (data[0]) {
@@ -279,7 +318,7 @@ const GamePage = () => {
           break
       }
     } else {
-      const data: Data = JSON.parse(message.data)
+      const data: Data = JSON.parse(msg.data)
       switch (data.type) {
         case CODE.game_check:
           onGameStatus(data.payload! as CheckPayload)
@@ -301,36 +340,33 @@ const GamePage = () => {
 
   const fetchRoom = () => {
     Promise.all([
-      axios.get(`${SERVER}api/room/${room}`)
-      .then((res) => {
+      axios.get(`${SERVER}api/room/${room}`).then((res) => {
         const currentRoom: Room = res.data
-        const playerIndex = currentRoom.players.findIndex(x => x?.id === id)
+        const playerIndex = currentRoom.players.findIndex((x) => x?.id === id)
         const player = currentRoom.players[playerIndex]
-        const opponent = currentRoom.players[playerIndex === 0 ? 1 : 0]
-        if (player && opponent && player.current && opponent.current) {
+        const oppon = currentRoom.players[playerIndex === 0 ? 1 : 0]
+        if (player && oppon && player.current && oppon.current) {
           setActive(player.current.team)
-          setOpponent(opponent.current.team)
+          setOpponent(oppon.current.team)
           setCharacters((prevState) => {
             prevState[0].char = player.current?.team[0]
-            prevState[1].char = opponent.current?.team[0]
+            prevState[1].char = oppon.current?.team[0]
             return prevState
           })
           setShields(player.current.shields)
           setRemaining(player.current.remaining)
-          setOppShields(opponent.current.shields)
-          setOppRemaining(opponent.current.remaining)
+          setOppShields(oppon.current.shields)
+          setOppRemaining(oppon.current.remaining)
         } else {
           throw new Error()
         }
       }),
-      axios.get(`${SERVER}api/moves/team/${room}/${id}`)
-      .then((res) => {
-        const allMoves: Move[][] = res.data;
+      axios.get(`${SERVER}api/moves/team/${room}/${id}`).then((res) => {
+        const allMoves: Move[][] = res.data
         setMoves(allMoves)
-      })
+      }),
     ])
-    .then(
-      () => {
+      .then(() => {
         ws.send(
           JSON.stringify({
             type: CODE.ready_game,
@@ -339,74 +375,93 @@ const GamePage = () => {
         )
         ws.onmessage = onMessage
         setIsLoading(false)
-      }
-    )
-    .catch(toHome)
+      })
+      .catch(toHome)
   }
 
   const onClick = () => {
-    if (currentMove === '' && status === StatusTypes.MAIN && wait <= -1) {
-      setCurrentMove(current.fastMove)
+    if (status === StatusTypes.MAIN && wait <= -1) {
       const data = '#fa:' + current.fastMove
-      ws.send(data)
-      setCharacters((prev) => {
-        prev[0].status = 'attack'
-        return prev
-      })
-      return true
+      if (currentMove === '') {
+        setCurrentMove(data)
+        ws.send(data)
+        setCharacters((prev) => {
+          prev[0].status = 'attack'
+          return prev
+        })
+        return true
+      }
+      if (bufferedMove === '') {
+        setBufferedMove(data)
+        ws.send(data)
+        return true
+      }
     }
     return false
   }
 
   const onSwitchClick = (pos: number) => {
     if (
-      currentMove === '' &&
       status === StatusTypes.MAIN &&
       swap <= 0 &&
       wait <= -1 &&
       active[pos].current?.hp &&
       active[pos].current!.hp > 0
     ) {
-      setCurrentMove('switch to ' + pos)
       const data = '#sw:' + pos
-      ws.send(data)
-      setCharacters((prev) => {
-        prev[0].status = 'switch'
-        return prev
-      })
-      return true
+      if (currentMove === '') {
+        setCurrentMove(data)
+        ws.send(data)
+        setCharacters((prev) => {
+          prev[0].status = 'switch'
+          return prev
+        })
+        return true
+      }
+      if (bufferedMove === '' || bufferedMove.startsWith('#fa')) {
+        setBufferedMove(data)
+        ws.send(data)
+        return true
+      }
     }
     return false
   }
 
   const onChargeClick = (move: Move) => {
-    if (currentMove === ''
-      && status === StatusTypes.MAIN
+    if (status === StatusTypes.MAIN
       && wait <= -1
       && active[charPointer].current?.energy
       && active[charPointer].current!.energy! >= move.energy
     ) {
-      setCurrentMove(move.moveId)
-      setActive(prev => {
-        prev[charPointer].current!.energy -= move.energy
-        return prev
-      })
       const data = '#ca:' + move.moveId
-      ws.send(data)
-      return true
+      if (currentMove === '' && bufferedMove === '') {
+        setCurrentMove(data)
+        setActive(prev => {
+          prev[charPointer].current!.energy -= move.energy
+          return prev
+        })
+        ws.send(data)
+        return true
+      }
+      if (bufferedMove === ''
+      || bufferedMove.startsWith('#fa')
+      || bufferedMove.startsWith('#sw')) {
+        setBufferedMove(data)
+        ws.send(data)
+        return true
+      }
     }
     return false
   }
 
   const onFaintClick = (pos: number) => {
     if (
-      (status === StatusTypes.FAINT
-      || status === StatusTypes.WAITING)
-      && active[pos].current?.hp
-      && active[pos].current!.hp > 0
+      (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
+      active[pos].current?.hp &&
+      active[pos].current!.hp > 0
     ) {
-      setCurrentMove('switch to ' + pos)
       const data = '#sw:' + pos
+      setCurrentMove(data)
       ws.send(data)
       setCharacters((prev) => {
         prev[0].status = 'switch'
@@ -418,13 +473,9 @@ const GamePage = () => {
   }
 
   const onShield = () => {
-    if (
-      status === StatusTypes.SHIELD
-      && shields > 0
-      && !toShield
-    ) {
+    if (status === StatusTypes.SHIELD && shields > 0 && !toShield) {
       setToShield(true)
-      setShields(prev => prev - 1)
+      setShields((prev) => prev - 1)
     }
   }
 
@@ -445,7 +496,7 @@ const GamePage = () => {
     if (fastKeyClick) {
       if (!onClick()) {
         if (status === StatusTypes.CHARGE) {
-          setChargeMult(prev => Math.min(prev + 0.25, 1))
+          setChargeMult((prev) => Math.min(prev + 0.25, 1))
         }
       }
     } else if (charge1KeyClick) {
@@ -471,7 +522,14 @@ const GamePage = () => {
     } else if (shieldKeyClick) {
       onShield()
     }
-  }, [fastKeyClick, charge1KeyClick, charge2KeyClick, switch1KeyClick, switch2KeyClick, shieldKeyClick])
+  }, [
+    fastKeyClick,
+    charge1KeyClick,
+    charge2KeyClick,
+    switch1KeyClick,
+    switch2KeyClick,
+    shieldKeyClick,
+  ])
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {
@@ -482,17 +540,19 @@ const GamePage = () => {
   }, [])
 
   if (isLoading) {
-    return <p>Loading...</p>
+    return <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
   }
 
   const current = active[charPointer]
   const opp = opponent[oppPointer]
 
   return (
-    <main className={style.root}>
+    <main className={style.root} style={{ height }}>
       <div className={style.content} onClick={onClick}>
         <section className={style.nav}>
-          <button className="btn btn-negative" onClick={onQuit}>Exit</button>
+          <button className="btn btn-negative" onClick={onQuit}>
+            Exit
+          </button>
         </section>
         <section className={style.statuses}>
           <Status subject={current} shields={shields} remaining={remaining} />
@@ -505,28 +565,32 @@ const GamePage = () => {
             <Icon name="clock" size="medium" />
           </div>
         </section>
+        
+        <strong style={{visibility: message.length === 1 ? "hidden" : "visible"}} className={style.message}>
+            {message[0]}&nbsp;
+          {/* <span className={style[currentType]}> */}
+            {message[1]}
+          {/* </span> */}
+          {message[2]}
+        </strong> 
+        
         <Field characters={characters} />
         <Switch
           team={active}
           pointer={charPointer}
           countdown={swap}
           onClick={onSwitchClick}
-        /> 
+        />
         <Charged
           moves={moves[charPointer]}
           energy={current.current?.energy || 0}
           onClick={onChargeClick}
         />
-        {
-          message !== "" &&
-          <strong className={style.message}>
-            {message}
-          </strong>
-        }
+
         <Popover
           closed={status === StatusTypes.MAIN}
-          showMenu={status !== StatusTypes.WAITING
-            && status !== StatusTypes.STARTING
+          showMenu={
+            status !== StatusTypes.WAITING && status !== StatusTypes.STARTING
           }
         >
           {status === StatusTypes.FAINT && (

@@ -3,7 +3,7 @@
 
 .root {
   @include bg;
-  height: 100vh;
+  min-height: 100%;
   overflow: hidden;
 }
 
@@ -56,4 +56,59 @@
   justify-content: center;
   text-align: center;
   margin-top: 2em;
+}
+
+.normal {
+  color: $color-normal;
+}
+.fighting {
+  color: $color-fighting;
+}
+.flying {
+  color: $color-flying;
+}
+.poison {
+  color: $color-poison;
+}
+.ground {
+  color: $color-ground;
+}
+.rock {
+  color: $color-rock;
+}
+.bug {
+  color: $color-bug;
+}
+.ghost {
+  color: $color-ghost;
+}
+.electric {
+  color: $color-electric;
+}
+.water {
+  color: $color-water;
+}
+.fire {
+  color: $color-fire;
+}
+.grass {
+  color: $color-grass;
+}
+.steel {
+  color: $color-steel;
+}
+.psychic {
+  color: $color-psychic;
+}
+.ice {
+  color: $color-ice;
+}
+.dragon {
+  color: $color-dragon;
+}
+.fairy {
+  color: $color-fairy;
+}
+.dark {
+  color: $color-dark;
 }

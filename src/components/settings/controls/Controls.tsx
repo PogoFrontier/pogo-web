@@ -1,11 +1,11 @@
-import Input from "@components/input/Input"
-import SettingsContext from "@context/SettingsContext"
-import { useContext, useEffect, useState } from "react"
-import style from "./controls.module.scss"
+import Input from '@components/input/Input'
+import SettingsContext from '@context/SettingsContext'
+import { useContext, useEffect, useState } from 'react'
+import style from './controls.module.scss'
 
 const returnKey = (key: string) => {
-  if (key === " ") {
-    return "space"
+  if (key === ' ') {
+    return 'space'
   }
   return key
 }
@@ -17,7 +17,12 @@ interface KeyInputProps {
   onSetKey: (keyType: string, newKey: string) => void
 }
 
-const KeyInput: React.FC<KeyInputProps> = ({ value, title, type, onSetKey }) => {
+const KeyInput: React.FC<KeyInputProps> = ({
+  value,
+  title,
+  type,
+  onSetKey,
+}) => {
   const [v, setV] = useState(value)
 
   useEffect(() => {
@@ -25,11 +30,11 @@ const KeyInput: React.FC<KeyInputProps> = ({ value, title, type, onSetKey }) => 
   }, [value])
 
   const show = () => {
-    setV("")
+    setV('')
   }
 
   const hide = () => {
-    if (v === "") {
+    if (v === '') {
       setV(value)
     }
   }
@@ -68,7 +73,7 @@ const Controls = () => {
     charge2Key,
     switch1Key,
     switch2Key,
-    shieldKey
+    shieldKey,
   } = settings.keys
 
   const onSetKey = (keyType: string, newKey: string) => {

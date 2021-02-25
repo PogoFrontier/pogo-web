@@ -36,7 +36,7 @@ $xl: 1200px;
 
 @mixin bg {
   position: relative;
-  height: 100vh;
+  min-height: 100%;
   background-image: url('../../assets/img/main.jpeg');
   background-position: center;
   background-size: cover;

@@ -5,7 +5,7 @@ import { NICE, GREAT, EXCELLENT } from './constants'
 import style from './stepper.module.scss'
 
 interface StepperProps {
-  onStep: (x: number) => void,
+  onStep: (x: number) => void
   step: number
 }
 
@@ -16,7 +16,7 @@ const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
   const onStepperClick = () => {
     if (stepperCharge < 100) {
       let stepperCount = stepperCharge
-      stepperCount += 7;
+      stepperCount += 7
       setStepperCharge(stepperCount)
       if (stepperCount >= 30 && stepperCount < 80) {
         setStepperLabel(NICE)
@@ -45,7 +45,10 @@ const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
     <div>
       <button
         onClick={onStepperClick}
-        className={classnames([style.button, style[stepperLabel.toLowerCase()]])}
+        className={classnames([
+          style.button,
+          style[stepperLabel.toLowerCase()],
+        ])}
       >
         {stepperLabel === '' ? 'Tap to Charge' : stepperLabel}
       </button>

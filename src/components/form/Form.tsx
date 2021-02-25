@@ -8,6 +8,7 @@ import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import { v4 as uuidv4 } from 'uuid'
 import classnames from 'classnames'
 import { getSignInWithGooglePopup } from 'src/firebase'
+import Loader from 'react-loader-spinner'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState('')
@@ -53,10 +54,9 @@ const Form: React.FunctionComponent = () => {
           />
         </div>
       </div>
-      {
-        isLoading ?
-        <div>Loading... </div>
-        :
+      {isLoading ? (
+        <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
+      ) : (
         <>
           <button
             className={classnames([style.button, 'btn', 'btn-primary'])}
@@ -66,9 +66,11 @@ const Form: React.FunctionComponent = () => {
             Play
           </button>
           <br />
-          <button onClick={getSignInWithGooglePopup}>Sign In With Google</button>
+          <button onClick={getSignInWithGooglePopup}>
+            Sign In With Google
+          </button>
         </>
-      }
+      )}
     </section>
   )
 }
