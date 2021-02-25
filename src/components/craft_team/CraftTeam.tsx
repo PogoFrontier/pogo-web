@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TeamMemberSummary from '@components/team_member_summary/TeamMemberSummary'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
 import getMini from '@common/actions/getMini'
-import TeamContext from '@context/TeamContext'
 import Input from '@components/input/Input'
 import style from './craft.module.scss'
 import classnames from 'classnames'
@@ -25,7 +24,6 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [addingMember, setAddingMember] = useState(false)
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
-  const setTeam = useContext(TeamContext).setTeam
 
   useEffect(() => {
     if (teamToEdit) {
@@ -81,7 +79,6 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
             members: workingTeam,
           }
     updateTeam(teamToUpdate)
-    setTeam(teamToUpdate.members)
   }
 
   const handleTeamNameChange = (e: any) => {

@@ -6,19 +6,20 @@ import SocketContext from '@context/SocketContext'
 import IdContext from '@context/IdContext'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
-import { auth } from '../src/firebase'
+// import { auth } from '../src/firebase'
 import UserContext, { User } from '@context/UserContext'
-import {
-  getUserProfile,
-  postNewGoogleUser,
-  signInWithGoogleId,
-} from '@common/actions/userAPIActions'
+// import {
+//   getUserProfile,
+//   postNewGoogleUser,
+//   signInWithGoogleId,
+// } from '@common/actions/userAPIActions'
 import { WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Head from 'next/head'
+import { v4 as uuidv4 } from 'uuid'
 
 /**
  * NextJS wrapper
@@ -48,65 +49,74 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       userFromStorage &&
       userFromStorage !== 'undefined'
     ) {
-      if (userFromStorage.googleId) {
-        // user is from db
-        signInWithGoogleId(userFromStorage.googleId)
-          .then((res) => {
-            if (res.error) {
-              setCurrentUser(null)
-            } else {
-              setCurrentUser(res.userData)
-              if (res.userData.teams && res.userData.teams[0]) {
-                setCurrentTeam(res.userData.teams[0].members)
-              }
-            }
-          })
-          .catch(() => setCurrentUser(null))
-      } else {
-        // its just a local guest
-        const userJSON = JSON.parse(userFromStorage)
-        if (userJSON.teams && userJSON.teams[0]) {
-          setCurrentTeam(userJSON.teams[0].members)
-        }
-        setCurrentUser(userJSON)
+      // if (userFromStorage.googleId) {
+      //   // user is from db
+      //   signInWithGoogleId(userFromStorage.googleId)
+      //     .then((res) => {
+      //       if (res.error) {
+      //         setCurrentUser(null)
+      //       } else {
+      //         setCurrentUser(res.userData)
+      //         if (res.userData.teams && res.userData.teams[0]) {
+      //           setCurrentTeam(res.userData.teams[0].members)
+      //         }
+      //       }
+      //     })
+      //     .catch(() => setCurrentUser(null))
+      // } else {
+      const userJSON = JSON.parse(userFromStorage)
+      if (
+        userJSON.teams &&
+        userJSON.teams[0] &&
+        userJSON.teams[0].members.length > 0
+      ) {
+        setCurrentTeam(userJSON.teams[0].members)
       }
+      setCurrentUser(userJSON)
+      // }
     } else {
-      // sign in user and store in context
-      auth.onAuthStateChanged(async (userAuth: any) => {
-        if (userAuth) {
-          signInWithGoogleId(userAuth.uid)
-            .then((res) => {
-              if (res.error) {
-                postNewGoogleUser(userAuth)
-                  .then((newRes) => {
-                    if (!newRes.error) {
-                      setCurrentUser(newRes.userData)
-                      if (typeof window !== undefined) {
-                        localStorage.setItem(
-                          'user',
-                          JSON.stringify(newRes.userData)
-                        )
-                        localStorage.setItem('token', newRes.token)
-                      }
-                    }
-                  })
-                  .catch(() => setCurrentUser(null))
-              } else {
-                setCurrentUser(res.userData)
-                if (res.userData.teams && res.userData.teams[0]) {
-                  setCurrentTeam(res.userData.teams[0].members)
-                }
-                if (typeof window !== undefined) {
-                  localStorage.setItem('user', JSON.stringify(res.userData))
-                  localStorage.setItem('token', res.token)
-                }
-              }
-            })
-            .catch(() => setCurrentUser(null))
-        } else {
-          return
-        }
-      })
+      const newUser: User = {
+        displayName: uuidv4(),
+        teams: [],
+      }
+      setCurrentUser(newUser)
+      localStorage.setItem('user', JSON.stringify(newUser))
+      //   // sign in user and store in context
+      //   auth.onAuthStateChanged(async (userAuth: any) => {
+      //     if (userAuth) {
+      //       signInWithGoogleId(userAuth.uid)
+      //         .then((res) => {
+      //           if (res.error) {
+      //             postNewGoogleUser(userAuth)
+      //               .then((newRes) => {
+      //                 if (!newRes.error) {
+      //                   setCurrentUser(newRes.userData)
+      //                   if (typeof window !== undefined) {
+      //                     localStorage.setItem(
+      //                       'user',
+      //                       JSON.stringify(newRes.userData)
+      //                     )
+      //                     localStorage.setItem('token', newRes.token)
+      //                   }
+      //                 }
+      //               })
+      //               .catch(() => setCurrentUser(null))
+      //           } else {
+      //             setCurrentUser(res.userData)
+      //             if (res.userData.teams && res.userData.teams[0]) {
+      //               setCurrentTeam(res.userData.teams[0].members)
+      //             }
+      //             if (typeof window !== undefined) {
+      //               localStorage.setItem('user', JSON.stringify(res.userData))
+      //               localStorage.setItem('token', res.token)
+      //             }
+      //           }
+      //         })
+      //         .catch(() => setCurrentUser(null))
+      //     } else {
+      //       return
+      //     }
+      //   })
     }
     return function cleanup() {
       if (socket.readyState) {
@@ -118,26 +128,27 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const refreshUser = () => {
     // use token (store in localStorage! (res from signin)) to getUserProfile from API
     // then update currentUser and localStorage
-    if (localStorage.getItem('token')) {
-      const token: any = localStorage.getItem('token')
-      getUserProfile(token)
-        .then((res) => {
-          if (!res.error) {
-            setCurrentUser(res)
-            if (res.teams && res.teams[0]) {
-              setCurrentTeam(res.teams[0])
-            }
-            localStorage.setItem('user', JSON.stringify(res))
-          }
-        })
-        .catch(() => setCurrentUser(null))
-    }
+    // if (localStorage.getItem('token')) {
+    //   const token: any = localStorage.getItem('token')
+    //   getUserProfile(token)
+    //     .then((res) => {
+    //       if (!res.error) {
+    //         setCurrentUser(res)
+    //         if (res.teams && res.teams[0]) {
+    //           setCurrentTeam(res.teams[0])
+    //         }
+    //         localStorage.setItem('user', JSON.stringify(res))
+    //       }
+    //     })
+    //     .catch(() => setCurrentUser(null))
+    // }
   }
 
   const setTeams = (teams: any[]) => {
     const curr: User = { ...currentUser! }
     curr.teams = teams
     setCurrentUser(curr)
+    localStorage.setItem('user', JSON.stringify(curr))
   }
 
   const connect = (id1: string, payload: OnNewRoomPayload) => {

@@ -2,7 +2,7 @@ import Layout from '@components/layout/Layout'
 import UserContext from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
-import { updateUserTeam } from '@common/actions/userAPIActions'
+// import { updateUserTeam } from '@common/actions/userAPIActions'
 import getMini from '@common/actions/getMini'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
@@ -15,26 +15,20 @@ interface ContentProps {
 }
 
 const Content: React.FC<ContentProps> = ({ meta }) => {
-  const { user, refreshUser, setTeams } = useContext(UserContext)
+  const { user, setTeams } = useContext(UserContext)
   const [craftingTeam, setCraftingTeam] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<any | null>(null)
+  const [editIndex, setEditIndex] = useState(-1)
   const setTeam = useContext(TeamContext).setTeam
 
   const updateTeam = (team: any) => {
-    if (localStorage.getItem('token')) {
-      const token: any = localStorage.getItem('token')
-      updateUserTeam(team, token)
-        .then((res) => {
-          if (res.message) {
-            // display success message too
-            refreshUser()
-            setCraftingTeam(false)
-          }
-        })
-        .catch(() => {
-          // console.log(err)
-        })
+    if (editIndex > -1 && editIndex < user.teams.length) {
+      user.teams[editIndex] = team
+    } else {
+      user.teams.unshift(team)
+      setTeam(team.members)
     }
+    setTeams(user.teams)
   }
 
   const handleOnClickAddTeam = () => {
@@ -44,6 +38,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   const handleEditTeam = (e: any) => {
     setTeamToEdit(user.teams[e.target.value])
+    setEditIndex(e.target.value)
     setCraftingTeam(true)
   }
 
@@ -150,7 +145,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
 const TeamPage = () => {
   const { user } = useContext(UserContext)
-  const [ metas, setMetas ] = useState([
+  const [ metas, ] = useState([
     'Great League',
     'Ultra League',
     'Master League',
@@ -170,15 +165,15 @@ const TeamPage = () => {
     }
   }, [user, metas])
 
-  const addMeta = () => {
-    // open modal and add custom meta to list
-    // eventually these metas and their rules should be stored on backend, useEffect to store them in state
-    // they should also be part of the user object
-    const newMetas = [...metas, 'Holiday Cup']
-    setMetas(newMetas)
-    setIndex(newMetas.length - 1) // will be whatever the new meta is
-    // reset select value on close/submit of modal
-  }
+  // const addMeta = () => {
+  //   // open modal and add custom meta to list
+  //   // eventually these metas and their rules should be stored on backend, useEffect to store them in state
+  //   // they should also be part of the user object
+  //   const newMetas = [...metas, 'Holiday Cup']
+  //   setMetas(newMetas)
+  //   setIndex(newMetas.length - 1) // will be whatever the new meta is
+  //   // reset select value on close/submit of modal
+  // }
 
   const tabs = metas.map(x => (
     <TabPanel key={x}>
@@ -194,7 +189,7 @@ const TeamPage = () => {
     <Layout>
       <Split
         tabs={metas}
-        buttonProps={{ title: "New Meta", onClick: addMeta }}
+        // buttonProps={{ title: "New Meta", onClick: addMeta }}
         tabProps={{ index, onChange, children: null }}
       >
         {tabs}
