@@ -391,7 +391,8 @@ const GamePage = () => {
         })
         return true
       }
-      if (bufferedMove === '') {
+      if (!currentMove.startsWith('#ca')
+      && bufferedMove === '') {
         setBufferedMove(data)
         ws.send(data)
         return true
@@ -418,7 +419,9 @@ const GamePage = () => {
         })
         return true
       }
-      if (bufferedMove === '' || bufferedMove.startsWith('#fa')) {
+      if (!currentMove.startsWith('#ca')
+      && (bufferedMove === ''
+      || bufferedMove.startsWith('#fa'))) {
         setBufferedMove(data)
         ws.send(data)
         return true
@@ -436,16 +439,18 @@ const GamePage = () => {
       const data = '#ca:' + move.moveId
       if (currentMove === '' && bufferedMove === '') {
         setCurrentMove(data)
-        setActive(prev => {
+        setActive(preva => {
+          const prev = { ...preva }
           prev[charPointer].current!.energy -= move.energy
-          return prev
+          return preva
         })
         ws.send(data)
         return true
       }
-      if (bufferedMove === ''
+      if (!currentMove.startsWith('#ca') 
+      && (bufferedMove === ''
       || bufferedMove.startsWith('#fa')
-      || bufferedMove.startsWith('#sw')) {
+      || bufferedMove.startsWith('#sw'))) {
         setBufferedMove(data)
         ws.send(data)
         return true
