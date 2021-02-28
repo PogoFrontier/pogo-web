@@ -13,6 +13,9 @@ interface CraftTeamProps {
   onExit: () => void
 }
 
+const unsavedString = "You have unsaved changes."
+const savedString = "Save successful."
+
 const CraftTeam: React.FC<CraftTeamProps> = ({
   selectedMeta,
   teamToEdit,
@@ -24,6 +27,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [addingMember, setAddingMember] = useState(false)
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
+  const [isUnsaved, setIsUnsaved] = useState(false)
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     if (teamToEdit) {
@@ -58,6 +63,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     newTeam[editingIndex] = pokemon
     setWorkingTeam(newTeam)
     setSelectedPokemon(pokemon)
+    setIsUnsaved(true)
+    setMessage(unsavedString)
     setAddingMember(false)
   }
 
@@ -79,9 +86,13 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
             members: workingTeam,
           }
     updateTeam(teamToUpdate)
+    setIsUnsaved(false)
+    setMessage(savedString)
   }
 
   const handleTeamNameChange = (e: any) => {
+    setIsUnsaved(true)
+    setMessage(unsavedString)
     setTeamName(e.target.value)
   }
 
@@ -103,12 +114,13 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         <button className="btn btn-negative" onClick={onExit}>
           Exit
         </button>
-        {workingTeam && workingTeam.length > 0 && (
+        {isUnsaved && (
           <button className="btn btn-primary" onClick={saveTeam}>
             Save Team
           </button>
         )}
       </div>
+      <p>{message}</p>
       <div>
         {workingTeam && (
           <ul className={style.members}>
@@ -123,11 +135,11 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
                   <img src={getMini(member.sid)} alt={member.speciesName} />
                 </li>
               ))}
-            {workingTeam.length < 6 && (
+            {workingTeam.length < 6 && !addingMember && (
               <li key="add-member">
-                <a href="#" onClick={handleAddMemberClick}>
+                <button className="btn btn-primary" onClick={handleAddMemberClick}>
                   Add New
-                </a>
+                </button>
               </li>
             )}
           </ul>

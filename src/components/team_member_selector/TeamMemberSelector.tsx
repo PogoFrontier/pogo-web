@@ -5,6 +5,9 @@ import {
 } from '@common/actions/pokemonAPIActions'
 import { cpms, ivValues, levelValues } from '@config/statVals'
 import getImage from '@common/actions/getImage'
+import style from './style.module.scss'
+import Input from '@components/input/Input'
+import classNames from 'classnames'
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
@@ -223,72 +226,51 @@ const TeamMemberSelector = (props: {
   }
 
   return (
-    <div>
-      <h4>Adding New Pokemon</h4>
+    <section>
       {suggestions && suggestions.length > 0 ? (
-        <table className="pokemon-input">
-          <tbody>
-            <tr>
-              <td>
-                <label>Pokemon: </label>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  onChange={onChange}
-                  onKeyDown={onKeyDown}
-                  value={userInput}
-                />
-              </td>
-            </tr>
-            <tr>
-              <td />
-              <td>
-                {showSuggestions && userInput ? (
-                  filteredSuggestions && filteredSuggestions.length ? (
-                    <ul
-                      className="suggestions"
-                      style={{ listStyleType: 'none' }}
+        <div>
+          <Input
+            title="Species"
+            type="text"
+            placeholder="Choose Pokemon"
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            value={userInput}
+          />
+          {showSuggestions && userInput ? (
+            filteredSuggestions && filteredSuggestions.length ? (
+              <ul className={style.suggestions}>
+                {filteredSuggestions.map(
+                  (suggestion: string, index: number) => (
+                    <li
+                      className={classNames([style.suggestion, {[style.active]: index === activeSuggestion}])}
+                      key={suggestion}
+                      onClick={handleSetPokemon}
                     >
-                      {filteredSuggestions.map(
-                        (suggestion: string, index: number) => (
-                          <li
-                            className={
-                              index === activeSuggestion
-                                ? 'suggestion-active'
-                                : ''
-                            }
-                            key={suggestion}
-                            onClick={handleSetPokemon}
-                          >
-                            {suggestion}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  ) : (
-                    <div className="no-suggestions" />
+                      {suggestion}
+                    </li>
                   )
-                ) : null}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      ) : null}
+                )}
+              </ul>
+            ) : (
+              <p>No suggestions</p>
+            )
+          ) : null}
+        </div>
+      ) : <p>Failed to connect to the Pokemon database</p>}
       {selectedPokemonData && addToBox ? (
-        <div className="pokemon-info">
-          <div className="choice-btns">
-            <button className="cancel-btn" onClick={cancel}>
-              Cancel
-            </button>
-            <button className="save-btn" onClick={handleSavePokemon}>
-              {' '}
+        <div className={style.info}>
+          <span className={style.btnRow}>
+            <button className={style.btn} onClick={handleSavePokemon}>
               Save
             </button>
-          </div>
-          <label className="cp">CP: {addToBox.cp}</label>
+            <button className={style.exit} onClick={cancel}>
+              Cancel
+            </button>
+          </span>
+          <label className={style.cp}>cp <strong>{addToBox.cp}</strong></label>
           <br />
-          <label className="types">
+          <label>
             {addToBox.types.map(
               (type: string) =>
                 type !== 'none' && <span key={type}>{toTitleCase(type)} </span> // Later make this a custom component
@@ -327,7 +309,6 @@ const TeamMemberSelector = (props: {
           >
             Clear
           </button>
-          <br />
           <div className="fast-move">
             <label className="fast-move-label">Fast Move: </label>
             <select
@@ -344,50 +325,33 @@ const TeamMemberSelector = (props: {
               ))}
             </select>
           </div>
-          <br />
-          <table className="charge-moves-table">
-            <tbody>
-              <tr>
-                <td>
-                  <label className="charge-move-label">Charge Moves: </label>
-                </td>
-                <td>
-                  <select
-                    className="charge-move-1"
-                    name="charge-move-1"
-                    id="chargeMove1"
-                    onChange={handlePokemonChange}
-                    value={addToBox.chargeMoves[0]}
-                  >
-                    {selectedPokemonData.chargedMoves.map((move: string) => (
-                      <option value={move} key={move}>
-                        {toTitleCase(move)}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td />
-                <td>
-                  <select
-                    className="charge-move-2"
-                    name="charge-move-2"
-                    id="chargeMove2"
-                    onChange={handlePokemonChange}
-                    value={addToBox.chargeMoves[1]}
-                  >
-                    {selectedPokemonData.chargedMoves.map((move: string) => (
-                      <option value={move} key={move}>
-                        {toTitleCase(move)}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <br />
+          <label className="charge-move-label">Charge Moves: </label>
+          <select
+            className="charge-move-1"
+            name="charge-move-1"
+            id="chargeMove1"
+            onChange={handlePokemonChange}
+            value={addToBox.chargeMoves[0]}
+          >
+            {selectedPokemonData.chargedMoves.map((move: string) => (
+              <option value={move} key={move}>
+                {toTitleCase(move)}
+              </option>
+            ))}
+          </select>
+          <select
+            className="charge-move-2"
+            name="charge-move-2"
+            id="chargeMove2"
+            onChange={handlePokemonChange}
+            value={addToBox.chargeMoves[1]}
+          >
+            {selectedPokemonData.chargedMoves.map((move: string) => (
+              <option value={move} key={move}>
+                {toTitleCase(move)}
+              </option>
+            ))}
+          </select>
           <div className="stats">
             <div className="level">
               <label className="level-label"> Level: </label>
@@ -407,67 +371,50 @@ const TeamMemberSelector = (props: {
             </div>
             <div className="ivs">
               <label className="iv-label">IVs: </label>
-              <table className="iv-table">
-                <tbody>
-                  <tr>
-                    <td>Attack</td>
-                    <td>Defense</td>
-                    <td>HP</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <select
-                        className="atk"
-                        name="atk"
-                        id="atk"
-                        onChange={handlePokemonChange}
-                        value={addToBox.iv.atk}
-                      >
-                        {ivValues.map((val: number) => (
-                          <option value={val} key={val}>
-                            {val}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <select
-                        className="def"
-                        name="def"
-                        id="def"
-                        onChange={handlePokemonChange}
-                        value={addToBox.iv.def}
-                      >
-                        {ivValues.map((val: number) => (
-                          <option value={val} key={val}>
-                            {val}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td>
-                      <select
-                        className="hp"
-                        name="hp"
-                        id="hp"
-                        onChange={handlePokemonChange}
-                        value={addToBox.iv.hp}
-                      >
-                        {ivValues.map((val: number) => (
-                          <option value={val} key={val}>
-                            {val}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <select
+                className="atk"
+                name="atk"
+                id="atk"
+                onChange={handlePokemonChange}
+                value={addToBox.iv.atk}
+              >
+                {ivValues.map((val: number) => (
+                  <option value={val} key={val}>
+                    {val}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="def"
+                name="def"
+                id="def"
+                onChange={handlePokemonChange}
+                value={addToBox.iv.def}
+              >
+                {ivValues.map((val: number) => (
+                  <option value={val} key={val}>
+                    {val}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="hp"
+                name="hp"
+                id="hp"
+                onChange={handlePokemonChange}
+                value={addToBox.iv.hp}
+              >
+                {ivValues.map((val: number) => (
+                  <option value={val} key={val}>
+                    {val}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
       ) : null}
-    </div>
+    </section>
   )
 }
 export default TeamMemberSelector
