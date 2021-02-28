@@ -1,0 +1,26 @@
+@import 'colors';
+
+.btns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.members {
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+.member {
+  margin-right: 1em;
+  width: 4em;
+  border: solid 1px $color-neutral-light;
+  text-align: center;
+  cursor: pointer;
+  img {
+    height: 3em;
+  }
+  &.selected {
+    background-color: $color-brand-primary;
+  }
+}

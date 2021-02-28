@@ -7,13 +7,13 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import { v4 as uuidv4 } from 'uuid'
 import classnames from 'classnames'
-import { getSignInWithGooglePopup } from 'src/firebase'
+// import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
 
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState('')
   const { socket, connect } = useContext(SocketContext)
-  const team: TeamMember[] = useContext(TeamContext)
+  const team: TeamMember[] = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -66,9 +66,9 @@ const Form: React.FunctionComponent = () => {
             Play
           </button>
           <br />
-          <button onClick={getSignInWithGooglePopup}>
+          {/* <button onClick={getSignInWithGooglePopup}>
             Sign In With Google
-          </button>
+          </button> */}
         </>
       )}
     </section>

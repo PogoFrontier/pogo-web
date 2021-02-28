@@ -30,7 +30,7 @@ const MatchupPage = () => {
   const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
-  const team: TeamMember[] = useContext(TeamContext)
+  const team: TeamMember[] = useContext(TeamContext).team
   const { height } = useWindowSize()
 
   const onMessage = (message: MessageEvent) => {

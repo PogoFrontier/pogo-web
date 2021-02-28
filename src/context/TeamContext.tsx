@@ -78,6 +78,6 @@ export const defaultTeam: TeamMember[] = [
   },
 ]
 
-const TeamContext = createContext(defaultTeam)
+const TeamContext = createContext({} as any)
 
 export default TeamContext

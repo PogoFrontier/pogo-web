@@ -1,0 +1,81 @@
+@import 'variables';
+@import 'colors';
+
+.root {
+  padding: 1em;
+  @include md() {
+    padding: 2em;
+  }
+}
+
+.wrapper {
+  width: 100%;
+  margin-bottom: 1em;
+  @include md() {
+    display: flex;
+  }
+}
+
+.box {
+  background-color: $color-white;
+  padding: 0.5em 1em;
+  border: solid 1px $color-neutral-light;
+  width: 100%;
+  margin-bottom: 1em;
+  cursor: pointer;
+  text-align: left;
+  @include md() {
+    display: flex;
+    flex: 1 1;
+    border: solid 1px $color-neutral-light;
+    padding: 1em;
+    max-width: 60em;
+    margin-right: 1.5em;
+    margin-bottom: 0;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+.label {
+  font-size: large;
+  font-weight: 600;
+}
+
+.members {
+  img {
+    height: 3em;
+    @include md() {
+      height: 3.5em;
+    }
+  }
+  img + img {
+    margin-left: 1em;
+  }
+}
+
+.btns {
+  display: flex;
+  justify-content: space-between;
+  @include md() {
+    flex-direction: column;
+    justify-content: center;
+    button + button {
+      margin-top: 0.5em;
+    }
+  }
+}
+
+.btn {
+  font-weight: 600;
+  background: none;
+  border: none;
+  font-size: large;
+  cursor: pointer;
+  &.edit {
+    color: $color-brand-primary
+  }
+  &.delete {
+    color: $color-brand-negative
+  }
+}

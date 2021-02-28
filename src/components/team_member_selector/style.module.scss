@@ -1,0 +1,61 @@
+@import 'variables';
+@import 'colors';
+
+.info {
+  br {
+    height: 20px;
+  }
+}
+
+.suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suggestion {
+  cursor: pointer;
+  margin-bottom: 0.5em;
+  transition: margin-left 150ms;
+  &:hover {
+    margin-left: 1em;
+  }
+}
+
+.btnRow {
+  float: right;
+  button + button {
+    margin-left: 1em;
+  }
+}
+
+.cp {
+  font-size: 1.5em;
+}
+
+.btn {
+  border: none;
+  background: none;
+  color: $color-brand-primary;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.exit {
+  border: none;
+  background: none;
+  color: $color-brand-negative;
+  font-size: 1.5em;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}

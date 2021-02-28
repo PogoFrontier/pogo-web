@@ -23,7 +23,7 @@ export default class CustomDocument extends Document<{
   public render() {
     return (
       <Html>
-        <Head>{/* your head if needed */}</Head>
+        <Head />
         <body>
           <div dangerouslySetInnerHTML={{ __html: this.props.spriteContent }} />
           <Main />
