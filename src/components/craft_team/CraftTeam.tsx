@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import TeamMemberSummary from '@components/team_member_summary/TeamMemberSummary'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
 import getMini from '@common/actions/getMini'
 import Input from '@components/input/Input'
@@ -30,14 +29,6 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [isUnsaved, setIsUnsaved] = useState(false)
   const [message, setMessage] = useState('')
 
-  useEffect(() => {
-    if (teamToEdit) {
-      setupForEditing()
-    } else if (!(workingTeam && workingTeam.length > 0)) {
-      setAddingMember(true)
-    }
-  }, [])
-
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
     setWorkingTeam(teamToEditCopy.members)
@@ -47,7 +38,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   const handleSelectPokemon = (e: any) => {
     setSelectedPokemon(workingTeam[e.currentTarget.id])
-    // setEditingIndex(Number(e.currentTarget.id));
+    setEditingIndex(e.currentTarget.id)
     setAddingMember(false)
   }
 
@@ -61,8 +52,19 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     // validate pokemon before allowing save!
     const newTeam = [...workingTeam]
     newTeam[editingIndex] = pokemon
-    setWorkingTeam(newTeam)
     setSelectedPokemon(pokemon)
+    setWorkingTeam(newTeam)
+    setIsUnsaved(true)
+    setMessage(unsavedString)
+    setAddingMember(false)
+  }
+
+  const deletePokemon = () => {
+    // validate pokemon before allowing save!
+    const newTeam = [...workingTeam]
+    newTeam.splice(editingIndex, 1)
+    setSelectedPokemon(newTeam[0])
+    setWorkingTeam(newTeam)
     setIsUnsaved(true)
     setMessage(unsavedString)
     setAddingMember(false)
@@ -99,7 +101,16 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const handleAddMemberClick = () => {
     setEditingIndex(workingTeam.length)
     setAddingMember(true)
+    setSelectedPokemon(null)
   }
+
+  useEffect(() => {
+    if (teamToEdit) {
+      setupForEditing()
+    } else if (!workingTeam || workingTeam.length <= 0) {
+      setAddingMember(true)
+    }
+  }, [])
 
   return (
     <div>
@@ -144,14 +155,12 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
             )}
           </ul>
         )}
-        {addingMember ? (
-          <TeamMemberSelector
-            cancelEdit={cancelEdit}
-            savePokemon={savePokemon}
-          />
-        ) : selectedPokemon ? (
-          <TeamMemberSummary member={selectedPokemon} />
-        ) : null}
+        <TeamMemberSelector
+          cancelEdit={cancelEdit}
+          savePokemon={savePokemon}
+          member={selectedPokemon}
+          deletePokemon={deletePokemon}
+        />
       </div>
     </div>
   )

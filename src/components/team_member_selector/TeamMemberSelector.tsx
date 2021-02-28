@@ -12,17 +12,31 @@ import classNames from 'classnames'
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
+  member: any,
+  deletePokemon: () => void
 }) => {
-  const { cancelEdit, savePokemon } = props
+  const { cancelEdit, savePokemon, member, deletePokemon } = props
   const [userInput, setUserInput] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [activeSuggestion, setActiveSuggestion] = useState(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState([] as any)
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const [selectedPokemonData, setSelectedPokemonData] = useState<any | null>(
-    null
-  )
+  const [selectedPokemonData, setSelectedPokemonData] = useState<any | null>(null)
   const [addToBox, setAddToBox] = useState<any | null>(null)
+
+  useEffect(() => {
+    if (member && member.speciesName) {
+      setAddToBox(member)
+      getPokemonData(member.speciesName.toLowerCase().replace(/[()]/g, '').replace(/\s/g, '_'))
+      .then((pokemon) => {
+        if (pokemon) {
+          setSelectedPokemonData(pokemon)
+        }
+      });
+    } else if (addToBox && addToBox.speciesName) {
+      setAddToBox(null)
+    }
+  }, [member])
 
   useEffect(() => {
     getPokemonNames().then((names) => {
@@ -225,6 +239,10 @@ const TeamMemberSelector = (props: {
     savePokemon(addToBox)
   }
 
+  const handleDelete = () => {
+    deletePokemon()
+  }
+
   return (
     <section>
       {suggestions && suggestions.length > 0 ? (
@@ -232,7 +250,7 @@ const TeamMemberSelector = (props: {
           <Input
             title="Species"
             type="text"
-            placeholder="Choose Pokemon"
+            placeholder={member ? member.speciesName : "Choose Pokemon"}
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
@@ -264,9 +282,16 @@ const TeamMemberSelector = (props: {
             <button className={style.btn} onClick={handleSavePokemon}>
               Save
             </button>
-            <button className={style.exit} onClick={cancel}>
-              Cancel
-            </button>
+            {
+              !member 
+              ? <button className={style.exit} onClick={cancel}>
+                Cancel
+              </button>
+              :
+              <button className={style.exit} onClick={handleDelete}>
+                Delete
+              </button>
+            }
           </span>
           <label className={style.cp}>cp <strong>{addToBox.cp}</strong></label>
           <br />
@@ -279,6 +304,7 @@ const TeamMemberSelector = (props: {
           <br />
           <img
             src={getImage(addToBox.sid, addToBox.shiny, false)}
+            key={getImage(addToBox.sid, addToBox.shiny, false)}
             alt={addToBox.speciesName}
             className="sprite"
           />
