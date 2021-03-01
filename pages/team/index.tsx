@@ -8,7 +8,7 @@ import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
 import classnames from 'classnames'
-import TeamContext from '@context/TeamContext'
+import TeamContext, { defaultTeam } from '@context/TeamContext'
 
 interface ContentProps {
   meta: string
@@ -53,6 +53,13 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   const onExit = () => {
     setCraftingTeam(false)
+  }
+
+  const handleDelete = (e: any) => {
+    const i = e.target.value
+    user.teams.splice(i, 1)
+    setTeams(user.teams)
+    setTeam(user.teams[0] ? user.teams[0].members : defaultTeam)
   }
 
   if (!user || !user.teams) {
@@ -121,6 +128,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                       </button>
                     }
                     <button
+                      value={i}
+                      onClick={handleDelete}
                       className={classnames([style.btn, style.delete])}
                     >
                       Delete
