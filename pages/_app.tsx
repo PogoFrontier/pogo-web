@@ -42,6 +42,17 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [keys, setKeys1] = useState(defaultKeys)
 
   useEffect(() => {
+    const keysFromStorage: any = localStorage.getItem('settings')
+    if (
+      typeof window !== undefined &&
+      keysFromStorage &&
+      keysFromStorage !== 'undefined'
+    ) {
+      const keysJSON = JSON.parse(keysFromStorage)
+      if (keysJSON && keysJSON.fastKey) {
+        setKeys1(keysJSON)
+      }
+    }
     // first try to load from localstorage and store in context
     const userFromStorage: any = localStorage.getItem('user')
     if (

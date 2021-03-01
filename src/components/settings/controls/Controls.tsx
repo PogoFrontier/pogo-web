@@ -85,6 +85,7 @@ const Controls = () => {
       }
     }
     keysCopy[keyType] = newKey
+    localStorage.setItem('settings', JSON.stringify(keysCopy))
     settings.setKeys(keysCopy)
   }
 
