@@ -12,7 +12,7 @@ import classNames from 'classnames'
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
-  member: any,
+  member: any
   deletePokemon: () => void
 }) => {
   const { cancelEdit, savePokemon, member, deletePokemon } = props
@@ -21,18 +21,24 @@ const TeamMemberSelector = (props: {
   const [activeSuggestion, setActiveSuggestion] = useState(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState([] as any)
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const [selectedPokemonData, setSelectedPokemonData] = useState<any | null>(null)
+  const [selectedPokemonData, setSelectedPokemonData] = useState<any | null>(
+    null
+  )
   const [addToBox, setAddToBox] = useState<any | null>(null)
 
   useEffect(() => {
     if (member && member.speciesName) {
       setAddToBox(member)
-      getPokemonData(member.speciesName.toLowerCase().replace(/[()]/g, '').replace(/\s/g, '_'))
-      .then((pokemon) => {
+      getPokemonData(
+        member.speciesName
+          .toLowerCase()
+          .replace(/[()]/g, '')
+          .replace(/\s/g, '_')
+      ).then((pokemon) => {
         if (pokemon) {
           setSelectedPokemonData(pokemon)
         }
-      });
+      })
     } else if (addToBox && addToBox.speciesName) {
       setAddToBox(null)
     }
@@ -233,6 +239,7 @@ const TeamMemberSelector = (props: {
 
   const handleSetPokemon = (e: any) => {
     setPokemon(e.currentTarget.innerText)
+    setUserInput('')
   }
 
   const handleSavePokemon = () => {
@@ -250,7 +257,7 @@ const TeamMemberSelector = (props: {
           <Input
             title="Species"
             type="text"
-            placeholder={member ? member.speciesName : "Choose Pokemon"}
+            placeholder={member ? member.speciesName : 'Choose Pokemon'}
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
@@ -261,7 +268,10 @@ const TeamMemberSelector = (props: {
                 {filteredSuggestions.map(
                   (suggestion: string, index: number) => (
                     <li
-                      className={classNames([style.suggestion, {[style.active]: index === activeSuggestion}])}
+                      className={classNames([
+                        style.suggestion,
+                        { [style.active]: index === activeSuggestion },
+                      ])}
                       key={suggestion}
                       onClick={handleSetPokemon}
                     >
@@ -275,25 +285,28 @@ const TeamMemberSelector = (props: {
             )
           ) : null}
         </div>
-      ) : <p>Failed to connect to the Pokemon database</p>}
+      ) : (
+        <p>Failed to connect to the Pokemon database</p>
+      )}
       {selectedPokemonData && addToBox ? (
         <div className={style.info}>
           <span className={style.btnRow}>
             <button className={style.btn} onClick={handleSavePokemon}>
               Save
             </button>
-            {
-              !member 
-              ? <button className={style.exit} onClick={cancel}>
+            {!member ? (
+              <button className={style.exit} onClick={cancel}>
                 Cancel
               </button>
-              :
+            ) : (
               <button className={style.exit} onClick={handleDelete}>
                 Delete
               </button>
-            }
+            )}
           </span>
-          <label className={style.cp}>cp <strong>{addToBox.cp}</strong></label>
+          <label className={style.cp}>
+            cp <strong>{addToBox.cp}</strong>
+          </label>
           <br />
           <label>
             {addToBox.types.map(
