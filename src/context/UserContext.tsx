@@ -17,7 +17,7 @@ const UserContext = createContext({
   },
   setTeams: (_teams: any[]) => {
     return
-  }
+  },
 })
 
 export default UserContext

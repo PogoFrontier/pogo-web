@@ -69,83 +69,74 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   if (craftingTeam) {
     return (
       <div className={style.root}>
-      {
-        teamToEdit
-        ? (
+        {teamToEdit ? (
           <CraftTeam
             selectedMeta={meta}
             updateTeam={updateTeam}
             teamToEdit={teamToEdit}
             onExit={onExit}
           />
-        )
-        : (
+        ) : (
           <CraftTeam
             selectedMeta={meta}
             updateTeam={updateTeam}
             onExit={onExit}
           />
-        )
-      }
-    </div>
+        )}
+      </div>
     )
   }
 
   return (
     <div className={style.root}>
-      {
-        user.teams.length > 0
-        ? (
-          user.teams.map((team: any, i: number) => {
-            if (team.format === meta) {
-              return (
-                <div className={style.wrapper} key={team.id}>
-                  <button
-                    className={style.box}
-                    value={i}
-                    onClick={handleEditTeam}
-                  >
-                    <label className={style.label}>{team.name}</label>
-                    <div className={style.members}>
-                      {team.members.length > 0 && team.members.map((member: any, index: number) => (
+      {user.teams.length > 0 ? (
+        user.teams.map((team: any, i: number) => {
+          if (team.format === meta) {
+            return (
+              <div className={style.wrapper} key={team.id}>
+                <button
+                  className={style.box}
+                  value={i}
+                  onClick={handleEditTeam}
+                >
+                  <label className={style.label}>{team.name}</label>
+                  <div className={style.members}>
+                    {team.members.length > 0 &&
+                      team.members.map((member: any, index: number) => (
                         <img
                           key={index}
                           src={getMini(member.sid)}
                           alt={member.speciesName}
                         />
                       ))}
-                    </div>
-                  </button>
-                  <div className={style.btns}>
-                    {
-                      i > 0 &&
-                      <button
-                        value={i}
-                        onClick={handleChooseTeam}
-                        className={classnames([style.btn, style.edit])}
-                      >
-                        Choose
-                      </button>
-                    }
+                  </div>
+                </button>
+                <div className={style.btns}>
+                  {i > 0 && (
                     <button
                       value={i}
-                      onClick={handleDelete}
-                      className={classnames([style.btn, style.delete])}
+                      onClick={handleChooseTeam}
+                      className={classnames([style.btn, style.edit])}
                     >
-                      Delete
+                      Choose
                     </button>
-                  </div>
+                  )}
+                  <button
+                    value={i}
+                    onClick={handleDelete}
+                    className={classnames([style.btn, style.delete])}
+                  >
+                    Delete
+                  </button>
                 </div>
-              )
-            }
-          })
-        )
-        : <p>No Teams to display</p>
-      }
-      <button
-        className="btn btn-primary"
-        onClick={handleOnClickAddTeam}
-      >
+              </div>
+            )
+          }
+        })
+      ) : (
+        <p>No Teams to display</p>
+      )}
+      <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
         Add Team
       </button>
     </div>
@@ -154,12 +145,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
 const TeamPage = () => {
   const { user } = useContext(UserContext)
-  const [ metas, ] = useState([
-    'Great League',
-    'Ultra League',
-    'Master League',
-  ])
-  const [ index, setIndex ] = useState(0)
+  const [metas] = useState(['Great League', 'Ultra League', 'Master League'])
+  const [index, setIndex] = useState(0)
 
   useEffect(() => {
     if (user && metas) {
@@ -184,7 +171,7 @@ const TeamPage = () => {
   //   // reset select value on close/submit of modal
   // }
 
-  const tabs = metas.map(x => (
+  const tabs = metas.map((x) => (
     <TabPanel key={x}>
       <Content meta={x} />
     </TabPanel>

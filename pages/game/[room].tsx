@@ -106,7 +106,7 @@ const GamePage = () => {
       setActive((prev1) => {
         setCharPointer((prev2) => {
           setCharacters((prev3b) => {
-            let prev3 = { ...prev3b }
+            const prev3 = { ...prev3b }
             let p = ''
             setCurrentMove(() => {
               setBufferedMove((prev) => {
@@ -119,7 +119,7 @@ const GamePage = () => {
                     case Actions.FAST_ATTACK:
                       setTimeout(() => {
                         setCharacters((prev4b) => {
-                          let prev4 = { ...prev4b }
+                          const prev4 = { ...prev4b }
                           prev4[0].status = 'attack'
                           return prev4
                         })
@@ -128,7 +128,7 @@ const GamePage = () => {
                     case Actions.SWITCH:
                       setTimeout(() => {
                         setCharacters((prev4b) => {
-                          let prev4 = { ...prev4b }
+                          const prev4 = { ...prev4b }
                           prev4[0].status = 'switch'
                           return prev4
                         })
@@ -177,10 +177,10 @@ const GamePage = () => {
         return prev1
       })
       if (payload.update[0].message) {
-        const d = payload.update[0].message.split("used")
-        const d2 = d[1].split(".")
-        setMessage([d[0] + "used", d2[0] + ".", d2[1]]);
-        setTimeout(() => setMessage([""]), 5000)
+        const d = payload.update[0].message.split('used')
+        const d2 = d[1].split('.')
+        setMessage([d[0] + 'used', d2[0] + '.', d2[1]])
+        setTimeout(() => setMessage(['']), 5000)
       }
       if (payload.update[0]?.wait) {
         setWait(payload.update[0]!.wait)
@@ -219,7 +219,7 @@ const GamePage = () => {
         setOpponent((prev1) => {
           setOppPointer((prev2) => {
             setCharacters((prev3b) => {
-              let prev3 = { ...prev3b }
+              const prev3 = { ...prev3b }
               if (hp) {
                 prev1[prev2].current!.hp = hp
               }
@@ -391,8 +391,7 @@ const GamePage = () => {
         })
         return true
       }
-      if (!currentMove.startsWith('#ca')
-      && bufferedMove === '') {
+      if (!currentMove.startsWith('#ca') && bufferedMove === '') {
         setBufferedMove(data)
         ws.send(data)
         return true
@@ -419,9 +418,10 @@ const GamePage = () => {
         })
         return true
       }
-      if (!currentMove.startsWith('#ca')
-      && (bufferedMove === ''
-      || bufferedMove.startsWith('#fa'))) {
+      if (
+        !currentMove.startsWith('#ca') &&
+        (bufferedMove === '' || bufferedMove.startsWith('#fa'))
+      ) {
         setBufferedMove(data)
         ws.send(data)
         return true
@@ -431,15 +431,16 @@ const GamePage = () => {
   }
 
   const onChargeClick = (move: Move) => {
-    if (status === StatusTypes.MAIN
-      && wait <= -1
-      && active[charPointer].current?.energy
-      && active[charPointer].current!.energy! >= move.energy
+    if (
+      status === StatusTypes.MAIN &&
+      wait <= -1 &&
+      active[charPointer].current?.energy &&
+      active[charPointer].current!.energy! >= move.energy
     ) {
       const data = '#ca:' + move.moveId
       if (currentMove === '' && bufferedMove === '') {
         setCurrentMove(data)
-        setActive(preva => {
+        setActive((preva) => {
           const prev = { ...preva }
           prev[charPointer].current!.energy -= move.energy
           return preva
@@ -447,10 +448,12 @@ const GamePage = () => {
         ws.send(data)
         return true
       }
-      if (!currentMove.startsWith('#ca') 
-      && (bufferedMove === ''
-      || bufferedMove.startsWith('#fa')
-      || bufferedMove.startsWith('#sw'))) {
+      if (
+        !currentMove.startsWith('#ca') &&
+        (bufferedMove === '' ||
+          bufferedMove.startsWith('#fa') ||
+          bufferedMove.startsWith('#sw'))
+      ) {
         setBufferedMove(data)
         ws.send(data)
         return true
@@ -570,15 +573,18 @@ const GamePage = () => {
             <Icon name="clock" size="medium" />
           </div>
         </section>
-        
-        <strong style={{visibility: message.length === 1 ? "hidden" : "visible"}} className={style.message}>
-            {message[0]}&nbsp;
+
+        <strong
+          style={{ visibility: message.length === 1 ? 'hidden' : 'visible' }}
+          className={style.message}
+        >
+          {message[0]}&nbsp;
           {/* <span className={style[currentType]}> */}
-            {message[1]}
+          {message[1]}
           {/* </span> */}
           {message[2]}
-        </strong> 
-        
+        </strong>
+
         <Field characters={characters} />
         <Switch
           team={active}

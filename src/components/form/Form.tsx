@@ -49,7 +49,7 @@ const Form: React.FunctionComponent = () => {
           <input
             className={style.input}
             value={room}
-            placeholder="Room Name"
+            placeholder="Enter room code"
             onChange={onChange}
           />
         </div>

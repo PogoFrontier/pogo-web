@@ -12,14 +12,14 @@ interface CraftTeamProps {
   onExit: () => void
 }
 
-const unsavedString = "You have unsaved changes."
-const savedString = "Save successful."
+const unsavedString = 'You have unsaved changes.'
+const savedString = 'Save successful.'
 
 const CraftTeam: React.FC<CraftTeamProps> = ({
   selectedMeta,
   teamToEdit,
   updateTeam,
-  onExit
+  onExit,
 }) => {
   const [workingTeam, setWorkingTeam] = useState([] as any)
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
@@ -138,7 +138,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
             {workingTeam.length > 0 &&
               workingTeam.map((member: any, index: any) => (
                 <li
-                  className={classnames([style.member, {[style.selected]: member === selectedPokemon}])}
+                  className={classnames([
+                    style.member,
+                    { [style.selected]: member === selectedPokemon },
+                  ])}
                   key={index}
                   id={index}
                   onClick={handleSelectPokemon}
@@ -148,7 +151,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
               ))}
             {workingTeam.length < 6 && !addingMember && (
               <li key="add-member">
-                <button className="btn btn-primary" onClick={handleAddMemberClick}>
+                <button
+                  className="btn btn-primary"
+                  onClick={handleAddMemberClick}
+                >
                   Add New
                 </button>
               </li>
