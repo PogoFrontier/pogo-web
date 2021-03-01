@@ -1,6 +1,7 @@
 @import 'colors';
 @import 'variables';
 
+
 .header{
     position: relative;
     display: flex;
@@ -13,17 +14,12 @@
 }
 
 .title{
-    color: $color-white;
-    font-size: 1.2em;
-    white-space: nowrap;
-    @include md() {
-        font-size: 2em;
-    }
-    transition: 0.5s;
-    text-decoration: none;
-}
-.title:hover{
-    color: $color-grass
+    background-image: url('../../assets/img/grookey.png');
+    width: 5em;
+    height: 100%;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .links {

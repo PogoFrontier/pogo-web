@@ -1,21 +1,17 @@
 import React from 'react'
 import style from './header.module.scss'
 import Link from 'next/link'
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuLink,
-} from '@reach/menu-button'
+import { Menu, MenuButton, MenuList, MenuLink } from '@reach/menu-button'
 import '@reach/menu-button/styles.css'
 import { Icon } from '@components/icon/Icon'
 // import UserContext from '@context/UserContext'
 
 const Header: React.FunctionComponent = () => {
-
   return (
     <header className={style.header}>
-      <div className={style.title}>Project Grookey</div>
+      <Link href="/">
+        <div className={style.title}/>
+      </Link>
       <ul className={style.links}>
         <li>
           <Link href="/">
