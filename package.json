@@ -8,6 +8,7 @@
     "test:dev": "NODE_ENV=test jest --watchAll",
     "start": "NODE_ENV=production PORT=$PORT next start",
     "build": "rm -rf .next && next build",
+    "now-build": "rm -rf .next && next build",
     "dev": "next dev -p 3001",
     "export": "npm run build && next export",
     "prettier": "prettier  --write **/*.{ts,tsx,js}",
@@ -60,7 +61,7 @@
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "firebase": "^8.2.1",
-    "next": "^10.0.5",
+    "next": "^10.0.7",
     "next-redux-wrapper": "6.0.2",
     "node-sass": "^4.14.1",
     "react": "17.0.1",
@@ -115,6 +116,7 @@
     "tslint-config-prettier": "1.18.0",
     "tslint-eslint-rules": "5.4.0",
     "tslint-react": "4.2.0",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "webpack": "^4.0.0"
   }
 }
