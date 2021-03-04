@@ -10,29 +10,29 @@ interface StepperProps {
 }
 
 const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
-  const [stepperCharge, setStepperCharge] = useState(0)
+  const [stepperCharge, setStepperCharge] = useState(25)
   const [stepperLabel, setStepperLabel] = useState('')
 
   const onStepperClick = () => {
     if (stepperCharge < 100) {
       let stepperCount = stepperCharge
-      stepperCount += 7
+      stepperCount += 5
       setStepperCharge(stepperCount)
-      if (stepperCount >= 30 && stepperCount < 80) {
+      if (stepperCount >= 50 && stepperCount < 75) {
         setStepperLabel(NICE)
-        onStep(0.5)
-      } else if (stepperCount >= 70 && stepperCount < 100) {
+        onStep(stepperCount / 100)
+      } else if (stepperCount >= 75 && stepperCount < 95) {
         setStepperLabel(GREAT)
-        onStep(0.75)
-      } else if (stepperCount >= 100) {
+        onStep(stepperCount / 100)
+      } else if (stepperCount >= 95) {
         setStepperLabel(EXCELLENT)
-        onStep(1)
+        onStep(stepperCount / 100)
       }
     }
   }
 
   useEffect(() => {
-    if (step >= 1) {
+    if (step >= 0.95) {
       setStepperLabel(EXCELLENT)
     } else if (step >= 0.75) {
       setStepperLabel(GREAT)
