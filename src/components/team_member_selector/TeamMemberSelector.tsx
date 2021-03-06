@@ -10,6 +10,13 @@ import Input from '@components/input/Input'
 import classNames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 
+const parseName = (name: string) => {
+  return name.toLowerCase()
+            .replace(/[()]/g, '')
+            .replace(/\s/g, '_')
+            .replace(/-/g, "_");
+}
+
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
@@ -30,12 +37,8 @@ const TeamMemberSelector = (props: {
   useEffect(() => {
     if (member && member.speciesName) {
       setAddToBox(member)
-      getPokemonData(
-        member.speciesName
-          .toLowerCase()
-          .replace(/[()]/g, '')
-          .replace(/\s/g, '_')
-      ).then((pokemon) => {
+      getPokemonData(member.speciesId)
+      .then((pokemon) => {
         if (pokemon) {
           setSelectedPokemonData(pokemon)
         }
@@ -86,7 +89,7 @@ const TeamMemberSelector = (props: {
 
   const setPokemon = (input: string) => {
     setUserInput(input)
-    getPokemonData(input.toLowerCase().replace(/[()]/g, '').replace(/\s/g, '_'))
+    getPokemonData(parseName(input))
       .then((pokemon) => {
         if (pokemon) {
           setActiveSuggestion(0)
