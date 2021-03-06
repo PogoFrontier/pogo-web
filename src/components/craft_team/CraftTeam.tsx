@@ -64,7 +64,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   const deletePokemon = () => {
     // validate pokemon before allowing save!
-    const newTeam = [...workingTeam]
+    let newTeam = [...workingTeam]
+    if (newTeam.length <= 1) {
+      newTeam = []
+    }
     newTeam.splice(editingIndex, 1)
     setSelectedPokemon(newTeam[0])
     setWorkingTeam(newTeam)
