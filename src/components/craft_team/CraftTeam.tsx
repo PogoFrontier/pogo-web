@@ -30,6 +30,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [teamName, setTeamName] = useState('New Team')
   const [isUnsaved, setIsUnsaved] = useState(false)
   const [message, setMessage] = useState('')
+  const [id, setId] = useState('')
 
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
@@ -80,9 +81,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     // validate team here
     // include id if teamToEdit
     const name = teamName === '' ? 'New Team' : teamName
-    const id: string = uuidv4()
+    const newId: string = id === '' ? uuidv4() : id
+    setId(newId)
     const teamToUpdate = {
-      id: (teamToEdit && teamToEdit.id) ? teamToEdit.id : id,
+      id: (teamToEdit && teamToEdit.id) ? teamToEdit.id : newId,
       name,
       format: selectedMeta,
       members: workingTeam,
