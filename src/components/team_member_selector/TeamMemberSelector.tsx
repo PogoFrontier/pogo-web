@@ -8,11 +8,12 @@ import getImage from '@common/actions/getImage'
 import style from './style.module.scss'
 import Input from '@components/input/Input'
 import classNames from 'classnames'
+import { TeamMember } from '@adibkhan/pogo-web-backend'
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
-  member: any
+  member: TeamMember
   deletePokemon: () => void
 }) => {
   const { cancelEdit, savePokemon, member, deletePokemon } = props
@@ -151,7 +152,11 @@ const TeamMemberSelector = (props: {
     return Math.floor(cp)
   }
 
-  const handlePokemonChange = (e: any) => {
+  const clearPokemonName = () => {
+    handleNicknameChange('')
+  }
+
+  const handlePokemonChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (['level', 'atk', 'def', 'hp'].includes(e.target.id)) {
       const statsObj: any = {
         level: addToBox.level,
@@ -195,14 +200,13 @@ const TeamMemberSelector = (props: {
         chargeMoves: cmArr,
       }))
     } else if (e.target.id === 'shiny') {
+      const target = e.target as HTMLInputElement
       setAddToBox((prevState: any) => ({
         ...prevState,
-        [e.target.id]: e.target.checked,
+        [e.target.id]: target.checked,
       }))
     } else if (e.target.id.startsWith('name')) {
-      e.target.id === 'name-clear'
-        ? handleNicknameChange('')
-        : handleNicknameChange(e.target.value)
+      handleNicknameChange(e.target.value)
     } else {
       setAddToBox((prevState: any) => ({
         ...prevState,
@@ -344,7 +348,7 @@ const TeamMemberSelector = (props: {
           <button
             className="clear-name-btn"
             id="name-clear-btn"
-            onClick={handlePokemonChange}
+            onClick={clearPokemonName}
           >
             Clear
           </button>

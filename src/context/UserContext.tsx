@@ -1,12 +1,20 @@
+import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { createContext } from 'react'
+
+export interface UserTeam {
+  name: string,
+  id: string,
+  format: string,
+  members: TeamMember[]
+}
 
 export interface User {
   googleId?: string
   displayName: string
   email?: string
-  teams: any[]
+  teams: UserTeam[]
   createdAt?: string
-  lasLogin?: string
+  lastLogin?: string
   isDeleted?: boolean
 }
 

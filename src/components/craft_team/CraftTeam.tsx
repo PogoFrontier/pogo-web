@@ -4,6 +4,8 @@ import getMini from '@common/actions/getMini'
 import Input from '@components/input/Input'
 import style from './craft.module.scss'
 import classnames from 'classnames'
+import { TeamMember } from '@adibkhan/pogo-web-backend'
+import { v4 as uuidv4 } from 'uuid'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -21,7 +23,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   updateTeam,
   onExit,
 }) => {
-  const [workingTeam, setWorkingTeam] = useState([] as any)
+  const [workingTeam, setWorkingTeam] = useState([] as TeamMember[])
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
   const [addingMember, setAddingMember] = useState(false)
   const [editingIndex, setEditingIndex] = useState(0)
@@ -36,9 +38,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setSelectedPokemon(teamToEditCopy.members[0])
   }
 
-  const handleSelectPokemon = (e: any) => {
-    setSelectedPokemon(workingTeam[e.currentTarget.id])
-    setEditingIndex(e.currentTarget.id)
+  const handleSelectPokemon = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    const index = parseInt(e.currentTarget.id, 10)
+    setSelectedPokemon(workingTeam[index])
+    setEditingIndex(index)
     setAddingMember(false)
   }
 
@@ -74,25 +77,19 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     // validate team here
     // include id if teamToEdit
     const name = teamName === '' ? 'New Team' : teamName
-    const teamToUpdate =
-      teamToEdit && teamToEdit.id
-        ? {
-            id: teamToEdit.id,
-            name,
-            format: selectedMeta,
-            members: workingTeam,
-          }
-        : {
-            name,
-            format: selectedMeta,
-            members: workingTeam,
-          }
+    const id: string = uuidv4()
+    const teamToUpdate = {
+      id: (teamToEdit && teamToEdit.id) ? teamToEdit.id : id,
+      name,
+      format: selectedMeta,
+      members: workingTeam,
+    }
     updateTeam(teamToUpdate)
     setIsUnsaved(false)
     setMessage(savedString)
   }
 
-  const handleTeamNameChange = (e: any) => {
+  const handleTeamNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsUnsaved(true)
     setMessage(unsavedString)
     setTeamName(e.target.value)
