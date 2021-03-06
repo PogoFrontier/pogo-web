@@ -1,5 +1,5 @@
 import Layout from '@components/layout/Layout'
-import UserContext from '@context/UserContext'
+import UserContext, { UserTeam } from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 // import { updateUserTeam } from '@common/actions/userAPIActions'
@@ -8,7 +8,8 @@ import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
 import classnames from 'classnames'
-import TeamContext, { defaultTeam } from '@context/TeamContext'
+import { TeamMember } from '@adibkhan/pogo-web-backend/team'
+import Loader from 'react-loader-spinner'
 
 interface ContentProps {
   meta: string
@@ -16,57 +17,66 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = ({ meta }) => {
   const { user, setTeams } = useContext(UserContext)
-  const [craftingTeam, setCraftingTeam] = useState(false)
-  const [teamToEdit, setTeamToEdit] = useState<any | null>(null)
-  const [editIndex, setEditIndex] = useState(-1)
-  const setTeam = useContext(TeamContext).setTeam
+  const [isCrafting, setIsCrafting] = useState(false)
+  const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const updateTeam = (team: any) => {
-    if (editIndex > -1 && editIndex < user.teams.length) {
-      user.teams[editIndex] = team
-    } else {
-      user.teams.unshift(team)
-      setTeam(team.members)
+  useEffect(() => {
+    setIsLoading(false)
+  }, [teamToEdit])
+
+  const updateTeam = (team: UserTeam) => {
+    if (team.id) {
+      const editIndex = user.teams.findIndex(x => x.id === team.id)
+      if (editIndex && editIndex > -1) {
+        user.teams[editIndex] = team
+      } else {
+        user.teams.push(team)
+      }
+      setTeams(user.teams)
     }
-    setTeams(user.teams)
   }
 
   const handleOnClickAddTeam = () => {
     setTeamToEdit(null)
-    setCraftingTeam(true)
+    setIsCrafting(true)
   }
 
-  const handleEditTeam = (e: any) => {
-    setTeamToEdit(user.teams[e.target.value])
-    setEditIndex(e.target.value)
-    setCraftingTeam(true)
-  }
-
-  const handleChooseTeam = (e: any) => {
-    const i = e.target.value
-    const data = user.teams[i]
-    user.teams.splice(i, 1)
-    user.teams.unshift(data)
-    setTeams(user.teams)
-    setTeam(data.members)
+  const handleEditTeam = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const i = parseInt(e.currentTarget.value, 10)
+    setTeamToEdit(user.teams[i])
+    if (teamToEdit === null) {
+      setIsLoading(true)
+    }
+    setIsCrafting(true)
   }
 
   const onExit = () => {
-    setCraftingTeam(false)
+    setIsCrafting(false)
   }
 
-  const handleDelete = (e: any) => {
-    const i = e.target.value
-    user.teams.splice(i, 1)
-    setTeams(user.teams)
-    setTeam(user.teams[0] ? user.teams[0].members : defaultTeam)
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (window.confirm("You cannot undo this action. Are you sure you want to delete this team?")) {
+      const i = parseInt(e.currentTarget.value, 10)
+      user.teams.splice(i, 1)
+      setTeams(user.teams)
+    }
+  }
+
+  if (isLoading) {
+    return <Loader
+      type="TailSpin"
+      color="#68BFF5"
+      height={80}
+      width={80}
+    />
   }
 
   if (!user || !user.teams) {
     return <p>Please sign in to use the teambuilder</p>
   }
 
-  if (craftingTeam) {
+  if (isCrafting) {
     return (
       <div className={style.root}>
         {teamToEdit ? (
@@ -90,7 +100,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   return (
     <div className={style.root}>
       {user.teams.length > 0 ? (
-        user.teams.map((team: any, i: number) => {
+        user.teams.map((team: UserTeam, i: number) => {
           if (team.format === meta) {
             return (
               <div className={style.wrapper} key={team.id}>
@@ -102,7 +112,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                   <label className={style.label}>{team.name}</label>
                   <div className={style.members}>
                     {team.members.length > 0 &&
-                      team.members.map((member: any, index: number) => (
+                      team.members.map((member: TeamMember, index: number) => (
                         <img
                           key={index}
                           src={getMini(member.sid)}
@@ -112,15 +122,6 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                   </div>
                 </button>
                 <div className={style.btns}>
-                  {i > 0 && (
-                    <button
-                      value={i}
-                      onClick={handleChooseTeam}
-                      className={classnames([style.btn, style.edit])}
-                    >
-                      Choose
-                    </button>
-                  )}
                   <button
                     value={i}
                     onClick={handleDelete}
@@ -144,22 +145,22 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 }
 
 const TeamPage = () => {
-  const { user } = useContext(UserContext)
+  // const { user } = useContext(UserContext)
   const [metas] = useState(['Great League', 'Ultra League', 'Master League'])
   const [index, setIndex] = useState(0)
 
-  useEffect(() => {
-    if (user && metas) {
-      const metaArr: string[] = [
-        'Great League',
-        'Ultra League',
-        'Master League',
-      ]
-      user.teams.forEach((team: any) => {
-        if (!metaArr.some((m) => m === team.meta)) metaArr.push(team.meta)
-      })
-    }
-  }, [user, metas])
+  // useEffect(() => {
+  //   if (user && metas) {
+  //     const metaArr: string[] = [
+  //       'Great League',
+  //       'Ultra League',
+  //       'Master League',
+  //     ]
+  //     user.teams.forEach((team: any) => {
+  //       if (!metaArr.some((m) => m === team.meta)) metaArr.push(team.meta)
+  //     })
+  //   }
+  // }, [user, metas])
 
   // const addMeta = () => {
   //   // open modal and add custom meta to list

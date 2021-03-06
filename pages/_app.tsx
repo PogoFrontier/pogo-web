@@ -36,7 +36,7 @@ const defaultKeys = {
 
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [currentTeam, setCurrentTeam] = useState(defaultTeam)
+  const [currentTeam, setCurrentTeam] = useState([] as TeamMember[])
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
@@ -54,37 +54,14 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       }
     }
     // first try to load from localstorage and store in context
-    const userFromStorage: any = localStorage.getItem('user')
+    const userFromStorage: string | null = localStorage.getItem('user')
     if (
       typeof window !== undefined &&
       userFromStorage &&
       userFromStorage !== 'undefined'
     ) {
-      // if (userFromStorage.googleId) {
-      //   // user is from db
-      //   signInWithGoogleId(userFromStorage.googleId)
-      //     .then((res) => {
-      //       if (res.error) {
-      //         setCurrentUser(null)
-      //       } else {
-      //         setCurrentUser(res.userData)
-      //         if (res.userData.teams && res.userData.teams[0]) {
-      //           setCurrentTeam(res.userData.teams[0].members)
-      //         }
-      //       }
-      //     })
-      //     .catch(() => setCurrentUser(null))
-      // } else {
       const userJSON = JSON.parse(userFromStorage)
-      if (
-        userJSON.teams &&
-        userJSON.teams[0] &&
-        userJSON.teams[0].members.length > 0
-      ) {
-        setCurrentTeam(userJSON.teams[0].members)
-      }
       setCurrentUser(userJSON)
-      // }
     } else {
       const newUser: User = {
         displayName: uuidv4(),
@@ -92,42 +69,17 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       }
       setCurrentUser(newUser)
       localStorage.setItem('user', JSON.stringify(newUser))
-      //   // sign in user and store in context
-      //   auth.onAuthStateChanged(async (userAuth: any) => {
-      //     if (userAuth) {
-      //       signInWithGoogleId(userAuth.uid)
-      //         .then((res) => {
-      //           if (res.error) {
-      //             postNewGoogleUser(userAuth)
-      //               .then((newRes) => {
-      //                 if (!newRes.error) {
-      //                   setCurrentUser(newRes.userData)
-      //                   if (typeof window !== undefined) {
-      //                     localStorage.setItem(
-      //                       'user',
-      //                       JSON.stringify(newRes.userData)
-      //                     )
-      //                     localStorage.setItem('token', newRes.token)
-      //                   }
-      //                 }
-      //               })
-      //               .catch(() => setCurrentUser(null))
-      //           } else {
-      //             setCurrentUser(res.userData)
-      //             if (res.userData.teams && res.userData.teams[0]) {
-      //               setCurrentTeam(res.userData.teams[0].members)
-      //             }
-      //             if (typeof window !== undefined) {
-      //               localStorage.setItem('user', JSON.stringify(res.userData))
-      //               localStorage.setItem('token', res.token)
-      //             }
-      //           }
-      //         })
-      //         .catch(() => setCurrentUser(null))
-      //     } else {
-      //       return
-      //     }
-      //   })
+    }
+    const teamFromStorage: string | null = localStorage.getItem('team')
+    if (
+      typeof window !== undefined &&
+      teamFromStorage &&
+      teamFromStorage !== 'undefined'
+    ) {
+      const teamJSON: TeamMember[] = JSON.parse(teamFromStorage)
+      setCurrentTeam(teamJSON)
+    } else {
+      setCurrentTeam(defaultTeam)
     }
     return function cleanup() {
       if (socket.readyState) {
@@ -137,22 +89,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }, [])
 
   const refreshUser = () => {
-    // use token (store in localStorage! (res from signin)) to getUserProfile from API
-    // then update currentUser and localStorage
-    // if (localStorage.getItem('token')) {
-    //   const token: any = localStorage.getItem('token')
-    //   getUserProfile(token)
-    //     .then((res) => {
-    //       if (!res.error) {
-    //         setCurrentUser(res)
-    //         if (res.teams && res.teams[0]) {
-    //           setCurrentTeam(res.teams[0])
-    //         }
-    //         localStorage.setItem('user', JSON.stringify(res))
-    //       }
-    //     })
-    //     .catch(() => setCurrentUser(null))
-    // }
+    // Yeet
   }
 
   const setTeams = (teams: any[]) => {
@@ -194,7 +131,23 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const setTeam = (t: TeamMember[]) => {
+    localStorage.setItem('team', JSON.stringify(t))
     setCurrentTeam(t)
+  }
+
+  const clear = () => {
+    if (window.confirm("Are you sure you'd like to clear all your data?")) {
+      localStorage.clear()
+      const newUser: User = {
+        displayName: uuidv4(),
+        teams: [],
+      }
+      setCurrentUser(newUser)
+      localStorage.setItem('user', JSON.stringify(newUser))
+      setCurrentTeam(defaultTeam)
+      setKeys1(defaultKeys)
+      alert('All cookies cleared.')
+    }
   }
 
   return (
@@ -205,7 +158,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
       </Head>
-      <SettingsContext.Provider value={{ keys, setKeys }}>
+      <SettingsContext.Provider value={{ keys, setKeys, clear }}>
         <IdContext.Provider value={{ id, setId }}>
           <UserContext.Provider
             value={{ user: currentUser!, refreshUser, setTeams }}
