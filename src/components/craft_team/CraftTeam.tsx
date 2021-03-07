@@ -137,7 +137,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           </button>
         )}
       </div>
-      <p>{message}</p>
+      <p className={message === savedString ? style.saved : style.error}>{message}</p>
       <div>
         {workingTeam && (
           <ul className={style.members}>

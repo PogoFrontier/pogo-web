@@ -26,3 +26,26 @@
     background-color: $color-brand-primary;
   }
 }
+
+.saved {
+  color: $color-brand-primary;
+  transform: scale(1);
+  transition: transform 200ms;
+}
+
+.error {
+  color: $color-brand-negative;
+  transform: scale(0.94);
+  transition: transform 200ms;
+  &::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: -1.5em;
+    height: 1em;
+    width: 1em;
+    border-radius: 50%;
+    background-color: $color-brand-negative;
+  }
+}
