@@ -50,16 +50,20 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     teamToEdit
       ? setSelectedPokemon(teamToEdit.members[0])
       : setAddingMember(true)
+    setId('')
   }
 
   const savePokemon = (pokemon: any) => {
     // validate pokemon before allowing save!
-    const newTeam = [...workingTeam]
+    const newTeam = [ ...workingTeam ]
     newTeam[editingIndex] = pokemon
+    const equals = newTeam[editingIndex] === workingTeam[editingIndex]
+    if (!equals) {
+      setIsUnsaved(true)
+      setMessage(unsavedString)
+    }
     setSelectedPokemon(pokemon)
     setWorkingTeam(newTeam)
-    setIsUnsaved(true)
-    setMessage(unsavedString)
     setAddingMember(false)
   }
 
