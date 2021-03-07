@@ -59,6 +59,15 @@
     padding-left: 0;
     font-size: large;
     border: none;
+    cursor: pointer;
     width: 100%;
+    &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+      color: $color-brand-primary;
+      font-weight: bold;
+      opacity: 1; /* Firefox */
+    }
+    &:hover::placeholder {
+      text-decoration: underline;
+    }
   }
 }

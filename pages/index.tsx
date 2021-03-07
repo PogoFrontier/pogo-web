@@ -66,7 +66,7 @@ const HomePage = () => {
               onSelect={onSelect}
               openOnFocus={true}
             >
-              <ComboboxInput placeholder="Search Team" value="" />
+              <ComboboxInput placeholder="See Teams" value="" />
               <ComboboxPopover>
                 <ComboboxList>
                   {user && user.teams && user.teams.length > 0 ? (
