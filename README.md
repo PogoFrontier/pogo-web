@@ -22,11 +22,11 @@ Project Grookey is a NextJs + Express + WebSocket application. To run this proje
 <b>Note:</b> If you haven't used npm before, make sure to [install](https://www.npmjs.com/get-npm) it first.
 
 ## Project Status
-Currently, this project is alpha. We plan to keep the initial build very minimal.
+Currently, this project is private alpha. We are approaching beta testing, so here is the [link](https://adibkhan127863.typeform.com/to/RwGKzaGg) if you are interested in testing.
 
 Our scope:
 - Online Matchmaking
-  - [ ] Team Builder
+  - [x] Team Builder
   - [x] Create Battle Rooms
   - [x] Join Battle Rooms
 - Battling
@@ -44,9 +44,9 @@ If you would like to contribute, feel free to reach out to AdibKhan on Discord (
 Hi, I'm Adib. I've been a competitive PoGo player for a little over a year and was at one point (December 4th) the [#1 ranked player in the world](https://ibb.co/Tq2mG2N). I love the game and its supportive, heartwarming community. I'm building Project Grookey as another way the community can connect, especially for players who may not have every Pokémon or looking for stress-free practice.
 
 ## Credit
-Credit to [the PvPoke team](https://github.com/pvpoke/pvpoke) for my understanding of game mechanics and this project's game data. Special thanks to Mr. PvPoke AKA Empoleon_Dynamite AKA KakunaMattata42 for spearheading the PvPoke project and answering some of my key questions.
+Credit to [the PvPoke team](https://github.com/pvpoke/pvpoke) for my understanding of game mechanics and this project's game data. Special thanks to Mr. PvPoke AKA Empoleon_Dynamite AKA KakunaMattata42 for spearheading the PvPoke project, answering many of my questions, and testing our alpha build.
 
-Credit to [Smogon](https://github.com/smogon/sprites) for all sprites.
+Credit to [Smogon](https://github.com/smogon/sprites) for all the Pokemon sprites.
 
 Credit to all the project contributors! They've shaved months off development and improved the project in ways I hadn't imagined:
 - @jarthur22 ⭐
