@@ -49,7 +49,7 @@ const MatchupPage = () => {
   }
 
   useEffect(() => {
-    if (ws.readyState === ws.OPEN) {
+    if (ws.readyState === ws.OPEN && ws.send) {
       ws.send(
         JSON.stringify({
           type: CODE.get_opponent,
