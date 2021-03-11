@@ -107,35 +107,10 @@ const GamePage = () => {
         setCharPointer((prev2) => {
           setCharacters((prev3b) => {
             const prev3 = { ...prev3b }
-            let p = ''
             setCurrentMove(() => {
+              let p = ''
               setBufferedMove((prev) => {
                 p = prev
-                if (prev.startsWith('#')) {
-                  const data: [keyof typeof Actions, string] = prev
-                    .substring(1)
-                    .split(':') as [keyof typeof Actions, string]
-                  switch (data[0]) {
-                    case Actions.FAST_ATTACK:
-                      setTimeout(() => {
-                        setCharacters((prev4b) => {
-                          const prev4 = { ...prev4b }
-                          prev4[0].status = 'attack'
-                          return prev4
-                        })
-                      }, 250)
-                      break
-                    case Actions.SWITCH:
-                      setTimeout(() => {
-                        setCharacters((prev4b) => {
-                          const prev4 = { ...prev4b }
-                          prev4[0].status = 'switch'
-                          return prev4
-                        })
-                      }, 250)
-                      break
-                  }
-                }
                 return ''
               })
               return p
@@ -391,11 +366,6 @@ const GamePage = () => {
         })
         return true
       }
-      if (!currentMove.startsWith('#ca') && bufferedMove === '') {
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
     }
     return false
   }
@@ -418,10 +388,7 @@ const GamePage = () => {
         })
         return true
       }
-      if (
-        !currentMove.startsWith('#ca') &&
-        (bufferedMove === '' || bufferedMove.startsWith('#fa'))
-      ) {
+      if (bufferedMove === '') {
         setBufferedMove(data)
         ws.send(data)
         return true
@@ -449,10 +416,8 @@ const GamePage = () => {
         return true
       }
       if (
-        !currentMove.startsWith('#ca') &&
-        (bufferedMove === '' ||
-          bufferedMove.startsWith('#fa') ||
-          bufferedMove.startsWith('#sw'))
+        !currentMove.startsWith('#ca')
+        && (bufferedMove === '' || bufferedMove.startsWith('#sw'))
       ) {
         setBufferedMove(data)
         ws.send(data)
