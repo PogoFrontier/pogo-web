@@ -18,3 +18,12 @@ export const getPokemonData = async (speciesId: string) => {
     return err
   }
 }
+
+export const getValidateTeam = async (team: string, meta: string) => {
+  try {
+    const res = await axios.get(`${SERVER}api/pokemon/validate/${team}/${meta}`)
+    return res.data
+  } catch (err) {
+    return err.message
+  }
+}

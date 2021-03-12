@@ -6,6 +6,8 @@ import style from './craft.module.scss'
 import classnames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { v4 as uuidv4 } from 'uuid'
+import { getValidateTeam } from '@common/actions/pokemonAPIActions'
+import Loader from 'react-loader-spinner'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -16,6 +18,13 @@ interface CraftTeamProps {
 
 const unsavedString = 'You have unsaved changes.'
 const savedString = 'Save successful.'
+const metaMap: {
+  [key: string]: string,
+ } = {
+  'Great League': 'Great',
+  'Ultra League': 'Ultra',
+  'Master League': 'Master'
+}
 
 const CraftTeam: React.FC<CraftTeamProps> = ({
   selectedMeta,
@@ -31,6 +40,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [isUnsaved, setIsUnsaved] = useState(false)
   const [message, setMessage] = useState('')
   const [id, setId] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
@@ -53,22 +63,37 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setId('')
   }
 
-  const savePokemon = (pokemon: any) => {
+  const validateTeam = async (team: TeamMember[]): Promise<boolean> => {
+    if (selectedMeta in metaMap) {
+      const result = await getValidateTeam(JSON.stringify(team), metaMap[selectedMeta]!)
+      if (result.message) {
+        alert(result.message)
+      } else {
+        return true
+      }
+    }
+    return false
+  }
+
+  const savePokemon = async (pokemon: any) => {
     // validate pokemon before allowing save!
     const newTeam = [ ...workingTeam ]
     newTeam[editingIndex] = pokemon
-    const equals = newTeam[editingIndex] === workingTeam[editingIndex]
-    if (!equals) {
-      setIsUnsaved(true)
-      setMessage(unsavedString)
+    setIsLoading(true)
+    if (await validateTeam(newTeam)) {
+      const equals = newTeam[editingIndex] === workingTeam[editingIndex]
+      if (!equals) {
+        setIsUnsaved(true)
+        setMessage(unsavedString)
+      }
+      setSelectedPokemon(pokemon)
+      setWorkingTeam(newTeam)
+      setAddingMember(false)
     }
-    setSelectedPokemon(pokemon)
-    setWorkingTeam(newTeam)
-    setAddingMember(false)
+    setIsLoading(false)
   }
 
   const deletePokemon = () => {
-    // validate pokemon before allowing save!
     let newTeam = [...workingTeam]
     if (newTeam.length <= 1) {
       newTeam = []
@@ -81,21 +106,23 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setAddingMember(false)
   }
 
-  const saveTeam = () => {
-    // validate team here
-    // include id if teamToEdit
-    const name = teamName === '' ? 'New Team' : teamName
-    const newId: string = id === '' ? uuidv4() : id
-    setId(newId)
-    const teamToUpdate = {
-      id: (teamToEdit && teamToEdit.id) ? teamToEdit.id : newId,
-      name,
-      format: selectedMeta,
-      members: workingTeam,
+  const saveTeam = async () => {
+    setIsLoading(true)
+    if (await validateTeam(workingTeam)) {
+      const name = teamName === '' ? 'New Team' : teamName
+      const newId: string = id === '' ? uuidv4() : id
+      setId(newId)
+      const teamToUpdate = {
+        id: (teamToEdit && teamToEdit.id) ? teamToEdit.id : newId,
+        name,
+        format: selectedMeta,
+        members: workingTeam,
+      }
+      updateTeam(teamToUpdate)
+      setIsUnsaved(false)
+      setMessage(savedString)
     }
-    updateTeam(teamToUpdate)
-    setIsUnsaved(false)
-    setMessage(savedString)
+    setIsLoading(false)
   }
 
   const handleTeamNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,6 +147,14 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   return (
     <div>
+      {isLoading
+        && <Loader
+          type="TailSpin"
+          color="#68BFF5"
+          height={80}
+          width={80}
+        />
+      }
       <Input
         title="Name"
         type="text"
@@ -128,16 +163,16 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         onChange={handleTeamNameChange}
       />
       <div className={style.btns}>
-        <button className="btn btn-negative" onClick={onExit}>
+        <button className="btn btn-negative" onClick={onExit} disabled={isLoading}>
           Exit
         </button>
-        {isUnsaved && (
-          <button className="btn btn-primary" onClick={saveTeam}>
+        {isUnsaved && !isLoading && (
+          <button className="btn btn-primary" onClick={saveTeam} disabled={isLoading}>
             Save Team
           </button>
         )}
       </div>
-      <p className={message === savedString ? style.saved : style.error}>{message}</p>
+      {message !== '' && <p className={message === savedString ? style.saved : style.error}>{message}</p>}
       <div>
         {workingTeam && (
           <ul className={style.members}>
@@ -160,6 +195,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
                 <button
                   className="btn btn-primary"
                   onClick={handleAddMemberClick}
+                  disabled={isLoading}
                 >
                   Add New
                 </button>
