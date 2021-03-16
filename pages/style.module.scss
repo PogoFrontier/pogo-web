@@ -33,6 +33,12 @@
   border-bottom: 1px solid $color-neutral-light;
 }
 
+.member {
+  height: 2em;
+  width: 2em;
+  object-fit: contain;
+}
+
 .members {
   background-color: $color-white;
   padding: 0 3em 1em 3em;
@@ -42,9 +48,9 @@
     width: 30em;
   }
   .member {
-    height: 2em;
     @include md() {
       height: 2.5em;
+      width: 2.5em;
     }
   }
   .member + .member {

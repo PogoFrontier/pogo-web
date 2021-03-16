@@ -17,6 +17,8 @@ const parseName = (name: string) => {
             .replace(/-/g, "_")
             .replace(/♀/g, "_female")
             .replace(/♂/g, "_male")
+            .replace(/\./g, "")
+            .replace(/\'/g, "")
 }
 
 const TeamMemberSelector = (props: {

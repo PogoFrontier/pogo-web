@@ -27,7 +27,12 @@ const TeamOption: React.FC<TeamOptionProps> = ({ team, name, id }) => {
       <strong>{name}</strong>
       <br />
       {team.map((member: any, index: number) => (
-        <img key={index} src={getMini(member.sid)} alt={member.speciesName} />
+        <img
+          key={index}
+          src={getMini(member.sid)}
+          className={style.member}
+          alt={member.speciesName}
+        />
       ))}
     </ComboboxOption>
   )
