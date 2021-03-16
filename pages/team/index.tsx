@@ -28,7 +28,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const updateTeam = (team: UserTeam) => {
     if (team.id) {
       const editIndex = user.teams.findIndex(x => x.id === team.id)
-      if (editIndex && editIndex > -1) {
+      if (editIndex > -1) {
         user.teams[editIndex] = team
       } else {
         user.teams.push(team)

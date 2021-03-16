@@ -47,6 +47,9 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setWorkingTeam(teamToEditCopy.members)
     setTeamName(teamToEditCopy.name)
     setSelectedPokemon(teamToEditCopy.members[0])
+    if (teamToEdit.id) {
+      setId(teamToEdit.id)
+    }
   }
 
   const handleSelectPokemon = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
