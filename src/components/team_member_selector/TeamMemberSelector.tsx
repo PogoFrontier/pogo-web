@@ -91,6 +91,54 @@ const TeamMemberSelector = (props: {
     }
   }
 
+  const calculateStats = (
+    bs: {
+      atk: number,
+      def: number,
+      hp: number
+    },
+    level: number,
+    atk: number,
+    def: number,
+    hp: number,
+    shadow?: boolean
+  ) => {
+    const cpm = cpms[(level - 1) * 2]
+    const selectedHP = Math.floor(
+      (bs.hp + hp) * cpm
+    )
+    let selectedAtk = (bs.atk + atk) * cpm
+    let selectedDef = (bs.def + def) * cpm
+    if (shadow) {
+      selectedAtk *= 1.2
+      selectedDef *= 0.83333331
+    }
+    return {
+      hp: selectedHP,
+      atk: selectedAtk,
+      def: selectedDef,
+    }
+  }
+
+  const calcCP = (bs: {
+    atk: number,
+    def: number,
+    hp: number
+  }, stats: number[]) => {
+    const cpm = cpms[(stats[0] - 1) * 2]
+    const atk = stats[1]
+    const def = stats[2]
+    const hp = stats[3]
+    const cp =
+      (bs.atk + atk) *
+      Math.sqrt(bs.def + def) *
+      Math.sqrt(bs.hp + hp) *
+      cpm *
+      cpm *
+      0.1
+    return Math.floor(cp)
+  }
+
   const setPokemon = (input: string) => {
     setUserInput(input)
     getPokemonData(parseName(input))
@@ -101,32 +149,29 @@ const TeamMemberSelector = (props: {
           setShowSuggestions(false)
           setSelectedPokemonData(pokemon)
           const selectedIVs = [40, 15, 15, 15] // change this later to be calced
-          const cpm = cpms[(selectedIVs[0] - 1) * 2]
-          const selectedHP = Math.floor(
-            (pokemon.baseStats.hp + selectedIVs[3]) * cpm
+          const isShadow = pokemon.speciesId.includes("shadow")
+          const stats = calculateStats(
+            pokemon.baseStats,
+            selectedIVs[0],
+            selectedIVs[1],
+            selectedIVs[2],
+            selectedIVs[3],
+            isShadow
           )
-          const selectedAtk = (pokemon.baseStats.atk + selectedIVs[1]) * cpm
-          const selectedDef = (pokemon.baseStats.def + selectedIVs[2]) * cpm
           setAddToBox({
             speciesId: pokemon.speciesId,
             speciesName: pokemon.speciesName,
-            hp: selectedHP,
-            atk: selectedAtk,
-            def: selectedDef,
+            baseStats: pokemon.baseStats,
+            hp: stats.hp,
+            atk: stats.atk,
+            def: stats.def,
             level: selectedIVs[0],
             iv: {
               atk: selectedIVs[1],
               def: selectedIVs[2],
               hp: selectedIVs[3],
             },
-            cp: Math.floor(
-              (pokemon.baseStats.atk + selectedIVs[1]) *
-                Math.sqrt(pokemon.baseStats.def + selectedIVs[2]) *
-                Math.sqrt(pokemon.baseStats.hp + selectedIVs[3]) *
-                cpms[(selectedIVs[0] - 1) * 2] *
-                cpms[(selectedIVs[0] - 1) * 2] *
-                0.1
-            ),
+            cp: calcCP(pokemon.baseStats, selectedIVs),
             types: pokemon.types,
             fastMove: pokemon.fastMoves[0],
             chargeMoves: pokemon.chargedMoves.slice(0, 2),
@@ -143,27 +188,15 @@ const TeamMemberSelector = (props: {
       })
   }
 
-  const calcCP = (stats: number[]) => {
-    const bs = selectedPokemonData.baseStats
-    const cpm = cpms[(stats[0] - 1) * 2]
-    const atk = stats[1]
-    const def = stats[2]
-    const hp = stats[3]
-    const cp =
-      (bs.atk + atk) *
-      Math.sqrt(bs.def + def) *
-      Math.sqrt(bs.hp + hp) *
-      cpm *
-      cpm *
-      0.1
-    return Math.floor(cp)
-  }
-
   const clearPokemonName = () => {
     handleNicknameChange('')
   }
 
   const handlePokemonChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (!addToBox.baseStats) {
+      alert("This Pokemon has corrupted data!")
+      return deletePokemon()
+    }
     if (['level', 'atk', 'def', 'hp'].includes(e.target.id)) {
       const statsObj: any = {
         level: addToBox.level,
@@ -172,16 +205,20 @@ const TeamMemberSelector = (props: {
         hp: addToBox.iv.hp,
       }
       statsObj[e.target.id] = +e.target.value
-      const newCP = calcCP([
+      const newCP = calcCP(selectedPokemonData.baseStats, [
         statsObj.level,
         statsObj.atk,
         statsObj.def,
         statsObj.hp,
       ])
+      const stats = calculateStats(addToBox.baseStats, statsObj.level, statsObj.atk, statsObj.def, statsObj.hp)
       // later, check newCP against the CP cap of the meta
       if (e.target.id === 'level') {
         setAddToBox((prevState: any) => ({
           ...prevState,
+          hp: stats.hp,
+          atk: stats.atk,
+          def: stats.def,
           level: +e.target.value,
           cp: newCP,
         }))
@@ -190,6 +227,9 @@ const TeamMemberSelector = (props: {
         newIVs[e.target.id] = +e.target.value
         setAddToBox((prevState: any) => ({
           ...prevState,
+          hp: stats.hp,
+          atk: stats.atk,
+          def: stats.def,
           iv: newIVs,
           cp: newCP,
         }))
