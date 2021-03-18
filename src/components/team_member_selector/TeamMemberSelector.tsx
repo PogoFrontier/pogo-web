@@ -150,10 +150,11 @@ const TeamMemberSelector = (props: {
     getPokemonData(parseName(input))
       .then((pokemon) => {
         if (pokemon) {
+          const isShadow = pokemon.tags && pokemon.tags.includes("shadow")
           pokemon.chargedMoves.push("NONE")
           if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
             pokemon.chargedMoves.push("RETURN")
-          } else if (pokemon.tags && pokemon.tags.includes("shadow")) {
+          } else if (isShadow) {
             pokemon.chargedMoves.push("FRUSTRATION")
           }
           setActiveSuggestion(0)
@@ -161,7 +162,6 @@ const TeamMemberSelector = (props: {
           setShowSuggestions(false)
           setSelectedPokemonData(pokemon)
           const selectedIVs = [40, 15, 15, 15] // change this later to be calced
-          const isShadow = pokemon.speciesId.includes("shadow")
           const stats = calculateStats(
             pokemon.baseStats,
             selectedIVs[0],
