@@ -153,7 +153,7 @@ const TeamMemberSelector = (props: {
           pokemon.chargedMoves.push("NONE")
           if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
             pokemon.chargedMoves.push("RETURN")
-          } else if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
+          } else if (pokemon.tags && pokemon.tags.includes("shadow")) {
             pokemon.chargedMoves.push("FRUSTRATION")
           }
           setActiveSuggestion(0)
