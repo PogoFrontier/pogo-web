@@ -44,6 +44,12 @@ const TeamMemberSelector = (props: {
       getPokemonData(member.speciesId)
       .then((pokemon) => {
         if (pokemon) {
+          pokemon.chargedMoves.push("NONE")
+          if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
+            pokemon.chargedMoves.push("RETURN")
+          } else if (pokemon.tags && pokemon.tags.includes("shadow")) {
+            pokemon.chargedMoves.push("FRUSTRATION")
+          }
           setSelectedPokemonData(pokemon)
         }
       })
@@ -144,6 +150,12 @@ const TeamMemberSelector = (props: {
     getPokemonData(parseName(input))
       .then((pokemon) => {
         if (pokemon) {
+          pokemon.chargedMoves.push("NONE")
+          if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
+            pokemon.chargedMoves.push("RETURN")
+          } else if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
+            pokemon.chargedMoves.push("FRUSTRATION")
+          }
           setActiveSuggestion(0)
           setFilteredSuggestions([])
           setShowSuggestions(false)
