@@ -39,10 +39,10 @@ const MatchupPage = () => {
     const data: Data = JSON.parse(message.data)
     switch (data.type) {
       case CODE.room_join:
-        console.log(data.payload!.team!)
         setOpponentTeam(data.payload!.team!)
         break
       case CODE.room_leave:
+        setStatus(STATUS.CHOOSING)
         setOpponentTeam([])
         break
       case CODE.team_confirm:
@@ -53,7 +53,7 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN && ws.send) {
-      if (!routing && prev !== router.asPath) {
+      if (!routing) {
         ws.send(
           JSON.stringify({
             type: CODE.get_opponent,
@@ -121,10 +121,17 @@ const MatchupPage = () => {
             <Team team={team} isPlayer={true} />
           </div>
         </div>
-        {status === STATUS.CHOOSING && (
+        {(status === STATUS.CHOOSING) 
+        && (opponentTeam.length > 0
+        ? (
           <Select team={team} onSubmit={onSubmit} />
+        )
+        : (
+          <p>Waiting for a player to join...</p>
+        )
         )}
-        {status === STATUS.WAITING && (
+        {status === STATUS.WAITING
+        && (
           <div>
             <p>Waiting for opponent...</p>
             <Loader
