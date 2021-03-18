@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import SocketContext from '@context/SocketContext'
 import TeamContext from '@context/TeamContext'
+import HistoryContext from '@context/HistoryContext'
 import Team from '@components/team/Team'
 import Select from '@components/select/Select'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
@@ -32,11 +33,13 @@ const MatchupPage = () => {
   const ws: WebSocket = useContext(SocketContext).socket
   const team: TeamMember[] = useContext(TeamContext).team
   const { height } = useWindowSize()
+  const { routing, prev } = useContext(HistoryContext)
 
   const onMessage = (message: MessageEvent) => {
     const data: Data = JSON.parse(message.data)
     switch (data.type) {
       case CODE.room_join:
+        console.log(data.payload!.team!)
         setOpponentTeam(data.payload!.team!)
         break
       case CODE.room_leave:
@@ -50,14 +53,16 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN && ws.send) {
-      ws.send(
-        JSON.stringify({
-          type: CODE.get_opponent,
-          payload: {
-            room,
-          },
-        })
-      )
+      if (!routing && prev !== router.asPath) {
+        ws.send(
+          JSON.stringify({
+            type: CODE.get_opponent,
+            payload: {
+              room,
+            },
+          })
+        )
+      }
       ws.onmessage = onMessage
     } else {
       toHome()
@@ -65,7 +70,7 @@ const MatchupPage = () => {
     return function cleanup() {
       ws.onmessage = null
     }
-  }, [])
+  }, [routing, prev])
 
   const onSubmit = (values: number[]) => {
     const submission: TeamMember[] = []
@@ -85,7 +90,9 @@ const MatchupPage = () => {
   }
 
   const toHome = () => {
-    ws.close()
+    if (ws.close) {
+      ws.close()
+    }
     router.push('/')
   }
 

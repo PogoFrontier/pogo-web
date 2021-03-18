@@ -12,7 +12,7 @@ const EndPage = () => {
   const router = useRouter()
   const { room, result } = router.query
   const { socket, connect } = useContext(SocketContext)
-  const team: TeamMember[] = useContext(TeamContext)
+  const team: TeamMember[] = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
 
   function joinRoom() {

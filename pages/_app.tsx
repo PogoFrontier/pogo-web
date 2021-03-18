@@ -8,6 +8,7 @@ import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 // import { auth } from '../src/firebase'
 import UserContext, { User } from '@context/UserContext'
+import HistoryContext from '@context/HistoryContext'
 // import {
 //   getUserProfile,
 //   postNewGoogleUser,
@@ -40,6 +41,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
+  const [routing, setRouting] = useState(false)
+  const [prevRoute, setPrevRoute] = useState<string | null>(null)
 
   useEffect(() => {
     const keysFromStorage: any = localStorage.getItem('settings')
@@ -81,7 +84,18 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     } else {
       setCurrentTeam(defaultTeam)
     }
+    const handleRouteChange = (url: string) => {
+      setRouting(true)
+      setPrevRoute(url)
+    }
+    const handleRouteComplete = () => {
+      setRouting(false)
+    }
+    router.events.on('routeChangeStart', handleRouteChange)
+    router.events.on('routeChangeComplete', handleRouteComplete)
     return function cleanup() {
+      router.events.off('routeChangeStart', handleRouteChange)
+      router.events.off('routeChangeComplete', handleRouteComplete)
       if (socket.readyState) {
         socket.close()
       }
@@ -106,6 +120,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       pingTimeout: 60000, // in 60 seconds, if no message accepted from server, close the connection.
     })
     s.onclose = () => {
+      setRouting(false)
       router.push('/')
     }
     setSocket(s)
@@ -165,7 +180,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           >
             <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
               <SocketContext.Provider value={{ socket, connect }}>
-                <Component {...pageProps} />
+                <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
+                  <Component {...pageProps} />
+                </HistoryContext.Provider>
               </SocketContext.Provider>
             </TeamContext.Provider>
           </UserContext.Provider>
