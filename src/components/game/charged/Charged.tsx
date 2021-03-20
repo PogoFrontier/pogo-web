@@ -27,7 +27,7 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   }
 
   return (
-    <div className={style.chargeGroup}>
+    <div className={classnames([style.chargeGroup, { 'no-click': energy < move.energy }])}>
       <button
         onClick={handleClick}
         disabled={energy < move.energy}

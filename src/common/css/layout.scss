@@ -92,3 +92,7 @@ h1 {
 img {
   user-select:none;
 }
+
+.no-click {
+  pointer-events: none;
+}
