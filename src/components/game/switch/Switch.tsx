@@ -55,7 +55,12 @@ const Selector: React.FC<SelectorProps> = ({
     >
       <small>CP {member.cp}</small>
       <br />
-      <img className={style.sprite} src={image} alt={member.speciesName} draggable='false' />
+      <img
+        className={style.sprite}
+        src={image}
+        alt={member.speciesName}
+        draggable="false"
+      />
       <div
         className={style.healthbar}
         style={{ width: `${ratio * 100}%`, backgroundColor: color }}

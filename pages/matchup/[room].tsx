@@ -121,17 +121,13 @@ const MatchupPage = () => {
             <Team team={team} isPlayer={true} />
           </div>
         </div>
-        {(status === STATUS.CHOOSING) 
-        && (opponentTeam.length > 0
-        ? (
-          <Select team={team} onSubmit={onSubmit} />
-        )
-        : (
-          <p>Waiting for a player to join...</p>
-        )
-        )}
-        {status === STATUS.WAITING
-        && (
+        {status === STATUS.CHOOSING &&
+          (opponentTeam.length > 0 ? (
+            <Select team={team} onSubmit={onSubmit} />
+          ) : (
+            <p>Waiting for a player to join...</p>
+          ))}
+        {status === STATUS.WAITING && (
           <div>
             <p>Waiting for opponent...</p>
             <Loader

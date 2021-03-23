@@ -55,7 +55,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
           className={classnames([style.char], [style[s]], {
             [style.back]: back,
           })}
-          draggable='false'
+          draggable="false"
           src={getImage(char.sid, char.shiny, back)}
           alt={char.speciesName}
         />

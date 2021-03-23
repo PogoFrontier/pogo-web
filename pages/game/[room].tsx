@@ -416,8 +416,8 @@ const GamePage = () => {
         return true
       }
       if (
-        !currentMove.startsWith('#ca')
-        && (bufferedMove === '' || bufferedMove.startsWith('#sw'))
+        !currentMove.startsWith('#ca') &&
+        (bufferedMove === '' || bufferedMove.startsWith('#sw'))
       ) {
         setBufferedMove(data)
         ws.send(data)

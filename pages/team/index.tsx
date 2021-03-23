@@ -27,7 +27,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   const updateTeam = (team: UserTeam) => {
     if (team.id) {
-      const editIndex = user.teams.findIndex(x => x.id === team.id)
+      const editIndex = user.teams.findIndex((x) => x.id === team.id)
       if (editIndex > -1) {
         user.teams[editIndex] = team
       } else {
@@ -42,7 +42,9 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     setIsCrafting(true)
   }
 
-  const handleEditTeam = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleEditTeam = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     const i = parseInt(e.currentTarget.value, 10)
     setTeamToEdit(user.teams[i])
     if (teamToEdit === null) {
@@ -56,7 +58,11 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   }
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (window.confirm("You cannot undo this action. Are you sure you want to delete this team?")) {
+    if (
+      window.confirm(
+        'You cannot undo this action. Are you sure you want to delete this team?'
+      )
+    ) {
       const i = parseInt(e.currentTarget.value, 10)
       user.teams.splice(i, 1)
       setTeams(user.teams)
@@ -64,12 +70,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   }
 
   if (isLoading) {
-    return <Loader
-      type="TailSpin"
-      color="#68BFF5"
-      height={80}
-      width={80}
-    />
+    return <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
   }
 
   if (!user || !user.teams) {
