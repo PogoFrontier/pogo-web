@@ -2,9 +2,9 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { createContext } from 'react'
 
 export interface UserTeam {
-  name: string,
-  id: string,
-  format: string,
+  name: string
+  id: string
+  format: string
   members: TeamMember[]
 }
 
