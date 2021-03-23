@@ -42,6 +42,10 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     setIsCrafting(true)
   }
 
+  const handleOnClickAddRandomTeam = () => {
+
+  }
+
   const handleEditTeam = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -140,6 +144,9 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       )}
       <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
         Add Team
+      </button>
+      <button className="btn btn-primary" style={{marginLeft: '1em', width:"11em"}} onClick={handleOnClickAddRandomTeam}>
+        Add Random Team
       </button>
     </div>
   )

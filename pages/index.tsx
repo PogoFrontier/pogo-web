@@ -99,7 +99,6 @@ const HomePage = () => {
         cookieName="cookieconsent"
         style={{ backgroundColor: '#707070' }}
         buttonStyle={{ backgroundColor: '#68BFF5', fontSize: '15px' }}
-        debug={true}
         expires={150}
       >
         We use cookies to enhance the user experience and save preferences.
