@@ -9,6 +9,7 @@ import style from './style.module.scss'
 import Input from '@components/input/Input'
 import classNames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
+import TypeIcons from '@components/type_icon/TypeIcons'
 
 const parseName = (name: string) => {
   return name
@@ -380,12 +381,7 @@ const TeamMemberSelector = (props: {
             cp <strong>{addToBox.cp}</strong>
           </label>
           <br />
-          <label>
-            {addToBox.types.map(
-              (type: string) =>
-                type !== 'none' && <span key={type}>{toTitleCase(type)} </span> // Later make this a custom component
-            )}
-          </label>
+          <TypeIcons types={addToBox.types} />
           <br />
           <img
             src={getImage(addToBox.sid, addToBox.shiny, false)}
