@@ -3,12 +3,14 @@ import {
   getPokemonData,
   getPokemonNames,
 } from '@common/actions/pokemonAPIActions'
-import { cpms, ivValues, levelValues } from '@config/statVals'
+import { cpms, ivValues, levelValues, shadowMult } from '@config/statVals'
 import getImage from '@common/actions/getImage'
 import style from './style.module.scss'
 import Input from '@components/input/Input'
 import classNames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
+import calcCP from '@common/actions/getCP'
+import getIVs from '@common/actions/getIVs'
 
 const parseName = (name: string) => {
   return name
@@ -22,13 +24,22 @@ const parseName = (name: string) => {
     .replace(/\'/g, '')
 }
 
+const metaMap: {
+  [key: string]: number,
+ } = {
+  'Great League': 1500,
+  'Ultra League': 2500,
+  'Master League': 10000
+}
+
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
   member: TeamMember
-  deletePokemon: () => void
+  deletePokemon: () => void,
+  meta: string
 }) => {
-  const { cancelEdit, savePokemon, member, deletePokemon } = props
+  const { cancelEdit, savePokemon, member, deletePokemon, meta } = props
   const [userInput, setUserInput] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [activeSuggestion, setActiveSuggestion] = useState(0)
@@ -114,36 +125,14 @@ const TeamMemberSelector = (props: {
     let selectedAtk = (bs.atk + atk) * cpm
     let selectedDef = (bs.def + def) * cpm
     if (shadow) {
-      selectedAtk *= 1.2
-      selectedDef *= 0.83333331
+      selectedAtk *= shadowMult[0]
+      selectedDef *= shadowMult[1]
     }
     return {
       hp: selectedHP,
       atk: selectedAtk,
       def: selectedDef,
     }
-  }
-
-  const calcCP = (
-    bs: {
-      atk: number
-      def: number
-      hp: number
-    },
-    stats: number[]
-  ) => {
-    const cpm = cpms[(stats[0] - 1) * 2]
-    const atk = stats[1]
-    const def = stats[2]
-    const hp = stats[3]
-    const cp =
-      (bs.atk + atk) *
-      Math.sqrt(bs.def + def) *
-      Math.sqrt(bs.hp + hp) *
-      cpm *
-      cpm *
-      0.1
-    return Math.floor(cp)
   }
 
   const setPokemon = (input: string) => {
@@ -162,15 +151,11 @@ const TeamMemberSelector = (props: {
           setFilteredSuggestions([])
           setShowSuggestions(false)
           setSelectedPokemonData(pokemon)
-          const selectedIVs = [40, 15, 15, 15] // change this later to be calced
-          const stats = calculateStats(
-            pokemon.baseStats,
-            selectedIVs[0],
-            selectedIVs[1],
-            selectedIVs[2],
-            selectedIVs[3],
-            isShadow
-          )
+          const cap = metaMap[meta]
+          const stats = getIVs({
+            pokemon,
+            targetCP: cap ? cap : 10000,
+          })[0]
           setAddToBox({
             speciesId: pokemon.speciesId,
             speciesName: pokemon.speciesName,
@@ -178,13 +163,13 @@ const TeamMemberSelector = (props: {
             hp: stats.hp,
             atk: stats.atk,
             def: stats.def,
-            level: selectedIVs[0],
+            level: stats.level,
             iv: {
-              atk: selectedIVs[1],
-              def: selectedIVs[2],
-              hp: selectedIVs[3],
+              atk: stats.ivs.atk,
+              def: stats.ivs.def,
+              hp: stats.ivs.hp,
             },
-            cp: calcCP(pokemon.baseStats, selectedIVs),
+            cp: stats.cp,
             types: pokemon.types,
             fastMove: pokemon.fastMoves[0],
             chargeMoves: pokemon.chargedMoves.slice(0, 2),
