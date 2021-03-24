@@ -37,17 +37,10 @@
     }
   }
 }
-
-.types {
-  display: flex;
-  span + span {
-    margin-left: 0.5rem;
-  }
-}
-
+  
 .row {
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .pokeball {

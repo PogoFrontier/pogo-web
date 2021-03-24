@@ -1,5 +1,6 @@
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './status.module.scss'
+import TypeIcons from '@components/type_icon/TypeIcons'
 import classnames from 'classnames'
 
 interface StatusProps {
@@ -11,11 +12,7 @@ interface StatusProps {
 const Status: React.FC<StatusProps> = ({ subject, shields, remaining }) => {
   return (
     <div className={style.root}>
-      <div className={style.types}>
-        {subject.types.map((x) => (
-          <span key={x}>{x}</span>
-        ))}
-      </div>
+      <TypeIcons types={subject.types} />
       <div className={style.container}>
         <div className={style.row}>
           <div
