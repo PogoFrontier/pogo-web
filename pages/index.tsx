@@ -1,6 +1,7 @@
 import Form from '@components/form/Form'
 import Layout from '@components/layout/Layout'
 import TeamContext from '@context/TeamContext'
+import CookieConsent from 'react-cookie-consent'
 import { useContext } from 'react'
 import style from './style.module.scss'
 import getMini from '@common/actions/getMini'
@@ -92,6 +93,17 @@ const HomePage = () => {
           </section>
         </div>
       </main>
+      <CookieConsent
+        location="bottom"
+        buttonText="I accept"
+        cookieName="cookieconsent"
+        style={{ backgroundColor: '#707070' }}
+        buttonStyle={{ backgroundColor: '#68BFF5', fontSize: '15px' }}
+        debug={true}
+        expires={150}
+      >
+        We use cookies to enhance the user experience and save preferences.
+      </CookieConsent>
     </Layout>
   )
 }

@@ -42,7 +42,7 @@ const EndPage = () => {
     <Layout>
       <div className={style.content}>
         <h1>Game over</h1>
-        {(result === 'won' || result === 'lost' || result ==='tied') && (
+        {(result === 'won' || result === 'lost' || result === 'tied') && (
           <h2>You {result} the game</h2>
         )}
         <div className={style.buttons}>

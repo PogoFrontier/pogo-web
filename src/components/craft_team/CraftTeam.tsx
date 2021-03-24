@@ -19,11 +19,11 @@ interface CraftTeamProps {
 const unsavedString = 'You have unsaved changes.'
 const savedString = 'Save successful.'
 const metaMap: {
-  [key: string]: string,
- } = {
+  [key: string]: string
+} = {
   'Great League': 'Great',
   'Ultra League': 'Ultra',
-  'Master League': 'Master'
+  'Master League': 'Master',
 }
 
 const CraftTeam: React.FC<CraftTeamProps> = ({
@@ -52,7 +52,9 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     }
   }
 
-  const handleSelectPokemon = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+  const handleSelectPokemon = (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>
+  ) => {
     const index = parseInt(e.currentTarget.id, 10)
     setSelectedPokemon(workingTeam[index])
     setEditingIndex(index)
@@ -68,7 +70,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   const validateTeam = async (team: TeamMember[]): Promise<boolean> => {
     if (selectedMeta in metaMap) {
-      const result = await getValidateTeam(JSON.stringify(team), metaMap[selectedMeta]!)
+      const result = await getValidateTeam(
+        JSON.stringify(team),
+        metaMap[selectedMeta]!
+      )
       if (result.message) {
         alert(result.message)
       } else {
@@ -80,7 +85,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   const savePokemon = async (pokemon: any) => {
     // validate pokemon before allowing save!
-    const newTeam = [ ...workingTeam ]
+    const newTeam = [...workingTeam]
     newTeam[editingIndex] = pokemon
     setIsLoading(true)
     if (await validateTeam(newTeam)) {
@@ -116,7 +121,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
       const newId: string = id === '' ? uuidv4() : id
       setId(newId)
       const teamToUpdate = {
-        id: (teamToEdit && teamToEdit.id) ? teamToEdit.id : newId,
+        id: teamToEdit && teamToEdit.id ? teamToEdit.id : newId,
         name,
         format: selectedMeta,
         members: workingTeam,
@@ -150,14 +155,9 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   return (
     <div>
-      {isLoading
-        && <Loader
-          type="TailSpin"
-          color="#68BFF5"
-          height={80}
-          width={80}
-        />
-      }
+      {isLoading && (
+        <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
+      )}
       <Input
         title="Name"
         type="text"
@@ -166,16 +166,28 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         onChange={handleTeamNameChange}
       />
       <div className={style.btns}>
-        <button className="btn btn-negative" onClick={onExit} disabled={isLoading}>
+        <button
+          className="btn btn-negative"
+          onClick={onExit}
+          disabled={isLoading}
+        >
           Exit
         </button>
         {isUnsaved && !isLoading && (
-          <button className="btn btn-primary" onClick={saveTeam} disabled={isLoading}>
+          <button
+            className="btn btn-primary"
+            onClick={saveTeam}
+            disabled={isLoading}
+          >
             Save Team
           </button>
         )}
       </div>
-      {message !== '' && <p className={message === savedString ? style.saved : style.error}>{message}</p>}
+      {message !== '' && (
+        <p className={message === savedString ? style.saved : style.error}>
+          {message}
+        </p>
+      )}
       <div>
         {workingTeam && (
           <ul className={style.members}>

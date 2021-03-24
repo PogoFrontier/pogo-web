@@ -7,7 +7,9 @@ const Controls = () => {
 
   return (
     <div className={style.root}>
-      <button className="btn btn-negative" onClick={clear}>Clear Data</button>
+      <button className="btn btn-negative" onClick={clear}>
+        Clear Data
+      </button>
     </div>
   )
 }

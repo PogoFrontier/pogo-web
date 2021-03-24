@@ -13,14 +13,15 @@ import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
 
 const parseName = (name: string) => {
-  return name.toLowerCase()
-            .replace(/[()]/g, '')
-            .replace(/\s/g, '_')
-            .replace(/-/g, "_")
-            .replace(/♀/g, "_female")
-            .replace(/♂/g, "_male")
-            .replace(/\./g, "")
-            .replace(/\'/g, "")
+  return name
+    .toLowerCase()
+    .replace(/[()]/g, '')
+    .replace(/\s/g, '_')
+    .replace(/-/g, '_')
+    .replace(/♀/g, '_female')
+    .replace(/♂/g, '_male')
+    .replace(/\./g, '')
+    .replace(/\'/g, '')
 }
 
 const metaMap: {
@@ -52,14 +53,13 @@ const TeamMemberSelector = (props: {
   useEffect(() => {
     if (member && member.speciesName) {
       setAddToBox(member)
-      getPokemonData(member.speciesId)
-      .then((pokemon) => {
+      getPokemonData(member.speciesId).then((pokemon) => {
         if (pokemon) {
-          pokemon.chargedMoves.push("NONE")
-          if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
-            pokemon.chargedMoves.push("RETURN")
-          } else if (pokemon.tags && pokemon.tags.includes("shadow")) {
-            pokemon.chargedMoves.push("FRUSTRATION")
+          pokemon.chargedMoves.push('NONE')
+          if (pokemon.tags && pokemon.tags.includes('shadoweligible')) {
+            pokemon.chargedMoves.push('RETURN')
+          } else if (pokemon.tags && pokemon.tags.includes('shadow')) {
+            pokemon.chargedMoves.push('FRUSTRATION')
           }
           setSelectedPokemonData(pokemon)
         }
@@ -110,8 +110,8 @@ const TeamMemberSelector = (props: {
 
   const calculateStats = (
     bs: {
-      atk: number,
-      def: number,
+      atk: number
+      def: number
       hp: number
     },
     level: number,
@@ -121,9 +121,7 @@ const TeamMemberSelector = (props: {
     shadow?: boolean
   ) => {
     const cpm = cpms[(level - 1) * 2]
-    const selectedHP = Math.floor(
-      (bs.hp + hp) * cpm
-    )
+    const selectedHP = Math.floor((bs.hp + hp) * cpm)
     let selectedAtk = (bs.atk + atk) * cpm
     let selectedDef = (bs.def + def) * cpm
     if (shadow) {
@@ -142,12 +140,12 @@ const TeamMemberSelector = (props: {
     getPokemonData(parseName(input))
       .then((pokemon) => {
         if (pokemon) {
-          const isShadow = pokemon.tags && pokemon.tags.includes("shadow")
-          pokemon.chargedMoves.push("NONE")
-          if (pokemon.tags && pokemon.tags.includes("shadoweligible")) {
-            pokemon.chargedMoves.push("RETURN")
+          const isShadow = pokemon.tags && pokemon.tags.includes('shadow')
+          pokemon.chargedMoves.push('NONE')
+          if (pokemon.tags && pokemon.tags.includes('shadoweligible')) {
+            pokemon.chargedMoves.push('RETURN')
           } else if (isShadow) {
-            pokemon.chargedMoves.push("FRUSTRATION")
+            pokemon.chargedMoves.push('FRUSTRATION')
           }
           setActiveSuggestion(0)
           setFilteredSuggestions([])
@@ -192,9 +190,11 @@ const TeamMemberSelector = (props: {
     handleNicknameChange('')
   }
 
-  const handlePokemonChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handlePokemonChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     if (!addToBox.baseStats) {
-      alert("This Pokemon has corrupted data!")
+      alert('This Pokemon has corrupted data!')
       return deletePokemon()
     }
     if (['level', 'atk', 'def', 'hp'].includes(e.target.id)) {
@@ -211,7 +211,13 @@ const TeamMemberSelector = (props: {
         statsObj.def,
         statsObj.hp,
       ])
-      const stats = calculateStats(addToBox.baseStats, statsObj.level, statsObj.atk, statsObj.def, statsObj.hp)
+      const stats = calculateStats(
+        addToBox.baseStats,
+        statsObj.level,
+        statsObj.atk,
+        statsObj.def,
+        statsObj.hp
+      )
       // later, check newCP against the CP cap of the meta
       if (e.target.id === 'level') {
         setAddToBox((prevState: any) => ({
