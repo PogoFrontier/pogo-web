@@ -211,6 +211,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           savePokemon={savePokemon}
           member={selectedPokemon}
           deletePokemon={deletePokemon}
+          meta={selectedMeta}
         />
       </div>
     </div>

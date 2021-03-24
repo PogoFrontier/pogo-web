@@ -1,3 +1,5 @@
+export const shadowMult = [1.2, 0.83333331]
+
 export const cpms = [
   0.0939999967813491,
   0.135137430784308,
