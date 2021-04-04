@@ -1,0 +1,77 @@
+@import 'colors';
+
+.chargeButton {
+    position: relative;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    margin-left: 0.4rem;
+    fill: $color-white;
+  
+    //add color variables for each type
+    &.normal {
+      background: $color-normal;
+    }
+    &.fighting {
+      background: $color-fighting;
+    }
+    &.flying {
+      background: $color-flying;
+    }
+    &.poison {
+      background: $color-poison;
+    }
+    &.ground {
+      background: $color-ground;
+    }
+    &.rock {
+      background: $color-rock;
+    }
+    &.bug {
+      background: $color-bug;
+    }
+    &.ghost {
+      background: $color-ghost;
+    }
+    &.electric {
+      background: $color-electric;
+    }
+    &.water {
+      background: $color-water;
+    }
+    &.fire {
+      background: $color-fire;
+    }
+    &.grass {
+      background: $color-grass;
+    }
+    &.steel {
+      background: $color-steel;
+    }
+    &.psychic {
+      background: $color-psychic;
+    }
+    &.ice {
+      background: $color-ice;
+    }
+    &.dragon {
+      background: $color-dragon;
+    }
+    &.fairy {
+      background: $color-fairy;
+    }
+    &.dark {
+      background: $color-dark;
+    }
+}
+  
+.icon {
+    margin-left: 0.1rem;
+    position: relative;
+    z-index: 1;
+}
+  
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
