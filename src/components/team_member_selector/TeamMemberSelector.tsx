@@ -322,13 +322,69 @@ const TeamMemberSelector = (props: {
     deletePokemon()
   }
 
-  function addRandomMember() {
+  async function addRandomMember() {
     let randPokemon: string = 'Pidgey'
+    let randCharged1: string = 'Twister'
+    let randCharged2: string = 'Twister'
+    let randFast: string = 'Tackle'
 
-    getPokemonNames().then((data) => {
+    // get a random pokemon
+    await getPokemonNames().then((data) => {
       randPokemon = data[Math.round(Math.random() * data.length)]
       setPokemon(randPokemon)
     })
+    // get random moves
+    await getPokemonData(parseName(randPokemon)).then((data) => {
+      const isShadow = data.tags && data.tags.includes('shadow')
+
+      const chargedMoves = data.chargedMoves
+      if (data.tags && data.tags.includes('shadoweligible')) {
+        chargedMoves.push('RETURN')
+      } else if (isShadow) {
+        chargedMoves.push('FRUSTRATION')
+      }
+      randCharged1 =
+        chargedMoves[Math.floor(Math.random() * chargedMoves.length)]
+      chargedMoves.splice(chargedMoves.indexOf(randCharged1), 1)
+      chargedMoves.length === 0
+        ? (randCharged2 = 'NONE')
+        : (randCharged2 =
+            chargedMoves[Math.floor(Math.random() * chargedMoves.length)])
+      randFast =
+        data.fastMoves[Math.floor(Math.random() * data.fastMoves.length)]
+
+      const selectedIVs = [40, 15, 15, 15] // change this later to be calced
+      const stats = calculateStats(
+        data.baseStats,
+        selectedIVs[0],
+        selectedIVs[1],
+        selectedIVs[2],
+        selectedIVs[3],
+        isShadow
+      )
+
+      setAddToBox({
+        speciesId: data.speciesId,
+        speciesName: data.speciesName,
+        baseStats: data.baseStats,
+        hp: stats.hp,
+        atk: stats.atk,
+        def: stats.def,
+        level: 40,
+        iv: {
+          atk: 15,
+          def: 15,
+          hp: 15,
+        },
+        cp: calcCP(data.baseStats, [40, 15, 15, 15]),
+        types: data.types,
+        fastMove: randFast,
+        chargeMoves: [randCharged1, randCharged2],
+        sid: data.sid,
+      })
+    })
+
+    // set pokemon with moves and save it
   }
 
   return (
