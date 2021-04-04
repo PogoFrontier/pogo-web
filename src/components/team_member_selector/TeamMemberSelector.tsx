@@ -322,10 +322,20 @@ const TeamMemberSelector = (props: {
     deletePokemon()
   }
 
+  function addRandomMember() {
+    let randPokemon: string = 'Pidgey'
+
+    getPokemonNames().then((data) => {
+      randPokemon = data[Math.round(Math.random() * data.length)]
+      setPokemon(randPokemon)
+    })
+  }
+
   return (
     <section>
       {suggestions && suggestions.length > 0 ? (
         <div>
+          <button onClick={addRandomMember}>random</button>
           <Input
             title="Species"
             type="text"
