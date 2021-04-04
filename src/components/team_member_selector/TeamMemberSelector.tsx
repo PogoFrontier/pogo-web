@@ -26,18 +26,18 @@ const parseName = (name: string) => {
 }
 
 const metaMap: {
-  [key: string]: number,
- } = {
+  [key: string]: number
+} = {
   'Great League': 1500,
   'Ultra League': 2500,
-  'Master League': 10000
+  'Master League': 10000,
 }
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
   member: TeamMember
-  deletePokemon: () => void,
+  deletePokemon: () => void
   meta: string
 }) => {
   const { cancelEdit, savePokemon, member, deletePokemon, meta } = props
@@ -321,6 +321,7 @@ const TeamMemberSelector = (props: {
     })
     // get random moves
     await getPokemonData(parseName(randPokemon)).then((data) => {
+      const cap = metaMap[meta]
       const isShadow = data.tags && data.tags.includes('shadow')
 
       const chargedMoves = data.chargedMoves
@@ -338,16 +339,11 @@ const TeamMemberSelector = (props: {
             chargedMoves[Math.floor(Math.random() * chargedMoves.length)])
       randFast =
         data.fastMoves[Math.floor(Math.random() * data.fastMoves.length)]
-
-      const selectedIVs = [40, 15, 15, 15] // change this later to be calced
-      const stats = calculateStats(
-        data.baseStats,
-        selectedIVs[0],
-        selectedIVs[1],
-        selectedIVs[2],
-        selectedIVs[3],
-        isShadow
-      )
+      const pokemon = data
+      const stats = getIVs({
+        pokemon,
+        targetCP: cap ? cap : 10000,
+      })[0]
 
       setAddToBox({
         speciesId: data.speciesId,
@@ -371,6 +367,7 @@ const TeamMemberSelector = (props: {
     })
 
     // set pokemon with moves and save it
+    handleSavePokemon()
   }
 
   return (
