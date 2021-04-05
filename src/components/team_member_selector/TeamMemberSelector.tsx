@@ -26,18 +26,21 @@ const parseName = (name: string) => {
 }
 
 const metaMap: {
-  [key: string]: number,
- } = {
+  [key: string]: number
+} = {
   'Great League': 1500,
   'Ultra League': 2500,
-  'Master League': 10000
+  'Master League': 10000,
 }
+
+let pokemonNames: string[]
+getPokemonNames().then((data) => (pokemonNames = data))
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
   member: TeamMember
-  deletePokemon: () => void,
+  deletePokemon: () => void
   meta: string
 }) => {
   const { cancelEdit, savePokemon, member, deletePokemon, meta } = props
@@ -71,13 +74,12 @@ const TeamMemberSelector = (props: {
   }, [member])
 
   useEffect(() => {
-    getPokemonNames().then((names) => {
-      if (names.length > 0) {
-        setSuggestions(names)
-      } else {
-        return
-      }
-    }) // .catch(err => console.log(err));//should show 404 page
+    if (pokemonNames.length > 0) {
+      setSuggestions(pokemonNames)
+    } else {
+      return
+    }
+    // .catch(err => console.log(err));//should show 404 page
   }, [suggestions])
 
   const onChange = (e: any) => {
