@@ -10,6 +10,7 @@ import style from './style.module.scss'
 import classnames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend/team'
 import Loader from 'react-loader-spinner'
+import getRandomPokemon from '@common/actions/getRandomPokemon'
 
 interface ContentProps {
   meta: string
@@ -35,6 +36,23 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       }
       setTeams(user.teams)
     }
+  }
+
+  /**
+   * Adds a Random Team to the userTeams
+   */
+  async function handleOnClickAddRandomTeam() {
+    // TODO auto select meta
+    const team: TeamMember[] = []
+    for (let i = 0; i < 6; i++) {
+      await getRandomPokemon('Great League').then((data) => team.push(data))
+    }
+    updateTeam({
+      name: Math.random().toString(36).substring(7),
+      id: Math.random().toString(36).substring(7),
+      format: 'Great League',
+      members: team,
+    })
   }
 
   const handleOnClickAddTeam = () => {
@@ -138,9 +156,17 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       ) : (
         <p>No Teams to display</p>
       )}
-      <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
-        Add Team
-      </button>
+      <div className={style.addButtons}>
+        <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
+          Add Team
+        </button>
+        <button
+          className="btn btn-primary"
+          onClick={handleOnClickAddRandomTeam}
+        >
+          Add Random Team
+        </button>
+      </div>
     </div>
   )
 }

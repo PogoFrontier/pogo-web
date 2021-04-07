@@ -12,18 +12,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import TypeIcons from '@components/type_icon/TypeIcons'
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
-
-const parseName = (name: string) => {
-  return name
-    .toLowerCase()
-    .replace(/[()]/g, '')
-    .replace(/\s/g, '_')
-    .replace(/-/g, '_')
-    .replace(/♀/g, '_female')
-    .replace(/♂/g, '_male')
-    .replace(/\./g, '')
-    .replace(/\'/g, '')
-}
+import parseName from '@common/actions/parseName'
 
 const metaMap: {
   [key: string]: number
@@ -310,73 +299,10 @@ const TeamMemberSelector = (props: {
     deletePokemon()
   }
 
-  async function addRandomMember() {
-    let randPokemon: string = 'Pidgey'
-    let randCharged1: string = 'Twister'
-    let randCharged2: string = 'Twister'
-    let randFast: string = 'Tackle'
-
-    // get a random pokemon
-    await getPokemonNames().then((data) => {
-      randPokemon = data[Math.round(Math.random() * data.length)]
-      setPokemon(randPokemon)
-    })
-    // get random moves
-    await getPokemonData(parseName(randPokemon)).then((data) => {
-      const cap = metaMap[meta]
-      const isShadow = data.tags && data.tags.includes('shadow')
-
-      const chargedMoves = data.chargedMoves
-      if (data.tags && data.tags.includes('shadoweligible')) {
-        chargedMoves.push('RETURN')
-      } else if (isShadow) {
-        chargedMoves.push('FRUSTRATION')
-      }
-      randCharged1 =
-        chargedMoves[Math.floor(Math.random() * chargedMoves.length)]
-      chargedMoves.splice(chargedMoves.indexOf(randCharged1), 1)
-      chargedMoves.length === 0
-        ? (randCharged2 = 'NONE')
-        : (randCharged2 =
-            chargedMoves[Math.floor(Math.random() * chargedMoves.length)])
-      randFast =
-        data.fastMoves[Math.floor(Math.random() * data.fastMoves.length)]
-      const pokemon = data
-      const stats = getIVs({
-        pokemon,
-        targetCP: cap ? cap : 10000,
-      })[0]
-
-      setAddToBox({
-        speciesId: data.speciesId,
-        speciesName: data.speciesName,
-        baseStats: data.baseStats,
-        hp: stats.hp,
-        atk: stats.atk,
-        def: stats.def,
-        level: 40,
-        iv: {
-          atk: 15,
-          def: 15,
-          hp: 15,
-        },
-        cp: calcCP(data.baseStats, [40, 15, 15, 15]),
-        types: data.types,
-        fastMove: randFast,
-        chargeMoves: [randCharged1, randCharged2],
-        sid: data.sid,
-      })
-    })
-
-    // set pokemon with moves and save it
-    handleSavePokemon()
-  }
-
   return (
     <section>
       {suggestions && suggestions.length > 0 ? (
         <div>
-          <button onClick={addRandomMember}>random</button>
           <Input
             title="Species"
             type="text"

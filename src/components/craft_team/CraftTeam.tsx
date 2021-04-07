@@ -97,6 +97,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setWorkingTeam(newTeam)
     setAddingMember(false)
     setIsLoading(false)
+    handleAddMemberClick()
   }
 
   const deletePokemon = () => {
