@@ -106,6 +106,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     }
     newTeam.splice(editingIndex, 1)
     setSelectedPokemon(newTeam[0])
+    setEditingIndex(0)
     setWorkingTeam(newTeam)
     setIsUnsaved(true)
     setMessage(unsavedString)
