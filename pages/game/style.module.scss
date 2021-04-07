@@ -116,3 +116,10 @@
 .dark {
   color: $color-dark;
 }
+
+.keylabel {
+  color: $color-neutral-dark;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

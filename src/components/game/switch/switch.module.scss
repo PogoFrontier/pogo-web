@@ -61,3 +61,16 @@
     }
   }
 }
+  
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.keylabel {
+  color: $color-neutral-dark;
+  align-self: center;
+  margin-bottom: 1em;
+  margin-right: 0.5em;
+}

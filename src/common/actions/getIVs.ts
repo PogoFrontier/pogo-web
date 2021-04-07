@@ -14,7 +14,7 @@ interface GetIVsProps {
 function getIVs({
   pokemon,
   targetCP,
-  sortStat = "overall",
+  sortStat = 'overall',
   sortDirection = 1,
   resultCount = 1,
   ivFloor,
@@ -126,8 +126,8 @@ function getIVs({
     a[sortStat] > b[sortStat]
       ? -1 * sortDirection
       : b[sortStat] > a[sortStat]
-        ? 1 * sortDirection
-        : 0
+      ? 1 * sortDirection
+      : 0
   )
   const results = combinations.splice(0, resultCount)
 
