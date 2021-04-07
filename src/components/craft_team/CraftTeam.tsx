@@ -88,16 +88,14 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     const newTeam = [...workingTeam]
     newTeam[editingIndex] = pokemon
     setIsLoading(true)
-    if (await validateTeam(newTeam)) {
-      const equals = newTeam[editingIndex] === workingTeam[editingIndex]
-      if (!equals) {
-        setIsUnsaved(true)
-        setMessage(unsavedString)
-      }
-      setSelectedPokemon(pokemon)
-      setWorkingTeam(newTeam)
-      setAddingMember(false)
+    const equals = newTeam[editingIndex] === workingTeam[editingIndex]
+    if (!equals) {
+      setIsUnsaved(true)
+      setMessage(unsavedString)
     }
+    setSelectedPokemon(pokemon)
+    setWorkingTeam(newTeam)
+    setAddingMember(false)
     setIsLoading(false)
   }
 
