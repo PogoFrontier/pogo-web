@@ -1,14 +1,10 @@
 import Input from '@components/input/Input'
+import Toggle from '@components/input/Toggle'
 import SettingsContext from '@context/SettingsContext'
 import { useContext, useEffect, useState } from 'react'
 import style from './controls.module.scss'
-
-const returnKey = (key: string) => {
-  if (key === ' ') {
-    return 'space'
-  }
-  return key
-}
+import returnKey from '@common/actions/getKeyDescription'
+import { isDesktop } from 'react-device-detect'
 
 interface KeyInputProps {
   value: string
@@ -67,6 +63,7 @@ const KeyInput: React.FC<KeyInputProps> = ({
 
 const Controls = () => {
   const settings = useContext(SettingsContext)
+  const showKeys = settings.showKeys
   const {
     fastKey,
     charge1Key,
@@ -110,6 +107,13 @@ const Controls = () => {
           type="switch2Key"
           onSetKey={onSetKey}
         />
+        {isDesktop && (
+          <Toggle
+            title="Show Keys"
+            checked={showKeys}
+            onChange={settings.setShowKeys}
+          />
+        )}
       </section>
       <section>
         <KeyInput

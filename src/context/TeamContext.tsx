@@ -12,7 +12,7 @@ export const defaultTeam: TeamMember[] = [
     iv: {
       atk: 3,
       def: 15,
-      hp: 14
+      hp: 14,
     },
     level: 14.5,
     types: ['dragon', 'flying'],
@@ -32,7 +32,7 @@ export const defaultTeam: TeamMember[] = [
     iv: {
       atk: 1,
       def: 15,
-      hp: 15
+      hp: 15,
     },
     level: 23,
     types: ['water', 'none'],
@@ -50,7 +50,7 @@ export const defaultTeam: TeamMember[] = [
     iv: {
       atk: 0,
       def: 15,
-      hp: 13
+      hp: 13,
     },
     level: 19.5,
     types: ['fire', 'flying'],
@@ -68,7 +68,7 @@ export const defaultTeam: TeamMember[] = [
     iv: {
       atk: 0,
       def: 14,
-      hp: 11
+      hp: 11,
     },
     level: 21,
     types: ['grass', 'poison'],
@@ -86,7 +86,7 @@ export const defaultTeam: TeamMember[] = [
     iv: {
       atk: 10,
       def: 15,
-      hp: 13
+      hp: 13,
     },
     level: 16.5,
     types: ['psychic', 'none'],
@@ -104,7 +104,7 @@ export const defaultTeam: TeamMember[] = [
     iv: {
       atk: 4,
       def: 15,
-      hp: 15
+      hp: 15,
     },
     level: 13,
     types: ['psychic', 'none'],

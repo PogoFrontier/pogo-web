@@ -21,6 +21,7 @@ import SettingsContext from '@context/SettingsContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
+import { isDesktop } from 'react-device-detect'
 
 /**
  * NextJS wrapper
@@ -41,6 +42,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
+  const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
 
@@ -173,7 +175,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
       </Head>
-      <SettingsContext.Provider value={{ keys, setKeys, clear }}>
+      <SettingsContext.Provider
+        value={{ showKeys, keys, setShowKeys, setKeys, clear }}
+      >
         <IdContext.Provider value={{ id, setId }}>
           <UserContext.Provider
             value={{ user: currentUser!, refreshUser, setTeams }}
