@@ -33,6 +33,9 @@ const metaMap: {
   'Master League': 10000,
 }
 
+let pokemonNames: string[]
+getPokemonNames().then((data) => (pokemonNames = data))
+
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
@@ -71,13 +74,12 @@ const TeamMemberSelector = (props: {
   }, [member])
 
   useEffect(() => {
-    getPokemonNames().then((names) => {
-      if (names.length > 0) {
-        setSuggestions(names)
-      } else {
-        return
-      }
-    }) // .catch(err => console.log(err));//should show 404 page
+    if (pokemonNames.length > 0) {
+      setSuggestions(pokemonNames)
+    } else {
+      return
+    }
+    // .catch(err => console.log(err));//should show 404 page
   }, [suggestions])
 
   const onChange = (e: any) => {
