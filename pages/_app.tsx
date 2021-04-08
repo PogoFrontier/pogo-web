@@ -38,7 +38,9 @@ const defaultKeys = {
 
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [currentTeam, setCurrentTeam] = useState([] as TeamMember[])
+  const [currentTeam, setCurrentTeam] = useState(
+    {} as { id?: string; members: TeamMember[] }
+  )
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
@@ -81,7 +83,10 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       teamFromStorage &&
       teamFromStorage !== 'undefined'
     ) {
-      const teamJSON: TeamMember[] = JSON.parse(teamFromStorage)
+      const teamJSON: {
+        id: string
+        members: TeamMember[]
+      } = JSON.parse(teamFromStorage)
       setCurrentTeam(teamJSON)
     } else {
       setCurrentTeam(defaultTeam)
@@ -147,7 +152,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     setKeys1(keys1)
   }
 
-  const setTeam = (t: TeamMember[]) => {
+  const setTeam = (t: { id: string; members: TeamMember[] }) => {
     localStorage.setItem('team', JSON.stringify(t))
     setCurrentTeam(t)
   }

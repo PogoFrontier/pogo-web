@@ -46,7 +46,7 @@ const HomePage = () => {
   const onSelect = (id: any) => {
     const newTeam = user.teams.find((x) => x.id === id)
     if (newTeam) {
-      setTeam(newTeam.members)
+      setTeam(newTeam)
     }
   }
 
@@ -58,7 +58,8 @@ const HomePage = () => {
           <section className={style.members}>
             <h2>Current Team</h2>
             {team &&
-              team.map((member: any, index: number) => (
+              team.members &&
+              team.members.map((member: any, index: number) => (
                 <img
                   key={index}
                   className={style.member}

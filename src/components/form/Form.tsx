@@ -13,13 +13,17 @@ import Loader from 'react-loader-spinner'
 const Form: React.FunctionComponent = () => {
   const [room, setRoom] = useState('')
   const { socket, connect } = useContext(SocketContext)
-  const team: TeamMember[] = useContext(TeamContext).team
+  const team = useContext(TeamContext).team
+  let teamMembers: TeamMember[]
+  if (team) {
+    teamMembers = team.members
+  }
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   function joinRoom() {
     // Connected, let's sign-up for to receive messages for this room
-    const data = { type: CODE.room, payload: { room, team } }
+    const data = { type: CODE.room, payload: { room, team: teamMembers } }
     socket.send(JSON.stringify(data))
     router.push(`/matchup/${room}`)
   }
@@ -29,7 +33,7 @@ const Form: React.FunctionComponent = () => {
       joinRoom()
     } else if (!isLoading) {
       if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-        const payload = { room, team }
+        const payload = { room, team: teamMembers }
         setIsLoading(true)
         connect(uuidv4(), payload)
       }
