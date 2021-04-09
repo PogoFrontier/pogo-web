@@ -10,6 +10,7 @@ import style from './style.module.scss'
 import classnames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend/team'
 import Loader from 'react-loader-spinner'
+import TeamContext from '@context/TeamContext'
 
 interface ContentProps {
   meta: string
@@ -20,19 +21,25 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const { team, setTeam } = useContext(TeamContext)
 
   useEffect(() => {
     setIsLoading(false)
   }, [teamToEdit])
 
-  const updateTeam = (team: UserTeam) => {
-    if (team.id) {
-      const editIndex = user.teams.findIndex((x) => x.id === team.id)
+  const updateTeam = (newteam: UserTeam) => {
+    if (newteam.id) {
+      const editIndex = user.teams.findIndex((x) => x.id === newteam.id)
       if (editIndex > -1) {
-        user.teams[editIndex] = team
+        user.teams[editIndex] = newteam
       } else {
-        user.teams.push(team)
+        user.teams.push(newteam)
       }
+
+      if (team && team.id === newteam.id) {
+        setTeam(newteam)
+      }
+
       setTeams(user.teams)
     }
   }
@@ -64,6 +71,11 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       )
     ) {
       const i = parseInt(e.currentTarget.value, 10)
+
+      if (team && team.id === user.teams[i].id) {
+        setTeam(undefined)
+      }
+
       user.teams.splice(i, 1)
       setTeams(user.teams)
     }
@@ -101,25 +113,27 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   return (
     <div className={style.root}>
       {user.teams.length > 0 ? (
-        user.teams.map((team: UserTeam, i: number) => {
-          if (team.format === meta) {
+        user.teams.map((userTeam: UserTeam, i: number) => {
+          if (userTeam.format === meta) {
             return (
-              <div className={style.wrapper} key={team.id}>
+              <div className={style.wrapper} key={userTeam.id}>
                 <button
                   className={style.box}
                   value={i}
                   onClick={handleEditTeam}
                 >
-                  <label className={style.label}>{team.name}</label>
+                  <label className={style.label}>{userTeam.name}</label>
                   <div className={style.members}>
-                    {team.members.length > 0 &&
-                      team.members.map((member: TeamMember, index: number) => (
-                        <img
-                          key={index}
-                          src={getMini(member.sid)}
-                          alt={member.speciesName}
-                        />
-                      ))}
+                    {userTeam.members.length > 0 &&
+                      userTeam.members.map(
+                        (member: TeamMember, index: number) => (
+                          <img
+                            key={index}
+                            src={getMini(member.sid)}
+                            alt={member.speciesName}
+                          />
+                        )
+                      )}
                   </div>
                 </button>
                 <div className={style.btns}>

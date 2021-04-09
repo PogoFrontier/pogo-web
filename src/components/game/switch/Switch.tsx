@@ -58,7 +58,12 @@ const Selector: React.FC<SelectorProps> = ({
       <small>CP {member.cp}</small>
       <br />
       <img
-        className={style.sprite}
+        className={classnames([
+          style.sprite,
+          {
+            [style.inactive]: !active,
+          },
+        ])}
         src={image}
         alt={member.speciesName}
         draggable="false"
@@ -130,7 +135,7 @@ const Switch: React.FC<SwitchProps> = ({
               member={x.char}
               index={x.index}
               onClick={onClick}
-              active={countdown <= 0}
+              active={modal || countdown <= 0}
               key={x.index.toString()}
             />
           </div>
