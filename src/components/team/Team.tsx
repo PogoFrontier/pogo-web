@@ -10,7 +10,7 @@ interface TeamProps {
 const Team: React.FC<TeamProps> = ({ team, isPlayer }) => {
   return (
     <section className={style.root}>
-      {team.map((x) => (
+      {team && team.map((x) => (
         <span className={style.member} key={x.speciesId}>
           <label>CP {x.cp}</label>
           <img
