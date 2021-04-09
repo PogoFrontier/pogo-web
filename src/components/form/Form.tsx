@@ -9,8 +9,10 @@ import { v4 as uuidv4 } from 'uuid'
 import classnames from 'classnames'
 // import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
+import ErrorPopup from '@components/error_popup/ErrorPopup'
 
 const Form: React.FunctionComponent = () => {
+  const [error, setError] = useState('')
   const [room, setRoom] = useState('')
   const { socket, connect } = useContext(SocketContext)
   const team = useContext(TeamContext).team
@@ -21,11 +23,20 @@ const Form: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
+  socket.onmessage = (msg: MessageEvent) => {
+    if (msg.data.startsWith('$error')) {
+      const data = msg.data.slice(6)
+      setIsLoading(false)
+      setError(data)
+    } else if (msg.data.startsWith('$start')) {
+      router.push(`/matchup/${room}`)
+    }
+  }
+
   function joinRoom() {
     // Connected, let's sign-up for to receive messages for this room
     const data = { type: CODE.room, payload: { room, team: teamMembers } }
     socket.send(JSON.stringify(data))
-    router.push(`/matchup/${room}`)
   }
 
   function join() {
@@ -44,38 +55,45 @@ const Form: React.FunctionComponent = () => {
     setRoom(e.target.value)
   }
 
+  function onErrorPopupClose() {
+    setError('')
+  }
+
   return (
-    <section className={style.root}>
-      <div className={style.container}>
-        <h1>Project Grookey</h1>
-        <div className={style.code}>
-          Code:{' '}
-          <input
-            className={style.input}
-            value={room}
-            placeholder="Enter room code"
-            onChange={onChange}
-          />
+    <>
+      {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
+      <section className={style.root}>
+        <div className={style.container}>
+          <h1>Project Grookey</h1>
+          <div className={style.code}>
+            Code:{' '}
+            <input
+              className={style.input}
+              value={room}
+              placeholder="Enter room code"
+              onChange={onChange}
+            />
+          </div>
         </div>
-      </div>
-      {isLoading ? (
-        <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
-      ) : (
-        <>
-          <button
-            className={classnames([style.button, 'btn', 'btn-primary'])}
-            disabled={room === ''}
-            onClick={join}
-          >
-            Play
-          </button>
-          <br />
-          {/* <button onClick={getSignInWithGooglePopup}>
+        {isLoading ? (
+          <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
+        ) : (
+          <>
+            <button
+              className={classnames([style.button, 'btn', 'btn-primary'])}
+              disabled={room === ''}
+              onClick={join}
+            >
+              Play
+            </button>
+            <br />
+            {/* <button onClick={getSignInWithGooglePopup}>
             Sign In With Google
           </button> */}
-        </>
-      )}
-    </section>
+          </>
+        )}
+      </section>
+    </>
   )
 }
 

@@ -137,7 +137,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         const data = { type: CODE.room, payload }
         s.send(JSON.stringify(data))
         clearInterval(x)
-        router.push(`/matchup/${payload.room}`)
       } else if (s.readyState === WebSocket.CLOSED) {
         clearInterval(x)
       }
