@@ -2,11 +2,15 @@ import { Move } from '@adibkhan/pogo-web-backend'
 import { Icon, IconName } from '@components/icon/Icon'
 import classnames from 'classnames'
 import style from './charged.module.scss'
+import SettingsContext from '@context/SettingsContext'
+import { useContext } from 'react'
+import getKeyDescription from '@common/actions/getKeyDescription'
 
 interface ChargedButtonProps {
   move: Move
   energy: number
   onClick: (move: Move) => void
+  keyboardInput: string | undefined
 }
 
 interface ChargedProps {
@@ -19,6 +23,7 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   move,
   energy,
   onClick,
+  keyboardInput,
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
@@ -33,6 +38,9 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
         { 'no-click': energy < move.energy },
       ])}
     >
+      {keyboardInput && (
+        <label className={style.keylabel}>({keyboardInput})</label>
+      )}
       <button
         onClick={handleClick}
         disabled={energy < move.energy}
@@ -74,15 +82,27 @@ const Charged: React.FunctionComponent<ChargedProps> = ({
     return null
   }
 
+  const { showKeys, keys } = useContext(SettingsContext)
+  const { charge1Key, charge2Key } = keys
+
   return (
     <div className={style.root}>
-      {moves.map((x) => (
-        <ChargedButton
-          key={x.moveId}
-          move={x}
-          energy={energy}
-          onClick={onClick}
-        />
+      {moves.map((x, index) => (
+        <>
+          <ChargedButton
+            key={x.moveId}
+            move={x}
+            energy={energy}
+            onClick={onClick}
+            keyboardInput={
+              showKeys
+                ? getKeyDescription(
+                    [charge1Key, charge2Key][index]
+                  ).toUpperCase()
+                : undefined
+            }
+          />
+        </>
       ))}
     </div>
   )

@@ -1,9 +1,11 @@
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './switch.module.scss'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import classnames from 'classnames'
 import getColor from '@common/actions/getColor'
 import ImageHandler from '@common/actions/getImages'
+import getKeyDescription from '@common/actions/getKeyDescription'
+import SettingsContext from '@context/SettingsContext'
 
 interface SwitchProps {
   team: TeamMember[]
@@ -57,7 +59,12 @@ const Selector: React.FC<SelectorProps> = ({
       <small>CP {member.cp}</small>
       <br />
       <img
-        className={style.sprite}
+        className={classnames([
+          style.sprite,
+          {
+            [style.inactive]: !active,
+          },
+        ])}
         src={image}
         alt={member.speciesName}
         draggable="false"
@@ -100,6 +107,9 @@ const Switch: React.FC<SwitchProps> = ({
     return <div />
   }
 
+  const { showKeys, keys } = useContext(SettingsContext)
+  const { switch1Key, switch2Key } = keys
+
   return (
     <div
       className={classnames([
@@ -110,15 +120,26 @@ const Switch: React.FC<SwitchProps> = ({
         },
       ])}
     >
-      {arr.map((x) => {
+      {arr.map((x, index) => {
         return (
-          <Selector
-            member={x.char}
-            index={x.index}
-            onClick={onClick}
-            active={countdown <= 0}
-            key={x.index.toString()}
-          />
+          <div key={'switchButton' + index} className={style.row}>
+            {showKeys && (
+              <label className={style.keylabel}>
+                (
+                {getKeyDescription(
+                  [switch1Key, switch2Key][index]
+                ).toUpperCase()}
+                )
+              </label>
+            )}
+            <Selector
+              member={x.char}
+              index={x.index}
+              onClick={onClick}
+              active={modal || countdown <= 0}
+              key={x.index.toString()}
+            />
+          </div>
         )
       })}
       {!modal && <strong>{countdown}</strong>}

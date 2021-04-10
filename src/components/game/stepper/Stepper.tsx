@@ -1,8 +1,10 @@
+import getKeyDescription from '@common/actions/getKeyDescription'
 import classnames from 'classnames'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { NICE, GREAT, EXCELLENT } from './constants'
 import style from './stepper.module.scss'
+import SettingsContext from '@context/SettingsContext'
 
 interface StepperProps {
   onStep: (x: number) => void
@@ -41,8 +43,16 @@ const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
     }
   }, [step])
 
+  const { showKeys, keys } = useContext(SettingsContext)
+  const { fastKey } = keys
+
   return (
-    <div>
+    <div className={style.column}>
+      {showKeys && (
+        <label className={style.keylabel}>
+          Press {getKeyDescription(fastKey).toUpperCase()}
+        </label>
+      )}
       <button
         onClick={onStepperClick}
         className={classnames([
