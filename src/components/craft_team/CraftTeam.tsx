@@ -8,6 +8,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { v4 as uuidv4 } from 'uuid'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import Loader from 'react-loader-spinner'
+import ErrorPopup from '@components/error_popup/ErrorPopup'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -35,6 +36,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [workingTeam, setWorkingTeam] = useState([] as TeamMember[])
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
   const [addingMember, setAddingMember] = useState(false)
+  const [error, setError] = useState('')
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
   const [isUnsaved, setIsUnsaved] = useState(false)
@@ -75,7 +77,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         metaMap[selectedMeta]!
       )
       if (result.message) {
-        alert(result.message)
+        setError(result.message)
       } else {
         return true
       }
@@ -152,8 +154,13 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     }
   }, [])
 
+  function onErrorPopupClose() {
+    setError('')
+  }
+
   return (
     <div>
+      {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
       {isLoading && (
         <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
       )}
