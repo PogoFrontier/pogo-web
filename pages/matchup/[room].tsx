@@ -82,6 +82,7 @@ const MatchupPage = () => {
         type: CODE.team_submit,
         payload: {
           room,
+          indexes: values,
           team: submission,
         },
       })
