@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { NICE, GREAT, EXCELLENT } from './constants'
 import style from './stepper.module.scss'
 import SettingsContext from '@context/SettingsContext'
+import useKeyPress from '@common/actions/useKeyPress'
 
 interface StepperProps {
   onStep: (x: number) => void
@@ -14,6 +15,10 @@ interface StepperProps {
 const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
   const [stepperCharge, setStepperCharge] = useState(25)
   const [stepperLabel, setStepperLabel] = useState('')
+  const { showKeys, keys } = useContext(SettingsContext)
+  const { fastKey } = keys
+
+  const fastKeyClick = useKeyPress(fastKey)
 
   const onStepperClick = () => {
     if (stepperCharge < 100) {
@@ -43,8 +48,7 @@ const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
     }
   }, [step])
 
-  const { showKeys, keys } = useContext(SettingsContext)
-  const { fastKey } = keys
+  useEffect(onStepperClick, [fastKeyClick])
 
   return (
     <div className={style.column}>

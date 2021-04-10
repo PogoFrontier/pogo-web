@@ -10,16 +10,17 @@ interface TeamProps {
 const Team: React.FC<TeamProps> = ({ team, isPlayer }) => {
   return (
     <section className={style.root}>
-      {team && team.map((x) => (
-        <span className={style.member} key={x.speciesId}>
-          <label>CP {x.cp}</label>
-          <img
-            className={style.sprite}
-            src={getImage(x.sid, x.shiny, isPlayer)}
-            alt={x.speciesName}
-          />
-        </span>
-      ))}
+      {team &&
+        team.map((x) => (
+          <span className={style.member} key={x.speciesId}>
+            <label>CP {x.cp}</label>
+            <img
+              className={style.sprite}
+              src={getImage(x.sid, x.shiny, isPlayer)}
+              alt={x.speciesName}
+            />
+          </span>
+        ))}
     </section>
   )
 }
