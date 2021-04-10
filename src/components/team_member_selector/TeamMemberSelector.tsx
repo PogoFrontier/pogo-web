@@ -12,6 +12,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import TypeIcons from '@components/type_icon/TypeIcons'
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
+import getMaxLevel from '@common/actions/getMaxLevel'
 
 const parseName = (name: string) => {
   return name
@@ -208,6 +209,17 @@ const TeamMemberSelector = (props: {
         hp: addToBox.iv.hp,
       }
       statsObj[e.target.id] = +e.target.value
+
+      if (e.target.id !== 'level') {
+        addToBox.level = getMaxLevel(
+          addToBox.baseStats,
+          statsObj,
+          metaMap[meta],
+          50
+        )
+        statsObj.level = addToBox.level
+      }
+
       const newCP = calcCP(selectedPokemonData.baseStats, [
         statsObj.level,
         statsObj.atk,
