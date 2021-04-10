@@ -1,4 +1,4 @@
-import getImage from '@common/actions/getImage'
+import ImageHandler from '@common/actions/getImages'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './team.module.scss'
 
@@ -8,6 +8,7 @@ interface TeamProps {
 }
 
 const Team: React.FC<TeamProps> = ({ team, isPlayer }) => {
+  const imageHandler = new ImageHandler()
   return (
     <section className={style.root}>
       {team.map((x) => (
@@ -15,7 +16,7 @@ const Team: React.FC<TeamProps> = ({ team, isPlayer }) => {
           <label>CP {x.cp}</label>
           <img
             className={style.sprite}
-            src={getImage(x.sid, x.shiny, isPlayer)}
+            src={imageHandler.getImage(x.sid, x.shiny, isPlayer)}
             alt={x.speciesName}
           />
         </span>

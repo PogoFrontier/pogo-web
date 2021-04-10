@@ -3,7 +3,8 @@ import UserContext, { UserTeam } from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 // import { updateUserTeam } from '@common/actions/userAPIActions'
-import getMini from '@common/actions/getMini'
+
+import ImageHandler from '@common/actions/getImages'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
@@ -20,6 +21,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const imagesHandler = new ImageHandler()
 
   useEffect(() => {
     setIsLoading(false)
@@ -116,7 +118,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                       team.members.map((member: TeamMember, index: number) => (
                         <img
                           key={index}
-                          src={getMini(member.sid)}
+                          src={imagesHandler.getMini(member.sid)}
                           alt={member.speciesName}
                         />
                       ))}

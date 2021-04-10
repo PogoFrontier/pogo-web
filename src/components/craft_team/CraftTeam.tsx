@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
-import getMini from '@common/actions/getMini'
+import ImageHandler from '@common/actions/getImages'
 import Input from '@components/input/Input'
 import style from './craft.module.scss'
 import classnames from 'classnames'
@@ -41,6 +41,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [message, setMessage] = useState('')
   const [id, setId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const imageHandler = new ImageHandler()
 
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
@@ -202,7 +203,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
                   id={index}
                   onClick={handleSelectPokemon}
                 >
-                  <img src={getMini(member.sid)} alt={member.speciesName} />
+                  <img
+                    src={imageHandler.getMini(member.sid)}
+                    alt={member.speciesName}
+                  />
                 </li>
               ))}
             {workingTeam.length < 6 && !addingMember && (

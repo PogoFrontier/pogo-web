@@ -4,7 +4,6 @@ import TeamContext from '@context/TeamContext'
 import CookieConsent from 'react-cookie-consent'
 import { useContext } from 'react'
 import style from './style.module.scss'
-import getMini from '@common/actions/getMini'
 import UserContext from '@context/UserContext'
 import {
   Combobox,
@@ -15,6 +14,7 @@ import {
 } from '@reach/combobox'
 import '@reach/combobox/styles.css'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
+import ImageHandler from '@common/actions/getImages'
 
 interface TeamOptionProps {
   team: TeamMember[]
@@ -23,6 +23,8 @@ interface TeamOptionProps {
 }
 
 const TeamOption: React.FC<TeamOptionProps> = ({ team, name, id }) => {
+  const imagesHandler = new ImageHandler()
+
   return (
     <ComboboxOption value={id} className={style.option}>
       <strong>{name}</strong>
@@ -30,7 +32,7 @@ const TeamOption: React.FC<TeamOptionProps> = ({ team, name, id }) => {
       {team.map((member: any, index: number) => (
         <img
           key={index}
-          src={getMini(member.sid)}
+          src={imagesHandler.getMini(member.sid)}
           className={style.member}
           alt={member.speciesName}
         />
@@ -42,6 +44,7 @@ const TeamOption: React.FC<TeamOptionProps> = ({ team, name, id }) => {
 const HomePage = () => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
+  const imagesHandler = new ImageHandler()
 
   const onSelect = (id: any) => {
     const newTeam = user.teams.find((x) => x.id === id)
@@ -62,7 +65,7 @@ const HomePage = () => {
                 <img
                   key={index}
                   className={style.member}
-                  src={getMini(member.sid)}
+                  src={imagesHandler.getMini(member.sid)}
                   alt={member.speciesName}
                 />
               ))}
