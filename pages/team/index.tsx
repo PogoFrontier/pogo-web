@@ -3,7 +3,7 @@ import UserContext, { UserTeam } from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 // import { updateUserTeam } from '@common/actions/userAPIActions'
-import getMini from '@common/actions/getMini'
+import ImageHandler from '@common/actions/getImages'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
@@ -21,6 +21,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const imagesHandler = new ImageHandler()
   const { team, setTeam } = useContext(TeamContext)
 
   useEffect(() => {
@@ -124,16 +125,14 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                 >
                   <label className={style.label}>{userTeam.name}</label>
                   <div className={style.members}>
-                    {userTeam.members.length > 0 &&
-                      userTeam.members.map(
-                        (member: TeamMember, index: number) => (
-                          <img
-                            key={index}
-                            src={getMini(member.sid)}
-                            alt={member.speciesName}
-                          />
-                        )
-                      )}
+                    {team.members.length > 0 &&
+                      team.members.map((member: TeamMember, index: number) => (
+                        <img
+                          key={index}
+                          src={imagesHandler.getMini(member.sid)}
+                          alt={member.speciesName}
+                        />
+                      ))}
                   </div>
                 </button>
                 <div className={style.btns}>

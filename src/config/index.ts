@@ -9,3 +9,5 @@ export const WSS =
   process.env.NODE_ENV === 'production'
     ? 'wss://pogo-web-backend.herokuapp.com/'
     : 'ws://localhost:3000/'
+
+export const CDN_BASE_URL = 'https://d1bbfbaqrr54l0.cloudfront.net'

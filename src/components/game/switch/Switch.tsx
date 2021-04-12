@@ -3,7 +3,7 @@ import style from './switch.module.scss'
 import { useContext, useEffect, useState } from 'react'
 import classnames from 'classnames'
 import getColor from '@common/actions/getColor'
-import getMini from '@common/actions/getMini'
+import ImageHandler from '@common/actions/getImages'
 import getKeyDescription from '@common/actions/getKeyDescription'
 import SettingsContext from '@context/SettingsContext'
 
@@ -33,6 +33,7 @@ const Selector: React.FC<SelectorProps> = ({
   active,
   onClick,
 }) => {
+  const imageHandler = new ImageHandler()
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -41,7 +42,7 @@ const Selector: React.FC<SelectorProps> = ({
     onClick(index)
   }
 
-  const image = getMini(member.sid)
+  const image = imageHandler.getMini(member.sid)
   const ratio = member.current ? Math.min(member.current.hp / member.hp, 1) : 1
   const color = getColor(ratio)
 
