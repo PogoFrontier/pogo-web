@@ -21,6 +21,7 @@ import SettingsContext from '@context/SettingsContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
+import { isDesktop } from 'react-device-detect'
 
 /**
  * NextJS wrapper
@@ -37,10 +38,13 @@ const defaultKeys = {
 
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [currentTeam, setCurrentTeam] = useState([] as TeamMember[])
+  const [currentTeam, setCurrentTeam] = useState(
+    {} as { id?: string; members: TeamMember[] }
+  )
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
+  const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
 
@@ -79,7 +83,10 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       teamFromStorage &&
       teamFromStorage !== 'undefined'
     ) {
-      const teamJSON: TeamMember[] = JSON.parse(teamFromStorage)
+      const teamJSON: {
+        id: string
+        members: TeamMember[]
+      } = JSON.parse(teamFromStorage)
       setCurrentTeam(teamJSON)
     } else {
       setCurrentTeam(defaultTeam)
@@ -130,7 +137,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         const data = { type: CODE.room, payload }
         s.send(JSON.stringify(data))
         clearInterval(x)
-        router.push(`/matchup/${payload.room}`)
       } else if (s.readyState === WebSocket.CLOSED) {
         clearInterval(x)
       }
@@ -145,7 +151,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     setKeys1(keys1)
   }
 
-  const setTeam = (t: TeamMember[]) => {
+  const setTeam = (t: { id: string; members: TeamMember[] }) => {
     localStorage.setItem('team', JSON.stringify(t))
     setCurrentTeam(t)
   }
@@ -173,7 +179,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
       </Head>
-      <SettingsContext.Provider value={{ keys, setKeys, clear }}>
+      <SettingsContext.Provider
+        value={{ showKeys, keys, setShowKeys, setKeys, clear }}
+      >
         <IdContext.Provider value={{ id, setId }}>
           <UserContext.Provider
             value={{ user: currentUser!, refreshUser, setTeams }}

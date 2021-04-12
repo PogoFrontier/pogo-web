@@ -1,9 +1,8 @@
-import axios from 'axios'
-import { SERVER } from '@config/index'
+import API from '@config/API'
 
 export const getPokemonNames = async () => {
   try {
-    const res = await axios.get(`${SERVER}api/pokemon/names`)
+    const res = await API.get(`api/pokemon/names`)
     return res.data
   } catch (err) {
     return err
@@ -12,7 +11,7 @@ export const getPokemonNames = async () => {
 
 export const getPokemonData = async (speciesId: string) => {
   try {
-    const res = await axios.get(`${SERVER}api/pokemon/${speciesId}`)
+    const res = await API.get(`api/pokemon/${speciesId}`)
     return res.data
   } catch (err) {
     return err
@@ -21,7 +20,7 @@ export const getPokemonData = async (speciesId: string) => {
 
 export const getValidateTeam = async (team: string, meta: string) => {
   try {
-    const res = await axios.get(`${SERVER}api/pokemon/validate/${team}/${meta}`)
+    const res = await API.get(`api/pokemon/validate/${team}/${meta}`)
     return res.data
   } catch (err) {
     return err.message

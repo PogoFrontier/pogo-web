@@ -3,13 +3,14 @@ import UserContext, { UserTeam } from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 // import { updateUserTeam } from '@common/actions/userAPIActions'
-import getMini from '@common/actions/getMini'
+import ImageHandler from '@common/actions/getImages'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
 import classnames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend/team'
 import Loader from 'react-loader-spinner'
+import TeamContext from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
 
 interface ContentProps {
@@ -21,19 +22,26 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const imagesHandler = new ImageHandler()
+  const { team, setTeam } = useContext(TeamContext)
 
   useEffect(() => {
     setIsLoading(false)
   }, [teamToEdit])
 
-  const updateTeam = (team: UserTeam) => {
-    if (team.id) {
-      const editIndex = user.teams.findIndex((x) => x.id === team.id)
+  const updateTeam = (newteam: UserTeam) => {
+    if (newteam.id) {
+      const editIndex = user.teams.findIndex((x) => x.id === newteam.id)
       if (editIndex > -1) {
-        user.teams[editIndex] = team
+        user.teams[editIndex] = newteam
       } else {
-        user.teams.push(team)
+        user.teams.push(newteam)
       }
+
+      if (team && team.id === newteam.id) {
+        setTeam(newteam)
+      }
+
       setTeams(user.teams)
     }
   }
@@ -43,15 +51,15 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    */
   async function handleOnClickAddRandomTeam() {
     // TODO auto select meta
-    const team: TeamMember[] = []
+    const t: TeamMember[] = []
     for (let i = 0; i < 6; i++) {
-      await getRandomPokemon('Great League').then((data) => team.push(data))
+      await getRandomPokemon('Great League').then((data) => t.push(data))
     }
     updateTeam({
       name: Math.random().toString(36).substring(7),
       id: Math.random().toString(36).substring(7),
       format: 'Great League',
-      members: team,
+      members: t,
     })
   }
 
@@ -82,6 +90,11 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       )
     ) {
       const i = parseInt(e.currentTarget.value, 10)
+
+      if (team && team.id === user.teams[i].id) {
+        setTeam(undefined)
+      }
+
       user.teams.splice(i, 1)
       setTeams(user.teams)
     }
@@ -119,22 +132,22 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   return (
     <div className={style.root}>
       {user.teams.length > 0 ? (
-        user.teams.map((team: UserTeam, i: number) => {
-          if (team.format === meta) {
+        user.teams.map((userTeam: UserTeam, i: number) => {
+          if (userTeam.format === meta) {
             return (
-              <div className={style.wrapper} key={team.id}>
+              <div className={style.wrapper} key={userTeam.id}>
                 <button
                   className={style.box}
                   value={i}
                   onClick={handleEditTeam}
                 >
-                  <label className={style.label}>{team.name}</label>
+                  <label className={style.label}>{userTeam.name}</label>
                   <div className={style.members}>
                     {team.members.length > 0 &&
                       team.members.map((member: TeamMember, index: number) => (
                         <img
                           key={index}
-                          src={getMini(member.sid)}
+                          src={imagesHandler.getMini(member.sid)}
                           alt={member.speciesName}
                         />
                       ))}

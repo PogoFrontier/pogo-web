@@ -25,6 +25,7 @@ import useKeyPress from '@common/actions/useKeyPress'
 import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
+import getKeyDescription from '@common/actions/getKeyDescription'
 
 interface CheckPayload {
   countdown: number
@@ -49,6 +50,7 @@ const GamePage = () => {
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
+  const { showKeys, keys } = useContext(SettingsContext)
   const {
     fastKey,
     charge1Key,
@@ -56,7 +58,7 @@ const GamePage = () => {
     switch1Key,
     switch2Key,
     shieldKey,
-  } = useContext(SettingsContext).keys
+  } = keys
   const { height } = useWindowSize()
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
@@ -467,11 +469,7 @@ const GamePage = () => {
 
   useEffect(() => {
     if (fastKeyClick) {
-      if (!onClick()) {
-        if (status === StatusTypes.CHARGE) {
-          setChargeMult((prev) => Math.min(prev + 0.25, 1))
-        }
-      }
+      onClick()
     } else if (charge1KeyClick) {
       const move = moves[charPointer][0]
       if (!onChargeClick(move)) {
@@ -562,6 +560,11 @@ const GamePage = () => {
           energy={current.current?.energy || 0}
           onClick={onChargeClick}
         />
+        {showKeys && (
+          <label className={style.keylabel}>
+            Press {getKeyDescription(fastKey).toUpperCase()}
+          </label>
+        )}
 
         <Popover
           closed={status === StatusTypes.MAIN}

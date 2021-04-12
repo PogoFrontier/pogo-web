@@ -51,8 +51,9 @@ Credit to [Smogon](https://github.com/smogon/sprites) for all the Pokemon sprite
 Credit to all the project contributors! They've shaved months off development and improved the project in ways I hadn't imagined:
 - @jarthur22 ⭐
 - @theking465 ⭐
+- @FlorianKutz ⭐
+- @golu360 ⭐
 - @tony-xuyf
 - @debopamsengupta
-- @golu360
 
 ⭐ Lead developer

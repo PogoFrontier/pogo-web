@@ -1,9 +1,9 @@
-import getImage from '@common/actions/getImage'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import classnames from 'classnames'
 import style from './character.module.scss'
 import getColor from '@common/actions/getColor'
 import { useEffect, useState } from 'react'
+import ImageHandler from '@common/actions/getImages'
 
 export interface CharacterProps {
   status: 'prime' | 'attack' | 'charge' | 'switch' | 'idle'
@@ -18,6 +18,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
 }) => {
   const [s, setS] = useState(status)
   const [cooldown, setCooldown] = useState(false)
+  const imagesHandler = new ImageHandler()
 
   useEffect(() => {
     if (s !== status) {
@@ -56,7 +57,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
             [style.back]: back,
           })}
           draggable="false"
-          src={getImage(char.sid, char.shiny, back)}
+          src={imagesHandler.getImage(char.sid, char.shiny, back)}
           alt={char.speciesName}
         />
       </div>

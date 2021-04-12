@@ -2,7 +2,7 @@
 @import 'variables';
 
 .selector {
-  border: solid 1px $color-neutral-dark;
+  border: 0px;
   padding: 0.5rem;
   text-align: center;
   background-color: $color-overlay-disabled;
@@ -13,6 +13,7 @@
   }
   &.active {
     background-color: $color-overlay;
+    border: solid 1px $color-neutral-dark;
   }
 }
 
@@ -20,6 +21,9 @@
   height: 2rem;
   @include md() {
     height: 3rem;
+  }
+  &.inactive{
+    filter: grayscale(1);
   }
 }
 
@@ -60,4 +64,17 @@
       }
     }
   }
+}
+  
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.keylabel {
+  color: $color-neutral-dark;
+  align-self: center;
+  margin-bottom: 1em;
+  margin-right: 0.5em;
 }

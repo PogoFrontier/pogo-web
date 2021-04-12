@@ -4,7 +4,7 @@ import {
   getPokemonNames,
 } from '@common/actions/pokemonAPIActions'
 import { cpms, ivValues, levelValues, shadowMult } from '@config/statVals'
-import getImage from '@common/actions/getImage'
+import ImageHandler from '@common/actions/getImages'
 import style from './style.module.scss'
 import Input from '@components/input/Input'
 import classNames from 'classnames'
@@ -12,7 +12,19 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import TypeIcons from '@components/type_icon/TypeIcons'
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
-import parseName from '@common/actions/parseName'
+import getMaxLevel from '@common/actions/getMaxLevel'
+
+const parseName = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/[()]/g, '')
+    .replace(/\s/g, '_')
+    .replace(/-/g, '_')
+    .replace(/♀/g, '_female')
+    .replace(/♂/g, '_male')
+    .replace(/\./g, '')
+    .replace(/\'/g, '')
+}
 
 const metaMap: {
   [key: string]: number
@@ -42,6 +54,8 @@ const TeamMemberSelector = (props: {
     null
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
+
+  const imageHandler = new ImageHandler()
 
   useEffect(() => {
     if (member && member.speciesName) {
@@ -197,6 +211,17 @@ const TeamMemberSelector = (props: {
         hp: addToBox.iv.hp,
       }
       statsObj[e.target.id] = +e.target.value
+
+      if (e.target.id !== 'level') {
+        addToBox.level = getMaxLevel(
+          addToBox.baseStats,
+          statsObj,
+          metaMap[meta],
+          50
+        )
+        statsObj.level = addToBox.level
+      }
+
       const newCP = calcCP(selectedPokemonData.baseStats, [
         statsObj.level,
         statsObj.atk,
@@ -360,8 +385,8 @@ const TeamMemberSelector = (props: {
           <TypeIcons types={addToBox.types} />
           <br />
           <img
-            src={getImage(addToBox.sid, addToBox.shiny, false)}
-            key={getImage(addToBox.sid, addToBox.shiny, false)}
+            src={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
+            key={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
             alt={addToBox.speciesName}
             className="sprite"
           />

@@ -31,7 +31,7 @@ const MatchupPage = () => {
   const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
-  const team: TeamMember[] = useContext(TeamContext).team
+  const team: TeamMember[] = useContext(TeamContext).team.members
   const { height } = useWindowSize()
   const { routing, prev } = useContext(HistoryContext)
 
@@ -82,6 +82,7 @@ const MatchupPage = () => {
         type: CODE.team_submit,
         payload: {
           room,
+          indexes: values,
           team: submission,
         },
       })

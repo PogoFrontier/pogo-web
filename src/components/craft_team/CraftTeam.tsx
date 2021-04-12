@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
-import getMini from '@common/actions/getMini'
+import ImageHandler from '@common/actions/getImages'
 import Input from '@components/input/Input'
 import style from './craft.module.scss'
 import classnames from 'classnames'
@@ -8,6 +8,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { v4 as uuidv4 } from 'uuid'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import Loader from 'react-loader-spinner'
+import ErrorPopup from '@components/error_popup/ErrorPopup'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -35,12 +36,14 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [workingTeam, setWorkingTeam] = useState([] as TeamMember[])
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
   const [addingMember, setAddingMember] = useState(false)
+  const [error, setError] = useState('')
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
   const [isUnsaved, setIsUnsaved] = useState(false)
   const [message, setMessage] = useState('')
   const [id, setId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const imageHandler = new ImageHandler()
 
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
@@ -75,7 +78,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         metaMap[selectedMeta]!
       )
       if (result.message) {
-        alert(result.message)
+        setError(result.message)
       } else {
         return true
       }
@@ -153,8 +156,13 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     }
   }, [])
 
+  function onErrorPopupClose() {
+    setError('')
+  }
+
   return (
     <div>
+      {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
       {isLoading && (
         <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
       )}
@@ -202,7 +210,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
                   id={index}
                   onClick={handleSelectPokemon}
                 >
-                  <img src={getMini(member.sid)} alt={member.speciesName} />
+                  <img
+                    src={imageHandler.getMini(member.sid)}
+                    alt={member.speciesName}
+                  />
                 </li>
               ))}
             {workingTeam.length < 6 && !addingMember && (
