@@ -4,7 +4,7 @@ import {
   getPokemonNames,
 } from '@common/actions/pokemonAPIActions'
 import { cpms, ivValues, levelValues, shadowMult } from '@config/statVals'
-import getImage from '@common/actions/getImage'
+import ImageHandler from '@common/actions/getImages'
 import style from './style.module.scss'
 import Input from '@components/input/Input'
 import classNames from 'classnames'
@@ -53,6 +53,8 @@ const TeamMemberSelector = (props: {
     null
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
+
+  const imageHandler = new ImageHandler()
 
   useEffect(() => {
     if (member && member.speciesName) {
@@ -371,8 +373,8 @@ const TeamMemberSelector = (props: {
           <TypeIcons types={addToBox.types} />
           <br />
           <img
-            src={getImage(addToBox.sid, addToBox.shiny, false)}
-            key={getImage(addToBox.sid, addToBox.shiny, false)}
+            src={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
+            key={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
             alt={addToBox.speciesName}
             className="sprite"
           />

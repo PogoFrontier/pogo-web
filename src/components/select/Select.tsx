@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './select.module.scss'
 import classnames from 'classnames'
-import getMini from '@common/actions/getMini'
+import ImageHandler from '@common/actions/getImages'
 
 interface SelectProps {
   team: TeamMember[]
@@ -25,6 +25,7 @@ const findNext = (map: number[], requiredAmount: number): number => {
 }
 
 const Button: React.FC<ButtonProps> = ({ x, onRegister, i, value }) => {
+  const imageHandler = new ImageHandler()
   const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     onRegister(i)
@@ -32,7 +33,7 @@ const Button: React.FC<ButtonProps> = ({ x, onRegister, i, value }) => {
 
   return (
     <button className={style.select} type="button" onClick={onClick}>
-      <img src={getMini(x.sid)} alt={x.speciesName} />
+      <img src={imageHandler.getMini(x.sid)} alt={x.speciesName} />
       {value > -1 && <div>{value}</div>}
     </button>
   )
