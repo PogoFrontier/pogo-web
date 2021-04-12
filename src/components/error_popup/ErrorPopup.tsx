@@ -11,10 +11,7 @@ const ErrorPopup: React.FunctionComponent<ErrorPopupProps> = ({
   error,
 }) => {
   return (
-    <Modal
-      onClose={onClose}
-      title="Hold up! There's an error."
-    >
+    <Modal onClose={onClose} title="Hold up! There's an error.">
       <div className={style.errormessage}>{error}</div>
       <div className={style.actions}>
         <button className="btn btn-secondary" onClick={onClose}>
