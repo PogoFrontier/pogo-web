@@ -50,15 +50,14 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    * Adds a Random Team to the userTeams
    */
   async function handleOnClickAddRandomTeam() {
-    // TODO auto select meta
     const t: TeamMember[] = []
     for (let i = 0; i < 6; i++) {
-      await getRandomPokemon('Great League').then((data) => t.push(data))
+      await getRandomPokemon(meta).then((data) => t.push(data))
     }
     updateTeam({
       name: Math.random().toString(36).substring(7),
       id: Math.random().toString(36).substring(7),
-      format: 'Great League',
+      format: meta,
       members: t,
     })
   }
