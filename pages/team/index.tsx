@@ -170,7 +170,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         <p>No Teams to display</p>
       )}
       <div className={style.addButtons}>
-        <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
+        <button className="btn btn-primary" style={{ marginBottom: "10px" }} onClick={handleOnClickAddTeam}>
           Add Team
         </button>
         <button
