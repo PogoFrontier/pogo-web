@@ -11,6 +11,7 @@ import classnames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend/team'
 import Loader from 'react-loader-spinner'
 import TeamContext from '@context/TeamContext'
+import getRandomPokemon from '@common/actions/getRandomPokemon'
 
 interface ContentProps {
   meta: string
@@ -43,6 +44,22 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
       setTeams(user.teams)
     }
+  }
+
+  /**
+   * Adds a Random Team to the userTeams
+   */
+  async function handleOnClickAddRandomTeam() {
+    const t: TeamMember[] = []
+    for (let i = 0; i < 6; i++) {
+      await getRandomPokemon(meta).then((data) => t.push(data))
+    }
+    updateTeam({
+      name: Math.random().toString(36).substring(7),
+      id: Math.random().toString(36).substring(7),
+      format: meta,
+      members: t,
+    })
   }
 
   const handleOnClickAddTeam = () => {
@@ -125,8 +142,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                 >
                   <label className={style.label}>{userTeam.name}</label>
                   <div className={style.members}>
-                    {team.members.length > 0 &&
-                      team.members.map((member: TeamMember, index: number) => (
+                    {userTeam.members.length > 0 &&
+                      userTeam.members.map((member: TeamMember, index: number) => (
                         <img
                           key={index}
                           src={imagesHandler.getMini(member.sid)}
@@ -151,9 +168,17 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       ) : (
         <p>No Teams to display</p>
       )}
-      <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
-        Add Team
-      </button>
+      <div className={style.addButtons}>
+        <button className="btn btn-primary" style={{ marginBottom: "10px" }} onClick={handleOnClickAddTeam}>
+          Add Team
+        </button>
+        <button
+          className="btn btn-primary"
+          onClick={handleOnClickAddRandomTeam}
+        >
+          Get Random Team
+        </button>
+      </div>
     </div>
   )
 }
