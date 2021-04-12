@@ -469,11 +469,7 @@ const GamePage = () => {
 
   useEffect(() => {
     if (fastKeyClick) {
-      if (!onClick()) {
-        if (status === StatusTypes.CHARGE) {
-          setChargeMult((prev) => Math.min(prev + 0.25, 1))
-        }
-      }
+      onClick()
     } else if (charge1KeyClick) {
       const move = moves[charPointer][0]
       if (!onChargeClick(move)) {
