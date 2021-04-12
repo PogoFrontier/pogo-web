@@ -143,8 +143,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                 >
                   <label className={style.label}>{userTeam.name}</label>
                   <div className={style.members}>
-                    {team.members.length > 0 &&
-                      team.members.map((member: TeamMember, index: number) => (
+                    {userTeam.members.length > 0 &&
+                      userTeam.members.map((member: TeamMember, index: number) => (
                         <img
                           key={index}
                           src={imagesHandler.getMini(member.sid)}
@@ -177,7 +177,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
           className="btn btn-primary"
           onClick={handleOnClickAddRandomTeam}
         >
-          Add Random Team
+          Get Random Team
         </button>
       </div>
     </div>
