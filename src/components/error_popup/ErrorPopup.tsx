@@ -1,3 +1,4 @@
+import Modal from '@components/modal/Modal'
 import style from './style.module.scss'
 
 interface ErrorPopupProps {
@@ -10,17 +11,17 @@ const ErrorPopup: React.FunctionComponent<ErrorPopupProps> = ({
   error,
 }) => {
   return (
-    <div className={style.modal}>
-      <div className={style.content}>
-        <div className={style.header}>You can't battle like this</div>{' '}
-      </div>
+    <Modal
+      onClose={onClose}
+      title="Hold up! There's an error."
+    >
       <div className={style.errormessage}>{error}</div>
       <div className={style.actions}>
-        <button className={style.button} onClick={onClose}>
+        <button className="btn btn-secondary" onClick={onClose}>
           Got it!
         </button>
       </div>
-    </div>
+    </Modal>
   )
 }
 

@@ -1,37 +1,9 @@
 @import 'colors';
 
-.modal {
-    font-size: 12px;
-    justify-content: center;
-    align-items: center;
-    background-color: $color-neutral-light;
-    margin-left: 25%;
-    position: fixed;
-    width: 50%;
-    top: 30%;
-    left: 0;
-    right: 0;
-    z-index: 100;
-}
-.header {
-    width: 100%;
-    border-bottom: 1px solid black;
-    font-size: 18px;
-    text-align: center;
-    white-space: nowrap;
-}
-.content {
-    width: 100%;
-    align-self: center;
-}
 .errormessage {
-    width: 100%;
-    align-self: center;
     color: $color-error
 }
 .actions {
-    width: 100%;
-    padding: 10px 5px;
-    margin: auto;
     text-align: center;
+    margin-top: 1em;
 }
