@@ -11,7 +11,7 @@ import Layout from '@components/layout/Layout'
 const EndPage = () => {
   const router = useRouter()
   const { room, result } = router.query
-  const { socket, connect } = useContext(SocketContext)
+  const { socket, connectAndJoin } = useContext(SocketContext)
   const team: TeamMember[] = useContext(TeamContext).team.members
   const [isLoading, setIsLoading] = useState(false)
 
@@ -29,7 +29,7 @@ const EndPage = () => {
       if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
         const payload = { room, team }
         setIsLoading(true)
-        connect(uuidv4(), payload)
+        connectAndJoin(uuidv4(), payload)
       }
     }
   }

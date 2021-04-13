@@ -143,13 +143,15 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                   <label className={style.label}>{userTeam.name}</label>
                   <div className={style.members}>
                     {userTeam.members.length > 0 &&
-                      userTeam.members.map((member: TeamMember, index: number) => (
-                        <img
-                          key={index}
-                          src={imagesHandler.getMini(member.sid)}
-                          alt={member.speciesName}
-                        />
-                      ))}
+                      userTeam.members.map(
+                        (member: TeamMember, index: number) => (
+                          <img
+                            key={index}
+                            src={imagesHandler.getMini(member.sid)}
+                            alt={member.speciesName}
+                          />
+                        )
+                      )}
                   </div>
                 </button>
                 <div className={style.btns}>
@@ -169,7 +171,11 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         <p>No Teams to display</p>
       )}
       <div className={style.addButtons}>
-        <button className="btn btn-primary" style={{ marginBottom: "10px" }} onClick={handleOnClickAddTeam}>
+        <button
+          className="btn btn-primary"
+          style={{ marginBottom: '10px' }}
+          onClick={handleOnClickAddTeam}
+        >
           Add Team
         </button>
         <button

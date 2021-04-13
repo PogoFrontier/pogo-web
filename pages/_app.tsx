@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { w3cwebsocket as WebSocket } from 'websocket'
-import { setWsHeartbeat, WebSocketBase } from 'ws-heartbeat/client'
+import { setWsHeartbeat } from 'ws-heartbeat/client'
 import { AppProps } from 'next/app'
 import SocketContext from '@context/SocketContext'
 import IdContext from '@context/IdContext'
@@ -120,9 +120,16 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     localStorage.setItem('user', JSON.stringify(curr))
   }
 
-  const connect = (id1: string, payload: OnNewRoomPayload) => {
+  const connectAndJoin = (id1: string, payload: OnNewRoomPayload) => {
+    connect(id1, (s: WebSocket) => {
+      const data = { type: CODE.room, payload }
+      s.send(JSON.stringify(data))
+    })
+  }
+
+  const connect = (id1: string, callback: (socket: WebSocket) => void) => {
     const s: any = new WebSocket(`${WSS}${id1}`)
-    setWsHeartbeat(s as WebSocketBase, '{"kind":"ping"}', {
+    setWsHeartbeat(s, '{"kind":"ping"}', {
       pingInterval: 30000, // every 30 seconds, send a ping message to the server.
       pingTimeout: 60000, // in 60 seconds, if no message accepted from server, close the connection.
     })
@@ -132,10 +139,10 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
     setSocket(s)
     setId1(id1)
+
     const x = setInterval(() => {
       if (s.readyState === WebSocket.OPEN) {
-        const data = { type: CODE.room, payload }
-        s.send(JSON.stringify(data))
+        callback(s)
         clearInterval(x)
       } else if (s.readyState === WebSocket.CLOSED) {
         clearInterval(x)
@@ -187,7 +194,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
             value={{ user: currentUser!, refreshUser, setTeams }}
           >
             <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
-              <SocketContext.Provider value={{ socket, connect }}>
+              <SocketContext.Provider
+                value={{ socket, connect, connectAndJoin }}
+              >
                 <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
                   <Component {...pageProps} />
                 </HistoryContext.Provider>

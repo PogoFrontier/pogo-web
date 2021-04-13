@@ -41,8 +41,15 @@
 
 .button {
   margin-top: -1em;
+  margin-left: 1em;
   background-color: $color-brand-primary;
 }
 .button:disabled{
   background-color: $color-button-disabled;
+}
+
+.loading{
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
 }
