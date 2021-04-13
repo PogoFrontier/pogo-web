@@ -81,7 +81,7 @@
     "ws-heartbeat": "^1.2.0"
   },
   "devDependencies": {
-    "@adibkhan/pogo-web-backend": "^1.0.26",
+    "@adibkhan/pogo-web-backend": "^1.0.28",
     "@babel/core": "7.9.0",
     "@bitwarden/cli": "^1.13.3",
     "@types/classnames": "^2.2.11",
