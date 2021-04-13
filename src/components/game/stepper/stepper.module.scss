@@ -34,3 +34,14 @@
         transform: scale(0.95);
     }
 }
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.keylabel {
+  color: $color-neutral-dark;
+  align-self: center;
+  margin-bottom: 1em;
+}

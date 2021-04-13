@@ -44,9 +44,12 @@
 
 .members {
   img {
+    object-fit: contain;
     height: 3em;
+    width: 3em;
     @include md() {
       height: 3.5em;
+      width: 3.5em;
     }
   }
   img + img {
@@ -78,4 +81,8 @@
   &.delete {
     color: $color-brand-negative
   }
+}
+
+.addButtons button{
+  margin-right: 1em;
 }

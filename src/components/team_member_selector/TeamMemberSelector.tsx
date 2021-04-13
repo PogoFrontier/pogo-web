@@ -4,7 +4,7 @@ import {
   getPokemonNames,
 } from '@common/actions/pokemonAPIActions'
 import { cpms, ivValues, levelValues, shadowMult } from '@config/statVals'
-import getImage from '@common/actions/getImage'
+import ImageHandler from '@common/actions/getImages'
 import style from './style.module.scss'
 import Input from '@components/input/Input'
 import classNames from 'classnames'
@@ -12,32 +12,25 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import TypeIcons from '@components/type_icon/TypeIcons'
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
-
-const parseName = (name: string) => {
-  return name
-    .toLowerCase()
-    .replace(/[()]/g, '')
-    .replace(/\s/g, '_')
-    .replace(/-/g, '_')
-    .replace(/♀/g, '_female')
-    .replace(/♂/g, '_male')
-    .replace(/\./g, '')
-    .replace(/\'/g, '')
-}
+import getMaxLevel from '@common/actions/getMaxLevel'
+import parseName from '@common/actions/parseName'
 
 const metaMap: {
-  [key: string]: number,
- } = {
+  [key: string]: number
+} = {
   'Great League': 1500,
   'Ultra League': 2500,
-  'Master League': 10000
+  'Master League': 10000,
 }
+
+let pokemonNames: string[]
+getPokemonNames().then((data) => (pokemonNames = data))
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
   savePokemon: (pokemon: any) => void
   member: TeamMember
-  deletePokemon: () => void,
+  deletePokemon: () => void
   meta: string
 }) => {
   const { cancelEdit, savePokemon, member, deletePokemon, meta } = props
@@ -50,6 +43,8 @@ const TeamMemberSelector = (props: {
     null
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
+
+  const imageHandler = new ImageHandler()
 
   useEffect(() => {
     if (member && member.speciesName) {
@@ -71,13 +66,12 @@ const TeamMemberSelector = (props: {
   }, [member])
 
   useEffect(() => {
-    getPokemonNames().then((names) => {
-      if (names.length > 0) {
-        setSuggestions(names)
-      } else {
-        return
-      }
-    }) // .catch(err => console.log(err));//should show 404 page
+    if (pokemonNames.length > 0) {
+      setSuggestions(pokemonNames)
+    } else {
+      return
+    }
+    // .catch(err => console.log(err));//should show 404 page
   }, [suggestions])
 
   const onChange = (e: any) => {
@@ -206,6 +200,17 @@ const TeamMemberSelector = (props: {
         hp: addToBox.iv.hp,
       }
       statsObj[e.target.id] = +e.target.value
+
+      if (e.target.id !== 'level') {
+        addToBox.level = getMaxLevel(
+          addToBox.baseStats,
+          statsObj,
+          metaMap[meta],
+          50
+        )
+        statsObj.level = addToBox.level
+      }
+
       const newCP = calcCP(selectedPokemonData.baseStats, [
         statsObj.level,
         statsObj.atk,
@@ -369,8 +374,8 @@ const TeamMemberSelector = (props: {
           <TypeIcons types={addToBox.types} />
           <br />
           <img
-            src={getImage(addToBox.sid, addToBox.shiny, false)}
-            key={getImage(addToBox.sid, addToBox.shiny, false)}
+            src={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
+            key={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
             alt={addToBox.speciesName}
             className="sprite"
           />

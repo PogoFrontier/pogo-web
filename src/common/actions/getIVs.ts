@@ -1,6 +1,7 @@
 // Generate an array of IV combinations sorted by stat
 import { cpms, shadowMult } from '@config/statVals'
 import getCP from './getCP'
+import getMaxLevel from './getMaxLevel'
 
 interface GetIVsProps {
   pokemon: any
@@ -14,7 +15,7 @@ interface GetIVsProps {
 function getIVs({
   pokemon,
   targetCP,
-  sortStat = "overall",
+  sortStat = 'overall',
   sortDirection = 1,
   resultCount = 1,
   ivFloor,
@@ -54,20 +55,14 @@ function getIVs({
     while (defIV >= floor) {
       atkIV = 15
       while (atkIV >= floor) {
-        level = 0.5
-        calcCP = 0
-
-        while (level < levelCap && calcCP < targetCP) {
-          level += 0.5
-          cpm = cpms[(level - 1) * 2]
-          calcCP = getCP(pokemon.baseStats, [level, atkIV, defIV, hpIV])
-        }
-
-        if (calcCP > targetCP) {
-          level -= 0.5
-          cpm = cpms[(level - 1) * 2]
-          calcCP = getCP(pokemon.baseStats, [level, atkIV, defIV, hpIV])
-        }
+        level = getMaxLevel(
+          pokemon.baseStats,
+          { atk: atkIV, def: defIV, hp: hpIV },
+          targetCP,
+          levelCap
+        )
+        cpm = cpms[(level - 1) * 2]
+        calcCP = getCP(pokemon.baseStats, [level, atkIV, defIV, hpIV])
 
         if (calcCP <= targetCP) {
           const atk = cpm * (pokemon.baseStats.atk + atkIV)
@@ -126,8 +121,8 @@ function getIVs({
     a[sortStat] > b[sortStat]
       ? -1 * sortDirection
       : b[sortStat] > a[sortStat]
-        ? 1 * sortDirection
-        : 0
+      ? 1 * sortDirection
+      : 0
   )
   const results = combinations.splice(0, resultCount)
 
