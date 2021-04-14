@@ -8,10 +8,14 @@ import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
 import classnames from 'classnames'
-import { TeamMember } from '@adibkhan/pogo-web-backend/team'
+import { TeamMember, Rule } from '@adibkhan/pogo-web-backend'
 import Loader from 'react-loader-spinner'
 import TeamContext from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
+import { parseToRule } from '@common/actions/pokemonAPIActions'
+import calcCP from '@common/actions/getCP'
+import getCP from '@common/actions/getCP'
+
 
 interface ContentProps {
   meta: string
@@ -50,10 +54,41 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    * Adds a Random Team to the userTeams
    */
   async function handleOnClickAddRandomTeam() {
+    let rule : Rule;
     const t: TeamMember[] = []
+    await parseToRule(meta).then(data => {
+      rule = data
+      if(rule === undefined) {
+        alert("An unexpected error occured")
+        return
+      }
+    })
+    
     for (let i = 0; i < 6; i++) {
-      await getRandomPokemon(meta).then((data) => t.push(data))
+      let pokemon : TeamMember;
+      await getRandomPokemon(meta).then(data => {
+        if(pokemon === undefined) {
+          alert("An unexpected error occured")
+          return
+        } 
+        pokemon = data
+        if(pokemon.level > 50){
+          if(rule.maxBestBuddy > 0) rule.maxBestBuddy--
+          else {
+            //set pokemon to level 50 and recalculate stats
+            pokemon.level = 50
+            pokemon.cp = calcCP(pokemon.baseStats, [
+              50,
+              pokemon.iv.atk,
+              pokemon.iv.def,
+              pokemon.iv.hp,
+            ])
+          }
+        } 
+        t.push(pokemon)
+      })
     }
+
     updateTeam({
       name: Math.random().toString(36).substring(7),
       id: Math.random().toString(36).substring(7),
