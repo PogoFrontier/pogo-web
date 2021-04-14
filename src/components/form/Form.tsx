@@ -14,7 +14,7 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
   const [room, setRoom] = useState('')
-  const { socket, connect } = useContext(SocketContext)
+  const { socket, connect, connectAndJoin } = useContext(SocketContext)
   const team = useContext(TeamContext).team
   let teamMembers: TeamMember[]
   if (team) {
@@ -22,6 +22,8 @@ const Form: React.FunctionComponent = () => {
   }
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  // matchmaking
+  const [isMatchmaking, setIsMatchmaking] = useState(false)
 
   socket.onmessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$error')) {
@@ -30,12 +32,24 @@ const Form: React.FunctionComponent = () => {
       setError(data)
     } else if (msg.data.startsWith('$start')) {
       router.push(`/matchup/${room}`)
+    } else if (msg.data.startsWith('$PROMT_JOIN')) {
+      const roomId = msg.data.slice('$PROMT_JOIN'.length)
+      joinRoom(roomId)
     }
   }
 
-  function joinRoom() {
+  function joinRoom(roomId?: string) {
+    if (roomId) {
+      setRoom(roomId)
+    } else {
+      roomId = room
+    }
+
     // Connected, let's sign-up for to receive messages for this room
-    const data = { type: CODE.room, payload: { room, team: teamMembers } }
+    const data = {
+      type: CODE.room,
+      payload: { room: roomId, team: teamMembers },
+    }
     socket.send(JSON.stringify(data))
   }
 
@@ -46,9 +60,45 @@ const Form: React.FunctionComponent = () => {
       if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
         const payload = { room, team: teamMembers }
         setIsLoading(true)
-        connect(uuidv4(), payload)
+        connectAndJoin(uuidv4(), payload)
       }
     }
+  }
+
+  function joinQuickPlay() {
+    // determine rule
+    setIsMatchmaking(true)
+    setIsLoading(true)
+    const data = {
+      type: CODE.matchmaking_search_battle,
+      payload: {
+        format: {
+          // TODO: Different Formats
+          // Also someone explain to my why this line doesn't work:
+          // import { RULESET_NAMES } from '@adibkhan/pogo-web-backend/rule'
+          name: 'Great',
+        },
+      },
+    }
+    connect(uuidv4(), (sock: WebSocket) => {
+      sock.send(JSON.stringify(data))
+    })
+  }
+
+  function quitQuickPlay() {
+    const data = {
+      type: CODE.matchmaking_quit,
+      payload: {
+        format: {
+          // TODO: Different Formats
+          name: 'Great',
+        },
+      },
+    }
+    socket.send(JSON.stringify(data))
+
+    setIsMatchmaking(false)
+    setIsLoading(false)
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -76,7 +126,18 @@ const Form: React.FunctionComponent = () => {
           </div>
         </div>
         {isLoading ? (
-          <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
+          <div className={style.loading}>
+            <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
+            {
+              isMatchmaking
+              && <button
+                className={classnames([style.button, 'btn', 'btn-primary'])}
+                onClick={quitQuickPlay}
+              >
+              Quit
+            </button>
+            }
+          </div>
         ) : (
           <>
             <button
@@ -86,6 +147,14 @@ const Form: React.FunctionComponent = () => {
             >
               Play
             </button>
+
+            <button
+              className={classnames([style.button, 'btn', 'btn-primary'])}
+              onClick={joinQuickPlay}
+            >
+              Quick Play
+            </button>
+
             <br />
             {/* <button onClick={getSignInWithGooglePopup}>
             Sign In With Google
