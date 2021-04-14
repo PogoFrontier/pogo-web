@@ -13,7 +13,6 @@ import Loader from 'react-loader-spinner'
 import TeamContext from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
 import { parseToRule } from '@common/actions/pokemonAPIActions'
-import calcCP from '@common/actions/getCP'
 import getCP from '@common/actions/getCP'
 
 
@@ -67,7 +66,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     for (let i = 0; i < 6; i++) {
       let pokemon : TeamMember;
       await getRandomPokemon(meta).then(data => {
-        if(pokemon === undefined) {
+        if(data === undefined) {
           alert("An unexpected error occured")
           return
         } 
@@ -75,9 +74,14 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         if(pokemon.level > 50){
           if(rule.maxBestBuddy > 0) rule.maxBestBuddy--
           else {
-            //set pokemon to level 50 and recalculate stats
+            // set pokemon to level 50 and recalculate stats
             pokemon.level = 50
-            pokemon.cp = calcCP(pokemon.baseStats, [
+            pokemon.cp = getCP(
+              {
+                atk: pokemon.atk,
+                def: pokemon.def,
+                hp: pokemon.hp
+              },[
               50,
               pokemon.iv.atk,
               pokemon.iv.def,
