@@ -73,17 +73,12 @@ const MatchupPage = () => {
   }, [routing, prev])
 
   const onSubmit = (values: number[]) => {
-    const submission: TeamMember[] = []
-    for (const value of values) {
-      submission.push(team[value])
-    }
     ws.send(
       JSON.stringify({
         type: CODE.team_submit,
         payload: {
           room,
           indexes: values,
-          team: submission,
         },
       })
     )

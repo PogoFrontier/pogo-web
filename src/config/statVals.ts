@@ -214,4 +214,6 @@ export const levelValues = [
   49,
   49.5,
   50,
+  50.5,
+  51,
 ]

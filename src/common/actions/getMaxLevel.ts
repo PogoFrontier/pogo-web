@@ -13,9 +13,10 @@ function getMaxLevel(
   levelCap: number
 ): number {
   let level = 0.5
+  levelCap += 1 // For best buddy
   let calcCP = 0
 
-  while (level <= levelCap && calcCP <= targetCP) {
+  while (level < levelCap && calcCP <= targetCP) {
     level += 0.5
     calcCP = getCP(baseStats, [level, iv.atk, iv.def, iv.hp])
   }
