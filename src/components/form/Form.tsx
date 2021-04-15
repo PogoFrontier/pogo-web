@@ -128,15 +128,14 @@ const Form: React.FunctionComponent = () => {
         {isLoading ? (
           <div className={style.loading}>
             <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
-            {
-              isMatchmaking
-              && <button
+            {isMatchmaking && (
+              <button
                 className={classnames([style.button, 'btn', 'btn-primary'])}
                 onClick={quitQuickPlay}
               >
-              Quit
-            </button>
-            }
+                Quit
+              </button>
+            )}
           </div>
         ) : (
           <>
