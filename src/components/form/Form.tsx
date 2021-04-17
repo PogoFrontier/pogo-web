@@ -10,6 +10,7 @@ import classnames from 'classnames'
 // import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
+import metaMap from '@common/actions/metaMap'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -50,7 +51,7 @@ const Form: React.FunctionComponent = () => {
       type: CODE.room,
       payload: {
         room: roomId,
-        format: team.format.split(' ')[0],
+        format: metaMap[team.format].name,
         team: teamMembers,
       },
     }
@@ -76,7 +77,7 @@ const Form: React.FunctionComponent = () => {
     const data = {
       type: CODE.matchmaking_search_battle,
       payload: {
-        format: team.format.split(' ')[0],
+        format: metaMap[team.format].name,
       },
     }
     connect(uuidv4(), (sock: WebSocket) => {
@@ -88,7 +89,7 @@ const Form: React.FunctionComponent = () => {
     const data = {
       type: CODE.matchmaking_quit,
       payload: {
-        format: team.format.split(' ')[0],
+        format: metaMap[team.format].name,
       },
     }
     socket.send(JSON.stringify(data))

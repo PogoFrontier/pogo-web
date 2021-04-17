@@ -7,6 +7,7 @@ import { useState, useContext } from 'react'
 import style from './style.module.scss'
 import { v4 as uuidv4 } from 'uuid'
 import Layout from '@components/layout/Layout'
+import metaMap from '@common/actions/metaMap'
 
 const EndPage = () => {
   const router = useRouter()
@@ -21,7 +22,7 @@ const EndPage = () => {
       type: CODE.room,
       payload: {
         room,
-        format: team.format.split(' ')[0],
+        format: metaMap[team.format].name,
         team: team.members,
       },
     }
