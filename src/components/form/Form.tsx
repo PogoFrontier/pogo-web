@@ -73,10 +73,7 @@ const Form: React.FunctionComponent = () => {
       type: CODE.matchmaking_search_battle,
       payload: {
         format: {
-          // TODO: Different Formats
-          // Also someone explain to my why this line doesn't work:
-          // import { RULESET_NAMES } from '@adibkhan/pogo-web-backend/rule'
-          name: 'Great',
+          name: team.format.split(' ')[0],
         },
       },
     }
@@ -90,8 +87,7 @@ const Form: React.FunctionComponent = () => {
       type: CODE.matchmaking_quit,
       payload: {
         format: {
-          // TODO: Different Formats
-          name: 'Great',
+          name: team.format.split(' ')[0],
         },
       },
     }
