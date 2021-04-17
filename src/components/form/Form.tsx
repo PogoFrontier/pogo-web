@@ -10,7 +10,6 @@ import classnames from 'classnames'
 // import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
-import metaMap from '@common/actions/metaMap'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -40,6 +39,9 @@ const Form: React.FunctionComponent = () => {
   }
 
   function joinRoom(roomId?: string) {
+    if (!team.format) {
+      return;
+    }
     if (roomId) {
       setRoom(roomId)
     } else {
@@ -51,7 +53,7 @@ const Form: React.FunctionComponent = () => {
       type: CODE.room,
       payload: {
         room: roomId,
-        format: metaMap[team.format].name,
+        format: team.format,
         team: teamMembers,
       },
     }
@@ -72,12 +74,15 @@ const Form: React.FunctionComponent = () => {
 
   function joinQuickPlay() {
     // determine rule
+    if (!team.format) {
+      return;
+    }
     setIsMatchmaking(true)
     setIsLoading(true)
     const data = {
       type: CODE.matchmaking_search_battle,
       payload: {
-        format: metaMap[team.format].name,
+        format: team.format,
       },
     }
     connect(uuidv4(), (sock: WebSocket) => {
@@ -86,10 +91,13 @@ const Form: React.FunctionComponent = () => {
   }
 
   function quitQuickPlay() {
+    if (!team.format) {
+      return;
+    }
     const data = {
       type: CODE.matchmaking_quit,
       payload: {
-        format: metaMap[team.format].name,
+        format: team.format,
       },
     }
     socket.send(JSON.stringify(data))
