@@ -9,9 +9,14 @@ export const getPokemonNames = async () => {
   }
 }
 
-export const getPokemonData = async (speciesId: string) => {
+export const getPokemonData = async (
+  speciesId: string,
+  movesetOption: 'original' | 'mainseries' | 'norestrictions'
+) => {
   try {
-    const res = await API.get(`api/pokemon/${speciesId}`)
+    const res = await API.get(
+      `api/pokemon/${speciesId}?movesetOption=${movesetOption}`
+    )
     return res.data
   } catch (err) {
     return err

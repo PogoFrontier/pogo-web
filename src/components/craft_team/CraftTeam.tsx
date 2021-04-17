@@ -7,6 +7,7 @@ import classnames from 'classnames'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { v4 as uuidv4 } from 'uuid'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
+import metaMap from '@common/actions/metaMap'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 
@@ -19,13 +20,6 @@ interface CraftTeamProps {
 
 const unsavedString = 'You have unsaved changes.'
 const savedString = 'Save successful.'
-const metaMap: {
-  [key: string]: string
-} = {
-  'Great League': 'Great',
-  'Ultra League': 'Ultra',
-  'Master League': 'Master',
-}
 
 const CraftTeam: React.FC<CraftTeamProps> = ({
   selectedMeta,
@@ -75,7 +69,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(team),
-        metaMap[selectedMeta]!
+        metaMap[selectedMeta]!.name
       )
       if (result.message) {
         setError(result.message)
