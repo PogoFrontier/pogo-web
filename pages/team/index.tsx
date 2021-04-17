@@ -191,7 +191,12 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
 const TeamPage = () => {
   // const { user } = useContext(UserContext)
-  const [metas] = useState(['Great League', 'Ultra League', 'Master League'])
+  const [metas] = useState([
+    'Great League',
+    'MainSeries Cup',
+    'Ultra League',
+    'Master League',
+  ])
   const [index, setIndex] = useState(0)
 
   // useEffect(() => {

@@ -39,6 +39,9 @@ const Form: React.FunctionComponent = () => {
   }
 
   function joinRoom(roomId?: string) {
+    if (!team.format) {
+      return;
+    }
     if (roomId) {
       setRoom(roomId)
     } else {
@@ -48,7 +51,11 @@ const Form: React.FunctionComponent = () => {
     // Connected, let's sign-up for to receive messages for this room
     const data = {
       type: CODE.room,
-      payload: { room: roomId, team: teamMembers },
+      payload: {
+        room: roomId,
+        format: team.format,
+        team: teamMembers,
+      },
     }
     socket.send(JSON.stringify(data))
   }
@@ -67,14 +74,15 @@ const Form: React.FunctionComponent = () => {
 
   function joinQuickPlay() {
     // determine rule
+    if (!team.format) {
+      return;
+    }
     setIsMatchmaking(true)
     setIsLoading(true)
     const data = {
       type: CODE.matchmaking_search_battle,
       payload: {
-        format: {
-          name: team.format.split(' ')[0],
-        },
+        format: team.format,
       },
     }
     connect(uuidv4(), (sock: WebSocket) => {
@@ -83,12 +91,13 @@ const Form: React.FunctionComponent = () => {
   }
 
   function quitQuickPlay() {
+    if (!team.format) {
+      return;
+    }
     const data = {
       type: CODE.matchmaking_quit,
       payload: {
-        format: {
-          name: team.format.split(' ')[0],
-        },
+        format: team.format,
       },
     }
     socket.send(JSON.stringify(data))

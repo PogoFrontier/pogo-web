@@ -4,20 +4,13 @@ import {
 } from '@common/actions/pokemonAPIActions'
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
+import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 
 /**
  * Maps the selected meta to a max CP value
  */
-const metaMap: {
-  [key: string]: number
-} = {
-  'Great League': 1500,
-  'Ultra League': 2500,
-  'Master League': 10000,
-}
-
 /**
  * returns a promise with a random Pokemon with random moves
  * @param meta the meta the pokemon has to be in
@@ -34,8 +27,11 @@ async function getRandomPokemon(meta: string): Promise<TeamMember> {
   })
 
   // get random moves
-  return getPokemonData(parseName(randPokemon)).then((data) => {
-    const cap = metaMap[meta]
+  return getPokemonData(
+    parseName(randPokemon),
+    metaMap[meta].movesetOption
+  ).then((data) => {
+    const cap = metaMap[meta].maxCP
     const isShadow = data.tags && data.tags.includes('shadow')
 
     const chargedMoves = data.chargedMoves

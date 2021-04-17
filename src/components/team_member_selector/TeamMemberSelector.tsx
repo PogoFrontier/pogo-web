@@ -13,15 +13,8 @@ import TypeIcons from '@components/type_icon/TypeIcons'
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
 import getMaxLevel from '@common/actions/getMaxLevel'
+import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
-
-const metaMap: {
-  [key: string]: number
-} = {
-  'Great League': 1500,
-  'Ultra League': 2500,
-  'Master League': 10000,
-}
 
 let pokemonNames: string[]
 getPokemonNames().then((data) => (pokemonNames = data))
@@ -49,24 +42,34 @@ const TeamMemberSelector = (props: {
   useEffect(() => {
     if (member && member.speciesName) {
       setAddToBox(member)
-      getPokemonData(member.speciesId).then((pokemon) => {
-        if (pokemon) {
-          pokemon.chargedMoves.push('NONE')
-          if (pokemon.tags && pokemon.tags.includes('shadoweligible')) {
-            pokemon.chargedMoves.push('RETURN')
-          } else if (pokemon.tags && pokemon.tags.includes('shadow')) {
-            pokemon.chargedMoves.push('FRUSTRATION')
+      getPokemonData(member.speciesId, metaMap[meta].movesetOption).then(
+        (pokemon) => {
+          if (pokemon) {
+            pokemon.chargedMoves.push('NONE')
+            if (
+              metaMap[meta].movesetOption === 'original' &&
+              pokemon.tags &&
+              pokemon.tags.includes('shadoweligible')
+            ) {
+              pokemon.chargedMoves.push('RETURN')
+            } else if (
+              metaMap[meta].movesetOption === 'original' &&
+              pokemon.tags &&
+              pokemon.tags.includes('shadow')
+            ) {
+              pokemon.chargedMoves.push('FRUSTRATION')
+            }
+            setSelectedPokemonData(pokemon)
           }
-          setSelectedPokemonData(pokemon)
         }
-      })
+      )
     } else if (addToBox && addToBox.speciesName) {
       setAddToBox(null)
     }
   }, [member])
 
   useEffect(() => {
-    if (pokemonNames.length > 0) {
+    if (pokemonNames) {
       setSuggestions(pokemonNames)
     } else {
       return
@@ -132,21 +135,25 @@ const TeamMemberSelector = (props: {
 
   const setPokemon = (input: string) => {
     setUserInput(input)
-    getPokemonData(parseName(input))
+    getPokemonData(parseName(input), metaMap[meta].movesetOption)
       .then((pokemon) => {
         if (pokemon) {
           const isShadow = pokemon.tags && pokemon.tags.includes('shadow')
           pokemon.chargedMoves.push('NONE')
-          if (pokemon.tags && pokemon.tags.includes('shadoweligible')) {
+          if (
+            metaMap[meta].movesetOption === 'original' &&
+            pokemon.tags &&
+            pokemon.tags.includes('shadoweligible')
+          ) {
             pokemon.chargedMoves.push('RETURN')
-          } else if (isShadow) {
+          } else if (metaMap[meta].movesetOption === 'original' && isShadow) {
             pokemon.chargedMoves.push('FRUSTRATION')
           }
           setActiveSuggestion(0)
           setFilteredSuggestions([])
           setShowSuggestions(false)
           setSelectedPokemonData(pokemon)
-          const cap = metaMap[meta]
+          const cap = metaMap[meta].maxCP
           const stats = getIVs({
             pokemon,
             targetCP: cap ? cap : 10000,
@@ -205,7 +212,7 @@ const TeamMemberSelector = (props: {
         addToBox.level = getMaxLevel(
           addToBox.baseStats,
           statsObj,
-          metaMap[meta],
+          metaMap[meta].maxCP,
           50
         )
         statsObj.level = addToBox.level
