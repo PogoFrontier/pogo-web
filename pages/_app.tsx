@@ -185,6 +185,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
+        <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
       <SettingsContext.Provider
         value={{ showKeys, keys, setShowKeys, setKeys, clear }}

@@ -65,7 +65,7 @@ const Form: React.FunctionComponent = () => {
       joinRoom()
     } else if (!isLoading) {
       if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-        const payload = { room, team: teamMembers }
+        const payload = { room, team: teamMembers, format: team.format }
         setIsLoading(true)
         connectAndJoin(uuidv4(), payload)
       }
