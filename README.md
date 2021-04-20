@@ -38,12 +38,12 @@ Credit to [the PvPoke team](https://github.com/pvpoke/pvpoke) for my understandi
 Credit to [Smogon](https://github.com/smogon/sprites) for all the Pokemon sprites.
 
 Credit to all the project contributors! They've shaved months off development and improved the project in ways I hadn't imagined:
-- @jarthur22 ⭐
-- @theking465 ⭐
-- @FlorianKutz ⭐
-- @golu360 ⭐
-- @psianion ⭐
-- @tony-xuyf
-- @debopamsengupta
+- [@jarthur22 ⭐](https://github.com/jarthur22)
+- [@theking465 ⭐](https://github.com/theking465)
+- [@FlorianKutz ⭐](https://github.com/FlorianKutz)
+- [@golu360 ⭐](https://github.com/golu360)
+- [@psianion ⭐](https://github.com/psianion)
+- [@tony-xuyf](https://github.com/tony-xuyf)
+- [@debopamsengupta](https://github.com/debopamsengupta)
 
 ⭐ Lead developer
