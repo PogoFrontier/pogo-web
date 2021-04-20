@@ -6,7 +6,6 @@ import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
 import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
-import { TeamMember } from '@adibkhan/pogo-web-backend'
 
 /**
  * Maps the selected meta to a max CP value
@@ -15,7 +14,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
  * returns a promise with a random Pokemon with random moves
  * @param meta the meta the pokemon has to be in
  */
-async function getRandomPokemon(meta: string): Promise<TeamMember> {
+async function getRandomPokemon(meta: string): Promise<any> {
   let randPokemon: string = 'Pidgey'
   let randCharged1: string = 'Twister'
   let randCharged2: string = 'Twister'
@@ -76,6 +75,7 @@ async function getRandomPokemon(meta: string): Promise<TeamMember> {
       fastMove: randFast,
       chargeMoves: [randCharged1, randCharged2],
       sid: data.sid,
+      dex: data.dex,
     }
   })
 }
