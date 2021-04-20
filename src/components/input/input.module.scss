@@ -1,7 +1,9 @@
 @import 'colors';
 
 .label {
-  font-size: small;
+  font-size: medium;
+  text-transform: uppercase;
+
 }
 
 .input {
@@ -10,10 +12,16 @@
   border-radius: 0;
   margin-top: 0.25em;
   margin-bottom: 0.75em;
+  padding: 5px;
+
   border: solid 1px $color-neutral-light;
   &.highlighted {
     font-weight: 600;
   }
+}
+
+.input::placeholder {
+  padding-left: 10px;
 }
 
 .content{

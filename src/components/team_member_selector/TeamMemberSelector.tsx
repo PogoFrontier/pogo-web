@@ -321,43 +321,7 @@ const TeamMemberSelector = (props: {
   }
 
   return (
-    <section>
-      {suggestions && suggestions.length > 0 ? (
-        <div>
-          <Input
-            title="Species"
-            type="text"
-            placeholder={member ? member.speciesName : 'Choose Pokemon'}
-            onChange={onChange}
-            onKeyDown={onKeyDown}
-            value={userInput}
-          />
-          {showSuggestions && userInput ? (
-            filteredSuggestions && filteredSuggestions.length ? (
-              <ul className={style.suggestions}>
-                {filteredSuggestions.map(
-                  (suggestion: string, index: number) => (
-                    <li
-                      className={classNames([
-                        style.suggestion,
-                        { [style.active]: index === activeSuggestion },
-                      ])}
-                      key={suggestion}
-                      onClick={handleSetPokemon}
-                    >
-                      {suggestion}
-                    </li>
-                  )
-                )}
-              </ul>
-            ) : (
-              <p>No suggestions</p>
-            )
-          ) : null}
-        </div>
-      ) : (
-        <p>Failed to connect to the Pokemon database</p>
-      )}
+    <div className={style.container}>
       {selectedPokemonData && addToBox ? (
         <div className={style.info}>
           <span className={style.btnRow}>
@@ -374,46 +338,53 @@ const TeamMemberSelector = (props: {
               </button>
             )}
           </span>
+          <label className={style.cp}>{addToBox.speciesName}</label>
+          <br />
           <label className={style.cp}>
-            cp <strong>{addToBox.cp}</strong>
+            CP <b>{addToBox.cp}</b>
           </label>
           <br />
           <TypeIcons types={addToBox.types} />
           <br />
-          <img
-            src={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
-            key={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
-            alt={addToBox.speciesName}
-            className="sprite"
-          />
-          <br />
-          <label className="shiny-label">
-            Shiny?{' '}
-            <input
-              type="checkbox"
-              name="shiny"
-              id="shiny"
-              checked={addToBox.shiny ? addToBox.shiny : false}
-              onChange={handlePokemonChange}
+          <div className={style.imagecontainer}>
+            <img
+              src={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
+              key={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
+              alt={addToBox.speciesName}
+              className="sprite"
             />
-          </label>
+          </div>
           <br />
-          <label className="name-label">Nickname: </label>
-          <input
-            type="text"
-            placeholder="none"
-            id="name"
-            onChange={handlePokemonChange}
-            value={addToBox.name ? addToBox.name : ''}
-          />
-          <button
-            className="clear-name-btn"
-            id="name-clear-btn"
-            onClick={clearPokemonName}
-          >
-            Clear
-          </button>
-          <div className="fast-move">
+          <div className={style.label}>
+            <label className="shiny-label">
+              Shiny?{' '}
+              <input
+                type="checkbox"
+                name="shiny"
+                id="shiny"
+                checked={addToBox.shiny ? addToBox.shiny : false}
+                onChange={handlePokemonChange}
+              />
+            </label>
+            <br />
+            <label className="name-label">Nickname: </label>
+            <input
+              type="text"
+              placeholder="None"
+              id="name"
+              onChange={handlePokemonChange}
+              value={addToBox.name ? addToBox.name : ''}
+            />
+            <button
+              className="clear-name-btn"
+              id="name-clear-btn"
+              onClick={clearPokemonName}
+            >
+              Clear
+            </button>
+          </div>
+
+          <div className={`fast-move ${style.label}`}>
             <label className="fast-move-label">Fast Move: </label>
             <select
               className="fast-moves-select"
@@ -429,35 +400,37 @@ const TeamMemberSelector = (props: {
               ))}
             </select>
           </div>
-          <label className="charge-move-label">Charge Moves: </label>
-          <select
-            className="charge-move-1"
-            name="charge-move-1"
-            id="chargeMove1"
-            onChange={handlePokemonChange}
-            value={addToBox.chargeMoves[0]}
-          >
-            {selectedPokemonData.chargedMoves.map((move: string) => (
-              <option value={move} key={move}>
-                {toTitleCase(move)}
-              </option>
-            ))}
-          </select>
-          <select
-            className="charge-move-2"
-            name="charge-move-2"
-            id="chargeMove2"
-            onChange={handlePokemonChange}
-            value={addToBox.chargeMoves[1]}
-          >
-            {selectedPokemonData.chargedMoves.map((move: string) => (
-              <option value={move} key={move}>
-                {toTitleCase(move)}
-              </option>
-            ))}
-          </select>
+          <div className={style.label}>
+            <label className="charge-move-label">Charge Moves: </label>
+            <select
+              className="charge-move-1"
+              name="charge-move-1"
+              id="chargeMove1"
+              onChange={handlePokemonChange}
+              value={addToBox.chargeMoves[0]}
+            >
+              {selectedPokemonData.chargedMoves.map((move: string) => (
+                <option value={move} key={move}>
+                  {toTitleCase(move)}
+                </option>
+              ))}
+            </select>
+            <select
+              className="charge-move-2"
+              name="charge-move-2"
+              id="chargeMove2"
+              onChange={handlePokemonChange}
+              value={addToBox.chargeMoves[1]}
+            >
+              {selectedPokemonData.chargedMoves.map((move: string) => (
+                <option value={move} key={move}>
+                  {toTitleCase(move)}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="stats">
-            <div className="level">
+            <div className={`level ${style.label}`}>
               <label className="level-label"> Level: </label>
               <select
                 className="level-select"
@@ -473,8 +446,9 @@ const TeamMemberSelector = (props: {
                 ))}
               </select>
             </div>
-            <div className="ivs">
-              <label className="iv-label">IVs: </label>
+            <div className={`ivs ${style.label}`}>
+              <label className="iv-label">IVs : </label>
+              ATK
               <select
                 className="atk"
                 name="atk"
@@ -488,6 +462,7 @@ const TeamMemberSelector = (props: {
                   </option>
                 ))}
               </select>
+              DEF
               <select
                 className="def"
                 name="def"
@@ -501,6 +476,7 @@ const TeamMemberSelector = (props: {
                   </option>
                 ))}
               </select>
+              HP
               <select
                 className="hp"
                 name="hp"
@@ -518,7 +494,45 @@ const TeamMemberSelector = (props: {
           </div>
         </div>
       ) : null}
-    </section>
+      {suggestions && suggestions.length > 0 ? (
+        <div className={style.searchbar}>
+          <Input
+            title="Species"
+            type="text"
+            placeholder={member ? member.speciesName : 'Choose Pokemon'}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            value={userInput}
+          />
+          {showSuggestions && userInput ? (
+            filteredSuggestions && filteredSuggestions.length ? (
+              <div className={style.suggestionscontainer}>
+                <ul className={style.suggestions}>
+                  {filteredSuggestions.map(
+                    (suggestion: string, index: number) => (
+                      <li
+                        className={classNames([
+                          style.suggestion,
+                          { [style.active]: index === activeSuggestion },
+                        ])}
+                        key={suggestion}
+                        onClick={handleSetPokemon}
+                      >
+                        {suggestion}
+                      </li>
+                    )
+                  )}
+                </ul>
+              </div>
+            ) : (
+              <p>No suggestions</p>
+            )
+          ) : null}
+        </div>
+      ) : (
+        <p>Failed to connect to the Pokemon database</p>
+      )}
+    </div>
   )
 }
 export default TeamMemberSelector
