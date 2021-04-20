@@ -9,7 +9,7 @@
     "start": "NODE_ENV=production PORT=$PORT next start",
     "build": "rm -rf .next && next build",
     "now-build": "rm -rf .next && next build",
-    "dev": "next dev -p 3001",
+    "dev": "next dev -p 3000",
     "export": "npm run build && next export",
     "prettier": "prettier  --write **/*.{ts,tsx,js}",
     "lint:ts": "npm run prettier && tslint -c tslint.json -t stylish --fix {pages,src,server}/**/*.{ts,tsx}",
