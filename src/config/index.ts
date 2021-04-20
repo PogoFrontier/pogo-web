@@ -4,10 +4,10 @@
 export const SERVER =
   process.env.NODE_ENV === 'production'
     ? 'https://pogo-web-backend.herokuapp.com/'
-    : 'http://localhost:2999/'
+    : 'http://localhost:8081/'
 export const WSS =
   process.env.NODE_ENV === 'production'
     ? 'wss://pogo-web-backend.herokuapp.com/'
-    : 'ws://localhost:3000/'
+    : 'ws://localhost:8088/'
 
 export const CDN_BASE_URL = 'https://d1bbfbaqrr54l0.cloudfront.net'
