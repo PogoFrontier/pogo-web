@@ -1,13 +1,13 @@
-// export const SERVER = 'https://pogo-web-backend.herokuapp.com/'
-// export const WSS = 'wss://pogo-web-backend.herokuapp.com/'
+// export const SERVER = 'http://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8080/'
+// export const WSS = 'ws://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8082/'
 
 export const SERVER =
   process.env.NODE_ENV === 'production'
-    ? 'https://pogo-web-backend.herokuapp.com/'
+    ? 'http://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8080/'
     : 'http://localhost:2999/'
 export const WSS =
   process.env.NODE_ENV === 'production'
-    ? 'wss://pogo-web-backend.herokuapp.com/'
+    ? 'ws://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8082/'
     : 'ws://localhost:3000/'
 
 export const CDN_BASE_URL = 'https://d1bbfbaqrr54l0.cloudfront.net'
