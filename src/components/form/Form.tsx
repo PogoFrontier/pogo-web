@@ -39,6 +39,9 @@ const Form: React.FunctionComponent = () => {
   }
 
   function joinRoom(roomId?: string) {
+    if (!team.format) {
+      return;
+    }
     if (roomId) {
       setRoom(roomId)
     } else {
@@ -48,7 +51,11 @@ const Form: React.FunctionComponent = () => {
     // Connected, let's sign-up for to receive messages for this room
     const data = {
       type: CODE.room,
-      payload: { room: roomId, team: teamMembers },
+      payload: {
+        room: roomId,
+        format: team.format,
+        team: teamMembers,
+      },
     }
     socket.send(JSON.stringify(data))
   }
@@ -58,7 +65,7 @@ const Form: React.FunctionComponent = () => {
       joinRoom()
     } else if (!isLoading) {
       if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-        const payload = { room, team: teamMembers }
+        const payload = { room, team: teamMembers, format: team.format }
         setIsLoading(true)
         connectAndJoin(uuidv4(), payload)
       }
@@ -67,17 +74,15 @@ const Form: React.FunctionComponent = () => {
 
   function joinQuickPlay() {
     // determine rule
+    if (!team.format) {
+      return;
+    }
     setIsMatchmaking(true)
     setIsLoading(true)
     const data = {
       type: CODE.matchmaking_search_battle,
       payload: {
-        format: {
-          // TODO: Different Formats
-          // Also someone explain to my why this line doesn't work:
-          // import { RULESET_NAMES } from '@adibkhan/pogo-web-backend/rule'
-          name: 'Great',
-        },
+        format: team.format,
       },
     }
     connect(uuidv4(), (sock: WebSocket) => {
@@ -86,13 +91,13 @@ const Form: React.FunctionComponent = () => {
   }
 
   function quitQuickPlay() {
+    if (!team.format) {
+      return;
+    }
     const data = {
       type: CODE.matchmaking_quit,
       payload: {
-        format: {
-          // TODO: Different Formats
-          name: 'Great',
-        },
+        format: team.format,
       },
     }
     socket.send(JSON.stringify(data))
@@ -128,15 +133,14 @@ const Form: React.FunctionComponent = () => {
         {isLoading ? (
           <div className={style.loading}>
             <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
-            {
-              isMatchmaking
-              && <button
+            {isMatchmaking && (
+              <button
                 className={classnames([style.button, 'btn', 'btn-primary'])}
                 onClick={quitQuickPlay}
               >
-              Quit
-            </button>
-            }
+                Quit
+              </button>
+            )}
           </div>
         ) : (
           <>

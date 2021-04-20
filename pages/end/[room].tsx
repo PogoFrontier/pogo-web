@@ -1,5 +1,5 @@
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
-import { TeamMember } from '@adibkhan/pogo-web-backend/team'
+import { Team } from '@adibkhan/pogo-web-backend/team'
 import SocketContext from '@context/SocketContext'
 import TeamContext from '@context/TeamContext'
 import { useRouter } from 'next/router'
@@ -12,12 +12,19 @@ const EndPage = () => {
   const router = useRouter()
   const { room, result } = router.query
   const { socket, connectAndJoin } = useContext(SocketContext)
-  const team: TeamMember[] = useContext(TeamContext).team.members
+  const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
 
   function joinRoom() {
     // Connected, let's sign-up for to receive messages for this room
-    const data = { type: CODE.room, payload: { room, team } }
+    const data = {
+      type: CODE.room,
+      payload: {
+        room,
+        format: team.format,
+        team: team.members,
+      },
+    }
     socket.send(JSON.stringify(data))
     router.push(`/matchup/${room}`)
   }
