@@ -1,11 +1,6 @@
 @import 'variables';
 @import 'colors';
 
-.info {
-  br {
-    height: 20px;
-  }
-}
 
 .suggestions {
   list-style: none;
@@ -15,6 +10,7 @@
 
 .suggestion {
   cursor: pointer;
+  padding: 0.5em;
   margin-bottom: 0.5em;
   transition: margin-left 150ms;
   &:hover {
@@ -22,15 +18,75 @@
   }
 }
 
+
+.label { 
+  margin-bottom: 10px;
+
+  label {
+    font-size: 1.2em;
+    align-items: center;
+    margin-bottom: 10px;
+  
+    input[type='checkbox'] {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 10px;
+    }
+  }
+
+  input[type='text'] {
+    width: 200px;
+    height: 25px;
+    margin-right: 10px;
+  }
+
+  input::placeholder {
+    padding-left: 10px;
+  }
+
+  select {
+    width: 100px;
+    height: 25px;
+    margin-right: 10px;
+    margin-left: 5px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    background-color: $color-neutral-light;
+  }
+
+  button {
+    border: none;
+    background: none;
+    color: $color-brand-primary;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: 600;
+    outline: none;
+  }
+}
+
+
 .btnRow {
   float: right;
   button + button {
-    margin-left: 1em;
+    margin: 0 1em 1em 1em;
   }
 }
 
 .cp {
-  font-size: 1.5em;
+  font-size: 1.1em;
+  @include md {
+    font-size: 1.5em;
+  }
+}
+
+.cp b {
+  font-size: 1.2em;
+  opacity: 0.8;
+  @include md {
+    font-size: 1.6em;
+  }
 }
 
 .btn {
@@ -52,6 +108,7 @@
   background: none;
   color: $color-brand-negative;
   font-size: 1.5em;
+  font-weight: bold;
   margin: 0;
   padding: 0;
   cursor: pointer;
@@ -59,3 +116,67 @@
     text-decoration: underline;
   }
 }
+
+.imagecontainer {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column-reverse;
+
+  @include lg {
+    display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+  margin-top: 20px;
+  outline: none;
+  }
+}
+
+.info {
+  width: 100%;
+  @include lg {
+    width: 50%;
+  outline: none;
+  margin: 20px 0 0 20px;
+  }
+}
+
+.searchbar {
+  width: 100%;
+  @include lg {
+    width: 50%;
+  outline: none;
+  margin-left: 20px;
+  }
+}
+
+.suggestionscontainer {
+  max-height: 400px;
+  outline: none;
+  overflow-y: scroll
+}
+
+.suggestionscontainer::-webkit-scrollbar {
+  width: 10px;
+}
+
+.suggestionscontainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.suggestionscontainer::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.suggestionscontainer::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
