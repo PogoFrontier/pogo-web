@@ -40,7 +40,7 @@ const Form: React.FunctionComponent = () => {
 
   function joinRoom(roomId?: string) {
     if (!team.format) {
-      return;
+      return
     }
     if (roomId) {
       setRoom(roomId)
@@ -75,7 +75,7 @@ const Form: React.FunctionComponent = () => {
   function joinQuickPlay() {
     // determine rule
     if (!team.format) {
-      return;
+      return
     }
     setIsMatchmaking(true)
     setIsLoading(true)
@@ -92,7 +92,7 @@ const Form: React.FunctionComponent = () => {
 
   function quitQuickPlay() {
     if (!team.format) {
-      return;
+      return
     }
     const data = {
       type: CODE.matchmaking_quit,
