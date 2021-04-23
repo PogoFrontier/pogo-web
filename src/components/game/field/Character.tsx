@@ -36,7 +36,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
     return <div />
   }
 
-  const ratio = char.current!.hp / char.hp
+  const ratio = char.current!.hp
   const color = getColor(ratio)
 
   return (

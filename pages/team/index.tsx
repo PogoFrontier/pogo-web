@@ -193,6 +193,7 @@ const TeamPage = () => {
   // const { user } = useContext(UserContext)
   const [metas] = useState([
     'Great League',
+    'Commander Cup',
     'MainSeries Cup',
     'Ultra League',
     'Master League',

@@ -1,6 +1,6 @@
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './switch.module.scss'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import classnames from 'classnames'
 import getColor from '@common/actions/getColor'
 import ImageHandler from '@common/actions/getImages'
@@ -43,7 +43,7 @@ const Selector: React.FC<SelectorProps> = ({
   }
 
   const image = imageHandler.getMini(member.sid)
-  const ratio = member.current ? Math.min(member.current.hp / member.hp, 1) : 1
+  const ratio = member.current!.hp
   const color = getColor(ratio)
 
   return (
@@ -86,22 +86,17 @@ const Switch: React.FC<SwitchProps> = ({
   onClick,
   modal,
 }) => {
-  const [arr, setArr] = useState([] as CharArray[])
-
-  useEffect(() => {
-    const newArr = new Array<CharArray>()
-    if (team.length > 1) {
-      team.map((x, i) => {
-        if (i !== pointer && x.current && x.current?.hp > 0) {
-          newArr.push({
-            char: x,
-            index: i,
-          })
-        }
-      })
-      setArr(newArr!)
-    }
-  }, [pointer])
+  const arr = new Array<CharArray>()
+  if (team.length > 1) {
+    team.map((x, i) => {
+      if (i !== pointer && x.current && x.current?.hp > 0) {
+        arr.push({
+          char: x,
+          index: i,
+        })
+      }
+    })
+  }
 
   if (team.length <= 1) {
     return <div />
