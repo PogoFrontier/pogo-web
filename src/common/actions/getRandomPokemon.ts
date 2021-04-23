@@ -4,17 +4,17 @@ import {
 } from '@common/actions/pokemonAPIActions'
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
-import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
+// import { Rule} from '@adibkhan/pogo-web-backend'
 
 /**
- * Maps the selected meta to a max CP value
- */
-/**
  * returns a promise with a random Pokemon with random moves
- * @param meta the meta the pokemon has to be in
+ * @param meta the meta the pokemon has to be in. Formatted as a Rule type.
  */
-async function getRandomPokemon(meta: string): Promise<any> {
+
+// TODO: change type of meta to any, however typescript errors when doing that
+async function getRandomPokemon(meta: any): Promise<any> {
+  if (meta === undefined) return undefined
   let randPokemon: string = 'Pidgey'
   let randCharged1: string = 'Twister'
   let randCharged2: string = 'Twister'
@@ -22,15 +22,91 @@ async function getRandomPokemon(meta: string): Promise<any> {
 
   // get a random pokemon
   await getPokemonNames().then((data) => {
-    randPokemon = data[Math.round(Math.random() * data.length)]
+    let changedData = data
+
+    // checkers for include, and exclude pokemon
+    if (meta.include !== undefined) {
+      meta.include.forEach((e: any) => {
+        switch (e.filterType) {
+          case 'tag':
+            /*
+            changedData = changedData.filter((p: any) => {
+              e.values.forEach((value: string) => {
+                if(p.includes(value)) return true
+              });
+              return false
+            })
+            */
+            break
+          case 'id':
+            changedData = changedData.filter((p: any) => {
+              e.values.forEach((value: string) => {
+                if (value === p) return true
+              })
+              return false
+            })
+            break
+          case 'dex':
+            changedData = changedData.filter((p: any) => {
+              e.values.forEach((value: number) => {
+                if (changedData.indexOf(p) === value) return true
+              })
+              return false
+            })
+            break
+          default:
+            break
+        }
+      })
+    }
+
+    if (meta.exlude !== undefined) {
+      meta.exclude.forEach((e: any) => {
+        switch (e.filterType) {
+          case 'tag':
+            /*
+            changedData = changedData.filter((p: any) => {
+              e.values.forEach((value: string) => {
+                if(p.includes(value)) return false
+              });
+              return true
+            })
+            */
+            break
+          case 'id':
+            changedData = changedData.filter((p: any) => {
+              e.values.forEach((value: string) => {
+                if (value === p) return false
+              })
+              return true
+            })
+            break
+          case 'dex':
+            changedData = changedData.filter((p: any) => {
+              e.values.forEach((value: number) => {
+                if (changedData.indexOf(p) === value) return false
+              })
+              return true
+            })
+            break
+          default:
+            break
+        }
+      })
+    }
+
+    randPokemon = changedData[Math.round(Math.random() * changedData.length)]
   })
 
   // get random moves
-  return getPokemonData(
-    parseName(randPokemon),
-    metaMap[meta].movesetOption
-  ).then((data) => {
-    const cap = metaMap[meta].maxCP
+  const moveset =
+    meta.advancedOptions === undefined
+      ? 'original'
+      : meta.advancedOptions.movesets === undefined
+      ? 'original'
+      : meta.advancedOptions.movesets
+  return getPokemonData(parseName(randPokemon), moveset).then((data) => {
+    const cap = meta.maxCP
     const isShadow = data.tags && data.tags.includes('shadow')
 
     const chargedMoves = data.chargedMoves

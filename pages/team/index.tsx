@@ -52,7 +52,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    * Adds a Random Team to the userTeams
    */
   async function handleOnClickAddRandomTeam() {
-    let rule: Rule
+    let rule: Rule = (undefined as unknown) as Rule
     const t: TeamMember[] = []
     const dexNrs = new Set()
     const types = new Set()
@@ -67,7 +67,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     })
     for (let i = 0; i < 6; i++) {
       let pokemon: TeamMember
-      await getRandomPokemon(meta).then((data) => {
+      await getRandomPokemon(rule).then((data) => {
         if (data === undefined) {
           alert('An unexpected error occured')
           return
