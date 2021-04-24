@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Pokemon GO PvP Web Game",
   "main": "index.js",
+  "engines": {
+    "node": "14.13.0"
+  },
   "scripts": {
     "test": "NODE_ENV=test jest",
     "test:dev": "NODE_ENV=test jest --watchAll",
