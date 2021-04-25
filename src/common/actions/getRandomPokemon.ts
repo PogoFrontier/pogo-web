@@ -24,6 +24,18 @@ type getRandomPokemonParams = {
   previousPokemon: TeamMemberWithDex[]
 }
 
+type moveWithRating = {
+  moveId: string
+  uses: number
+}
+
+type moveUsageData =
+  | {
+      fastMoves: moveWithRating[]
+      chargedMoves: moveWithRating[]
+    }
+  | undefined
+
 async function getRandomPokemon({
   meta,
   rule,
@@ -32,42 +44,41 @@ async function getRandomPokemon({
 }: getRandomPokemonParams): Promise<any> {
   if (meta === undefined) return undefined
   let randPokemon: string = 'Pidgey'
-  let randCharged1: string = 'Twister'
-  let randCharged2: string = 'Twister'
-  let randFast: string = 'Tackle'
+  let moveData: moveUsageData
 
   // get a random pokemon
   await getPokemonNames(meta, position, true).then((data) => {
-    let speciesPool = Object.keys(data)
+    randPokemon = getRandomPokemonSpecies(data, (speciesPool: string[]) => {
+      if (rule.flags && rule.flags.speciesClauseByForm) {
+        speciesPool = speciesPool.filter(
+          (speciesId) =>
+            !previousPokemon
+              .map((pokemon) => pokemon.speciesId)
+              .includes(speciesId)
+        )
+      }
+      if (rule.flags && rule.flags.speciesClauseByDex) {
+        speciesPool = speciesPool.filter(
+          (speciesId) =>
+            !previousPokemon
+              .map((pokemon) => pokemon.dex)
+              .includes(data[speciesId].dex)
+        )
+      }
+      if (rule.flags && rule.flags.typeClause) {
+        speciesPool = speciesPool.filter(
+          (speciesId) =>
+            !previousPokemon
+              .map((pokemon) => pokemon.types)
+              .some((poke1Types) =>
+                isThereADuplicateType(poke1Types, data[speciesId].types)
+              )
+        )
+      }
+      return speciesPool
+    })
 
-    if (rule.flags && rule.flags.speciesClauseByForm) {
-      speciesPool = speciesPool.filter(
-        (speciesId) =>
-          !previousPokemon
-            .map((pokemon) => pokemon.speciesId)
-            .includes(speciesId)
-      )
-    }
-    if (rule.flags && rule.flags.speciesClauseByDex) {
-      speciesPool = speciesPool.filter(
-        (speciesId) =>
-          !previousPokemon
-            .map((pokemon) => pokemon.dex)
-            .includes(data[speciesId].dex)
-      )
-    }
-    if (rule.flags && rule.flags.typeClause) {
-      speciesPool = speciesPool.filter(
-        (speciesId) =>
-          !previousPokemon
-            .map((pokemon) => pokemon.types)
-            .some((poke1Types) =>
-              isThereADuplicateType(poke1Types, data[speciesId].types)
-            )
-      )
-    }
-
-    randPokemon = speciesPool[Math.round(Math.random() * speciesPool.length)]
+    moveData = data[randPokemon].moves
   })
 
   // get random moves
@@ -79,26 +90,24 @@ async function getRandomPokemon({
       : rule.advancedOptions.movesets
   return getPokemonData(parseName(randPokemon), moveset).then((data) => {
     const cap = rule.maxCP
-    const isShadow = data.tags && data.tags.includes('shadow')
-
-    const chargedMoves = data.chargedMoves
-    if (data.tags && data.tags.includes('shadoweligible')) {
-      chargedMoves.push('RETURN')
-    } else if (isShadow) {
-      chargedMoves.push('FRUSTRATION')
-    }
-    randCharged1 = chargedMoves[Math.floor(Math.random() * chargedMoves.length)]
-    chargedMoves.splice(chargedMoves.indexOf(randCharged1), 1)
-    chargedMoves.length === 0
-      ? (randCharged2 = 'NONE')
-      : (randCharged2 =
-          chargedMoves[Math.floor(Math.random() * chargedMoves.length)])
-    randFast = data.fastMoves[Math.floor(Math.random() * data.fastMoves.length)]
     const pokemon = data
     const stats = getIVs({
       pokemon,
       targetCP: cap ? cap : 10000,
     })[0]
+
+    const isShadow = data.tags && data.tags.includes('shadow')
+    const chargedMovePool = data.chargedMoves
+    if (data.tags && data.tags.includes('shadoweligible')) {
+      chargedMovePool.push('RETURN')
+    } else if (isShadow) {
+      chargedMovePool.push('FRUSTRATION')
+    }
+    const { fastMove, chargedMoves } = getRandomMoves(
+      moveData,
+      data.fastMoves,
+      chargedMovePool
+    )
 
     return {
       speciesId: data.speciesId,
@@ -120,12 +129,105 @@ async function getRandomPokemon({
         stats.ivs.hp,
       ]),
       types: data.types,
-      fastMove: randFast,
-      chargeMoves: [randCharged1, randCharged2],
+      fastMove,
+      chargeMoves: chargedMoves,
       sid: data.sid,
       dex: data.dex,
     }
   })
+}
+
+function getRandomPokemonSpecies(
+  data: any,
+  filter: (speciesPool: string[]) => string[]
+): string {
+  let speciesPool = Object.keys(data)
+  speciesPool = filter(speciesPool)
+
+  const ratingSum: number = speciesPool
+    .map((speciesId) => (data[speciesId].ranking ? data[speciesId].ranking : 0))
+    .map((rating) => Math.pow(rating / 1000, 6))
+    .reduce((r1, r2) => r1 + r2)
+
+  if (ratingSum !== 0) {
+    let rand = Math.round(Math.random() * ratingSum)
+    const randPokemon = speciesPool.find((speciesId) => {
+      let rating: number = data[speciesId].ranking ? data[speciesId].ranking : 0
+      rating = Math.pow(rating / 1000, 6)
+      rand -= rating
+      return rand <= 0
+    })
+    if (randPokemon) {
+      return randPokemon
+    }
+  }
+
+  return speciesPool[Math.round(Math.random() * speciesPool.length)]
+}
+
+function getRandomMoves(
+  moveData: moveUsageData,
+  fastMoves: string[],
+  chargedMovePool: string[]
+): {
+  fastMove: string
+  chargedMoves: [string, string]
+} {
+  let randFast: string
+
+  if (moveData) {
+    let usageSum: number
+    let rand: number
+    // get chargedmoves
+    const chargedMoves: [string, string] = ['NONE', 'NONE']
+    for (const i of [0, 1]) {
+      usageSum = moveData.chargedMoves
+        .map((chargedMove) => chargedMove.uses)
+        .reduce((use1, use2) => use1 + use2)
+      rand = Math.random() * usageSum
+      const randChargedMove = moveData.chargedMoves.find((chargedMove) => {
+        rand -= chargedMove.uses
+        return rand <= 0
+      })
+      if (randChargedMove) {
+        chargedMoves[i] = randChargedMove.moveId
+      }
+      moveData.chargedMoves = moveData.chargedMoves.filter(
+        (chargedMove) => chargedMove !== randChargedMove
+      )
+    }
+
+    // get fastmove
+    usageSum = moveData.fastMoves
+      .map((fastMove) => fastMove.uses)
+      .reduce((use1, use2) => use1 + use2)
+    rand = Math.random() * usageSum
+    randFast = moveData.fastMoves.find((fastMove) => {
+      rand -= fastMove.uses
+      return rand <= 0
+    })!.moveId
+
+    return {
+      fastMove: randFast,
+      chargedMoves,
+    }
+  }
+
+  // Get moves with equal odds for all moves
+  const randCharged1 =
+    chargedMovePool[Math.floor(Math.random() * chargedMovePool.length)]
+  chargedMovePool.splice(chargedMovePool.indexOf(randCharged1), 1)
+  let randCharged2: string
+  chargedMovePool.length === 0
+    ? (randCharged2 = 'NONE')
+    : (randCharged2 =
+        chargedMovePool[Math.floor(Math.random() * chargedMovePool.length)])
+  randFast = fastMoves[Math.floor(Math.random() * fastMoves.length)]
+
+  return {
+    chargedMoves: [randCharged1, randCharged2],
+    fastMove: randFast,
+  }
 }
 
 function isThereADuplicateType(
