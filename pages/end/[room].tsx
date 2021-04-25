@@ -34,7 +34,7 @@ const EndPage = () => {
       joinRoom()
     } else if (!isLoading) {
       if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-        const payload = { room, team }
+        const payload = { room, team: team.members }
         setIsLoading(true)
         connectAndJoin(uuidv4(), payload)
       }
