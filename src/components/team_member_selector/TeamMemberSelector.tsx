@@ -17,7 +17,7 @@ import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
 
 let pokemonNames: string[]
-getPokemonNames().then((data) => (pokemonNames = data))
+getPokemonNames().then((data) => (pokemonNames = Object.keys(data)))
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void

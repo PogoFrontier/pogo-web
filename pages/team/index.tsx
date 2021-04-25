@@ -19,6 +19,10 @@ interface ContentProps {
   meta: string
 }
 
+type TeamMemberWithDex = TeamMember & {
+  dex: number
+}
+
 const Content: React.FC<ContentProps> = ({ meta }) => {
   const { user, setTeams } = useContext(UserContext)
   const [isCrafting, setIsCrafting] = useState(false)
@@ -53,7 +57,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    */
   async function handleOnClickAddRandomTeam() {
     let rule: Rule = (undefined as unknown) as Rule
-    const t: TeamMember[] = []
+    const t: TeamMemberWithDex[] = []
     const dexNrs = new Set()
     const types = new Set()
     const IDs = new Set()
@@ -66,8 +70,13 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       }
     })
     for (let i = 0; i < 6; i++) {
-      let pokemon: TeamMember
-      await getRandomPokemon(rule).then((data) => {
+      let pokemon: TeamMemberWithDex
+      await getRandomPokemon({
+        meta,
+        rule,
+        position: i,
+        previousPokemon: t,
+      }).then((data) => {
         if (data === undefined) {
           alert('An unexpected error occured')
           return

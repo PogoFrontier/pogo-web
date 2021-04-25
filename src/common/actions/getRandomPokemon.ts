@@ -5,15 +5,31 @@ import {
 import calcCP from '@common/actions/getCP'
 import getIVs from '@common/actions/getIVs'
 import parseName from '@common/actions/parseName'
-// import { Rule} from '@adibkhan/pogo-web-backend'
+import { TeamMember } from '@adibkhan/pogo-web-backend/team'
+// import { Rule } from '@adibkhan/pogo-web-backend'
 
 /**
  * returns a promise with a random Pokemon with random moves
  * @param meta the meta the pokemon has to be in. Formatted as a Rule type.
  */
 
-// TODO: change type of meta to any, however typescript errors when doing that
-async function getRandomPokemon(meta: any): Promise<any> {
+type TeamMemberWithDex = TeamMember & {
+  dex: number
+}
+
+type getRandomPokemonParams = {
+  meta: string
+  rule: any // TODO: Make it Rule when movesets is added to advancedOptions
+  position: number
+  previousPokemon: TeamMemberWithDex[]
+}
+
+async function getRandomPokemon({
+  meta,
+  rule,
+  position,
+  previousPokemon,
+}: getRandomPokemonParams): Promise<any> {
   if (meta === undefined) return undefined
   let randPokemon: string = 'Pidgey'
   let randCharged1: string = 'Twister'
@@ -21,92 +37,48 @@ async function getRandomPokemon(meta: any): Promise<any> {
   let randFast: string = 'Tackle'
 
   // get a random pokemon
-  await getPokemonNames().then((data) => {
-    let changedData = data
+  await getPokemonNames(meta, position, true).then((data) => {
+    let speciesPool = Object.keys(data)
 
-    // checkers for include, and exclude pokemon
-    if (meta.include !== undefined) {
-      meta.include.forEach((e: any) => {
-        switch (e.filterType) {
-          case 'tag':
-            /*
-            changedData = changedData.filter((p: any) => {
-              e.values.forEach((value: string) => {
-                if(p.includes(value)) return true
-              });
-              return false
-            })
-            */
-            break
-          case 'id':
-            changedData = changedData.filter((p: any) => {
-              e.values.forEach((value: string) => {
-                if (value === p) return true
-              })
-              return false
-            })
-            break
-          case 'dex':
-            changedData = changedData.filter((p: any) => {
-              e.values.forEach((value: number) => {
-                if (changedData.indexOf(p) === value) return true
-              })
-              return false
-            })
-            break
-          default:
-            break
-        }
-      })
+    if (rule.flags && rule.flags.speciesClauseByForm) {
+      speciesPool = speciesPool.filter(
+        (speciesId) =>
+          !previousPokemon
+            .map((pokemon) => pokemon.speciesId)
+            .includes(speciesId)
+      )
+    }
+    if (rule.flags && rule.flags.speciesClauseByDex) {
+      speciesPool = speciesPool.filter(
+        (speciesId) =>
+          !previousPokemon
+            .map((pokemon) => pokemon.dex)
+            .includes(data[speciesId].dex)
+      )
+    }
+    if (rule.flags && rule.flags.typeClause) {
+      speciesPool = speciesPool.filter(
+        (speciesId) =>
+          !previousPokemon
+            .map((pokemon) => pokemon.types)
+            .some((poke1Types) =>
+              isThereADuplicateType(poke1Types, data[speciesId].types)
+            )
+      )
     }
 
-    if (meta.exlude !== undefined) {
-      meta.exclude.forEach((e: any) => {
-        switch (e.filterType) {
-          case 'tag':
-            /*
-            changedData = changedData.filter((p: any) => {
-              e.values.forEach((value: string) => {
-                if(p.includes(value)) return false
-              });
-              return true
-            })
-            */
-            break
-          case 'id':
-            changedData = changedData.filter((p: any) => {
-              e.values.forEach((value: string) => {
-                if (value === p) return false
-              })
-              return true
-            })
-            break
-          case 'dex':
-            changedData = changedData.filter((p: any) => {
-              e.values.forEach((value: number) => {
-                if (changedData.indexOf(p) === value) return false
-              })
-              return true
-            })
-            break
-          default:
-            break
-        }
-      })
-    }
-
-    randPokemon = changedData[Math.round(Math.random() * changedData.length)]
+    randPokemon = speciesPool[Math.round(Math.random() * speciesPool.length)]
   })
 
   // get random moves
   const moveset =
-    meta.advancedOptions === undefined
+    rule.advancedOptions === undefined
       ? 'original'
-      : meta.advancedOptions.movesets === undefined
+      : rule.advancedOptions.movesets === undefined
       ? 'original'
-      : meta.advancedOptions.movesets
+      : rule.advancedOptions.movesets
   return getPokemonData(parseName(randPokemon), moveset).then((data) => {
-    const cap = meta.maxCP
+    const cap = rule.maxCP
     const isShadow = data.tags && data.tags.includes('shadow')
 
     const chargedMoves = data.chargedMoves
@@ -154,6 +126,15 @@ async function getRandomPokemon(meta: any): Promise<any> {
       dex: data.dex,
     }
   })
+}
+
+function isThereADuplicateType(
+  poke1Types: string[],
+  poke2Types: string[]
+): boolean {
+  return poke1Types.some((type1) =>
+    poke2Types.some((type2) => type1 === type2 && type1 !== 'none')
+  )
 }
 
 export default getRandomPokemon
