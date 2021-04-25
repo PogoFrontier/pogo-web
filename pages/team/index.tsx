@@ -8,10 +8,12 @@ import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
 import classnames from 'classnames'
-import { TeamMember } from '@adibkhan/pogo-web-backend/team'
+import { TeamMember, Rule } from '@adibkhan/pogo-web-backend'
 import Loader from 'react-loader-spinner'
 import TeamContext from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
+import { parseToRule } from '@common/actions/pokemonAPIActions'
+import getCP from '@common/actions/getCP'
 
 interface ContentProps {
   meta: string
@@ -50,10 +52,86 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    * Adds a Random Team to the userTeams
    */
   async function handleOnClickAddRandomTeam() {
+    let rule: Rule = (undefined as unknown) as Rule
     const t: TeamMember[] = []
+    const dexNrs = new Set()
+    const types = new Set()
+    const IDs = new Set()
+    let hasMega = false
+    await parseToRule(meta).then((data) => {
+      rule = data
+      if (rule === undefined) {
+        alert('An unexpected error occured')
+        return
+      }
+    })
     for (let i = 0; i < 6; i++) {
-      await getRandomPokemon(meta).then((data) => t.push(data))
+      let pokemon: TeamMember
+      await getRandomPokemon(rule).then((data) => {
+        if (data === undefined) {
+          alert('An unexpected error occured')
+          return
+        }
+        pokemon = data
+        let canPush = true
+
+        // check for bestbuddy rule
+        if (pokemon.level > 50) {
+          if (rule.maxBestBuddy > 0) rule.maxBestBuddy--
+          else {
+            // set pokemon to level 50 and recalculate stats
+            pokemon.level = 50
+            pokemon.cp = getCP(
+              {
+                atk: pokemon.atk,
+                def: pokemon.def,
+                hp: pokemon.hp,
+              },
+              [50, pokemon.iv.atk, pokemon.iv.def, pokemon.iv.hp]
+            )
+          }
+        }
+
+        // check for duplicate pokemons rule
+        if (rule.flags?.speciesClauseByDex) {
+          if (dexNrs.has(data.dex)) {
+            canPush = false
+          }
+          if (rule.flags?.speciesClauseByForm && IDs.has(pokemon.speciesId)) {
+            canPush = false
+          }
+        }
+
+        // check for duplicate types
+        if (
+          rule.flags?.typeClause !== undefined &&
+          rule.flags.typeClause &&
+          (types.has(pokemon.types[0]) ||
+            (pokemon.types.length > 1 && types.has(pokemon.types[1])))
+        ) {
+          canPush = false
+        }
+
+        // harcoded check for megas
+        if (pokemon.speciesName?.toLowerCase().includes('mega') && !hasMega) {
+          hasMega = true
+        }
+        if (pokemon.speciesName?.toLowerCase().includes('mega') && hasMega) {
+          canPush = false
+        }
+
+        // push teamMember to the team or reiterate
+        if (canPush) {
+          t.push(pokemon)
+          dexNrs.add(data.dex)
+          pokemon.types.forEach((type) => types.add(type))
+          IDs.add(pokemon.speciesId)
+        } else {
+          i--
+        }
+      })
     }
+
     updateTeam({
       name: Math.random().toString(36).substring(7),
       id: Math.random().toString(36).substring(7),

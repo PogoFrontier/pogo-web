@@ -31,3 +31,12 @@ export const getValidateTeam = async (team: string, meta: string) => {
     return err.message
   }
 }
+
+export const parseToRule = async (rule: string) => {
+  try {
+    const res = await API.get(`api/rule/${rule}`)
+    return res.data
+  } catch (err) {
+    return err.message
+  }
+}
