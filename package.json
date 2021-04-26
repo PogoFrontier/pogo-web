@@ -92,7 +92,8 @@
     "@types/svg-sprite-loader": "3.9.1",
     "@types/uuid": "^8.3.0",
     "@types/websocket": "^1.0.1",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "babel-plugin-module-resolver": "4.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.9.0",
@@ -101,7 +102,6 @@
     "babel-core": "6.26.3",
     "babel-jest": "25.2.4",
     "babel-loader": "8.1.0",
-    "babel-plugin-module-resolver": "4.0.0",
     "cross-env": "^7.0.3",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
