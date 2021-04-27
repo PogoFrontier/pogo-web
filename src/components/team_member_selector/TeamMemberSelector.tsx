@@ -36,6 +36,7 @@ const TeamMemberSelector = (props: {
     null
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
+  const [shouldSave, setShouldSave] = useState<boolean>(false)
 
   const imageHandler = new ImageHandler()
 
@@ -74,7 +75,6 @@ const TeamMemberSelector = (props: {
     } else {
       return
     }
-    // .catch(err => console.log(err));//should show 404 page
   }, [suggestions])
 
   const onChange = (e: any) => {
@@ -177,6 +177,7 @@ const TeamMemberSelector = (props: {
             chargeMoves: pokemon.chargedMoves.slice(0, 2),
             sid: pokemon.sid,
           })
+          setShouldSave(true)
         }
       })
       .catch(() => {
@@ -279,6 +280,8 @@ const TeamMemberSelector = (props: {
         [e.target.id]: e.target.value,
       }))
     }
+
+    setShouldSave(true)
   }
 
   const handleNicknameChange = (value: string) => {
@@ -290,6 +293,8 @@ const TeamMemberSelector = (props: {
       deepCopy.name = value
       setAddToBox(deepCopy)
     }
+
+    setShouldSave(true)
   }
 
   const toTitleCase = (text: string) => {
@@ -312,12 +317,13 @@ const TeamMemberSelector = (props: {
     setUserInput('')
   }
 
-  const handleSavePokemon = () => {
-    savePokemon(addToBox)
-  }
-
   const handleDelete = () => {
     deletePokemon()
+  }
+
+  if (shouldSave) {
+    savePokemon(addToBox)
+    setShouldSave(false)
   }
 
   return (
@@ -325,9 +331,6 @@ const TeamMemberSelector = (props: {
       {selectedPokemonData && addToBox ? (
         <div className={style.info}>
           <span className={style.btnRow}>
-            <button className={style.btn} onClick={handleSavePokemon}>
-              Save
-            </button>
             {!member ? (
               <button className={style.exit} onClick={cancel}>
                 Cancel
