@@ -9,7 +9,7 @@
   "scripts": {
     "test": "NODE_ENV=test jest",
     "test:dev": "NODE_ENV=test jest --watchAll",
-    "start": "npm run build && NODE_ENV=production next start -p 80",
+    "start": "npm run build && NODE_ENV=production next start -p $PORT",
     "build": "rm -rf .next && next build",
     "now-build": "rm -rf .next && next build",
     "dev": "next dev -p 3000",
