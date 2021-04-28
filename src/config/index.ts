@@ -3,7 +3,7 @@
 
 export const SERVER =
   process.env.NODE_ENV === 'production'
-    ? 'https://backend.projectgrookey.com:8080/'
+    ? 'https://backend.projectgrookey.com/'
     : 'http://localhost:8081/'
 export const WSS =
   process.env.NODE_ENV === 'production'
