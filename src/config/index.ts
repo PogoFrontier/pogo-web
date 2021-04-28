@@ -3,11 +3,11 @@
 
 export const SERVER =
   process.env.NODE_ENV === 'production'
-    ? 'https://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8080/'
+    ? 'https://backend.projectgrookey.com/'
     : 'http://localhost:8081/'
 export const WSS =
   process.env.NODE_ENV === 'production'
-    ? 'wss://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8082/'
+    ? 'wss://backend.projectgrookey.com:8082/'
     : 'ws://localhost:8088/'
 
 export const CDN_BASE_URL = 'https://d1bbfbaqrr54l0.cloudfront.net'
