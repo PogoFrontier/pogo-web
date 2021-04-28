@@ -45,10 +45,10 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       }
 
       if (team && team.id === newteam.id) {
-        // setTeam(newteam)
+        setTeam(newteam)
       }
 
-      // setTeams(user.teams)
+      setTeams(user.teams)
     }
   }
 
