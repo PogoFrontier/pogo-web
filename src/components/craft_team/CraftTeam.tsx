@@ -18,8 +18,11 @@ interface CraftTeamProps {
   onExit: () => void
 }
 
-const unsavedString = 'You have unsaved changes.'
-const savedString = 'Save successful.'
+interface ButtonProps {
+  title: string
+  onClick: () => void
+  className: string
+}
 
 const CraftTeam: React.FC<CraftTeamProps> = ({
   selectedMeta,
@@ -31,10 +34,12 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
   const [addingMember, setAddingMember] = useState(false)
   const [error, setError] = useState('')
+  const [popupTitle, setPopupTitle] = useState('')
+  const [popupButtons, setPopupButtons] = useState(
+    undefined as ButtonProps[] | undefined
+  )
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
-  const [isUnsaved, setIsUnsaved] = useState(false)
-  const [message, setMessage] = useState('')
   const [id, setId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
@@ -65,36 +70,79 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setId('')
   }
 
-  const validateTeam = async (team: TeamMember[]): Promise<boolean> => {
+  const handleValidate = async () => {
+    // set loading if it needs too much time
+    const timeout = setTimeout(() => setIsLoading(true), 1000)
+
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
-        JSON.stringify(team),
+        JSON.stringify(workingTeam),
         metaMap[selectedMeta]!.name
       )
       if (result.message) {
         setError(result.message)
+        setPopupTitle('Your team is invalid')
+        setPopupButtons(undefined)
       } else {
-        return true
+        setError(' ')
+        setPopupTitle('Your team is valid')
+        setPopupButtons(undefined)
       }
+    } else {
+      setError(`Meta ${selectedMeta} doesn't exist`)
+      setPopupTitle("Wait, what? That shouldn't happen.")
+      setPopupButtons(undefined)
     }
-    return false
+
+    clearTimeout(timeout)
+    setIsLoading(false)
+  }
+
+  const handleExit = async () => {
+    // set loading if it needs too much time
+    const timeout = setTimeout(() => setIsLoading(true), 1000)
+
+    if (selectedMeta in metaMap) {
+      const result = await getValidateTeam(
+        JSON.stringify(workingTeam),
+        metaMap[selectedMeta]!.name
+      )
+      if (result.message) {
+        setError(result.message)
+        setPopupTitle('Are you sure, you want to exit? Your team is invalid')
+        setPopupButtons([
+          {
+            title: 'Exit anyway',
+            onClick: onExit,
+            className: 'btn btn-negative',
+          },
+          {
+            title: 'Continue editing',
+            onClick: onErrorPopupClose,
+            className: 'btn btn-secondary',
+          },
+        ])
+      } else {
+        onExit()
+      }
+    } else {
+      setError(`Meta ${selectedMeta} doesn't exist`)
+      setPopupTitle("Wait, what? That shouldn't happen.")
+      setPopupButtons(undefined)
+    }
+
+    clearTimeout(timeout)
+    setIsLoading(false)
   }
 
   const savePokemon = async (pokemon: any) => {
     // validate pokemon before allowing save!
     const newTeam = [...workingTeam]
     newTeam[editingIndex] = pokemon
-    setIsLoading(true)
-    const equals = newTeam[editingIndex] === workingTeam[editingIndex]
-    if (!equals) {
-      setIsUnsaved(true)
-      setMessage(unsavedString)
-    }
     setSelectedPokemon(pokemon)
     setWorkingTeam(newTeam)
     setAddingMember(false)
-    setIsLoading(false)
-    handleAddMemberClick()
+    saveTeam(newTeam)
   }
 
   const deletePokemon = () => {
@@ -106,34 +154,31 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setSelectedPokemon(newTeam[0])
     setEditingIndex(0)
     setWorkingTeam(newTeam)
-    setIsUnsaved(true)
-    setMessage(unsavedString)
     setAddingMember(false)
   }
 
-  const saveTeam = async () => {
-    setIsLoading(true)
-    if (await validateTeam(workingTeam)) {
-      const name = teamName === '' ? 'New Team' : teamName
-      const newId: string = id === '' ? uuidv4() : id
-      setId(newId)
-      const teamToUpdate = {
-        id: teamToEdit && teamToEdit.id ? teamToEdit.id : newId,
-        name,
-        format: selectedMeta,
-        members: workingTeam,
-      }
-      updateTeam(teamToUpdate)
-      setIsUnsaved(false)
-      setMessage(savedString)
+  const saveTeam = async (team?: TeamMember[], name?: string) => {
+    if (!team) {
+      team = workingTeam
     }
-    setIsLoading(false)
+
+    if (!name) {
+      name = teamName === '' ? 'New Team' : teamName
+    }
+    const newId: string = id === '' ? uuidv4() : id
+    setId(newId)
+    const teamToUpdate = {
+      id: teamToEdit && teamToEdit.id ? teamToEdit.id : newId,
+      name,
+      format: selectedMeta,
+      members: team,
+    }
+    updateTeam(teamToUpdate)
   }
 
   const handleTeamNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsUnsaved(true)
-    setMessage(unsavedString)
     setTeamName(e.target.value)
+    saveTeam(undefined, e.target.value)
   }
 
   const handleAddMemberClick = () => {
@@ -156,7 +201,14 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   return (
     <div>
-      {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
+      {!!error && (
+        <ErrorPopup
+          error={error}
+          title={popupTitle}
+          onClose={onErrorPopupClose}
+          buttons={popupButtons}
+        />
+      )}
       {isLoading && (
         <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
       )}
@@ -170,26 +222,19 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
       <div className={style.btns}>
         <button
           className="btn btn-negative"
-          onClick={onExit}
+          onClick={handleExit}
           disabled={isLoading}
         >
           Exit
         </button>
-        {isUnsaved && !isLoading && (
-          <button
-            className="btn btn-primary"
-            onClick={saveTeam}
-            disabled={isLoading}
-          >
-            Save Team
-          </button>
-        )}
+        <button
+          className="btn btn-secondary"
+          onClick={handleValidate}
+          disabled={isLoading}
+        >
+          Validate
+        </button>
       </div>
-      {message !== '' && (
-        <p className={message === savedString ? style.saved : style.error}>
-          {message}
-        </p>
-      )}
       <div>
         {workingTeam && (
           <ul className={style.members}>

@@ -6,7 +6,7 @@ const metaMap: {
   }
 } = {
   'Great League': {
-    name: 'Great',
+    name: 'Great League',
     maxCP: 1500,
     movesetOption: 'original',
   },
@@ -21,12 +21,12 @@ const metaMap: {
     movesetOption: 'mainseries',
   },
   'Ultra League': {
-    name: 'Ultra',
+    name: 'Ultra League',
     maxCP: 2500,
     movesetOption: 'original',
   },
   'Master League': {
-    name: 'Master',
+    name: 'Master League',
     maxCP: 10000,
     movesetOption: 'original',
   },

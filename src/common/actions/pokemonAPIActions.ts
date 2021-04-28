@@ -35,7 +35,7 @@ export const getPokemonData = async (
 
 export const getValidateTeam = async (team: string, meta: string) => {
   try {
-    const res = await API.get(`api/pokemon/validate/${team}/${meta}`)
+    const res = await API.get(`api/validate/${team}/${meta}`)
     return res.data
   } catch (err) {
     return err.message
