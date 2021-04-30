@@ -10,7 +10,7 @@ import style from './style.module.scss'
 import classnames from 'classnames'
 import { TeamMember, Rule } from '@adibkhan/pogo-web-backend'
 import Loader from 'react-loader-spinner'
-import TeamContext from '@context/TeamContext'
+import TeamContext, { defaultTeam } from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
 import { parseToRule } from '@common/actions/pokemonAPIActions'
 import getCP from '@common/actions/getCP'
@@ -178,7 +178,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       const i = parseInt(e.currentTarget.value, 10)
 
       if (team && team.id === user.teams[i].id) {
-        setTeam(undefined)
+        setTeam(defaultTeam)
       }
 
       user.teams.splice(i, 1)

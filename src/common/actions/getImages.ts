@@ -22,6 +22,9 @@ class ImageHandler {
     }
     return `${this.baseUrl}/mini/${image}.png`
   }
+  getProfile(id: number) {
+    return `${this.baseUrl}/profiles/${id}.png`
+  }
 }
 
 export default ImageHandler

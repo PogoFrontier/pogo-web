@@ -7,16 +7,123 @@
   background-position: center;
   background-size: cover;
   overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding-top: 2em;
 }
 
-.content{
+.content {
+  margin: auto;
+  width: 100%;
+  @include md() {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 2em;
+    row-gap: 2em;
+    max-width: $xl;
+  }
+}
+
+.container {
+  width: 100%;
+  background-color: $color-white;
+  box-shadow: 0px 0px 15px rgba($color-dark, 0.25);
+  margin-bottom: 1em;
+  h1 {
+    margin-top: 0;
+  }
+  &.info {
+    padding: 1em;
+  }
+  @include md() {
+    margin-bottom: 0;
+    &.info {
+      padding: 2em;
+    }
+  }
+}
+
+.full {
+  @include md() {
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+}
+
+.game {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border-bottom: solid 1px $color-neutral-light;
+  padding: 1em 0;
+  @include md() {
+    padding: 0;
+  }
+}
+
+.profileImage {
+  display: none;
+  @include md() {
+    display: block;
+    height: 130px;
+  }
+}
+
+.teamPreview {
+  display: flex;
+  flex-grow: 1;
+  padding-left: 1em;
+  
+}
+
+.teamTitle {
+  font-size: large;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  strong {
+    font-size: 1.3em;
+  }
+}
+
+.changeWrap {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  flex-direction: row-reverse;
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-top: 0.25em;
+  @include md() {
+    margin-right: 0;
+    margin-right: 2em;
+    flex-direction: column;
+  }
+}
+
+.changeTeam {
+  width: 4.1em;
+  height: 4em;
+  background-color: $color-brand-primary;
+  border: none;
+  box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
+  &:hover {
+    background-color: darken($color-brand-primary, 10%);
+  }
+  svg {
+    fill: $color-white;
+    height: 40px;
+    width: 40px;
+    margin-top: -14px;
+    margin-left: 3px;
+  }
+  @include md() {
+    margin-left: 0;
+  }
+}
+
+.noteams {
+  min-width: 200px;
 }
 
 .option {
@@ -33,43 +140,19 @@
 }
 
 .member {
-  height: 2em;
-  width: 2em;
+  height: 2.3em;
+  width: 2.3em;
   object-fit: contain;
 }
 
 .members {
-  background-color: $color-white;
-  padding: 0 3em 1em 3em;
-  margin-top: 1em;
-  width: 100%;
   .member {
     @include md() {
-      height: 2.5em;
-      width: 2.5em;
+      height: 3em;
+      width: 3em;
     }
   }
   .member + .member {
     margin-left: 1em;
-  }
-}
-
-.inputwrap {
-  width: 100%;
-  input {
-    padding: 0.5em;
-    padding-left: 0;
-    font-size: large;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-      color: $color-brand-primary;
-      font-weight: bold;
-      opacity: 1; /* Firefox */
-    }
-    &:hover::placeholder {
-      text-decoration: underline;
-    }
   }
 }

@@ -10,6 +10,7 @@ import classnames from 'classnames'
 // import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
+import RoomModal from '@components/room_modal/RoomModal'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -20,7 +21,8 @@ const Form: React.FunctionComponent = () => {
   if (team) {
     teamMembers = team.members
   }
-  const [isLoading, setIsLoading] = useState(false)
+  const [state, setState] = useState<'quick' | 'loading'>('quick')
+  const [showRoom, setShowRoom] = useState(false)
   const router = useRouter()
   // matchmaking
   const [isMatchmaking, setIsMatchmaking] = useState(false)
@@ -28,7 +30,7 @@ const Form: React.FunctionComponent = () => {
   socket.onmessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$error')) {
       const data = msg.data.slice(6)
-      setIsLoading(false)
+      setState('loading')
       setError(data)
     } else if (msg.data.startsWith('$start')) {
       router.push(`/matchup/${room}`)
@@ -63,10 +65,10 @@ const Form: React.FunctionComponent = () => {
   function join() {
     if (socket.readyState && socket.readyState === WebSocket.OPEN) {
       joinRoom()
-    } else if (!isLoading) {
+    } else if (state !== 'loading') {
       if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
         const payload = { room, team: teamMembers, format: team.format }
-        setIsLoading(true)
+        setState('loading')
         connectAndJoin(uuidv4(), payload)
       }
     }
@@ -78,7 +80,7 @@ const Form: React.FunctionComponent = () => {
       return
     }
     setIsMatchmaking(true)
-    setIsLoading(true)
+    setState('loading')
     const data = {
       type: CODE.matchmaking_search_battle,
       payload: {
@@ -103,68 +105,75 @@ const Form: React.FunctionComponent = () => {
     socket.send(JSON.stringify(data))
 
     setIsMatchmaking(false)
-    setIsLoading(false)
+    setState('quick')
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     setRoom(e.target.value)
   }
 
+  function openRoomModal() {
+    setShowRoom(true)
+  }
+
+  function closeRoomModal() {
+    setShowRoom(false)
+  }
+
   function onErrorPopupClose() {
     setError('')
   }
 
+  function render() {
+    if (state === 'loading') {
+      return (
+        <div className={style.loading}>
+          <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
+          {isMatchmaking && (
+            <button
+              className={classnames([style.button, 'btn', 'btn-negative', 'noshrink'])}
+              onClick={quitQuickPlay}
+            >
+              Quit
+            </button>
+          )}
+        </div>
+      )
+    }
+    if (state === 'quick') {
+      return (
+        <>
+          <button
+            className={classnames([style.button, 'btn', 'btn-primary'])}
+            onClick={joinQuickPlay}
+          >
+            Quick Play
+          </button>
+          <button
+            className="btn btn-secondary noshrink"
+            onClick={openRoomModal}
+          >
+            Browse Rooms
+          </button>
+        </>
+      )
+    }
+  }
+
   return (
     <>
+      {showRoom && (
+        <RoomModal
+          onClose={closeRoomModal}
+          room={room}
+          join={join}
+          onChange={onChange}
+          isLoading={state === "loading"}
+        />
+      )}
       {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
       <section className={style.root}>
-        <div className={style.container}>
-          <h1>Project Grookey</h1>
-          <div className={style.code}>
-            Code:{' '}
-            <input
-              className={style.input}
-              value={room}
-              placeholder="Enter room code"
-              onChange={onChange}
-            />
-          </div>
-        </div>
-        {isLoading ? (
-          <div className={style.loading}>
-            <Loader type="TailSpin" color="#68BFF5" height={40} width={40} />
-            {isMatchmaking && (
-              <button
-                className={classnames([style.button, 'btn', 'btn-primary'])}
-                onClick={quitQuickPlay}
-              >
-                Quit
-              </button>
-            )}
-          </div>
-        ) : (
-          <>
-            <button
-              className={classnames([style.button, 'btn', 'btn-primary'])}
-              disabled={room === ''}
-              onClick={join}
-            >
-              Play
-            </button>
-
-            <button
-              className={classnames([style.button, 'btn', 'btn-primary'])}
-              onClick={joinQuickPlay}
-            >
-              Quick Play
-            </button>
-
-            <br />
-            {/* <button onClick={getSignInWithGooglePopup}>
-            Sign In With Google
-          </button> */}
-          </>
-        )}
+        {render()}
       </section>
     </>
   )

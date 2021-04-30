@@ -15,7 +15,7 @@
 }
 .modal {
     background-color: $color-white;
-
+    overflow: hidden;
 }
 .head {
     display: flex;
@@ -34,4 +34,6 @@
 }
 .body {
     padding: 1em;
+    overflow-y: scroll;
+    height: inherit;
 }
