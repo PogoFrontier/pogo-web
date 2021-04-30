@@ -152,6 +152,24 @@ const HomePage = () => {
           </section>
           <section className={classnames([style.container, style.info])}>
             <h1>Links</h1>
+            <div className={style.links}>
+              <a
+                className="btn btn-secondary"
+                href="https://github.com/DeveloperKhan/pogo-web"
+                target="_blank"
+                rel="noreferrer nofollow"
+              >
+                <Icon name="github" size="medium" /> Github (Frontend)
+              </a>
+              <a
+                className="btn btn-secondary"
+                href="https://github.com/DeveloperKhan/pogo-web-backend"
+                target="_blank"
+                rel="noreferrer nofollow"
+              >
+                <Icon name="github" size="medium" /> Github (Backend)
+              </a>
+            </div>
           </section>
         </div>
       </main>
