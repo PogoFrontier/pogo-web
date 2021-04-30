@@ -165,3 +165,8 @@
     margin-top: -2px;
   }
 }
+
+.popover {
+  max-height: 400px;
+  overflow-y: scroll;
+}

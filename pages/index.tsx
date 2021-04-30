@@ -126,7 +126,7 @@ const HomePage = () => {
                   </ListboxButton>
                   <small>Change Team</small>
                 </div>
-                <ListboxPopover position={right}>
+                <ListboxPopover className={style.popover} position={right}>
                   <ListboxList>
                     {user && user.teams && user.teams.length > 0 ? (
                       user.teams.map((x) => (
