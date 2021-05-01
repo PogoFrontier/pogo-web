@@ -16,8 +16,15 @@ import getMaxLevel from '@common/actions/getMaxLevel'
 import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
 
-let pokemonNames: string[]
-getPokemonNames().then((data) => (pokemonNames = Object.keys(data)))
+type pokemonType = {
+  types: string[]
+  tags?: string[]
+  dex: number
+  moves: {
+    fastMoves: { moveId: string }[]
+    chargedMoves: { moveId: string }[]
+  }
+}
 
 const TeamMemberSelector = (props: {
   cancelEdit: () => void
@@ -36,7 +43,9 @@ const TeamMemberSelector = (props: {
     position,
   } = props
   const [userInput, setUserInput] = useState('')
-  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [suggestions, setSuggestions] = useState<Map<string, pokemonType>>(
+    new Map()
+  )
   const [activeSuggestion, setActiveSuggestion] = useState(0)
   const [filteredSuggestions, setFilteredSuggestions] = useState([] as any)
   const [showSuggestions, setShowSuggestions] = useState(false)
@@ -78,20 +87,84 @@ const TeamMemberSelector = (props: {
   }, [member])
 
   useEffect(() => {
-    if (pokemonNames) {
-      setSuggestions(pokemonNames)
-    } else {
-      return
-    }
-  }, [suggestions])
+    getPokemonNames(meta, position, true).then((data) => {
+      const pokemonData = new Map()
+      Object.keys(data).forEach((speciesId) =>
+        pokemonData.set(speciesId, data[speciesId])
+      )
+      setSuggestions(pokemonData)
+    })
+  }, [position, meta])
 
   const onChange = (e: any) => {
-    const input: string = e.currentTarget.value
+    const input: string = e.currentTarget.value.toLowerCase()
+    let tagNeedle = input
+    if (tagNeedle === '@frustration') {
+      tagNeedle = 'shadow'
+    } else if (tagNeedle === '@return') {
+      tagNeedle = 'shadoweligible'
+    }
+    const dexRange = [
+      [1, 151],
+      [152, 251],
+      [252, 386],
+      [387, 493],
+      [494, 649],
+      [650, 721],
+      [722, 809],
+      [810, 898],
+    ][
+      ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'alola', 'galar'].indexOf(
+        input
+      )
+    ]
+
     setUserInput(input)
     setFilteredSuggestions(
-      suggestions.filter(
-        (s) => s.toLowerCase().indexOf(input.toLowerCase()) > -1
-      )
+      Array.from(suggestions.keys()).filter((s) => {
+        // Is substring of speciesId?
+        if (s.toLowerCase().indexOf(input) > -1) {
+          return true
+        }
+        const suggestion = suggestions.get(s)
+
+        // Is the pokémon's type
+        if (suggestion?.types.includes(input)) {
+          return true
+        }
+
+        // Is the pokémon's tag
+        if (suggestion?.tags?.includes(tagNeedle)) {
+          return true
+        }
+
+        // Is the pokémon's move
+        const moves = suggestion?.moves.fastMoves.concat(
+          ...suggestion?.moves.chargedMoves
+        )
+        if (
+          input.startsWith('@') &&
+          moves?.some((fastMove) =>
+            fastMove.moveId.includes(
+              input.toUpperCase().slice(1).replace(' ', '_')
+            )
+          )
+        ) {
+          return true
+        }
+
+        // Is in dex-range
+        if (
+          dexRange &&
+          suggestion?.dex &&
+          suggestion.dex >= dexRange[0] &&
+          suggestion.dex <= dexRange[1]
+        ) {
+          return true
+        }
+
+        return false
+      })
     )
     setShowSuggestions(true)
   }
@@ -516,7 +589,7 @@ const TeamMemberSelector = (props: {
           </div>
         </div>
       ) : null}
-      {suggestions && suggestions.length > 0 ? (
+      {suggestions && suggestions.size > 0 ? (
         <div className={style.searchbar}>
           <Input
             title="Species"
