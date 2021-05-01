@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'colors';
 
 .root {
   display: flex;
@@ -7,6 +8,7 @@
   width: 100%;
   padding: 0 0 1rem 0;
   margin-top: 1rem;
+  position: relative;
   @include md {
     flex-direction: row;
     justify-content: space-between;
@@ -21,5 +23,91 @@
   @include md {
     align-self: flex-end;
     padding-top: 10vh;
+  }
+}
+
+.log {
+  position: absolute;
+  background: $color-overlay;
+  width: 50%;
+  left: 0;
+  top: -20%;
+  padding: 0.5em;
+  z-index: 3;
+  max-height: 100px;
+  overflow: scroll;
+  @include md() {
+    margin-top: 1em;
+    left: 2em;
+    top: -40%;
+  }
+}
+
+.logItem {
+  margin-top: 0.5em;
+}
+
+.move {
+  padding: 0.1em;
+  &.normal {
+    background: $color-normal;
+  }
+  &.fighting {
+    background: $color-fighting;
+  }
+  &.flying {
+    background: $color-flying;
+  }
+  &.poison {
+    background: $color-poison;
+  }
+  &.ground {
+    background: $color-ground;
+  }
+  &.rock {
+    background: $color-rock;
+  }
+  &.bug {
+    background: $color-bug;
+  }
+  &.ghost {
+    background: $color-ghost;
+  }
+  &.electric {
+    background: $color-electric;
+  }
+  &.water {
+    background: $color-water;
+  }
+  &.fire {
+    background: $color-fire;
+  }
+  &.grass {
+    background: $color-grass;
+  }
+  &.steel {
+    background: $color-steel;
+  }
+  &.psychic {
+    background: $color-psychic;
+  }
+  &.ice {
+    background: $color-ice;
+  }
+  &.dragon {
+    background: $color-dragon;
+  }
+  &.fairy {
+    background: $color-fairy;
+  }
+  &.dark {
+    background: $color-dark;
+  }
+}
+
+.hide {
+  display: none;
+  @include md() {
+    display: initial;
   }
 }

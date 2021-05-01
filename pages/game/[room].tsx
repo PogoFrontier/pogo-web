@@ -72,7 +72,6 @@ const GamePage = () => {
   const [charPointer, setCharPointer] = useState(0)
   const [time, setTime] = useState(240)
   const [swap, setSwap] = useState(0)
-  const [info, setInfo] = useState(<div />)
   const [currentMove, setCurrentMove] = useState('')
   const [bufferedMove, setBufferedMove] = useState('')
   const [shields, setShields] = useState(0)
@@ -85,7 +84,7 @@ const GamePage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
-  const [message, setMessage] = useState([''])
+  const [message, setMessage] = useState('')
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
@@ -95,7 +94,7 @@ const GamePage = () => {
 
   const startGame = () => {
     setTime(240)
-    setInfo(<strong>GO!</strong>)
+    setMessage("GO!")
     setStatus(StatusTypes.MAIN)
   }
 
@@ -158,10 +157,7 @@ const GamePage = () => {
         return prev1
       })
       if (payload.update[0].message) {
-        const d = payload.update[0].message.split('used')
-        const d2 = d[1].split('.')
-        setMessage([d[0] + 'used', d2[0] + '.', d2[1]])
-        setTimeout(() => setMessage(['']), 5000)
+        setMessage(payload.update[0].message)
       }
       if (payload.update[0]?.wait) {
         setWait(payload.update[0]!.wait)
@@ -194,38 +190,34 @@ const GamePage = () => {
     if (payload.update[1] !== null) {
       const hp = payload.update[1]!.hp
       const isShields = payload.update[1].shields
-      // const isActive = payload.update[1].active
-      setInfo(() => {
-        setOpponent((prev1) => {
-          setCharacters((prev3b) => {
-            const prev3 = { ...prev3b }
-            if (hp) {
-              prev1[0].current!.hp = hp
+      setOpponent((prev1) => {
+        setCharacters((prev3b) => {
+          const prev3 = { ...prev3b }
+          if (hp) {
+            prev1[0].current!.hp = hp
+          }
+          if (isShields !== undefined) {
+            setOppShields(isShields)
+          }
+          if (payload.update[1]?.remaining) {
+            setOppRemaining(payload.update[1]?.remaining)
+            prev1[0].current!.hp = 0
+            if (!payload.update[0]?.remaining) {
+              setStatus((prev4) => {
+                if (prev4 === StatusTypes.FAINT) {
+                  return prev4
+                }
+                return StatusTypes.WAITING
+              })
             }
-            if (isShields !== undefined) {
-              setOppShields(isShields)
+            prev3[1].anim = {
+              type: "faint",
+              turn: payload.turn
             }
-            if (payload.update[1]?.remaining) {
-              setOppRemaining(payload.update[1]?.remaining)
-              prev1[0].current!.hp = 0
-              if (!payload.update[0]?.remaining) {
-                setStatus((prev4) => {
-                  if (prev4 === StatusTypes.FAINT) {
-                    return prev4
-                  }
-                  return StatusTypes.WAITING
-                })
-              }
-              prev3[1].anim = {
-                type: "faint",
-                turn: payload.turn
-              }
-            }
-            return prev3
-          })
-          return prev1
+          }
+          return prev3
         })
-        return <div />
+        return prev1
       })
     }
     setSwap(payload.switch)
@@ -236,7 +228,7 @@ const GamePage = () => {
     if (payload.countdown === 4) {
       startGame()
     } else {
-      setInfo(<>Starting: {payload.countdown}...</>)
+      setMessage(`Starting: ${payload.countdown}...`)
     }
   }
 
@@ -519,25 +511,14 @@ const GamePage = () => {
           <Status subject={opp} shields={oppShields} remaining={oppRemaining} />
         </section>
         <section className={style.info}>
-          <div>{wait > -1 ? wait : info}</div>
+          <div />
           <div className={style.timer}>
             <strong>{time + ' '}</strong>
             <Icon name="clock" size="medium" />
           </div>
         </section>
 
-        <strong
-          style={{ visibility: message.length === 1 ? 'hidden' : 'visible' }}
-          className={style.message}
-        >
-          {message[0]}&nbsp;
-          {/* <span className={style[currentType]}> */}
-          {message[1]}
-          {/* </span> */}
-          {message[2]}
-        </strong>
-
-        <Field characters={characters} />
+        <Field characters={characters} message={message} />
         <Switch
           team={active}
           pointer={charPointer}
