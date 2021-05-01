@@ -28,6 +28,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isRandomTeamLoading, setisRandomTeamLoading] = useState(false)
   const imagesHandler = new ImageHandler()
   const { team, setTeam } = useContext(TeamContext)
 
@@ -56,6 +57,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    * Adds a Random Team to the userTeams
    */
   async function handleOnClickAddRandomTeam() {
+    setisRandomTeamLoading(true)
     let rule: Rule = (undefined as unknown) as Rule
     const t: TeamMemberWithDex[] = []
     const dexNrs = new Set()
@@ -139,6 +141,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
           i--
         }
       })
+      setisRandomTeamLoading(false)
     }
 
     updateTeam({
@@ -258,19 +261,19 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         <p>No Teams to display</p>
       )}
       <div className={style.addButtons}>
-        <button
-          className="btn btn-primary"
-          style={{ marginBottom: '10px' }}
-          onClick={handleOnClickAddTeam}
-        >
+        <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
           Add Team
         </button>
-        <button
-          className="btn btn-primary"
-          onClick={handleOnClickAddRandomTeam}
-        >
-          Get Random Team
-        </button>
+        {isRandomTeamLoading ? (
+          <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
+        ) : (
+          <button
+            className="btn btn-primary"
+            onClick={handleOnClickAddRandomTeam}
+          >
+            Get Random Team
+          </button>
+        )}
       </div>
     </div>
   )
