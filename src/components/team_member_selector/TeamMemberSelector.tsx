@@ -25,8 +25,16 @@ const TeamMemberSelector = (props: {
   member: TeamMember
   deletePokemon: () => void
   meta: string
+  position: number
 }) => {
-  const { cancelEdit, savePokemon, member, deletePokemon, meta } = props
+  const {
+    cancelEdit,
+    savePokemon,
+    member,
+    deletePokemon,
+    meta,
+    position,
+  } = props
   const [userInput, setUserInput] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [activeSuggestion, setActiveSuggestion] = useState(0)
@@ -135,7 +143,12 @@ const TeamMemberSelector = (props: {
 
   const setPokemon = (input: string) => {
     setUserInput(input)
-    getPokemonData(parseName(input), metaMap[meta].movesetOption)
+    getPokemonData(
+      parseName(input),
+      metaMap[meta].movesetOption,
+      meta,
+      position
+    )
       .then((pokemon) => {
         if (pokemon) {
           const isShadow = pokemon.tags && pokemon.tags.includes('shadow')
@@ -158,6 +171,12 @@ const TeamMemberSelector = (props: {
             pokemon,
             targetCP: cap ? cap : 10000,
           })[0]
+          const fastMove = pokemon.moveset
+            ? pokemon.moveset[0]
+            : pokemon.fastMoves[0]
+          const chargeMoves = pokemon.moveset
+            ? pokemon.moveset.slice(1)
+            : pokemon.fastMoves[0]
           setAddToBox({
             speciesId: pokemon.speciesId,
             speciesName: pokemon.speciesName,
@@ -173,8 +192,8 @@ const TeamMemberSelector = (props: {
             },
             cp: stats.cp,
             types: pokemon.types,
-            fastMove: pokemon.fastMoves[0],
-            chargeMoves: pokemon.chargedMoves.slice(0, 2),
+            fastMove,
+            chargeMoves,
             sid: pokemon.sid,
           })
           setShouldSave(true)

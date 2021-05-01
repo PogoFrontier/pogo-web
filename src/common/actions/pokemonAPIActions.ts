@@ -21,11 +21,15 @@ export const getPokemonNames = async (
 
 export const getPokemonData = async (
   speciesId: string,
-  movesetOption: 'original' | 'mainseries' | 'norestrictions'
+  movesetOption: 'original' | 'mainseries' | 'norestrictions',
+  meta?: string,
+  position?: number
 ) => {
   try {
+    const metaString = meta ? `&format=${meta}` : ''
+    const positionString = position ? `&position=${position}` : ''
     const res = await API.get(
-      `api/pokemon/${speciesId}?movesetOption=${movesetOption}`
+      `api/pokemon/${speciesId}?movesetOption=${movesetOption}${metaString}${positionString}`
     )
     return res.data
   } catch (err) {
