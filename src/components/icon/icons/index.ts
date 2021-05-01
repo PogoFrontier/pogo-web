@@ -25,4 +25,3 @@ export { default as github } from './github.svg'
 export { default as patreon } from './patreon.svg'
 export { default as book } from './book.svg'
 export { default as down } from './down.svg'
-

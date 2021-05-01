@@ -83,6 +83,10 @@
   }
 }
 
-.addButtons button{
-  margin-right: 1em;
+.addButtons{
+  button{
+   margin-right: 1em;
+  }
+  display: flex;
+  flex-direction: row;
 }

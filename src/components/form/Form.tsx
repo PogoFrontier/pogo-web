@@ -131,7 +131,12 @@ const Form: React.FunctionComponent = () => {
           <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
           {isMatchmaking && (
             <button
-              className={classnames([style.button, 'btn', 'btn-negative', 'noshrink'])}
+              className={classnames([
+                style.button,
+                'btn',
+                'btn-negative',
+                'noshrink',
+              ])}
               onClick={quitQuickPlay}
             >
               Quit
@@ -168,13 +173,11 @@ const Form: React.FunctionComponent = () => {
           room={room}
           join={join}
           onChange={onChange}
-          isLoading={state === "loading"}
+          isLoading={state === 'loading'}
         />
       )}
       {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
-      <section className={style.root}>
-        {render()}
-      </section>
+      <section className={style.root}>{render()}</section>
     </>
   )
 }
