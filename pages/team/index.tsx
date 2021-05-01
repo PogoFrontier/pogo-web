@@ -284,6 +284,7 @@ const TeamPage = () => {
   const [metas] = useState([
     'Great League',
     'Commander Cup',
+    'Floating City',
     'MainSeries Cup',
     'Ultra League',
     'Master League',

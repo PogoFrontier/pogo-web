@@ -1,12 +1,13 @@
-import { TeamMember } from '@adibkhan/pogo-web-backend'
 import classnames from 'classnames'
 import style from './character.module.scss'
 import getColor from '@common/actions/getColor'
 import { useEffect, useState } from 'react'
 import ImageHandler from '@common/actions/getImages'
+import { Anim, TeamMember } from '@adibkhan/pogo-web-backend'
+import { Actions } from '@adibkhan/pogo-web-backend/actions'
 
 export interface CharacterProps {
-  status: 'prime' | 'attack' | 'charge' | 'switch' | 'idle'
+  anim?: Anim
   char?: TeamMember
   back?: boolean
 }
@@ -14,23 +15,21 @@ export interface CharacterProps {
 const Character: React.FunctionComponent<CharacterProps> = ({
   char,
   back,
-  status,
+  anim,
 }) => {
-  const [s, setS] = useState(status)
-  const [cooldown, setCooldown] = useState(false)
   const imagesHandler = new ImageHandler()
+  const [s, setS] = useState("")
 
   useEffect(() => {
-    if (s !== status) {
-      if (cooldown) {
-        setTimeout(() => setS(status), 200)
-      } else {
-        setS(status)
-        setCooldown(true)
-        setTimeout(() => setCooldown(false), 200)
-      }
+    if (anim && !(s.startsWith("sw") && anim.type === "sw")) {
+      const cooldown = anim.type === Actions.FAST_ATTACK ? (anim.move!.cooldown!) : 500
+      setS(`${anim.type}${cooldown}`)
     }
-  }, [status])
+  }, [anim])
+
+  const onAnimationEnd = () => {
+    setS("")
+  }
 
   if (!char) {
     return <div />
@@ -48,14 +47,16 @@ const Character: React.FunctionComponent<CharacterProps> = ({
         />
       </div>
       <div
-        className={classnames(style.imgcontainer, style[s], {
+        className={classnames(style.imgcontainer, {
           [style.back]: back,
         })}
       >
         <img
-          className={classnames([style.char], [style[s]], {
+          key={anim ? anim.turn : -1}
+          onAnimationEnd={onAnimationEnd}
+          className={classnames([style.char, style[s], {
             [style.back]: back,
-          })}
+          }])}
           draggable="false"
           src={imagesHandler.getImage(char.sid, char.shiny, back)}
           alt={char.speciesName}

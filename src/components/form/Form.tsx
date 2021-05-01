@@ -30,7 +30,7 @@ const Form: React.FunctionComponent = () => {
   socket.onmessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$error')) {
       const data = msg.data.slice(6)
-      setState('loading')
+      setState('quick')
       setError(data)
     } else if (msg.data.startsWith('$start')) {
       router.push(`/matchup/${room}`)

@@ -13,7 +13,10 @@ const TypeIcons: React.FC<TypeIconProps> = ({ types }) => {
       {types.map((type) => {
         if (type !== 'none') {
           return (
-            <div className={classnames([style.chargeButton, style[type]])}>
+            <div
+              key={type}
+              className={classnames([style.chargeButton, style[type]])}
+            >
               <div className={style.icon}>
                 <Icon name={type as IconName} size="small" />
               </div>

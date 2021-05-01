@@ -21,34 +21,32 @@
   height: 100%;
 }
 
+@keyframes faFast {
+  44% { transform: translateX(-1.2rem); }
+  100% { transform: translateX(0); }
+}
+@keyframes fa {
+  44% { transform: translateX(-2rem); }
+  100% { transform: translateX(0); }
+}
+@keyframes faBack {
+  44% { transform: translateX(2rem); }
+  100% { transform: translateX(0); }
+}
+@keyframes faFastBack {
+  44% { transform: translateX(1.2rem); }
+  100% { transform: translateX(0); }
+}
+@keyframes sw {
+  0% { transform: scale(1); }
+  100% { transform: scale(0); }
+}
+
 .char {
   display: block;
   margin: auto;
-  //Animations
   transition: transform 200ms;
-  &.prime {
-    transform: translateX(2rem);
-  }
-  &.attack {
-    transform: translateX(-2rem);
-  }
-  &.charge {
-    transform: translateY(-0.5rem);
-  }
-  &.switch {
-    transform: scale(0.1);
-  }
-
-  &.back {
-    &.prime {
-      transform: translateX(-2rem);
-    }
-    &.attack {
-      transform: translateX(2rem);
-    }
-  }
-  
-}
+}  
 
 .imgcontainer{
   transform: scale(0.9);
@@ -63,3 +61,41 @@
     }
   }
 }
+.faint500 {
+  filter: grayscale(1);
+}
+.fa500 {
+  animation: faFast 300ms ease-out 1;
+}
+.fa1000 {
+  animation: fa 800ms ease-out 1;
+}
+.fa1500 {
+  animation: fa 1300ms ease-out 1;
+}
+.fa2000 {
+  animation: fa 1800ms ease-out 1;
+}
+.fa2500 {
+  animation: fa 2300ms ease-out 1;
+}
+.sw500 {
+  animation: sw 300ms ease-out 1;
+}
+.back {
+  &.fa500 {
+    animation: faFastBack 300ms ease-out 1;
+  }
+  &.fa1000 {
+    animation: faBack 800ms ease-out 1;
+  }
+  &.fa1500 {
+    animation: faBack 1300ms ease-out 1;
+  }
+  &.fa2000 {
+    animation: faBack 1800ms ease-out 1;
+  }
+  &.fa2500 {
+    animation: faBack 2300ms ease-out 1;
+  }
+}  
