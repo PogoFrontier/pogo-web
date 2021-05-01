@@ -18,17 +18,18 @@ const Character: React.FunctionComponent<CharacterProps> = ({
   anim,
 }) => {
   const imagesHandler = new ImageHandler()
-  const [s, setS] = useState("")
+  const [s, setS] = useState('')
 
   useEffect(() => {
-    if (anim && !(s.startsWith("sw") && anim.type === "sw")) {
-      const cooldown = anim.type === Actions.FAST_ATTACK ? (anim.move!.cooldown!) : 500
+    if (anim && !(s.startsWith('sw') && anim.type === 'sw')) {
+      const cooldown =
+        anim.type === Actions.FAST_ATTACK ? anim.move!.cooldown! : 500
       setS(`${anim.type}${cooldown}`)
     }
   }, [anim])
 
   const onAnimationEnd = () => {
-    setS("")
+    setS('')
   }
 
   if (!char) {
@@ -54,9 +55,13 @@ const Character: React.FunctionComponent<CharacterProps> = ({
         <img
           key={anim ? anim.turn : -1}
           onAnimationEnd={onAnimationEnd}
-          className={classnames([style.char, style[s], {
-            [style.back]: back,
-          }])}
+          className={classnames([
+            style.char,
+            style[s],
+            {
+              [style.back]: back,
+            },
+          ])}
           draggable="false"
           src={imagesHandler.getImage(char.sid, char.shiny, back)}
           alt={char.speciesName}

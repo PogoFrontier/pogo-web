@@ -10,7 +10,7 @@ interface ChargedButtonProps {
   move: Move
   energy: number
   onClick: (move: Move, index: number) => void
-  keyboardInput: string | undefined,
+  keyboardInput: string | undefined
   index: number
 }
 
@@ -25,7 +25,7 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   energy,
   onClick,
   keyboardInput,
-  index
+  index,
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()

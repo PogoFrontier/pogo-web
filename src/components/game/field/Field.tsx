@@ -6,7 +6,7 @@ import Character, { CharacterProps } from './Character'
 import style from './field.module.scss'
 
 interface FieldProps {
-  characters: [CharacterProps, CharacterProps],
+  characters: [CharacterProps, CharacterProps]
   message?: string
 }
 
@@ -19,98 +19,92 @@ interface LogMessageProps {
 }
 
 const AlwaysScrollToBottom = () => {
-  const elementRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (elementRef.current) {
       elementRef.current.scrollIntoView()
     }
-  });
-  return <div ref={elementRef} />;
-};
+  })
+  return <div ref={elementRef} />
+}
 
 const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
   const render = () => {
     switch (value.type) {
-      case "faint":
-        return (
-          <>It's a KO!</>
-        )
+      case 'faint':
+        return <>It's a KO!</>
       case Actions.FAST_ATTACK:
         return (
-          <>They used <strong className={classnames([style.move, style[value.move!.type]])}>{value.move!.moveId}</strong>.</>
+          <>
+            They used{' '}
+            <strong
+              className={classnames([style.move, style[value.move!.type]])}
+            >
+              {value.move!.moveId}
+            </strong>
+            .
+          </>
         )
       case Actions.SWITCH:
-        return (
-          <>They are switching.</>
-        )
+        return <>They are switching.</>
       case Actions.CHARGE_ATTACK:
-        return (
-          <>They are charging up!</>
-        )
+        return <>They are charging up!</>
     }
     const v = value as Message
     if (v.message) {
-      return (
-        <>{v.message}</>
-      )
+      return <>{v.message}</>
     }
   }
   return (
     <div className={style.logItem}>
-      {
-        value.turn !== undefined
-        && (
-          <>
-            <strong className={style.hide}>{"Turn "}</strong>
-            <strong>{`${value.turn}: `}</strong>
-          </>
-        )
-      }
+      {value.turn !== undefined && (
+        <>
+          <strong className={style.hide}>{'Turn '}</strong>
+          <strong>{`${value.turn}: `}</strong>
+        </>
+      )}
       {render()}
     </div>
   )
 }
 
-const Field: React.FunctionComponent<FieldProps> = ({ characters, message }) => {
+const Field: React.FunctionComponent<FieldProps> = ({
+  characters,
+  message,
+}) => {
   const [messages, setMessages] = useState<(Message | Anim)[]>([])
   useEffect(() => {
-    if (characters[1].anim
-      && (
-        messages.length === 0
-        || characters[1].anim !== messages[messages.length - 1]
-      )) {
-      setMessages(
-        prev => {
-          const newM = [...prev]
-          newM.push(characters[1].anim!)
-          return newM
-        }
-      )
+    if (
+      characters[1].anim &&
+      (messages.length === 0 ||
+        characters[1].anim !== messages[messages.length - 1])
+    ) {
+      setMessages((prev) => {
+        const newM = [...prev]
+        newM.push(characters[1].anim!)
+        return newM
+      })
     }
   }, [characters[1].anim])
   useEffect(() => {
     if (message) {
-      setMessages(
-        prev => {
-          const newM = [...prev]
-          const d: Message = {
-            message: message!,
-            type: "message"
-          }
-          newM.push(d)
-          return newM
+      setMessages((prev) => {
+        const newM = [...prev]
+        const d: Message = {
+          message: message!,
+          type: 'message',
         }
-      )
+        newM.push(d)
+        return newM
+      })
     }
   }, [message])
   return (
     <section className={style.root}>
       <div className={style.log}>
-        {
-          messages.map((x: any, i: number) => (
-            <LogMessage value={x} key={`${x.turn}${i}`} />
-          ))
-        }
+        {messages.map((x: any, i: number) => (
+          <LogMessage value={x} key={`${x.turn}${i}`} />
+        ))}
         <AlwaysScrollToBottom />
       </div>
       <div className={style.player}>
