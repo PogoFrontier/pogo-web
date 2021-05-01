@@ -7,6 +7,7 @@ import {
   ResolveTurnPayload,
   Move,
   Room,
+  Anim,
 } from '@adibkhan/pogo-web-backend'
 import { CODE, Actions } from '@adibkhan/pogo-web-backend/actions'
 import { Icon } from '@components/icon/Icon'
@@ -26,7 +27,6 @@ import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
-import { Anim } from '@adibkhan/pogo-web-backend'
 
 interface CheckPayload {
   countdown: number
@@ -68,7 +68,10 @@ const GamePage = () => {
   const { height } = useWindowSize()
   const [active, setActive] = useState([] as TeamMember[])
   const [opponent, setOpponent] = useState([] as TeamMember[])
-  const [characters, setCharacters] = useState([{ back: true },{ }] as [CharacterProps, CharacterProps])
+  const [characters, setCharacters] = useState([{ back: true }, {}] as [
+    CharacterProps,
+    CharacterProps
+  ])
   const [charPointer, setCharPointer] = useState(0)
   const [time, setTime] = useState(240)
   const [swap, setSwap] = useState(0)
@@ -94,7 +97,7 @@ const GamePage = () => {
 
   const startGame = () => {
     setTime(240)
-    setMessage("GO!")
+    setMessage('GO!')
     setStatus(StatusTypes.MAIN)
   }
 
@@ -138,8 +141,8 @@ const GamePage = () => {
               if (isActive === prev2) {
                 setStatus(StatusTypes.FAINT)
                 prev3[0].anim = {
-                  type: "faint",
-                  turn: payload.turn
+                  type: 'faint',
+                  turn: payload.turn,
                 }
               }
             }
@@ -211,8 +214,8 @@ const GamePage = () => {
               })
             }
             prev3[1].anim = {
-              type: "faint",
-              turn: payload.turn
+              type: 'faint',
+              turn: payload.turn,
             }
           }
           return prev3
@@ -246,7 +249,7 @@ const GamePage = () => {
       setCharacters((prev) => {
         prev[1].char = data
         prev[1].anim = {
-          type: Actions.SWITCH
+          type: Actions.SWITCH,
         }
         return prev
       })
@@ -339,7 +342,7 @@ const GamePage = () => {
         setCharacters((prev) => {
           prev[0].anim = {
             move: moves[charPointer][0],
-            type: Actions.FAST_ATTACK
+            type: Actions.FAST_ATTACK,
           }
           return prev
         })
@@ -363,7 +366,7 @@ const GamePage = () => {
         ws.send(data)
         setCharacters((prev) => {
           prev[0].anim = {
-            type: Actions.SWITCH
+            type: Actions.SWITCH,
           }
           return prev
         })
@@ -419,7 +422,7 @@ const GamePage = () => {
       ws.send(data)
       setCharacters((prev) => {
         prev[0].anim = {
-          type: Actions.SWITCH
+          type: Actions.SWITCH,
         }
         return prev
       })

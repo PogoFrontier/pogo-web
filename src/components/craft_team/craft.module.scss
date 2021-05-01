@@ -2,13 +2,13 @@
 
 .btns {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .members {
   display: flex;
   list-style: none;
-  padding: 0;
+  padding: 0; 
   width: 100%;
   overflow-x: scroll;
 }
@@ -26,6 +26,9 @@
   }
   &.selected {
     background-color: $color-brand-primary;
+  }
+  &:hover div {
+    visibility: visible;
   }
 }
 
@@ -50,4 +53,16 @@
     border-radius: 50%;
     background-color: $color-brand-negative;
   }
+}
+
+
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  transform: translateY(-50px) ;
+  background-color: $color-dark;
+  color: $color-white;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
 }

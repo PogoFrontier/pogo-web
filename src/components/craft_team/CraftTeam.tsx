@@ -224,6 +224,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           className="btn btn-negative"
           onClick={handleExit}
           disabled={isLoading}
+          style={{ marginRight: '20px' }}
         >
           Exit
         </button>
@@ -249,6 +250,15 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
                   id={index}
                   onClick={handleSelectPokemon}
                 >
+                  <div className={style.tooltip}>
+                    {member.fastMove.replace('_', ' ')} <br />{' '}
+                    {member.chargeMoves
+                      .toString()
+                      .split('_')
+                      .join(' ')
+                      .replace(',', ', ')}
+                  </div>
+
                   <img
                     src={imageHandler.getMini(member.sid)}
                     alt={member.speciesName}
