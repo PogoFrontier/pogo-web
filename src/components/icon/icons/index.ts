@@ -1,4 +1,4 @@
-export { default as clock } from './clock.svg'
+// Types
 export { default as bug } from './bug.svg'
 export { default as dark } from './dark.svg'
 export { default as dragon } from './dragon.svg'
@@ -18,4 +18,11 @@ export { default as rock } from './rock.svg'
 export { default as steel } from './steel.svg'
 export { default as water } from './water.svg'
 
+// Other
 export { default as menu } from './menu.svg'
+export { default as clock } from './clock.svg'
+export { default as github } from './github.svg'
+export { default as patreon } from './patreon.svg'
+export { default as book } from './book.svg'
+export { default as down } from './down.svg'
+
