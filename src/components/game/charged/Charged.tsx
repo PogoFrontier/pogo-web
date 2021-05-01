@@ -9,14 +9,15 @@ import getKeyDescription from '@common/actions/getKeyDescription'
 interface ChargedButtonProps {
   move: Move
   energy: number
-  onClick: (move: Move) => void
-  keyboardInput: string | undefined
+  onClick: (move: Move, index: number) => void
+  keyboardInput: string | undefined,
+  index: number
 }
 
 interface ChargedProps {
   moves: Move[]
   energy: number
-  onClick: (move: Move) => void
+  onClick: (move: Move, index: number) => void
 }
 
 const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
@@ -24,11 +25,12 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   energy,
   onClick,
   keyboardInput,
+  index
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     e.stopPropagation()
-    onClick(move)
+    onClick(move, index)
   }
 
   return (
@@ -90,8 +92,9 @@ const Charged: React.FunctionComponent<ChargedProps> = ({
       {moves.map((x, index) => (
         <>
           <ChargedButton
-            key={x.moveId}
+            key={`${x.moveId}${index}`}
             move={x}
+            index={index}
             energy={energy}
             onClick={onClick}
             keyboardInput={

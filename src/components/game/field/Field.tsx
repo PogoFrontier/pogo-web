@@ -11,11 +11,11 @@ const Field: React.FunctionComponent<FieldProps> = ({ characters }) => {
       <div className={style.player}>
         <Character
           char={characters[0].char}
-          status={characters[0].status}
+          anim={characters[0].anim}
           back={true}
         />
       </div>
-      <Character char={characters[1].char} status={characters[1].status} />
+      <Character char={characters[1].char} anim={characters[1].anim} />
     </section>
   )
 }
