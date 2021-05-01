@@ -176,7 +176,7 @@ const TeamMemberSelector = (props: {
             : pokemon.fastMoves[0]
           const chargeMoves = pokemon.moveset
             ? pokemon.moveset.slice(1)
-            : pokemon.fastMoves[0]
+            : pokemon.chargedMoves.splice(0, 2)
           setAddToBox({
             speciesId: pokemon.speciesId,
             speciesName: pokemon.speciesName,
