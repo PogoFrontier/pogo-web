@@ -126,10 +126,10 @@ const GamePage = () => {
               return p
             })
             if (hp) {
-              prev1[prev2].current!.hp = hp
+              prev1[isActive].current!.hp = hp
             }
             if (energy) {
-              prev1[prev2].current!.energy = energy
+              prev1[isActive].current!.energy = energy
             }
             prev3[0].char = prev1[isActive]
             if (isShields) {
@@ -137,7 +137,7 @@ const GamePage = () => {
             }
             if (payload.update[0]?.remaining) {
               setRemaining(payload.update[0]!.remaining)
-              prev1[prev2].current!.hp = 0
+              prev1[isActive].current!.hp = 0
               if (isActive === prev2) {
                 setStatus(StatusTypes.FAINT)
                 prev3[0].anim = {
