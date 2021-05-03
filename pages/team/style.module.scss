@@ -84,25 +84,10 @@
 }
 
 .addButtons{
-  button{
-   margin-right: 1em;
-  }
   display: flex;
   flex-direction: row;
 }
 
-.importTeam{
-  margin-top: 1em;
-  textarea{
-    resize:none;
-    width: 50%;
-    height: 30em;
-  }
-}
-
-.importTeamButtons{
-  margin-top: 1em;
-  button{
-    margin-right: 1em;
-  }
+.addButtons *{
+  margin-right: 1em;
 }

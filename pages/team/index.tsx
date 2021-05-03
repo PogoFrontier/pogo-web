@@ -15,6 +15,7 @@ import getRandomPokemon from '@common/actions/getRandomPokemon'
 import { getValidateTeam, parseToRule } from '@common/actions/pokemonAPIActions'
 import getCP from '@common/actions/getCP'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
+import ImportTeam from '@components/import_team/ImportTeam'
 
 interface ContentProps {
   meta: string
@@ -46,7 +47,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const [popupButtons, setPopupButtons] = useState(
     undefined as ButtonProps[] | undefined
   )
-
+  const [isImportLoading, setIsImportLoading] = useState(false)
 
   useEffect(() => {
     setIsLoading(false)
@@ -169,15 +170,17 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   }
 
   async function handleImportTeam() {
-    let parsedImportString : UserTeam
+    setIsImportLoading(true)
+    let parsedImportString: UserTeam
     try {
-      parsedImportString = JSON.parse(importString);
+      parsedImportString = JSON.parse(importString)
     } catch (error) {
-      setError("Invalid team object entered.")
+      setError('Invalid team object entered.')
       setPopupTitle('Your team is invalid')
       setPopupButtons(undefined)
+      setIsImportLoading(false)
       return
-    } 
+    }
     const result = await getValidateTeam(
       JSON.stringify(parsedImportString.members),
       meta
@@ -191,10 +194,11 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         name: parsedImportString.name,
         id: Math.random().toString(36).substring(7),
         format: meta,
-        members: parsedImportString.members
+        members: parsedImportString.members,
       })
-
+      setIsImportingTeam(false)
     }
+    setIsImportLoading(false)
   }
 
   const handleOnClickAddTeam = () => {
@@ -202,19 +206,23 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     setIsCrafting(true)
   }
 
-  const handleImportTeamVisibility = (visibility : boolean) => {
-    setIsImportingTeam(visibility)
+  const startTeamImport = () => {
+    setIsImportingTeam(true)
     setImportString('')
   }
 
-  const handleImportChange = (event : any) => {
+  const cancelTeamImport = () => {
+    setIsImportingTeam(false)
+  }
+
+  const handleImportChange = (event: any) => {
     setImportString(event.target.value)
   }
 
   const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    let teamToExport = user.teams[parseInt(e.currentTarget.value, 10)]
+    const teamToExport = user.teams[parseInt(e.currentTarget.value, 10)]
     navigator.clipboard.writeText(JSON.stringify(teamToExport as unknown))
-    setPopup("Team succesfully copied to your clipboard!");
+    setPopup('Team succesfully copied to your clipboard!')
   }
 
   const handleEditTeam = (
@@ -356,7 +364,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
           Add Team
         </button>
         {isRandomTeamLoading ? (
-          <Loader type="TailSpin" color="#68BFF5" height={30} width={30}/>
+          <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
         ) : (
           <button
             className="btn btn-primary"
@@ -365,27 +373,23 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
             Get Random Team
           </button>
         )}
-        <button className="btn btn-primary" onClick={() => handleImportTeamVisibility(true)} style={{visibility : isImportingTeam ? 'hidden' : 'visible'}}>
+        <button
+          className="btn btn-primary"
+          onClick={startTeamImport}
+          style={{ visibility: isImportingTeam ? 'hidden' : 'visible' }}
+        >
           Import Team
         </button>
       </div>
 
-      <div className={style.importTeam} style={{visibility : isImportingTeam ? 'visible' : 'hidden'}}>
-
-        <textarea placeholder='Paste your imported team here' onChange={handleImportChange} value={importString}>
-          
-        </textarea>
-
-        <div className={style.importTeamButtons}>
-          <button onClick={handleImportTeam} className="btn btn-primary">
-            Import
-          </button>
-          <button onClick={() => handleImportTeamVisibility(false)} className="btn btn-negative">
-            Cancel
-          </button>
-        </div>
-      </div>
-
+      <ImportTeam
+        visible={isImportingTeam}
+        importString={importString}
+        saveImportString={handleImportChange}
+        cancelImport={cancelTeamImport}
+        confirmImport={handleImportTeam}
+        isLoading={isImportLoading}
+      />
     </div>
   )
 }
