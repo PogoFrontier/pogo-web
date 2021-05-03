@@ -162,7 +162,7 @@ function getRandomPokemonSpecies(
     }
   }
 
-  return speciesPool[Math.round(Math.random() * speciesPool.length)]
+  return speciesPool[Math.floor(Math.random() * speciesPool.length)]
 }
 
 function getRandomMoves(
@@ -182,11 +182,11 @@ function getRandomMoves(
     const chargedMoves: [string, string] = ['NONE', 'NONE']
     for (const i of [0, 1]) {
       usageSum = moveData.chargedMoves
-        .map((chargedMove) => chargedMove.uses)
+        .map((chargedMove) => (chargedMove.uses ? chargedMove.uses : 0))
         .reduce((use1, use2) => use1 + use2)
       rand = Math.random() * usageSum
       const randChargedMove = moveData.chargedMoves.find((chargedMove) => {
-        rand -= chargedMove.uses
+        rand -= chargedMove.uses ? chargedMove.uses : 0
         return rand <= 0
       })
       if (randChargedMove) {
@@ -199,11 +199,11 @@ function getRandomMoves(
 
     // get fastmove
     usageSum = moveData.fastMoves
-      .map((fastMove) => fastMove.uses)
+      .map((fastMove) => (fastMove.uses ? fastMove.uses : 0))
       .reduce((use1, use2) => use1 + use2)
     rand = Math.random() * usageSum
     randFast = moveData.fastMoves.find((fastMove) => {
-      rand -= fastMove.uses
+      rand -= fastMove.uses ? fastMove.uses : 0
       return rand <= 0
     })!.moveId
 

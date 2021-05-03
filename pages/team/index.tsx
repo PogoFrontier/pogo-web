@@ -285,6 +285,7 @@ const TeamPage = () => {
     'Great League',
     'Commander Cup',
     'Floating City',
+    'Nursery Cup',
     'MainSeries Cup',
     'Ultra League',
     'Master League',
