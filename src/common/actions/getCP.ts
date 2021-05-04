@@ -1,11 +1,11 @@
 import { cpms } from '@config/statVals'
-
+export interface BaseStatsProps {
+  atk: number
+  def: number
+  hp: number
+}
 const getCP = (
-  bs: {
-    atk: number
-    def: number
-    hp: number
-  },
+  bs: BaseStatsProps,
   stats: number[]
 ): number => {
   const cpm = cpms[(stats[0] - 1) * 2]

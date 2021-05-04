@@ -3,6 +3,7 @@ import UserContext, { UserTeam } from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 // import { updateUserTeam } from '@common/actions/userAPIActions'
+import { v4 as uuidv4 } from 'uuid'
 import ImageHandler from '@common/actions/getImages'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
@@ -12,10 +13,25 @@ import { TeamMember, Rule } from '@adibkhan/pogo-web-backend'
 import Loader from 'react-loader-spinner'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
-import { getValidateTeam, parseToRule } from '@common/actions/pokemonAPIActions'
-import getCP from '@common/actions/getCP'
+import { getPokemonData, getValidateTeam, parseToRule } from '@common/actions/pokemonAPIActions'
+import getCP, { BaseStatsProps } from '@common/actions/getCP'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import ImportTeam from '@components/import_team/ImportTeam'
+import calculateStats from '@common/actions/calculateStats'
+
+interface TeamExportProps {
+  speciesId: string,
+  name?: string,
+  chargeMoves: string[],
+  fastMove: string,
+  level: number,
+  iv: {
+    atk: number
+    def: number
+    hp: number
+  },
+  shiny?: boolean
+}
 
 interface ContentProps {
   meta: string
@@ -169,11 +185,71 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     })
   }
 
+  async function loadTeam(t: UserTeam) {
+    if (!t || !t.members || !t.format || !t.name) {
+      throw new Error()
+    }
+    return Promise.all(t.members.map(async (x) => {
+      const p = await getPokemonData(x.speciesId, "norestrictions")
+      const bs = p.baseStats as BaseStatsProps
+      const cp = getCP(
+        bs,
+        [x.level, x.iv.atk, x.iv.def, x.iv.hp]
+      )
+      const stats = calculateStats(
+        bs,
+        x.level,
+        x.iv.atk,
+        x.iv.def,
+        x.iv.hp
+      )
+      const m = {
+        speciesId: x.speciesId,
+        name: x.name,
+        chargeMoves: x.chargeMoves,
+        fastMove: x.fastMove,
+        level: x.level,
+        iv: x.iv,
+        shiny: x.shiny,
+        speciesName: p.speciesName,
+        cp,
+        types: p.types,
+        sid: p.sid,
+        hp: stats.hp,
+        atk: stats.atk,
+        def: stats.def,
+        baseStats: bs
+      }
+      return m
+    }))
+  }
+
   async function handleImportTeam() {
     setIsImportLoading(true)
-    let parsedImportString: UserTeam
     try {
-      parsedImportString = JSON.parse(importString)
+      const parsedImport = await JSON.parse(importString)
+      loadTeam(parsedImport).then(
+        async (members) => {
+          const result = await getValidateTeam(
+            JSON.stringify(members),
+            meta
+          )
+          if (result.message) {
+            setError(result.message)
+            setPopupTitle('Your team is invalid')
+            setPopupButtons(undefined)
+          } else {
+            updateTeam({
+              name: parsedImport.name,
+              id: uuidv4(),
+              format: parsedImport.format,
+              members,
+            })
+            setIsImportingTeam(false)
+          }
+          setIsImportLoading(false)
+        }
+      );
     } catch (error) {
       setError('Invalid team object entered.')
       setPopupTitle('Your team is invalid')
@@ -181,24 +257,6 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       setIsImportLoading(false)
       return
     }
-    const result = await getValidateTeam(
-      JSON.stringify(parsedImportString.members),
-      meta
-    )
-    if (result.message) {
-      setError(result.message)
-      setPopupTitle('Your team is invalid')
-      setPopupButtons(undefined)
-    } else {
-      updateTeam({
-        name: parsedImportString.name,
-        id: Math.random().toString(36).substring(7),
-        format: meta,
-        members: parsedImportString.members,
-      })
-      setIsImportingTeam(false)
-    }
-    setIsImportLoading(false)
   }
 
   const handleOnClickAddTeam = () => {
@@ -219,9 +277,30 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     setImportString(event.target.value)
   }
 
+  const formatTeam = (t: UserTeam): string => {
+    const members = t.members.map((x) => {
+      const s: TeamExportProps = {
+        speciesId: x.speciesId,
+        name: x.name,
+        chargeMoves: x.chargeMoves,
+        fastMove: x.fastMove,
+        level: x.level,
+        iv: x.iv,
+        shiny: x.shiny
+      }
+      return s
+    })
+    const d = {
+      name: t.name,
+      format: t.format,
+      members
+    }
+    return JSON.stringify(d)
+  }
+
   const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const teamToExport = user.teams[parseInt(e.currentTarget.value, 10)]
-    navigator.clipboard.writeText(JSON.stringify(teamToExport as unknown))
+    navigator.clipboard.writeText(formatTeam(teamToExport))
     setPopup('Team succesfully copied to your clipboard!')
   }
 
