@@ -15,6 +15,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend/team'
 
 type TeamMemberWithDex = TeamMember & {
   dex: number
+  price?: number
 }
 
 type getRandomPokemonParams = {
@@ -45,9 +46,12 @@ async function getRandomPokemon({
   if (meta === undefined) return undefined
   let randPokemon: string = 'Pidgey'
   let moveData: moveUsageData
+  const usedPoints = previousPokemon
+    .map((poke) => (poke.price ? poke.price : 0))
+    .reduce((price1, price2) => price1 + price2, 0)
 
   // get a random pokemon
-  await getPokemonNames(meta, position, true).then((data) => {
+  await getPokemonNames(meta, position, false, usedPoints).then((data) => {
     randPokemon = getRandomPokemonSpecies(data, (speciesPool: string[]) => {
       if (rule.flags && rule.flags.speciesClauseByForm) {
         speciesPool = speciesPool.filter(
@@ -88,7 +92,7 @@ async function getRandomPokemon({
       : rule.advancedOptions.movesets === undefined
       ? 'original'
       : rule.advancedOptions.movesets
-  return getPokemonData(parseName(randPokemon), moveset).then((data) => {
+  return getPokemonData(parseName(randPokemon), moveset, meta).then((data) => {
     const cap = rule.maxCP
     const pokemon = data
     const stats = getIVs({
@@ -128,6 +132,7 @@ async function getRandomPokemon({
         stats.ivs.def,
         stats.ivs.hp,
       ]),
+      price: data.price,
       types: data.types,
       fastMove,
       chargeMoves: chargedMoves,
@@ -195,6 +200,9 @@ function getRandomMoves(
       moveData.chargedMoves = moveData.chargedMoves.filter(
         (chargedMove) => chargedMove !== randChargedMove
       )
+      if (moveData.chargedMoves.length === 0) {
+        break
+      }
     }
 
     // get fastmove

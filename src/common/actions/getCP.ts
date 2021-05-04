@@ -4,10 +4,7 @@ export interface BaseStatsProps {
   def: number
   hp: number
 }
-const getCP = (
-  bs: BaseStatsProps,
-  stats: number[]
-): number => {
+const getCP = (bs: BaseStatsProps, stats: number[]): number => {
   const cpm = cpms[(stats[0] - 1) * 2]
   const atk = stats[1]
   const def = stats[2]
