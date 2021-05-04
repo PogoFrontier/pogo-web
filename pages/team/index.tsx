@@ -34,7 +34,8 @@ interface TeamExportProps {
 }
 
 interface ContentProps {
-  meta: string
+  meta: string,
+  switchMeta: (m: string) => void
 }
 
 interface ButtonProps {
@@ -47,7 +48,7 @@ type TeamMemberWithDex = TeamMember & {
   dex: number
 }
 
-const Content: React.FC<ContentProps> = ({ meta }) => {
+const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   const { user, setTeams } = useContext(UserContext)
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
@@ -232,7 +233,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         async (members) => {
           const result = await getValidateTeam(
             JSON.stringify(members),
-            meta
+            parsedImport.format
           )
           if (result.message) {
             setError(result.message)
@@ -245,6 +246,9 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
               format: parsedImport.format,
               members,
             })
+            if (parsedImport.format !== meta) {
+              switchMeta(parsedImport.format)
+            }
             setIsImportingTeam(false)
           }
           setIsImportLoading(false)
@@ -509,15 +513,22 @@ const TeamPage = () => {
   //   // reset select value on close/submit of modal
   // }
 
-  const tabs = metas.map((x) => (
-    <TabPanel key={x}>
-      <Content meta={x} />
-    </TabPanel>
-  ))
+  const switchMeta = (m: string) => {
+    const i = metas.findIndex(x => x === m)
+    if (i > -1) {
+      setIndex(i)
+    }
+  }
 
   const onChange = (i: number) => {
     setIndex(i)
   }
+
+  const tabs = metas.map((x) => (
+    <TabPanel key={x}>
+      <Content meta={x} switchMeta={switchMeta} />
+    </TabPanel>
+  ))
 
   return (
     <Layout>
