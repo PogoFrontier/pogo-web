@@ -20,6 +20,11 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
   },
+  'Nursery Cup': {
+    name: 'Nursery Cup',
+    maxCP: 1500,
+    movesetOption: 'original',
+  },
   'MainSeries Cup': {
     name: 'MainSeries Cup',
     maxCP: 1500,
