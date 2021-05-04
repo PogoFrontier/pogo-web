@@ -145,14 +145,14 @@ function getRandomPokemonSpecies(
   speciesPool = filter(speciesPool)
 
   const ratingSum: number = speciesPool
-    .map((speciesId) => (data[speciesId].ranking ? data[speciesId].ranking : 1))
+    .map((speciesId) => (data[speciesId].ranking ? data[speciesId].ranking : 0))
     .map((rating) => Math.pow(rating / 1000, 6))
     .reduce((r1, r2) => r1 + r2)
 
   if (ratingSum !== 0) {
     let rand = Math.round(Math.random() * ratingSum)
     const randPokemon = speciesPool.find((speciesId) => {
-      let rating: number = data[speciesId].ranking ? data[speciesId].ranking : 1
+      let rating: number = data[speciesId].ranking ? data[speciesId].ranking : 0
       rating = Math.pow(rating / 1000, 6)
       rand -= rating
       return rand <= 0
