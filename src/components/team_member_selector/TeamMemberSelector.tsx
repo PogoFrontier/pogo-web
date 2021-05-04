@@ -3,7 +3,7 @@ import {
   getPokemonData,
   getPokemonNames,
 } from '@common/actions/pokemonAPIActions'
-import { cpms, ivValues, levelValues, shadowMult } from '@config/statVals'
+import { ivValues, levelValues } from '@config/statVals'
 import ImageHandler from '@common/actions/getImages'
 import style from './style.module.scss'
 import Input from '@components/input/Input'
@@ -15,6 +15,7 @@ import getIVs from '@common/actions/getIVs'
 import getMaxLevel from '@common/actions/getMaxLevel'
 import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
+import calculateStats from '@common/actions/calculateStats'
 
 type pokemonType = {
   types: string[]
@@ -122,6 +123,10 @@ const TeamMemberSelector = (props: {
     setUserInput(input)
     setFilteredSuggestions(
       Array.from(suggestions.keys()).filter((s) => {
+        // Is all string?
+        if (input === "all" || input === "@all") {
+          return true
+        }
         // Is substring of speciesId?
         if (s.toLowerCase().indexOf(input) > -1) {
           return true
@@ -184,33 +189,6 @@ const TeamMemberSelector = (props: {
         break
       default:
         break
-    }
-  }
-
-  const calculateStats = (
-    bs: {
-      atk: number
-      def: number
-      hp: number
-    },
-    level: number,
-    atk: number,
-    def: number,
-    hp: number,
-    shadow?: boolean
-  ) => {
-    const cpm = cpms[(level - 1) * 2]
-    const selectedHP = Math.floor((bs.hp + hp) * cpm)
-    let selectedAtk = (bs.atk + atk) * cpm
-    let selectedDef = (bs.def + def) * cpm
-    if (shadow) {
-      selectedAtk *= shadowMult[0]
-      selectedDef *= shadowMult[1]
-    }
-    return {
-      hp: selectedHP,
-      atk: selectedAtk,
-      def: selectedDef,
     }
   }
 

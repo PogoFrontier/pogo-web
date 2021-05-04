@@ -3,6 +3,7 @@ import UserContext, { UserTeam } from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 // import { updateUserTeam } from '@common/actions/userAPIActions'
+import { v4 as uuidv4 } from 'uuid'
 import ImageHandler from '@common/actions/getImages'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
@@ -12,25 +13,58 @@ import { TeamMember, Rule } from '@adibkhan/pogo-web-backend'
 import Loader from 'react-loader-spinner'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
-import { parseToRule } from '@common/actions/pokemonAPIActions'
-import getCP from '@common/actions/getCP'
+import { getPokemonData, getValidateTeam, parseToRule } from '@common/actions/pokemonAPIActions'
+import getCP, { BaseStatsProps } from '@common/actions/getCP'
+import ErrorPopup from '@components/error_popup/ErrorPopup'
+import ImportTeam from '@components/import_team/ImportTeam'
+import calculateStats from '@common/actions/calculateStats'
+
+interface TeamExportProps {
+  speciesId: string,
+  name?: string,
+  chargeMoves: string[],
+  fastMove: string,
+  level: number,
+  iv: {
+    atk: number
+    def: number
+    hp: number
+  },
+  shiny?: boolean
+}
 
 interface ContentProps {
-  meta: string
+  meta: string,
+  switchMeta: (m: string) => void
+}
+
+interface ButtonProps {
+  title: string
+  onClick: () => void
+  className: string
 }
 
 type TeamMemberWithDex = TeamMember & {
   dex: number
 }
 
-const Content: React.FC<ContentProps> = ({ meta }) => {
+const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   const { user, setTeams } = useContext(UserContext)
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isRandomTeamLoading, setisRandomTeamLoading] = useState(false)
+  const [isRandomTeamLoading, setIsRandomTeamLoading] = useState(false)
+  const [isImportingTeam, setIsImportingTeam] = useState(false)
   const imagesHandler = new ImageHandler()
   const { team, setTeam } = useContext(TeamContext)
+  const [importString, setImportString] = useState('')
+  const [popup, setPopup] = useState('')
+  const [error, setError] = useState('')
+  const [popupTitle, setPopupTitle] = useState('')
+  const [popupButtons, setPopupButtons] = useState(
+    undefined as ButtonProps[] | undefined
+  )
+  const [isImportLoading, setIsImportLoading] = useState(false)
 
   useEffect(() => {
     setIsLoading(false)
@@ -57,7 +91,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    * Adds a Random Team to the userTeams
    */
   async function handleOnClickAddRandomTeam() {
-    setisRandomTeamLoading(true)
+    setIsRandomTeamLoading(true)
     let rule: Rule = (undefined as unknown) as Rule
     const t: TeamMemberWithDex[] = []
     const dexNrs = new Set()
@@ -141,7 +175,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
           i--
         }
       })
-      setisRandomTeamLoading(false)
+      setIsRandomTeamLoading(false)
     }
 
     updateTeam({
@@ -152,9 +186,126 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     })
   }
 
+  async function loadTeam(t: UserTeam) {
+    if (!t || !t.members || !t.format || !t.name) {
+      throw new Error()
+    }
+    return Promise.all(t.members.map(async (x) => {
+      const p = await getPokemonData(x.speciesId, "norestrictions")
+      const bs = p.baseStats as BaseStatsProps
+      const cp = getCP(
+        bs,
+        [x.level, x.iv.atk, x.iv.def, x.iv.hp]
+      )
+      const stats = calculateStats(
+        bs,
+        x.level,
+        x.iv.atk,
+        x.iv.def,
+        x.iv.hp
+      )
+      const m = {
+        speciesId: x.speciesId,
+        name: x.name,
+        chargeMoves: x.chargeMoves,
+        fastMove: x.fastMove,
+        level: x.level,
+        iv: x.iv,
+        shiny: x.shiny,
+        speciesName: p.speciesName,
+        cp,
+        types: p.types,
+        sid: p.sid,
+        hp: stats.hp,
+        atk: stats.atk,
+        def: stats.def,
+        baseStats: bs
+      }
+      return m
+    }))
+  }
+
+  async function handleImportTeam() {
+    setIsImportLoading(true)
+    try {
+      const parsedImport = await JSON.parse(importString)
+      loadTeam(parsedImport).then(
+        async (members) => {
+          const result = await getValidateTeam(
+            JSON.stringify(members),
+            parsedImport.format
+          )
+          if (result.message) {
+            setError(result.message)
+            setPopupTitle('Your team is invalid')
+            setPopupButtons(undefined)
+          } else {
+            updateTeam({
+              name: parsedImport.name,
+              id: uuidv4(),
+              format: parsedImport.format,
+              members,
+            })
+            if (parsedImport.format !== meta) {
+              switchMeta(parsedImport.format)
+            }
+            setIsImportingTeam(false)
+          }
+          setIsImportLoading(false)
+        }
+      );
+    } catch (error) {
+      setError('Invalid team object entered.')
+      setPopupTitle('Your team is invalid')
+      setPopupButtons(undefined)
+      setIsImportLoading(false)
+      return
+    }
+  }
+
   const handleOnClickAddTeam = () => {
     setTeamToEdit(null)
     setIsCrafting(true)
+  }
+
+  const startTeamImport = () => {
+    setIsImportingTeam(true)
+    setImportString('')
+  }
+
+  const cancelTeamImport = () => {
+    setIsImportingTeam(false)
+  }
+
+  const handleImportChange = (event: any) => {
+    setImportString(event.target.value)
+  }
+
+  const formatTeam = (t: UserTeam): string => {
+    const members = t.members.map((x) => {
+      const s: TeamExportProps = {
+        speciesId: x.speciesId,
+        name: x.name,
+        chargeMoves: x.chargeMoves,
+        fastMove: x.fastMove,
+        level: x.level,
+        iv: x.iv,
+        shiny: x.shiny
+      }
+      return s
+    })
+    const d = {
+      name: t.name,
+      format: t.format,
+      members
+    }
+    return JSON.stringify(d)
+  }
+
+  const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const teamToExport = user.teams[parseInt(e.currentTarget.value, 10)]
+    navigator.clipboard.writeText(formatTeam(teamToExport))
+    setPopup('Team succesfully copied to your clipboard!')
   }
 
   const handleEditTeam = (
@@ -170,6 +321,14 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   const onExit = () => {
     setIsCrafting(false)
+  }
+
+  const onPopupClose = () => {
+    setPopup('')
+  }
+
+  const onErrorPopupClose = () => {
+    setError('')
   }
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -220,6 +379,22 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   return (
     <div className={style.root}>
+      {!!popup && (
+        <ErrorPopup
+          title={popup}
+          error={' '}
+          onClose={onPopupClose}
+          buttons={undefined}
+        />
+      )}
+      {!!error && (
+        <ErrorPopup
+          error={error}
+          title={popupTitle}
+          onClose={onErrorPopupClose}
+          buttons={popupButtons}
+        />
+      )}
       {user.teams.length > 0 ? (
         user.teams.map((userTeam: UserTeam, i: number) => {
           if (userTeam.format === meta) {
@@ -252,6 +427,13 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                   >
                     Delete
                   </button>
+                  <button
+                    value={i}
+                    onClick={handleExport}
+                    className={classnames([style.btn, style.edit])}
+                  >
+                    Export
+                  </button>
                 </div>
               </div>
             )
@@ -274,7 +456,23 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
             Get Random Team
           </button>
         )}
+        <button
+          className="btn btn-primary"
+          onClick={startTeamImport}
+          style={{ visibility: isImportingTeam ? 'hidden' : 'visible' }}
+        >
+          Import Team
+        </button>
       </div>
+
+      <ImportTeam
+        visible={isImportingTeam}
+        importString={importString}
+        saveImportString={handleImportChange}
+        cancelImport={cancelTeamImport}
+        confirmImport={handleImportTeam}
+        isLoading={isImportLoading}
+      />
     </div>
   )
 }
@@ -315,15 +513,22 @@ const TeamPage = () => {
   //   // reset select value on close/submit of modal
   // }
 
-  const tabs = metas.map((x) => (
-    <TabPanel key={x}>
-      <Content meta={x} />
-    </TabPanel>
-  ))
+  const switchMeta = (m: string) => {
+    const i = metas.findIndex(x => x === m)
+    if (i > -1) {
+      setIndex(i)
+    }
+  }
 
   const onChange = (i: number) => {
     setIndex(i)
   }
+
+  const tabs = metas.map((x) => (
+    <TabPanel key={x}>
+      <Content meta={x} switchMeta={switchMeta} />
+    </TabPanel>
+  ))
 
   return (
     <Layout>
