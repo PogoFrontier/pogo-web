@@ -12,11 +12,19 @@ import { TeamMember, Rule } from '@adibkhan/pogo-web-backend'
 import Loader from 'react-loader-spinner'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
-import { parseToRule } from '@common/actions/pokemonAPIActions'
+import { getValidateTeam, parseToRule } from '@common/actions/pokemonAPIActions'
 import getCP from '@common/actions/getCP'
+import ErrorPopup from '@components/error_popup/ErrorPopup'
+import ImportTeam from '@components/import_team/ImportTeam'
 
 interface ContentProps {
   meta: string
+}
+
+interface ButtonProps {
+  title: string
+  onClick: () => void
+  className: string
 }
 
 type TeamMemberWithDex = TeamMember & {
@@ -28,9 +36,18 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isRandomTeamLoading, setisRandomTeamLoading] = useState(false)
+  const [isRandomTeamLoading, setIsRandomTeamLoading] = useState(false)
+  const [isImportingTeam, setIsImportingTeam] = useState(false)
   const imagesHandler = new ImageHandler()
   const { team, setTeam } = useContext(TeamContext)
+  const [importString, setImportString] = useState('')
+  const [popup, setPopup] = useState('')
+  const [error, setError] = useState('')
+  const [popupTitle, setPopupTitle] = useState('')
+  const [popupButtons, setPopupButtons] = useState(
+    undefined as ButtonProps[] | undefined
+  )
+  const [isImportLoading, setIsImportLoading] = useState(false)
 
   useEffect(() => {
     setIsLoading(false)
@@ -57,7 +74,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
    * Adds a Random Team to the userTeams
    */
   async function handleOnClickAddRandomTeam() {
-    setisRandomTeamLoading(true)
+    setIsRandomTeamLoading(true)
     let rule: Rule = (undefined as unknown) as Rule
     const t: TeamMemberWithDex[] = []
     const dexNrs = new Set()
@@ -141,7 +158,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
           i--
         }
       })
-      setisRandomTeamLoading(false)
+      setIsRandomTeamLoading(false)
     }
 
     updateTeam({
@@ -152,9 +169,60 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     })
   }
 
+  async function handleImportTeam() {
+    setIsImportLoading(true)
+    let parsedImportString: UserTeam
+    try {
+      parsedImportString = JSON.parse(importString)
+    } catch (error) {
+      setError('Invalid team object entered.')
+      setPopupTitle('Your team is invalid')
+      setPopupButtons(undefined)
+      setIsImportLoading(false)
+      return
+    }
+    const result = await getValidateTeam(
+      JSON.stringify(parsedImportString.members),
+      meta
+    )
+    if (result.message) {
+      setError(result.message)
+      setPopupTitle('Your team is invalid')
+      setPopupButtons(undefined)
+    } else {
+      updateTeam({
+        name: parsedImportString.name,
+        id: Math.random().toString(36).substring(7),
+        format: meta,
+        members: parsedImportString.members,
+      })
+      setIsImportingTeam(false)
+    }
+    setIsImportLoading(false)
+  }
+
   const handleOnClickAddTeam = () => {
     setTeamToEdit(null)
     setIsCrafting(true)
+  }
+
+  const startTeamImport = () => {
+    setIsImportingTeam(true)
+    setImportString('')
+  }
+
+  const cancelTeamImport = () => {
+    setIsImportingTeam(false)
+  }
+
+  const handleImportChange = (event: any) => {
+    setImportString(event.target.value)
+  }
+
+  const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const teamToExport = user.teams[parseInt(e.currentTarget.value, 10)]
+    navigator.clipboard.writeText(JSON.stringify(teamToExport as unknown))
+    setPopup('Team succesfully copied to your clipboard!')
   }
 
   const handleEditTeam = (
@@ -170,6 +238,14 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   const onExit = () => {
     setIsCrafting(false)
+  }
+
+  const onPopupClose = () => {
+    setPopup('')
+  }
+
+  const onErrorPopupClose = () => {
+    setError('')
   }
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -220,6 +296,22 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   return (
     <div className={style.root}>
+      {!!popup && (
+        <ErrorPopup
+          title={popup}
+          error={' '}
+          onClose={onPopupClose}
+          buttons={undefined}
+        />
+      )}
+      {!!error && (
+        <ErrorPopup
+          error={error}
+          title={popupTitle}
+          onClose={onErrorPopupClose}
+          buttons={popupButtons}
+        />
+      )}
       {user.teams.length > 0 ? (
         user.teams.map((userTeam: UserTeam, i: number) => {
           if (userTeam.format === meta) {
@@ -252,6 +344,13 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                   >
                     Delete
                   </button>
+                  <button
+                    value={i}
+                    onClick={handleExport}
+                    className={classnames([style.btn, style.edit])}
+                  >
+                    Export
+                  </button>
                 </div>
               </div>
             )
@@ -274,7 +373,23 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
             Get Random Team
           </button>
         )}
+        <button
+          className="btn btn-primary"
+          onClick={startTeamImport}
+          style={{ visibility: isImportingTeam ? 'hidden' : 'visible' }}
+        >
+          Import Team
+        </button>
       </div>
+
+      <ImportTeam
+        visible={isImportingTeam}
+        importString={importString}
+        saveImportString={handleImportChange}
+        cancelImport={cancelTeamImport}
+        confirmImport={handleImportTeam}
+        isLoading={isImportLoading}
+      />
     </div>
   )
 }
