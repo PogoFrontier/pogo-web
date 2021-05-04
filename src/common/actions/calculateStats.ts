@@ -1,4 +1,4 @@
-import { cpms, shadowMult } from "@config/statVals"
+import { cpms, shadowMult } from '@config/statVals'
 
 const calculateStats = (
   bs: {

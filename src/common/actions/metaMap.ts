@@ -25,6 +25,11 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
   },
+  Cliffhanger: {
+    name: 'Cliffhanger',
+    maxCP: 1500,
+    movesetOption: 'original',
+  },
   'MainSeries Cup': {
     name: 'MainSeries Cup',
     maxCP: 1500,

@@ -124,7 +124,7 @@ const TeamMemberSelector = (props: {
     setFilteredSuggestions(
       Array.from(suggestions.keys()).filter((s) => {
         // Is all string?
-        if (input === "all" || input === "@all") {
+        if (input === 'all' || input === '@all') {
           return true
         }
         // Is substring of speciesId?

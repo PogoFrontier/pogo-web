@@ -3,14 +3,18 @@ import API from '@config/API'
 export const getPokemonNames = async (
   meta?: string,
   position?: number,
-  showIllegal?: boolean
+  showIllegal?: boolean,
+  usedPoints?: number
 ) => {
   try {
     if (!position) {
       position = 0
     }
+    if (!usedPoints) {
+      usedPoints = 0
+    }
     const queryString = meta
-      ? `?format=${meta}&position=${position}?showIllegal=${!!showIllegal}`
+      ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}`
       : ''
     const res = await API.get(`api/pokemon${queryString}`)
     return res.data

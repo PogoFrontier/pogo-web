@@ -13,28 +13,32 @@ import { TeamMember, Rule } from '@adibkhan/pogo-web-backend'
 import Loader from 'react-loader-spinner'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 import getRandomPokemon from '@common/actions/getRandomPokemon'
-import { getPokemonData, getValidateTeam, parseToRule } from '@common/actions/pokemonAPIActions'
+import {
+  getPokemonData,
+  getValidateTeam,
+  parseToRule,
+} from '@common/actions/pokemonAPIActions'
 import getCP, { BaseStatsProps } from '@common/actions/getCP'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import ImportTeam from '@components/import_team/ImportTeam'
 import calculateStats from '@common/actions/calculateStats'
 
 interface TeamExportProps {
-  speciesId: string,
-  name?: string,
-  chargeMoves: string[],
-  fastMove: string,
-  level: number,
+  speciesId: string
+  name?: string
+  chargeMoves: string[]
+  fastMove: string
+  level: number
   iv: {
     atk: number
     def: number
     hp: number
-  },
+  }
   shiny?: boolean
 }
 
 interface ContentProps {
-  meta: string,
+  meta: string
   switchMeta: (m: string) => void
 }
 
@@ -190,70 +194,61 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
     if (!t || !t.members || !t.format || !t.name) {
       throw new Error()
     }
-    return Promise.all(t.members.map(async (x) => {
-      const p = await getPokemonData(x.speciesId, "norestrictions")
-      const bs = p.baseStats as BaseStatsProps
-      const cp = getCP(
-        bs,
-        [x.level, x.iv.atk, x.iv.def, x.iv.hp]
-      )
-      const stats = calculateStats(
-        bs,
-        x.level,
-        x.iv.atk,
-        x.iv.def,
-        x.iv.hp
-      )
-      const m = {
-        speciesId: x.speciesId,
-        name: x.name,
-        chargeMoves: x.chargeMoves,
-        fastMove: x.fastMove,
-        level: x.level,
-        iv: x.iv,
-        shiny: x.shiny,
-        speciesName: p.speciesName,
-        cp,
-        types: p.types,
-        sid: p.sid,
-        hp: stats.hp,
-        atk: stats.atk,
-        def: stats.def,
-        baseStats: bs
-      }
-      return m
-    }))
+    return Promise.all(
+      t.members.map(async (x) => {
+        const p = await getPokemonData(x.speciesId, 'norestrictions')
+        const bs = p.baseStats as BaseStatsProps
+        const cp = getCP(bs, [x.level, x.iv.atk, x.iv.def, x.iv.hp])
+        const stats = calculateStats(bs, x.level, x.iv.atk, x.iv.def, x.iv.hp)
+        const m = {
+          speciesId: x.speciesId,
+          name: x.name,
+          chargeMoves: x.chargeMoves,
+          fastMove: x.fastMove,
+          level: x.level,
+          iv: x.iv,
+          shiny: x.shiny,
+          speciesName: p.speciesName,
+          cp,
+          types: p.types,
+          sid: p.sid,
+          hp: stats.hp,
+          atk: stats.atk,
+          def: stats.def,
+          baseStats: bs,
+        }
+        return m
+      })
+    )
   }
 
   async function handleImportTeam() {
     setIsImportLoading(true)
     try {
       const parsedImport = await JSON.parse(importString)
-      loadTeam(parsedImport).then(
-        async (members) => {
-          const result = await getValidateTeam(
-            JSON.stringify(members),
-            parsedImport.format
-          )
-          if (result.message) {
-            setError(result.message)
-            setPopupTitle('Your team is invalid')
-            setPopupButtons(undefined)
-          } else {
-            updateTeam({
-              name: parsedImport.name,
-              id: uuidv4(),
-              format: parsedImport.format,
-              members,
-            })
-            if (parsedImport.format !== meta) {
-              switchMeta(parsedImport.format)
-            }
-            setIsImportingTeam(false)
+      loadTeam(parsedImport).then(async (members) => {
+        const result = await getValidateTeam(
+          JSON.stringify(members),
+          parsedImport.format
+        )
+        if (result.message) {
+          setError(result.message)
+          setPopupTitle('Your team is invalid')
+          setPopupButtons(undefined)
+        } else {
+          updateTeam({
+            name: parsedImport.name,
+            id: uuidv4(),
+            format: parsedImport.format,
+            members,
+          })
+          if (parsedImport.format !== meta) {
+            switchMeta(parsedImport.format)
           }
-          setIsImportLoading(false)
+          setIsImportingTeam(false)
         }
-      );
+        setIsImportLoading(false)
+      })
     } catch (error) {
       setError('Invalid team object entered.')
       setPopupTitle('Your team is invalid')
@@ -290,14 +285,14 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
         fastMove: x.fastMove,
         level: x.level,
         iv: x.iv,
-        shiny: x.shiny
+        shiny: x.shiny,
       }
       return s
     })
     const d = {
       name: t.name,
       format: t.format,
-      members
+      members,
     }
     return JSON.stringify(d)
   }
@@ -484,6 +479,7 @@ const TeamPage = () => {
     'Commander Cup',
     'Floating City',
     'Nursery Cup',
+    'Cliffhanger',
     'MainSeries Cup',
     'Ultra League',
     'Master League',
@@ -514,7 +510,7 @@ const TeamPage = () => {
   // }
 
   const switchMeta = (m: string) => {
-    const i = metas.findIndex(x => x === m)
+    const i = metas.findIndex((x) => x === m)
     if (i > -1) {
       setIndex(i)
     }
