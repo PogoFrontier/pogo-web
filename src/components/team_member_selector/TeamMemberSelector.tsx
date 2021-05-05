@@ -34,6 +34,7 @@ const TeamMemberSelector = (props: {
   deletePokemon: () => void
   meta: string
   position: number
+  metaClassName?: string
 }) => {
   const {
     cancelEdit,
@@ -42,6 +43,7 @@ const TeamMemberSelector = (props: {
     deletePokemon,
     meta,
     position,
+    metaClassName,
   } = props
   const [userInput, setUserInput] = useState('')
   const [suggestions, setSuggestions] = useState<Map<string, pokemonType>>(
@@ -88,14 +90,14 @@ const TeamMemberSelector = (props: {
   }, [member])
 
   useEffect(() => {
-    getPokemonNames(meta, position, true).then((data) => {
+    getPokemonNames(meta, position, false, 0, metaClassName).then((data) => {
       const pokemonData = new Map()
       Object.keys(data).forEach((speciesId) =>
         pokemonData.set(speciesId, data[speciesId])
       )
       setSuggestions(pokemonData)
     })
-  }, [position, meta])
+  }, [position, meta, metaClassName])
 
   const onChange = (e: any) => {
     const input: string = e.currentTarget.value.toLowerCase()
@@ -198,7 +200,8 @@ const TeamMemberSelector = (props: {
       parseName(input),
       metaMap[meta].movesetOption,
       meta,
-      position
+      position,
+      metaClassName
     )
       .then((pokemon) => {
         if (pokemon) {

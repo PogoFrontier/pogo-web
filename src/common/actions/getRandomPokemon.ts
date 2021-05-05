@@ -23,6 +23,7 @@ type getRandomPokemonParams = {
   rule: any // TODO: Make it Rule when movesets is added to advancedOptions
   position: number
   previousPokemon: TeamMemberWithDex[]
+  className?: string
 }
 
 type moveWithRating = {
@@ -42,6 +43,7 @@ async function getRandomPokemon({
   rule,
   position,
   previousPokemon,
+  className,
 }: getRandomPokemonParams): Promise<any> {
   if (meta === undefined) return undefined
   let randPokemon: string = 'Pidgey'
@@ -51,39 +53,41 @@ async function getRandomPokemon({
     .reduce((price1, price2) => price1 + price2, 0)
 
   // get a random pokemon
-  await getPokemonNames(meta, position, false, usedPoints).then((data) => {
-    randPokemon = getRandomPokemonSpecies(data, (speciesPool: string[]) => {
-      if (rule.flags && rule.flags.speciesClauseByForm) {
-        speciesPool = speciesPool.filter(
-          (speciesId) =>
-            !previousPokemon
-              .map((pokemon) => pokemon.speciesId)
-              .includes(speciesId)
-        )
-      }
-      if (rule.flags && rule.flags.speciesClauseByDex) {
-        speciesPool = speciesPool.filter(
-          (speciesId) =>
-            !previousPokemon
-              .map((pokemon) => pokemon.dex)
-              .includes(data[speciesId].dex)
-        )
-      }
-      if (rule.flags && rule.flags.typeClause) {
-        speciesPool = speciesPool.filter(
-          (speciesId) =>
-            !previousPokemon
-              .map((pokemon) => pokemon.types)
-              .some((poke1Types) =>
-                isThereADuplicateType(poke1Types, data[speciesId].types)
-              )
-        )
-      }
-      return speciesPool
-    })
+  await getPokemonNames(meta, position, false, usedPoints, className).then(
+    (data) => {
+      randPokemon = getRandomPokemonSpecies(data, (speciesPool: string[]) => {
+        if (rule.flags && rule.flags.speciesClauseByForm) {
+          speciesPool = speciesPool.filter(
+            (speciesId) =>
+              !previousPokemon
+                .map((pokemon) => pokemon.speciesId)
+                .includes(speciesId)
+          )
+        }
+        if (rule.flags && rule.flags.speciesClauseByDex) {
+          speciesPool = speciesPool.filter(
+            (speciesId) =>
+              !previousPokemon
+                .map((pokemon) => pokemon.dex)
+                .includes(data[speciesId].dex)
+          )
+        }
+        if (rule.flags && rule.flags.typeClause) {
+          speciesPool = speciesPool.filter(
+            (speciesId) =>
+              !previousPokemon
+                .map((pokemon) => pokemon.types)
+                .some((poke1Types) =>
+                  isThereADuplicateType(poke1Types, data[speciesId].types)
+                )
+          )
+        }
+        return speciesPool
+      })
 
-    moveData = data[randPokemon].moves
-  })
+      moveData = data[randPokemon].moves
+    }
+  )
 
   // get random moves
   const moveset =
@@ -92,7 +96,13 @@ async function getRandomPokemon({
       : rule.advancedOptions.movesets === undefined
       ? 'original'
       : rule.advancedOptions.movesets
-  return getPokemonData(parseName(randPokemon), moveset, meta).then((data) => {
+  return getPokemonData(
+    parseName(randPokemon),
+    moveset,
+    meta,
+    undefined,
+    className
+  ).then((data) => {
     const cap = rule.maxCP
     const pokemon = data
     const stats = getIVs({

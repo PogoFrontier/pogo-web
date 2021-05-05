@@ -102,12 +102,16 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
     const types = new Set()
     const IDs = new Set()
     let hasMega = false
+    let className: string | undefined
     await parseToRule(meta).then((data) => {
       rule = data
       if (rule === undefined) {
         alert('An unexpected error occured')
         return
       }
+      className = rule.classes
+        ? rule.classes[Math.floor(Math.random() * rule.classes.length)].name
+        : undefined
     })
     for (let i = 0; i < 6; i++) {
       let pokemon: TeamMemberWithDex
@@ -116,6 +120,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
         rule,
         position: i,
         previousPokemon: t,
+        className,
       }).then((data) => {
         if (data === undefined) {
           alert('An unexpected error occured')
@@ -478,6 +483,7 @@ const TeamPage = () => {
     'Great League',
     'Commander Cup',
     'Floating City',
+    'Specialist Cup',
     'Nursery Cup',
     'Cliffhanger',
     'MainSeries Cup',

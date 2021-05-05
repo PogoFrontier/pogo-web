@@ -40,6 +40,9 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   )
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
+  const [className, setClassName] = useState(
+    metaMap[selectedMeta]?.classes?.[0]
+  )
   const [id, setId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
@@ -187,6 +190,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setSelectedPokemon(null)
   }
 
+  const handleSetClassName = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setClassName(e.target.value)
+  }
+
   useEffect(() => {
     if (teamToEdit) {
       setupForEditing()
@@ -219,6 +226,21 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         placeholder="Team Name"
         onChange={handleTeamNameChange}
       />
+      {className !== undefined && (
+        <select
+          className="classNameSelector"
+          name="class"
+          id="class"
+          onChange={handleSetClassName}
+          value={className}
+        >
+          {metaMap[selectedMeta].classes!.map((val: string) => (
+            <option value={val} key={val}>
+              {val}
+            </option>
+          ))}
+        </select>
+      )}
       <div className={style.btns}>
         <button
           className="btn btn-negative"
@@ -275,6 +297,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           deletePokemon={deletePokemon}
           meta={selectedMeta}
           position={editingIndex}
+          metaClassName={className}
         />
       </div>
     </div>
