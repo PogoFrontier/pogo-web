@@ -103,7 +103,9 @@ const GamePage = () => {
 
   const endGame = (result: string) => {
     ws.onclose = null
-    ws.close()
+    if (ws.close) {
+      ws.close()
+    }
     router.push(`/end/${room}?result=${result}`)
   }
 
@@ -298,7 +300,7 @@ const GamePage = () => {
 
   const fetchRoom = () => {
     Promise.all([
-      axios.get(`${SERVER}api/room/${room}`).then((res) => {
+      axios.get(`${SERVER}api/room/data/${room}`).then((res) => {
         const currentRoom: Room = res.data
         const playerIndex = currentRoom.players.findIndex((x) => x?.id === id)
         const player = currentRoom.players[playerIndex]
@@ -335,7 +337,7 @@ const GamePage = () => {
 
   const onClick = () => {
     if (status === StatusTypes.MAIN && wait <= -1) {
-      const data = '#fa'
+      const data = '#fa:'
       if (currentMove === '') {
         setCurrentMove(data)
         ws.send(data)
@@ -391,11 +393,6 @@ const GamePage = () => {
       const data = `#ca:${index}`
       if (currentMove === '' && bufferedMove === '') {
         setCurrentMove(data)
-        setActive((preva) => {
-          const prev = { ...preva }
-          prev[charPointer].current!.energy -= move.energy
-          return preva
-        })
         ws.send(data)
         return true
       }
@@ -538,7 +535,9 @@ const GamePage = () => {
               ? moves[charPointer].filter((_, i) => i !== 0)
               : []
           }
-          energy={current.current?.energy || 0}
+          currentMove={currentMove}
+          bufferedMove={bufferedMove}
+          energy={(current && current.current) ? current.current.energy : 0}
           onClick={onChargeClick}
         />
         {showKeys && (
