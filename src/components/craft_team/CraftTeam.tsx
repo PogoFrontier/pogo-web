@@ -206,6 +206,30 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setError('')
   }
 
+  function classSelector(): React.ReactElement | null {
+    if (className !== undefined) {
+      return (
+        <div className={style.label}>
+          <label>FILTER SPECIES SEARCH BY CLASS</label>
+          <select
+            className="classNameSelector"
+            name="class"
+            id="class"
+            onChange={handleSetClassName}
+            value={className}
+          >
+            {metaMap[selectedMeta].classes!.map((val: string) => (
+              <option value={val} key={val}>
+                {val}
+              </option>
+            ))}
+          </select>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <div>
       {!!error && (
@@ -242,24 +266,6 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           Validate
         </button>
       </div>
-      {className !== undefined && (
-        <div className={style.label}>
-          <label>Choose One:</label>
-          <select
-            className="classNameSelector"
-            name="class"
-            id="class"
-            onChange={handleSetClassName}
-            value={className}
-          >
-            {metaMap[selectedMeta].classes!.map((val: string) => (
-              <option value={val} key={val}>
-                {val}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
       <div>
         {workingTeam && (
           <ul className={style.members}>
@@ -301,6 +307,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           meta={selectedMeta}
           position={editingIndex}
           metaClassName={className}
+          classSelector={classSelector}
         />
       </div>
     </div>

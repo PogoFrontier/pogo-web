@@ -35,6 +35,7 @@ const TeamMemberSelector = (props: {
   meta: string
   position: number
   metaClassName?: string
+  classSelector: () => React.ReactElement | null
 }) => {
   const {
     cancelEdit,
@@ -44,6 +45,7 @@ const TeamMemberSelector = (props: {
     meta,
     position,
     metaClassName,
+    classSelector
   } = props
   const [userInput, setUserInput] = useState('')
   const [suggestions, setSuggestions] = useState<Map<string, pokemonType>>(
@@ -572,6 +574,7 @@ const TeamMemberSelector = (props: {
       ) : null}
       {suggestions && suggestions.size > 0 ? (
         <div className={style.searchbar}>
+          {classSelector()}
           <Input
             title="Species"
             type="text"
