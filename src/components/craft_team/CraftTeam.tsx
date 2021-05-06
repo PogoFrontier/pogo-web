@@ -40,6 +40,9 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   )
   const [editingIndex, setEditingIndex] = useState(0)
   const [teamName, setTeamName] = useState('New Team')
+  const [className, setClassName] = useState(
+    metaMap[selectedMeta]?.classes?.[0]
+  )
   const [id, setId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
@@ -187,6 +190,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setSelectedPokemon(null)
   }
 
+  const handleSetClassName = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setClassName(e.target.value)
+  }
+
   useEffect(() => {
     if (teamToEdit) {
       setupForEditing()
@@ -197,6 +204,30 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
 
   function onErrorPopupClose() {
     setError('')
+  }
+
+  function classSelector(): React.ReactElement | null {
+    if (className !== undefined) {
+      return (
+        <div className={style.label}>
+          <label>FILTER SPECIES SEARCH BY CLASS</label>
+          <select
+            className="classNameSelector"
+            name="class"
+            id="class"
+            onChange={handleSetClassName}
+            value={className}
+          >
+            {metaMap[selectedMeta].classes!.map((val: string) => (
+              <option value={val} key={val}>
+                {val}
+              </option>
+            ))}
+          </select>
+        </div>
+      )
+    }
+    return null
   }
 
   return (
@@ -275,6 +306,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           deletePokemon={deletePokemon}
           meta={selectedMeta}
           position={editingIndex}
+          metaClassName={className}
+          classSelector={classSelector}
         />
       </div>
     </div>

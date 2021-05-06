@@ -335,7 +335,7 @@ const GamePage = () => {
 
   const onClick = () => {
     if (status === StatusTypes.MAIN && wait <= -1) {
-      const data = '#fa:' + moves[charPointer][0].moveId
+      const data = '#fa'
       if (currentMove === '') {
         setCurrentMove(data)
         ws.send(data)
@@ -452,6 +452,10 @@ const GamePage = () => {
   const shieldKeyClick = useKeyPress(shieldKey)
 
   useEffect(() => {
+    if (!moves.length) {
+      return
+    }
+
     if (fastKeyClick) {
       onClick()
     } else if (charge1KeyClick) {
