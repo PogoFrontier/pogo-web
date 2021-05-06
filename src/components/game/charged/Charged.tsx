@@ -12,12 +12,16 @@ interface ChargedButtonProps {
   onClick: (move: Move, index: number) => void
   keyboardInput: string | undefined
   index: number
+  currentMove: string
+  bufferedMove: string
 }
 
 interface ChargedProps {
   moves: Move[]
   energy: number
   onClick: (move: Move, index: number) => void
+  currentMove: string
+  bufferedMove: string
 }
 
 const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
@@ -26,12 +30,21 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   onClick,
   keyboardInput,
   index,
+  currentMove,
+  bufferedMove,
 }) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     e.stopPropagation()
     onClick(move, index)
   }
+
+  function evaluatePressed() {
+    const search = `#ca:${index}`;
+    return currentMove === search || bufferedMove === search;
+  }
+
+  const pressed = evaluatePressed();
 
   return (
     <div
@@ -52,6 +65,7 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
           {
             [style.filled]: energy >= move.energy,
             [style.alternative]: energy >= move.energy * 2,
+            [style.pressed]: pressed
           },
         ])}
       >
@@ -79,6 +93,8 @@ const Charged: React.FunctionComponent<ChargedProps> = ({
   moves,
   onClick,
   energy,
+  currentMove,
+  bufferedMove
 }) => {
   if (!moves || moves.length <= 0) {
     return null
@@ -97,6 +113,8 @@ const Charged: React.FunctionComponent<ChargedProps> = ({
             index={index}
             energy={energy}
             onClick={onClick}
+            currentMove={currentMove}
+            bufferedMove={bufferedMove}
             keyboardInput={
               showKeys
                 ? getKeyDescription(

@@ -36,8 +36,8 @@
   z-index: 3;
   max-height: 100px;
   overflow: scroll;
+  margin-top: 1em;
   @include md() {
-    margin-top: 1em;
     left: 2em;
     top: -40%;
   }
