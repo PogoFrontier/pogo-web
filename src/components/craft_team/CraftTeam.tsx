@@ -226,21 +226,6 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         placeholder="Team Name"
         onChange={handleTeamNameChange}
       />
-      {className !== undefined && (
-        <select
-          className="classNameSelector"
-          name="class"
-          id="class"
-          onChange={handleSetClassName}
-          value={className}
-        >
-          {metaMap[selectedMeta].classes!.map((val: string) => (
-            <option value={val} key={val}>
-              {val}
-            </option>
-          ))}
-        </select>
-      )}
       <div className={style.btns}>
         <button
           className="btn btn-negative"
@@ -257,6 +242,24 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           Validate
         </button>
       </div>
+      {className !== undefined && (
+        <div className={style.label}>
+          <label>Choose One:</label>
+          <select
+            className="classNameSelector"
+            name="class"
+            id="class"
+            onChange={handleSetClassName}
+            value={className}
+          >
+            {metaMap[selectedMeta].classes!.map((val: string) => (
+              <option value={val} key={val}>
+                {val}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div>
         {workingTeam && (
           <ul className={style.members}>
