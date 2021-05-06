@@ -336,20 +336,23 @@ const GamePage = () => {
   }
 
   const onClick = () => {
-    if (status === StatusTypes.MAIN && wait <= -1) {
+    if (
+      status === StatusTypes.MAIN
+      && wait <= -1
+      && currentMove === ''
+      && bufferedMove === ''
+    ) {
       const data = '#fa:'
-      if (currentMove === '') {
-        setCurrentMove(data)
-        ws.send(data)
-        setCharacters((prev) => {
-          prev[0].anim = {
-            move: moves[charPointer][0],
-            type: Actions.FAST_ATTACK,
-          }
-          return prev
-        })
-        return true
-      }
+      setCurrentMove(data)
+      ws.send(data)
+      setCharacters((prev) => {
+        prev[0].anim = {
+          move: moves[charPointer][0],
+          type: Actions.FAST_ATTACK,
+        }
+        return prev
+      })
+      return true
     }
     return false
   }
