@@ -36,6 +36,11 @@ const MatchupPage = () => {
   const { routing, prev } = useContext(HistoryContext)
 
   const onMessage = (message: MessageEvent) => {
+    if (message.data.startsWith('$end')) {
+      const result = message.data.slice(4)
+      endGame(result)
+      return
+    }
     const data: Data = JSON.parse(message.data)
     switch (data.type) {
       case CODE.room_join:
@@ -94,6 +99,10 @@ const MatchupPage = () => {
 
   const toGame = () => {
     router.push(`/game/${room}`)
+  }
+
+  const endGame = (result: string) => {
+    router.push(`/end/${room}?result=${result}`)
   }
 
   return (

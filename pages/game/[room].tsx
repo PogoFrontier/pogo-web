@@ -537,7 +537,7 @@ const GamePage = () => {
           }
           currentMove={currentMove}
           bufferedMove={bufferedMove}
-          energy={(current && current.current) ? current.current.energy : 0}
+          energy={current && current.current ? current.current.energy : 0}
           onClick={onChargeClick}
         />
         {showKeys && (

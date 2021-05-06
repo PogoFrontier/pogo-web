@@ -40,11 +40,11 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   }
 
   function evaluatePressed() {
-    const search = `#ca:${index}`;
-    return currentMove === search || bufferedMove === search;
+    const search = `#ca:${index}`
+    return currentMove === search || bufferedMove === search
   }
 
-  const pressed = evaluatePressed();
+  const pressed = evaluatePressed()
 
   return (
     <div
@@ -65,7 +65,7 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
           {
             [style.filled]: energy >= move.energy,
             [style.alternative]: energy >= move.energy * 2,
-            [style.pressed]: pressed
+            [style.pressed]: pressed,
           },
         ])}
       >
@@ -94,7 +94,7 @@ const Charged: React.FunctionComponent<ChargedProps> = ({
   onClick,
   energy,
   currentMove,
-  bufferedMove
+  bufferedMove,
 }) => {
   if (!moves || moves.length <= 0) {
     return null

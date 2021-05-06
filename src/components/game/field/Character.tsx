@@ -26,7 +26,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
       const cooldown =
         anim.type === Actions.FAST_ATTACK ? anim.move!.cooldown! : 500
       setS(`${anim.type}${cooldown}`)
-      setCount(prev => prev + 1)
+      setCount((prev) => prev + 1)
     }
   }, [anim])
 
