@@ -45,7 +45,7 @@ const TeamMemberSelector = (props: {
     meta,
     position,
     metaClassName,
-    classSelector
+    classSelector,
   } = props
   const [userInput, setUserInput] = useState('')
   const [suggestions, setSuggestions] = useState<Map<string, pokemonType>>(
