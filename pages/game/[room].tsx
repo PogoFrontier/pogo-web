@@ -362,7 +362,7 @@ const GamePage = () => {
       status === StatusTypes.MAIN &&
       swap <= 0 &&
       wait <= -1 &&
-      active[pos].current?.hp &&
+      active[pos]?.current?.hp &&
       active[pos].current!.hp > 0
     ) {
       const data = '#sw:' + pos
@@ -456,9 +456,7 @@ const GamePage = () => {
       return
     }
 
-    if (fastKeyClick) {
-      onClick()
-    } else if (charge1KeyClick) {
+    if (charge1KeyClick) {
       const move = moves[charPointer][1]
       if (!onChargeClick(move, 0)) {
         onClick()
@@ -469,12 +467,20 @@ const GamePage = () => {
         onClick()
       }
     } else if (switch1KeyClick) {
-      const pos = charPointer === 0 ? 1 : 0
+      const pos = active.findIndex(
+        (poke, index) => poke.current?.hp && index !== charPointer
+      )
       if (!onSwitchClick(pos)) {
         onFaintClick(pos)
       }
     } else if (switch2KeyClick) {
-      const pos = charPointer !== 2 ? 2 : 1
+      const pos =
+        2 -
+        [...active]
+          .reverse()
+          .findIndex(
+            (poke, index) => poke.current?.hp && 2 - index !== charPointer
+          )
       if (!onSwitchClick(pos)) {
         onFaintClick(pos)
       }
@@ -482,13 +488,16 @@ const GamePage = () => {
       onShield()
     }
   }, [
-    fastKeyClick,
     charge1KeyClick,
     charge2KeyClick,
     switch1KeyClick,
     switch2KeyClick,
     shieldKeyClick,
   ])
+
+  if (fastKeyClick) {
+    onClick()
+  }
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {
