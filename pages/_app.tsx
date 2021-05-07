@@ -48,6 +48,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
 
+  const [language, setLanguage] = useState('English')
+
   useEffect(() => {
     const keysFromStorage: any = localStorage.getItem('settings')
     if (
@@ -188,7 +190,15 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
       <SettingsContext.Provider
-        value={{ showKeys, keys, setShowKeys, setKeys, clear }}
+        value={{
+          showKeys,
+          keys,
+          setShowKeys,
+          setKeys,
+          clear,
+          language,
+          setLanguage,
+        }}
       >
         <IdContext.Provider value={{ id, setId }}>
           <UserContext.Provider
