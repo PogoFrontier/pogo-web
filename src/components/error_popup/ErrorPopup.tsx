@@ -35,7 +35,16 @@ const ErrorPopup: React.FunctionComponent<ErrorPopupProps> = ({
 
   return (
     <Modal onClose={onClose} title={title}>
-      <div className={style.errormessage}>{error}</div>
+      <div className={style.errormessage}>
+        {error.split('\n').map((item) => {
+          return (
+            <>
+              {item}
+              <br />
+            </>
+          )
+        })}
+      </div>
       <div className={style.actions}>
         {buttons.map((buttonProps, index) => {
           return (

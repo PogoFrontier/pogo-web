@@ -451,6 +451,7 @@ const TeamMemberSelector = (props: {
               placeholder="None"
               id="name"
               onChange={handlePokemonChange}
+              maxLength={12}
               value={addToBox.name ? addToBox.name : ''}
             />
             <button

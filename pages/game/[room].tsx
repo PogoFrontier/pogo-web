@@ -337,10 +337,10 @@ const GamePage = () => {
 
   const onClick = () => {
     if (
-      status === StatusTypes.MAIN
-      && wait <= -1
-      && currentMove === ''
-      && bufferedMove === ''
+      status === StatusTypes.MAIN &&
+      wait <= -1 &&
+      currentMove === '' &&
+      bufferedMove === ''
     ) {
       const data = '#fa:'
       setCurrentMove(data)

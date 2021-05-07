@@ -195,11 +195,11 @@ const Form: React.FunctionComponent = () => {
       {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
       <section className={style.root}>
         {render()}
-        { count > -1 &&
+        {count > -1 && (
           <span className={style.status}>
-            {count} player{count === 1 ? "" : "s"} online
+            {count} player{count === 1 ? '' : 's'} online
           </span>
-        }
+        )}
       </section>
     </>
   )
