@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import style from './controls.module.scss'
 import returnKey from '@common/actions/getKeyDescription'
 import { isDesktop } from 'react-device-detect'
+import { getStrings } from '@trans/translations'
 
 interface KeyInputProps {
   value: string
@@ -63,6 +64,7 @@ const KeyInput: React.FC<KeyInputProps> = ({
 
 const Controls = () => {
   const settings = useContext(SettingsContext)
+  const strings = getStrings(settings.language)
   const showKeys = settings.showKeys
   const {
     fastKey,
@@ -90,26 +92,26 @@ const Controls = () => {
     <div className={style.root}>
       <section>
         <KeyInput
-          title="Fast Attack / Charge Move Powerup"
+          title={strings.fast_attack_setting}
           value={fastKey}
           type="fastKey"
           onSetKey={onSetKey}
         />
         <KeyInput
-          title="Switch 1"
+          title={strings.switch_one}
           value={switch1Key}
           type="switch1Key"
           onSetKey={onSetKey}
         />
         <KeyInput
-          title="Switch 2"
+          title={strings.switch_two}
           value={switch2Key}
           type="switch2Key"
           onSetKey={onSetKey}
         />
         {isDesktop && (
           <Toggle
-            title="Show Keys"
+            title={strings.show_keys}
             checked={showKeys}
             onChange={settings.setShowKeys}
           />
@@ -117,19 +119,19 @@ const Controls = () => {
       </section>
       <section>
         <KeyInput
-          title="Shield"
+          title={strings.shield}
           value={shieldKey}
           type="shieldKey"
           onSetKey={onSetKey}
         />
         <KeyInput
-          title="Charge 1"
+          title={strings.charge_one}
           value={charge1Key}
           type="charge1Key"
           onSetKey={onSetKey}
         />
         <KeyInput
-          title="Charge 2"
+          title={strings.charge_two}
           value={charge2Key}
           type="charge2Key"
           onSetKey={onSetKey}

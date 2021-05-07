@@ -22,6 +22,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
+import { getStrings } from '@trans/translations'
 
 /**
  * NextJS wrapper
@@ -49,6 +50,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
 
   const [language, setLanguage] = useState('English')
+
+  const strings = getStrings(language)
 
   useEffect(() => {
     const keysFromStorage: any = localStorage.getItem('settings')
@@ -166,7 +169,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const clear = () => {
-    if (window.confirm("Are you sure you'd like to clear all your data?")) {
+    if (window.confirm(strings.clear_data_confirmation)) {
       localStorage.clear()
       const newUser: User = {
         displayName: uuidv4(),
@@ -176,7 +179,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       localStorage.setItem('user', JSON.stringify(newUser))
       setCurrentTeam(defaultTeam)
       setKeys1(defaultKeys)
-      alert('All cookies cleared.')
+      alert(strings.cookies_cleared)
     }
   }
 

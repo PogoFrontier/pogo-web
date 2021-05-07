@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
 import ImageHandler from '@common/actions/getImages'
 import Input from '@components/input/Input'
@@ -10,6 +10,8 @@ import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import metaMap from '@common/actions/metaMap'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
+import SettingsContext from '@context/SettingsContext'
+import { getStrings } from '@trans/translations'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -46,6 +48,9 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [id, setId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
+
+  const settings = useContext(SettingsContext)
+  const strings = getStrings(settings.language)
 
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
@@ -84,16 +89,16 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
       )
       if (result.message) {
         setError(result.message)
-        setPopupTitle('Your team is invalid')
+        setPopupTitle(strings.invalid_team)
         setPopupButtons(undefined)
       } else {
         setError(' ')
-        setPopupTitle('Your team is valid')
+        setPopupTitle(strings.valid_team)
         setPopupButtons(undefined)
       }
     } else {
-      setError(`Meta ${selectedMeta} doesn't exist`)
-      setPopupTitle("Wait, what? That shouldn't happen.")
+      setError(strings.meta_not_existing.replace('%1', selectedMeta))
+      setPopupTitle(strings.not_possible)
       setPopupButtons(undefined)
     }
 
@@ -112,15 +117,15 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
       )
       if (result.message) {
         setError(result.message)
-        setPopupTitle('Are you sure, you want to exit? Your team is invalid')
+        setPopupTitle(strings.exit_invalid_team)
         setPopupButtons([
           {
-            title: 'Exit anyway',
+            title: strings.exit_anyway,
             onClick: onExit,
             className: 'btn btn-negative',
           },
           {
-            title: 'Continue editing',
+            title: strings.continue_edit,
             onClick: onErrorPopupClose,
             className: 'btn btn-secondary',
           },
@@ -129,8 +134,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         onExit()
       }
     } else {
-      setError(`Meta ${selectedMeta} doesn't exist`)
-      setPopupTitle("Wait, what? That shouldn't happen.")
+      setError(strings.meta_not_existing.replace('%1', selectedMeta))
+      setPopupTitle(strings.not_possible)
       setPopupButtons(undefined)
     }
 
@@ -166,7 +171,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     }
 
     if (!name) {
-      name = teamName === '' ? 'New Team' : teamName
+      name = teamName === '' ? strings.new_team : teamName
     }
     const newId: string = id === '' ? uuidv4() : id
     setId(newId)
@@ -244,10 +249,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
         <Loader type="TailSpin" color="#68BFF5" height={80} width={80} />
       )}
       <Input
-        title="Name"
+        title={strings.name}
         type="text"
         value={teamName}
-        placeholder="Team Name"
+        placeholder={strings.team_name}
         onChange={handleTeamNameChange}
       />
       <div className={style.btns}>
@@ -293,7 +298,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
                   onClick={handleAddMemberClick}
                   disabled={isLoading}
                 >
-                  Add New
+                  {strings.add_new}
                 </button>
               </li>
             )}

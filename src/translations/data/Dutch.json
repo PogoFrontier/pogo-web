@@ -1,3 +1,9 @@
 {
-	"project_title": "Project Grookey"
+	"project_title": "Project Grookey",
+	"your_team" : "Jouw team",
+	"select_team" : "Selecteer team",
+	"team_not_available": "Geen teams beschikbaar",
+	"friends" :"vrienden",
+	"coming_soon" :"Binnenkort!",
+	"links" : "links"
 }

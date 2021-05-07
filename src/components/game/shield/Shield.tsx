@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import getKeyDescription from '@common/actions/getKeyDescription'
 import style from './shield.module.scss'
 import SettingsContext from '@context/SettingsContext'
+import { getStrings } from '@trans/translations'
 
 interface ShieldProps {
   value: boolean
@@ -19,6 +20,10 @@ const Shield: React.FC<ShieldProps> = ({ value, onShield, shields }) => {
   const { shieldKey } = keys
 
   const disabled = value || shields <= 0
+
+  const settings = useContext(SettingsContext)
+  const strings = getStrings(settings.language)
+
   return (
     <>
       {showKeys && !disabled && (
@@ -27,7 +32,7 @@ const Shield: React.FC<ShieldProps> = ({ value, onShield, shields }) => {
         </label>
       )}
       <button className="btn btn-primary" onClick={onClick} disabled={disabled}>
-        {disabled ? 'Waiting...' : 'Shield?'}
+        {disabled ? strings.waiting : strings.shield_question}
       </button>
     </>
   )

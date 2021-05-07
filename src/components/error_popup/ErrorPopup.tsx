@@ -1,4 +1,7 @@
 import Modal from '@components/modal/Modal'
+import SettingsContext from '@context/SettingsContext'
+import { getStrings } from '@trans/translations'
+import { useContext } from 'react'
 import style from './style.module.scss'
 
 interface ButtonProps {
@@ -20,13 +23,16 @@ const ErrorPopup: React.FunctionComponent<ErrorPopupProps> = ({
   title,
   buttons,
 }) => {
+  const settings = useContext(SettingsContext)
+  const strings = getStrings(settings.language)
+
   if (!title) {
-    title = "Hold up! There's an error."
+    title = String(strings.error)
   }
   if (!buttons) {
     buttons = [
       {
-        title: 'Got it!',
+        title: strings.got_it,
         onClick: onClose,
         className: 'btn btn-secondary',
       },

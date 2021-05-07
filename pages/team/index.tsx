@@ -22,6 +22,8 @@ import getCP, { BaseStatsProps } from '@common/actions/getCP'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import ImportTeam from '@components/import_team/ImportTeam'
 import calculateStats from '@common/actions/calculateStats'
+import { getStrings } from '@trans/translations'
+import SettingsContext from '@context/SettingsContext'
 
 interface TeamExportProps {
   speciesId: string
@@ -70,6 +72,9 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   )
   const [isImportLoading, setIsImportLoading] = useState(false)
 
+  const settings = useContext(SettingsContext)
+  const strings = getStrings(settings.language)
+
   useEffect(() => {
     setIsLoading(false)
   }, [teamToEdit])
@@ -106,7 +111,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
     await parseToRule(meta).then((data) => {
       rule = data
       if (rule === undefined) {
-        alert('An unexpected error occured')
+        alert(strings.unexpected_error)
         return
       }
       className = rule.classes
@@ -123,7 +128,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
         className,
       }).then((data) => {
         if (data === undefined) {
-          alert('An unexpected error occured')
+          alert(strings.unexpected_error)
           return
         }
         pokemon = data
@@ -238,7 +243,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
         )
         if (result.message) {
           setError(result.message)
-          setPopupTitle('Your team is invalid')
+          setPopupTitle(strings.invalid_team)
           setPopupButtons(undefined)
         } else {
           updateTeam({
@@ -255,8 +260,8 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
         setIsImportLoading(false)
       })
     } catch (error) {
-      setError('Invalid team object entered.')
-      setPopupTitle('Your team is invalid')
+      setError(strings.invalid_team_object)
+      setPopupTitle(strings.invalid_team)
       setPopupButtons(undefined)
       setIsImportLoading(false)
       return
@@ -305,7 +310,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const teamToExport = user.teams[parseInt(e.currentTarget.value, 10)]
     navigator.clipboard.writeText(formatTeam(teamToExport))
-    setPopup('Team succesfully copied to your clipboard!')
+    setPopup(strings.team_copied_succes)
   }
 
   const handleEditTeam = (
@@ -332,11 +337,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   }
 
   const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    if (
-      window.confirm(
-        'You cannot undo this action. Are you sure you want to delete this team?'
-      )
-    ) {
+    if (window.confirm(strings.confirm_team_delete)) {
       const i = parseInt(e.currentTarget.value, 10)
 
       if (team && team.id === user.teams[i].id) {
@@ -353,7 +354,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   }
 
   if (!user || !user.teams) {
-    return <p>Please sign in to use the teambuilder</p>
+    return <p>{strings.teambuilder_signin}</p>
   }
 
   if (isCrafting) {
@@ -425,14 +426,14 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
                     onClick={handleDelete}
                     className={classnames([style.btn, style.delete])}
                   >
-                    Delete
+                    {strings.delete}
                   </button>
                   <button
                     value={i}
                     onClick={handleExport}
                     className={classnames([style.btn, style.edit])}
                   >
-                    Export
+                    {strings.export}
                   </button>
                 </div>
               </div>
@@ -440,11 +441,11 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
           }
         })
       ) : (
-        <p>No Teams to display</p>
+        <p>{strings.no_teams_display}</p>
       )}
       <div className={style.addButtons}>
         <button className="btn btn-primary" onClick={handleOnClickAddTeam}>
-          Add Team
+          {strings.add_team}
         </button>
         {isRandomTeamLoading ? (
           <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
@@ -453,7 +454,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
             className="btn btn-primary"
             onClick={handleOnClickAddRandomTeam}
           >
-            Get Random Team
+            {strings.add_random_team}
           </button>
         )}
         <button
@@ -461,7 +462,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
           onClick={startTeamImport}
           style={{ visibility: isImportingTeam ? 'hidden' : 'visible' }}
         >
-          Import Team
+          {strings.import_team}
         </button>
       </div>
 

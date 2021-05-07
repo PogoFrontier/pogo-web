@@ -1,7 +1,9 @@
 import { Anim } from '@adibkhan/pogo-web-backend'
 import { Actions } from '@adibkhan/pogo-web-backend/actions'
+import SettingsContext from '@context/SettingsContext'
+import { getStrings } from '@trans/translations'
 import classnames from 'classnames'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useContext } from 'react'
 import Character, { CharacterProps } from './Character'
 import style from './field.module.scss'
 
@@ -34,9 +36,12 @@ const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
       case 'faint':
         return <>It's a KO!</>
       case Actions.FAST_ATTACK:
+        const settings = useContext(SettingsContext)
+        const strings = getStrings(settings.language)
+
         return (
           <>
-            They used{' '}
+            {strings.used}
             <strong
               className={classnames([style.move, style[value.move!.type]])}
             >
@@ -46,9 +51,9 @@ const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
           </>
         )
       case Actions.SWITCH:
-        return <>They are switching.</>
+        return <>{strings.switching}.</>
       case Actions.CHARGE_ATTACK:
-        return <>They are charging up!</>
+        return <>{strings.charging}</>
     }
     const v = value as Message
     if (v.message) {

@@ -27,6 +27,7 @@ import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
+import { getStrings } from '@trans/translations'
 
 interface CheckPayload {
   countdown: number
@@ -56,7 +57,7 @@ const GamePage = () => {
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
-  const { showKeys, keys } = useContext(SettingsContext)
+  const { showKeys, keys, language } = useContext(SettingsContext)
   const {
     fastKey,
     charge1Key,
@@ -88,6 +89,8 @@ const GamePage = () => {
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
   const [message, setMessage] = useState('')
+
+  const strings = getStrings(language)
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
@@ -97,7 +100,7 @@ const GamePage = () => {
 
   const startGame = () => {
     setTime(240)
-    setMessage('GO!')
+    setMessage(strings.battle_start)
     setStatus(StatusTypes.MAIN)
   }
 
@@ -233,7 +236,9 @@ const GamePage = () => {
     if (payload.countdown === 4) {
       startGame()
     } else {
-      setMessage(`Starting: ${payload.countdown}...`)
+      setMessage(
+        strings.battle_start_countdown.replace('%1', payload.countdown)
+      )
     }
   }
 

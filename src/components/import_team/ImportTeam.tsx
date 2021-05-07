@@ -1,5 +1,8 @@
 import style from './ImportTeam.module.scss'
 import Loader from 'react-loader-spinner'
+import { useContext } from 'react'
+import SettingsContext from '@context/SettingsContext'
+import { getStrings } from '@trans/translations'
 
 interface ImportTeamProps {
   visible: boolean
@@ -18,13 +21,16 @@ const ImportTeam: React.FC<ImportTeamProps> = ({
   confirmImport,
   isLoading,
 }) => {
+  const settings = useContext(SettingsContext)
+  const strings = getStrings(settings.language)
+
   return (
     <div
       className={style.importTeam}
       style={{ visibility: visible ? 'visible' : 'hidden' }}
     >
       <textarea
-        placeholder="Paste your imported team here"
+        placeholder={strings.paste_import_team}
         onChange={saveImportString}
         value={importString}
       />
@@ -33,12 +39,12 @@ const ImportTeam: React.FC<ImportTeamProps> = ({
           <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
         ) : (
           <button onClick={confirmImport} className="btn btn-primary">
-            Import
+            {strings.import}
           </button>
         )}
 
         <button onClick={cancelImport} className="btn btn-negative">
-          Cancel
+          {strings.exit}
         </button>
       </div>
     </div>
