@@ -456,9 +456,7 @@ const GamePage = () => {
       return
     }
 
-    if (fastKeyClick) {
-      onClick()
-    } else if (charge1KeyClick) {
+    if (charge1KeyClick) {
       const move = moves[charPointer][1]
       if (!onChargeClick(move, 0)) {
         onClick()
@@ -482,13 +480,16 @@ const GamePage = () => {
       onShield()
     }
   }, [
-    fastKeyClick,
     charge1KeyClick,
     charge2KeyClick,
     switch1KeyClick,
     switch2KeyClick,
     shieldKeyClick,
   ])
+
+  if (fastKeyClick) {
+    onClick()
+  }
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {
