@@ -60,8 +60,8 @@ async function getRandomPokemon({
           speciesPool = speciesPool.filter(
             (speciesId) =>
               !previousPokemon
-                .map((pokemon) => pokemon.speciesId)
-                .includes(speciesId)
+                .map((pokemon) => pokemon.speciesId.replace('_shadow', ''))
+                .includes(speciesId.replace('_shadow', ''))
           )
         }
         if (rule.flags && rule.flags.speciesClauseByDex) {
