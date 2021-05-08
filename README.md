@@ -22,7 +22,7 @@ Project Grookey is a NextJs + Express + WebSocket application. To run this proje
 <b>Note:</b> If you haven't used npm before, make sure to [install](https://www.npmjs.com/get-npm) it first.
 
 ## Project Status
-Currently, this project is private alpha. We are approaching beta testing, so here is the [link](https://forms.gle/5ZFB8QDp8z8cDk468) if you are interested in testing.
+Currently, this project is in private beta. We are still inviting people, so here is the [link](https://forms.gle/5ZFB8QDp8z8cDk468) if you are interested in testing.
  
 We'll update this repository with major milestones. You can get the MOST up to date information from our [Github Issues](https://github.com/DeveloperKhan/pogo-web/issues). Many similar projects have stalled, so we will keep our progress very public to not suffer the same fate.
 
