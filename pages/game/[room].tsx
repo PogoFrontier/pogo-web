@@ -181,7 +181,7 @@ const GamePage = () => {
                 return StatusTypes.MAIN
               }
             }
-            return StatusTypes.WAITING
+            return StatusTypes.MAIN
           })
         }
       }
