@@ -174,15 +174,9 @@ const GamePage = () => {
               payload.update[1].wait <= -1
             ) {
               if (prev === StatusTypes.CHARGE) {
-                setChargeMult((prev1) => {
-                  ws.send('$c' + prev1.toString())
-                  return 0.25
-                })
+                setChargeMult(0.25)
               } else if (prev === StatusTypes.SHIELD) {
-                setToShield((prev1) => {
-                  ws.send('$s' + (prev1 ? 1 : 0).toString())
-                  return false
-                })
+                setToShield(false)
               } else {
                 return StatusTypes.MAIN
               }
@@ -228,6 +222,14 @@ const GamePage = () => {
     setSwap(payload.switch)
     setTime(payload.time)
   }
+
+  // Send updates to charge moev decisions
+  useEffect(() => {
+    ws.send('$c' + chargeMult.toString())
+  }, [chargeMult, status === StatusTypes.CHARGE])
+  useEffect(() => {
+    ws.send('$s' + (toShield ? 1 : 0).toString())
+  }, [toShield])
 
   const onGameStatus = (payload: CheckPayload) => {
     if (payload.countdown === 4) {
