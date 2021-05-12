@@ -398,6 +398,7 @@ const GamePage = () => {
       const data = `#ca:${index}`
       if (currentMove === '' && bufferedMove === '') {
         setCurrentMove(data)
+        setBufferedMove(data)
         ws.send(data)
         return true
       }

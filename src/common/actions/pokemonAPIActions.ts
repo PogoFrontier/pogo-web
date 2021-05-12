@@ -62,3 +62,12 @@ export const parseToRule = async (rule: string) => {
     return err.message
   }
 }
+
+export const getRandomPokemon = async (rule: string) => {
+  try {
+    const res = await API.get(`api/random/${rule}`)
+    return res.data
+  } catch (err) {
+    return err
+  }
+}
