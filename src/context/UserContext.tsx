@@ -20,7 +20,7 @@ export interface User {
 
 const UserContext = createContext({
   user: {} as User,
-  refreshUser: () => {
+  setUser: () => {
     return
   },
   setTeams: (_teams: any[]) => {

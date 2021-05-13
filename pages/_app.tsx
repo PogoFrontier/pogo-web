@@ -112,8 +112,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   })
 
-  const refreshUser = () => {
-    // Yeet
+  const setUser = () => {
+    // Yeet, but cooler
   }
 
   const setTeams = (teams: any[]) => {
@@ -195,7 +195,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       >
         <IdContext.Provider value={{ id, setId }}>
           <UserContext.Provider
-            value={{ user: currentUser!, refreshUser, setTeams }}
+            value={{ user: currentUser!, setUser, setTeams }}
           >
             <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
               <SocketContext.Provider
