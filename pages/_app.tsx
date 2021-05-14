@@ -21,6 +21,7 @@ import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
+import { signInWithGoogleId } from '@common/actions/userAPIActions'
 
 /**
  * NextJS wrapper
@@ -60,32 +61,70 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       }
     }
     // first try to load from localstorage and store in context
-    const userFromStorage: string | null = localStorage.getItem('user')
+    // actually, first try loading authed user data from local,
+    // then load from firebase if there is one
+    // or create local user if there is none
+    // and then store in context
+
+    const authedUserFromStorage: string | null = localStorage.getItem(
+      'authedUser'
+    )
     if (
       typeof window !== undefined &&
-      userFromStorage &&
-      userFromStorage !== 'undefined'
+      authedUserFromStorage &&
+      authedUserFromStorage !== 'undefined'
     ) {
-      const userJSON = JSON.parse(userFromStorage)
-      setCurrentUser(userJSON)
-    } else {
-      const newUser: User = {
-        displayName: uuidv4(),
-        teams: [],
+      const parsedUserCredentials = JSON.parse(authedUserFromStorage)
+      if (parsedUserCredentials.googleId && parsedUserCredentials.email) {
+        signInWithGoogleId(parsedUserCredentials.googleId)
+          .then((res) => {
+            if (res.data.email === parsedUserCredentials.email) {
+              const authedUser = res.data
+              setCurrentUser(authedUser)
+              if (authedUser.teams && authedUser.teams.length > 0) {
+                setCurrentTeam(authedUser.teams[0])
+              } else {
+                setCurrentTeam(defaultTeam)
+              }
+            } else {
+              // data is tampered with, create local user like nothing ever happened B-)
+            }
+          })
+          .catch(() => {
+            // handle error messages, if user not found create local user, else display error
+          })
+      } else {
+        // add username/password logic to this, right here
       }
-      setCurrentUser(newUser)
-      localStorage.setItem('user', JSON.stringify(newUser))
-    }
-    const teamFromStorage: string | null = localStorage.getItem('team')
-    if (
-      typeof window !== undefined &&
-      teamFromStorage &&
-      teamFromStorage !== 'undefined'
-    ) {
-      const teamJSON: UserTeam = JSON.parse(teamFromStorage)
-      setCurrentTeam(teamJSON)
     } else {
-      setCurrentTeam(defaultTeam)
+      // NOW we can check for a local user.
+      const userFromStorage: string | null = localStorage.getItem('user')
+      if (
+        typeof window !== undefined &&
+        userFromStorage &&
+        userFromStorage !== 'undefined'
+      ) {
+        const userJSON = JSON.parse(userFromStorage)
+        setCurrentUser(userJSON)
+      } else {
+        const newUser: User = {
+          displayName: uuidv4(),
+          teams: [],
+        }
+        setCurrentUser(newUser)
+        localStorage.setItem('user', JSON.stringify(newUser))
+      }
+      const teamFromStorage: string | null = localStorage.getItem('team')
+      if (
+        typeof window !== undefined &&
+        teamFromStorage &&
+        teamFromStorage !== 'undefined'
+      ) {
+        const teamJSON: UserTeam = JSON.parse(teamFromStorage)
+        setCurrentTeam(teamJSON)
+      } else {
+        setCurrentTeam(defaultTeam)
+      }
     }
   }, [])
 
