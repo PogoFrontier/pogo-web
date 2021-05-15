@@ -177,20 +177,14 @@ const GamePage = () => {
               payload.update[1].wait <= -1
             ) {
               if (prev === StatusTypes.CHARGE) {
-                setChargeMult((prev1) => {
-                  ws.send('$c' + prev1.toString())
-                  return 0.25
-                })
+                setChargeMult(0.25)
               } else if (prev === StatusTypes.SHIELD) {
-                setToShield((prev1) => {
-                  ws.send('$s' + (prev1 ? 1 : 0).toString())
-                  return false
-                })
+                setToShield(false)
               } else {
                 return StatusTypes.MAIN
               }
             }
-            return StatusTypes.WAITING
+            return StatusTypes.MAIN
           })
         }
       }
@@ -231,6 +225,14 @@ const GamePage = () => {
     setSwap(payload.switch)
     setTime(payload.time)
   }
+
+  // Send updates to charge moev decisions
+  useEffect(() => {
+    ws.send('$c' + chargeMult.toString())
+  }, [chargeMult, status === StatusTypes.CHARGE])
+  useEffect(() => {
+    ws.send('$s' + (toShield ? 1 : 0).toString())
+  }, [toShield])
 
   const onGameStatus = (payload: CheckPayload) => {
     if (payload.countdown === 4) {
@@ -367,7 +369,7 @@ const GamePage = () => {
       status === StatusTypes.MAIN &&
       swap <= 0 &&
       wait <= -1 &&
-      active[pos].current?.hp &&
+      active[pos]?.current?.hp &&
       active[pos].current!.hp > 0
     ) {
       const data = '#sw:' + pos
@@ -461,9 +463,7 @@ const GamePage = () => {
       return
     }
 
-    if (fastKeyClick) {
-      onClick()
-    } else if (charge1KeyClick) {
+    if (charge1KeyClick) {
       const move = moves[charPointer][1]
       if (!onChargeClick(move, 0)) {
         onClick()
@@ -474,12 +474,20 @@ const GamePage = () => {
         onClick()
       }
     } else if (switch1KeyClick) {
-      const pos = charPointer === 0 ? 1 : 0
+      const pos = active.findIndex(
+        (poke, index) => poke.current?.hp && index !== charPointer
+      )
       if (!onSwitchClick(pos)) {
         onFaintClick(pos)
       }
     } else if (switch2KeyClick) {
-      const pos = charPointer !== 2 ? 2 : 1
+      const pos =
+        2 -
+        [...active]
+          .reverse()
+          .findIndex(
+            (poke, index) => poke.current?.hp && 2 - index !== charPointer
+          )
       if (!onSwitchClick(pos)) {
         onFaintClick(pos)
       }
@@ -487,13 +495,16 @@ const GamePage = () => {
       onShield()
     }
   }, [
-    fastKeyClick,
     charge1KeyClick,
     charge2KeyClick,
     switch1KeyClick,
     switch2KeyClick,
     shieldKeyClick,
   ])
+
+  if (fastKeyClick) {
+    onClick()
+  }
 
   useEffect(() => {
     if (ws.readyState === ws.OPEN) {

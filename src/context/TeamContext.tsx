@@ -1,11 +1,8 @@
 import { createContext } from 'react'
-import { TeamMember } from '@adibkhan/pogo-web-backend'
+import { UserTeam } from '@context/UserContext'
 
-export const defaultTeam: {
-  id: 'defaultTeam'
-  format: string
-  members: TeamMember[]
-} = {
+export const defaultTeam: UserTeam = {
+  name: 'Default',
   id: 'defaultTeam',
   format: 'Great League',
   members: [

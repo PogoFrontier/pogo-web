@@ -20,6 +20,7 @@ import SettingsContext from '@context/SettingsContext'
 import { getStrings } from '@trans/translations'
 
 type pokemonType = {
+  speciesName: string
   types: string[]
   tags?: string[]
   dex: number
@@ -131,54 +132,61 @@ const TeamMemberSelector = (props: {
 
     setUserInput(input)
     setFilteredSuggestions(
-      Array.from(suggestions.keys()).filter((s) => {
-        // Is all string?
-        if (input === 'all' || input === '@all') {
-          return true
-        }
-        // Is substring of speciesId?
-        if (s.toLowerCase().indexOf(input) > -1) {
-          return true
-        }
-        const suggestion = suggestions.get(s)
+      Array.from(suggestions.values())
+        .filter((suggestion) => {
+          // Is all string?
+          if (input === 'all' || input === '@all') {
+            return true
+          }
 
-        // Is the pokémon's type
-        if (suggestion?.types.includes(input)) {
-          return true
-        }
+          // Is substring of speciesId?
+          if (suggestion.speciesName.toLowerCase().indexOf(input) > -1) {
+            return true
+          }
 
-        // Is the pokémon's tag
-        if (suggestion?.tags?.includes(tagNeedle)) {
-          return true
-        }
+          // Is the pokémon's type
+          if (suggestion.types.includes(input)) {
+            return true
+          }
 
-        // Is the pokémon's move
-        const moves = suggestion?.moves.fastMoves.concat(
-          ...suggestion?.moves.chargedMoves
-        )
-        if (
-          input.startsWith('@') &&
-          moves?.some((fastMove) =>
-            fastMove.moveId.includes(
-              input.toUpperCase().slice(1).replace(' ', '_')
-            )
+          // Is the pokémon's tag
+          if (suggestion.tags?.includes(tagNeedle)) {
+            return true
+          }
+
+          // Is the pokémon's move
+          const moves = suggestion.moves.fastMoves.concat(
+            ...suggestion.moves.chargedMoves
           )
-        ) {
-          return true
-        }
+          if (
+            input.startsWith('@') &&
+            moves?.some((fastMove) =>
+              fastMove.moveId.includes(
+                input.toUpperCase().slice(1).replace(' ', '_')
+              )
+            )
+          ) {
+            return true
+          }
 
-        // Is in dex-range
-        if (
-          dexRange &&
-          suggestion?.dex &&
-          suggestion.dex >= dexRange[0] &&
-          suggestion.dex <= dexRange[1]
-        ) {
-          return true
-        }
+          // Is in dex-range
+          if (
+            dexRange &&
+            suggestion?.dex &&
+            suggestion.dex >= dexRange[0] &&
+            suggestion.dex <= dexRange[1]
+          ) {
+            return true
+          }
 
-        return false
-      })
+          return false
+        })
+        .map((suggestion) => suggestion.speciesName)
+        .sort((s1, s2) => {
+          const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
+          const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
+          return s2Val - s1Val
+        })
     )
     setShowSuggestions(true)
   }

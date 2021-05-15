@@ -7,7 +7,7 @@ import IdContext from '@context/IdContext'
 import '@common/css/layout.scss'
 import TeamContext, { defaultTeam } from '@context/TeamContext'
 // import { auth } from '../src/firebase'
-import UserContext, { User } from '@context/UserContext'
+import UserContext, { User, UserTeam } from '@context/UserContext'
 import HistoryContext from '@context/HistoryContext'
 // import {
 //   getUserProfile,
@@ -18,7 +18,6 @@ import { WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
-import { TeamMember } from '@adibkhan/pogo-web-backend'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
@@ -37,11 +36,11 @@ const defaultKeys = {
   shieldKey: 'd',
 }
 
+const isRoomUrlRegex = new RegExp('\\/room.*|\\/matchup.*|\\/game.*')
+
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
-  const [currentTeam, setCurrentTeam] = useState(
-    {} as { id?: string; members: TeamMember[] }
-  )
+  const [currentTeam, setCurrentTeam] = useState({} as UserTeam)
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
@@ -88,15 +87,22 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       teamFromStorage &&
       teamFromStorage !== 'undefined'
     ) {
-      const teamJSON: {
-        id: string
-        members: TeamMember[]
-      } = JSON.parse(teamFromStorage)
+      const teamJSON: UserTeam = JSON.parse(teamFromStorage)
       setCurrentTeam(teamJSON)
     } else {
       setCurrentTeam(defaultTeam)
     }
+  }, [])
+
+  useEffect(() => {
     const handleRouteChange = (url: string) => {
+      if (!isRoomUrlRegex.test(url) && socket.readyState) {
+        socket.onclose = () => {
+          // Do nothing
+        }
+        socket.close()
+      }
+
       setRouting(true)
       setPrevRoute(url)
     }
@@ -108,11 +114,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     return function cleanup() {
       router.events.off('routeChangeStart', handleRouteChange)
       router.events.off('routeChangeComplete', handleRouteComplete)
-      if (socket.readyState) {
-        socket.close()
-      }
     }
-  }, [])
+  })
 
   const refreshUser = () => {
     // Yeet
@@ -163,7 +166,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     setKeys1(keys1)
   }
 
-  const setTeam = (t: { id: string; members: TeamMember[] }) => {
+  const setTeam = (t: UserTeam) => {
     localStorage.setItem('team', JSON.stringify(t))
     setCurrentTeam(t)
   }
