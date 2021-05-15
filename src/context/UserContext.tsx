@@ -10,8 +10,8 @@ export interface UserTeam {
 
 export interface User {
   googleId?: string
-  displayName: string
-  email?: string
+  displayName: string | null
+  email?: string | null
   teams: UserTeam[]
   createdAt?: string
   lastLogin?: string
@@ -20,7 +20,7 @@ export interface User {
 
 const UserContext = createContext({
   user: {} as User,
-  setUser: () => {
+  setUser: (_user: User) => {
     return
   },
   setTeams: (_teams: any[]) => {

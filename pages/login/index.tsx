@@ -1,14 +1,37 @@
 import Layout from '@components/layout/Layout'
 import UserContext from '@context/UserContext'
 import React, { useContext, useEffect } from 'react'
+import {
+  getGoogleSignInRedirectResult,
+  googleSignInWithRedirect,
+} from 'src/firebase'
 import style from './style.module.scss'
 
 const LoginPage = () => {
   const { setUser } = useContext(UserContext)
 
   useEffect(() => {
-    setUser()
+    getGoogleSignInRedirectResult().then((result) => {
+      // console.log(result)
+      const googleUser = result.user
+      if (googleUser) {
+        // try to load profile via google id
+        // if no profile exists, create new account
+        setUser({
+          googleId: googleUser.uid,
+          displayName: googleUser.displayName,
+          email: googleUser.email,
+          teams: [],
+        })
+      } else {
+        // no redirect happened, I think
+      }
+    }) /* .catch(err => console.log(err)); */
   }, [])
+
+  const onSubmitGoogleSignIn = () => {
+    googleSignInWithRedirect() /* .then(res => console.log(res)).catch(err => console.log(err)); */
+  }
 
   return (
     <Layout>
@@ -26,7 +49,9 @@ const LoginPage = () => {
             <button type="submit">Submit</button>
           </form>
           <br />
-          <button>Or, Sign In With Google</button>
+          <button onClick={onSubmitGoogleSignIn}>
+            Or, Sign In With Google
+          </button>
         </div>
         <div>
           <p>

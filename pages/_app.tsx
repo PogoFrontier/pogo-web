@@ -9,11 +9,6 @@ import TeamContext, { defaultTeam } from '@context/TeamContext'
 // import { auth } from '../src/firebase'
 import UserContext, { User, UserTeam } from '@context/UserContext'
 import HistoryContext from '@context/HistoryContext'
-// import {
-//   getUserProfile,
-//   postNewGoogleUser,
-//   signInWithGoogleId,
-// } from '@common/actions/userAPIActions'
 import { WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
@@ -151,8 +146,12 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   })
 
-  const setUser = () => {
-    // Yeet, but cooler
+  const setUser = (user: User) => {
+    setCurrentUser(user)
+    const { googleId, email } = user
+    if (user.googleId) {
+      localStorage.setItem('authedUser', JSON.stringify({ googleId, email }))
+    }
   }
 
   const setTeams = (teams: any[]) => {
