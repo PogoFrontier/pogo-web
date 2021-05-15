@@ -50,6 +50,19 @@ const EndPage = () => {
     router.push('/')
   }
 
+  const getResult = (msg :string) => {
+    switch (msg) {
+      case "won":
+        return strings.result_win
+      case "lost":
+        return strings.result_loss
+      case "tied":
+        return strings.result_tie
+      default:
+        break;
+    }
+  }
+
   return (
     <Layout>
       <div className={style.content}>

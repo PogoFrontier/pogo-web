@@ -39,7 +39,7 @@ const Header: React.FunctionComponent = () => {
           <MenuButton className={style.menubutton}>
             <Icon name="menu" size="medium" />
           </MenuButton>
-          <MenuList>
+          <MenuList className={style.headerButtons}>
             <Link href="/">
               <MenuLink>{strings.homepage}</MenuLink>
             </Link>

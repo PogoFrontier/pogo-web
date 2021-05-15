@@ -562,7 +562,7 @@ const TeamMemberSelector = (props: {
                   </option>
                 ))}
               </select>
-              {strings.hitpoints.abbr}
+              {strings.hitpointsabbr}
               <select
                 className="hp"
                 name="hp"

@@ -178,6 +178,14 @@ const HomePage = () => {
               >
                 <Icon name="github" size="medium" /> Github (Backend)
               </a>
+              <a
+                className="btn btn-secondary"
+                href="https://github.com/DeveloperKhan/pogo-web-backend"
+                target="_blank"
+                rel="noreferrer nofollow"
+              >
+                <Icon name="lokalise" size="medium" /> Lokalise (translations)
+              </a>
             </div>
           </section>
         </div>
