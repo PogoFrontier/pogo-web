@@ -1,11 +1,13 @@
 import API from '@config/API'
+import mapLanguage from './mapLanguage'
 
 export const getPokemonNames = async (
   meta?: string,
   position?: number,
   showIllegal?: boolean,
   usedPoints?: number,
-  className?: string
+  className?: string,
+  language?: string
 ) => {
   try {
     if (!position) {
@@ -14,9 +16,10 @@ export const getPokemonNames = async (
     if (!usedPoints) {
       usedPoints = 0
     }
+    language = mapLanguage(language ?? "English")
     const classString = className ? `&class=${className}` : ''
     const queryString = meta
-      ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}${classString}`
+      ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}${classString}&language=${language}`
       : ''
     const res = await API.get(`api/pokemon${queryString}`)
     return res.data

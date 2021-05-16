@@ -18,9 +18,11 @@ import parseName from '@common/actions/parseName'
 import calculateStats from '@common/actions/calculateStats'
 import SettingsContext from '@context/SettingsContext'
 import { getStrings } from '@trans/translations'
+import mapLanguage from '@common/actions/mapLanguage'
 
+//TODO: find better type definition for speciesName
 type pokemonType = {
-  speciesName: string
+  speciesName: any
   types: string[]
   tags?: string[]
   dex: number
@@ -62,6 +64,7 @@ const TeamMemberSelector = (props: {
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
   const [shouldSave, setShouldSave] = useState<boolean>(false)
+  const [pokemonNames, setPokemonNames] = useState<any | null>(null)
 
   const imageHandler = new ImageHandler()
 
@@ -99,6 +102,7 @@ const TeamMemberSelector = (props: {
 
   useEffect(() => {
     getPokemonNames(meta, position, false, 0, metaClassName).then((data) => {
+      setPokemonNames(data)
       const pokemonData = new Map()
       Object.keys(data).forEach((speciesId) =>
         pokemonData.set(speciesId, data[speciesId])
@@ -140,7 +144,7 @@ const TeamMemberSelector = (props: {
           }
 
           // Is substring of speciesId?
-          if (suggestion.speciesName.toLowerCase().indexOf(input) > -1) {
+          if (suggestion.speciesName[mapLanguage(settings.language)].toLowerCase().indexOf(input) > -1) {
             return true
           }
 
@@ -181,7 +185,7 @@ const TeamMemberSelector = (props: {
 
           return false
         })
-        .map((suggestion) => suggestion.speciesName)
+        .map((suggestion) => suggestion.speciesName[mapLanguage(settings.language)])
         .sort((s1, s2) => {
           const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
           const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
@@ -208,11 +212,22 @@ const TeamMemberSelector = (props: {
         break
     }
   }
-
+  const getSpeciesId = (name: string) => {
+    
+    for (const _p in pokemonNames) {
+      for (const lang in pokemonNames[_p].speciesName){
+        if(pokemonNames[_p].speciesName[lang] === undefined) return parseName(pokemonNames[name].speciesName["en"])
+        if(parseName(pokemonNames[_p].speciesName[lang]) == name){
+          return parseName(pokemonNames[_p].speciesName["en"])
+        }
+      }
+    }
+    return "bulbasaur"
+  }
   const setPokemon = (input: string) => {
     setUserInput(input)
     getPokemonData(
-      parseName(input),
+      getSpeciesId(input),
       metaMap[meta].movesetOption,
       meta,
       position,
@@ -248,7 +263,7 @@ const TeamMemberSelector = (props: {
             : pokemon.chargedMoves.splice(0, 2)
           setAddToBox({
             speciesId: pokemon.speciesId,
-            speciesName: pokemon.speciesName,
+            speciesName: pokemon.speciesName[mapLanguage(settings.language)],
             baseStats: pokemon.baseStats,
             hp: stats.hp,
             atk: stats.atk,
@@ -414,6 +429,13 @@ const TeamMemberSelector = (props: {
     setShouldSave(false)
   }
 
+  const getSpeciesName = (name: string) => {
+    const lang = mapLanguage(settings.language)
+    const pokemonID = getSpeciesId(parseName(name))
+    console.log(pokemonID, "id")
+    return pokemonNames[pokemonID].speciesName[lang] ?? pokemonNames[pokemonID].speciesName["en"]
+  }
+
   return (
     <div className={style.container}>
       {selectedPokemonData && addToBox ? (
@@ -429,7 +451,7 @@ const TeamMemberSelector = (props: {
               </button>
             )}
           </span>
-          <label className={style.cp}>{addToBox.speciesName}</label>
+          <label className={style.cp}>{getSpeciesName(addToBox.speciesName)}</label>
           <br />
           <label className={style.cp}>
             {strings.cp} <b>{addToBox.cp}</b>
@@ -594,7 +616,7 @@ const TeamMemberSelector = (props: {
           <Input
             title="Species"
             type="text"
-            placeholder={member ? member.speciesName : 'Choose Pokemon'}
+            placeholder={member ? getSpeciesName(member.speciesName) : strings.choose_pokemon}
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
