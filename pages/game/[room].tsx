@@ -49,6 +49,7 @@ enum StatusTypes {
   FAINT,
   CHARGE,
   SHIELD,
+  ANIMATING,
 }
 
 const GamePage = () => {
@@ -127,7 +128,7 @@ const GamePage = () => {
               })
               return p
             })
-            if (hp) {
+            if (hp !== undefined) {
               prev1[isActive].current!.hp = hp
             }
             if (energy) {
@@ -137,11 +138,11 @@ const GamePage = () => {
             if (isShields) {
               setShields(isShields)
             }
-            if (payload.update[0]?.remaining) {
+            if (payload.update[0]?.remaining !== undefined) {
               setRemaining(payload.update[0]!.remaining)
               prev1[isActive].current!.hp = 0
               if (isActive === prev2) {
-                setStatus(StatusTypes.FAINT)
+                setTimeout((_) => setStatus(StatusTypes.FAINT), 3000)
                 prev3[0].anim = {
                   type: 'faint',
                   turn: payload.turn,
@@ -175,10 +176,26 @@ const GamePage = () => {
             ) {
               if (prev === StatusTypes.CHARGE) {
                 setChargeMult(0.25)
+                setTimeout(() => {
+                  setStatus((currentStatus) => {
+                    if (currentStatus === StatusTypes.ANIMATING) {
+                      return StatusTypes.MAIN
+                    }
+                    return currentStatus
+                  })
+                }, 3000)
+                return StatusTypes.ANIMATING
               } else if (prev === StatusTypes.SHIELD) {
                 setToShield(false)
-              } else {
-                return StatusTypes.MAIN
+                setTimeout(() => {
+                  setStatus((currentStatus) => {
+                    if (currentStatus === StatusTypes.ANIMATING) {
+                      return StatusTypes.MAIN
+                    }
+                    return currentStatus
+                  })
+                }, 3000)
+                return StatusTypes.ANIMATING
               }
             }
             return StatusTypes.MAIN
@@ -192,13 +209,13 @@ const GamePage = () => {
       setOpponent((prev1) => {
         setCharacters((prev3b) => {
           const prev3 = { ...prev3b }
-          if (hp) {
+          if (hp !== undefined) {
             prev1[0].current!.hp = hp
           }
           if (isShields !== undefined) {
             setOppShields(isShields)
           }
-          if (payload.update[1]?.remaining) {
+          if (payload.update[1]?.remaining !== undefined) {
             setOppRemaining(payload.update[1]?.remaining)
             prev1[0].current!.hp = 0
             if (!payload.update[0]?.remaining) {
@@ -557,12 +574,14 @@ const GamePage = () => {
         />
         {showKeys && (
           <label className={style.keylabel}>
-            Press {getKeyDescription(fastKey).toUpperCase()}
+            Hold {getKeyDescription(fastKey).toUpperCase()}
           </label>
         )}
 
         <Popover
-          closed={status === StatusTypes.MAIN}
+          closed={
+            status === StatusTypes.MAIN || status === StatusTypes.ANIMATING
+          }
           showMenu={
             status !== StatusTypes.WAITING && status !== StatusTypes.STARTING
           }
