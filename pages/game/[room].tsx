@@ -574,7 +574,7 @@ const GamePage = () => {
         />
         {showKeys && (
           <label className={style.keylabel}>
-            Press {getKeyDescription(fastKey).toUpperCase()}
+            Hold {getKeyDescription(fastKey).toUpperCase()}
           </label>
         )}
 
