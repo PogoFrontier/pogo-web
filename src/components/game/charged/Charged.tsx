@@ -47,18 +47,13 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   const pressed = evaluatePressed()
 
   return (
-    <div
-      className={classnames([
-        style.chargeGroup,
-        { 'no-click': energy < move.energy },
-      ])}
-    >
+    <div className={classnames([style.chargeGroup])}>
       {keyboardInput && (
         <label className={style.keylabel}>({keyboardInput})</label>
       )}
       <button
         onClick={handleClick}
-        disabled={energy < move.energy}
+        disabled={false}
         className={classnames([
           style.chargeButton,
           style[move.type],
