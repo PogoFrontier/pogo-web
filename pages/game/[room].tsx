@@ -135,6 +135,9 @@ const GamePage = () => {
               prev1[isActive].current!.energy = energy
             }
             prev3[0].char = prev1[isActive]
+            if (isActive !== prev2 && prev3[0].anim?.type === 'faint') {
+              delete prev3[0].anim
+            }
             if (isShields) {
               setShields(isShields)
             }
