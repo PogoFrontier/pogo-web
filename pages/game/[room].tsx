@@ -377,32 +377,36 @@ const GamePage = () => {
   }
 
   const onSwitchClick = (pos: number) => {
+    const data = '#sw:' + pos
+    setBufferedMove(data)
+    ws.send(data)
+    if (
+      (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
+      active[pos].current?.hp &&
+      active[pos].current!.hp > 0
+    ) {
+      setCharacters((prev) => {
+        prev[0].anim = {
+          type: Actions.SWITCH,
+        }
+        return prev
+      })
+    }
     if (
       status === StatusTypes.MAIN &&
       swap <= 0 &&
       wait <= -1 &&
       active[pos]?.current?.hp &&
-      active[pos].current!.hp > 0
+      active[pos].current!.hp > 0 &&
+      currentMove === ''
     ) {
-      const data = '#sw:' + pos
-      if (currentMove === '') {
-        setCurrentMove(data)
-        ws.send(data)
-        setCharacters((prev) => {
-          prev[0].anim = {
-            type: Actions.SWITCH,
-          }
-          return prev
-        })
-        return true
-      }
-      if (bufferedMove === '') {
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
+      setCharacters((prev) => {
+        prev[0].anim = {
+          type: Actions.SWITCH,
+        }
+        return prev
+      })
     }
-    return false
   }
 
   const onChargeClick = (move: Move, index: number) => {
@@ -434,26 +438,6 @@ const GamePage = () => {
         return prev
       })
     }
-  }
-
-  const onFaintClick = (pos: number) => {
-    if (
-      (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
-      active[pos].current?.hp &&
-      active[pos].current!.hp > 0
-    ) {
-      const data = '#sw:' + pos
-      setCurrentMove(data)
-      ws.send(data)
-      setCharacters((prev) => {
-        prev[0].anim = {
-          type: Actions.SWITCH,
-        }
-        return prev
-      })
-      return true
-    }
-    return false
   }
 
   const onShield = () => {
@@ -491,9 +475,7 @@ const GamePage = () => {
       const pos = active.findIndex(
         (poke, index) => poke.current?.hp && index !== charPointer
       )
-      if (!onSwitchClick(pos)) {
-        onFaintClick(pos)
-      }
+      onSwitchClick(pos)
     } else if (switch2KeyClick) {
       const pos =
         2 -
@@ -502,9 +484,7 @@ const GamePage = () => {
           .findIndex(
             (poke, index) => poke.current?.hp && 2 - index !== charPointer
           )
-      if (!onSwitchClick(pos)) {
-        onFaintClick(pos)
-      }
+      onSwitchClick(pos)
     } else if (shieldKeyClick) {
       onShield()
     }
@@ -592,7 +572,7 @@ const GamePage = () => {
               team={active}
               pointer={charPointer}
               countdown={wait}
-              onClick={onFaintClick}
+              onClick={onSwitchClick}
               modal={true}
             />
           )}
