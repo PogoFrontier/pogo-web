@@ -406,29 +406,34 @@ const GamePage = () => {
   }
 
   const onChargeClick = (move: Move, index: number) => {
+    const data = `#ca:${index}`
+    if (currentMove === '' && bufferedMove === '') {
+      setCurrentMove(data)
+      setBufferedMove(data)
+      ws.send(data)
+    } else if (
+      !currentMove.startsWith('#ca') &&
+      (bufferedMove === '' || bufferedMove.startsWith('#sw'))
+    ) {
+      setBufferedMove(data)
+      ws.send(data)
+    }
     if (
       status === StatusTypes.MAIN &&
       wait <= -1 &&
-      active[charPointer].current?.energy &&
-      active[charPointer].current!.energy! >= move.energy
+      active[charPointer].current?.energy !== undefined &&
+      active[charPointer].current!.energy! < move.energy &&
+      currentMove === ''
     ) {
-      const data = `#ca:${index}`
-      if (currentMove === '' && bufferedMove === '') {
-        setCurrentMove(data)
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
-      if (
-        !currentMove.startsWith('#ca') &&
-        (bufferedMove === '' || bufferedMove.startsWith('#sw'))
-      ) {
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
+      setCharacters((prev) => {
+        setCurrentMove('#fa:')
+        prev[0].anim = {
+          move: moves[charPointer][0],
+          type: Actions.FAST_ATTACK,
+        }
+        return prev
+      })
     }
-    return false
   }
 
   const onFaintClick = (pos: number) => {
@@ -478,14 +483,10 @@ const GamePage = () => {
 
     if (charge1KeyClick) {
       const move = moves[charPointer][1]
-      if (!onChargeClick(move, 0)) {
-        onClick()
-      }
+      onChargeClick(move, 0)
     } else if (charge2KeyClick) {
       const move = moves[charPointer][2]
-      if (!onChargeClick(move, 1)) {
-        onClick()
-      }
+      onChargeClick(move, 1)
     } else if (switch1KeyClick) {
       const pos = active.findIndex(
         (poke, index) => poke.current?.hp && index !== charPointer
