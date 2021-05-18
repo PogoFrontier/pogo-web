@@ -219,7 +219,15 @@ const GamePage = () => {
             setOppShields(isShields)
           }
           if (payload.update[1]?.remaining !== undefined) {
-            setOppRemaining(payload.update[1]?.remaining)
+            setOppRemaining((prevOppRemaining) => {
+              if (prevOppRemaining !== payload.update[1]!.remaining) {
+                prev3[1].anim = {
+                  type: 'faint',
+                  turn: payload.turn,
+                }
+              }
+              return payload.update[1]?.remaining!
+            })
             prev1[0].current!.hp = 0
             if (!payload.update[0]?.remaining) {
               setStatus((prev4) => {
@@ -228,10 +236,6 @@ const GamePage = () => {
                 }
                 return StatusTypes.WAITING
               })
-            }
-            prev3[1].anim = {
-              type: 'faint',
-              turn: payload.turn,
             }
           }
           return prev3
