@@ -50,6 +50,7 @@ enum StatusTypes {
   FAINT,
   CHARGE,
   SHIELD,
+  ANIMATING,
 }
 
 const GamePage = () => {
@@ -130,21 +131,24 @@ const GamePage = () => {
               })
               return p
             })
-            if (hp) {
+            if (hp !== undefined) {
               prev1[isActive].current!.hp = hp
             }
             if (energy) {
               prev1[isActive].current!.energy = energy
             }
             prev3[0].char = prev1[isActive]
+            if (isActive !== prev2 && prev3[0].anim?.type === 'faint') {
+              delete prev3[0].anim
+            }
             if (isShields) {
               setShields(isShields)
             }
-            if (payload.update[0]?.remaining) {
+            if (payload.update[0]?.remaining !== undefined) {
               setRemaining(payload.update[0]!.remaining)
               prev1[isActive].current!.hp = 0
               if (isActive === prev2) {
-                setStatus(StatusTypes.FAINT)
+                setTimeout((_) => setStatus(StatusTypes.FAINT), 3000)
                 prev3[0].anim = {
                   type: 'faint',
                   turn: payload.turn,
@@ -178,10 +182,26 @@ const GamePage = () => {
             ) {
               if (prev === StatusTypes.CHARGE) {
                 setChargeMult(0.25)
+                setTimeout(() => {
+                  setStatus((currentStatus) => {
+                    if (currentStatus === StatusTypes.ANIMATING) {
+                      return StatusTypes.MAIN
+                    }
+                    return currentStatus
+                  })
+                }, 3000)
+                return StatusTypes.ANIMATING
               } else if (prev === StatusTypes.SHIELD) {
                 setToShield(false)
-              } else {
-                return StatusTypes.MAIN
+                setTimeout(() => {
+                  setStatus((currentStatus) => {
+                    if (currentStatus === StatusTypes.ANIMATING) {
+                      return StatusTypes.MAIN
+                    }
+                    return currentStatus
+                  })
+                }, 3000)
+                return StatusTypes.ANIMATING
               }
             }
             return StatusTypes.MAIN
@@ -195,14 +215,22 @@ const GamePage = () => {
       setOpponent((prev1) => {
         setCharacters((prev3b) => {
           const prev3 = { ...prev3b }
-          if (hp) {
+          if (hp !== undefined) {
             prev1[0].current!.hp = hp
           }
           if (isShields !== undefined) {
             setOppShields(isShields)
           }
-          if (payload.update[1]?.remaining) {
-            setOppRemaining(payload.update[1]?.remaining)
+          if (payload.update[1]?.remaining !== undefined) {
+            setOppRemaining((prevOppRemaining) => {
+              if (prevOppRemaining !== payload.update[1]!.remaining) {
+                prev3[1].anim = {
+                  type: 'faint',
+                  turn: payload.turn,
+                }
+              }
+              return payload.update[1]?.remaining!
+            })
             prev1[0].current!.hp = 0
             if (!payload.update[0]?.remaining) {
               setStatus((prev4) => {
@@ -211,10 +239,6 @@ const GamePage = () => {
                 }
                 return StatusTypes.WAITING
               })
-            }
-            prev3[1].anim = {
-              type: 'faint',
-              turn: payload.turn,
             }
           }
           return prev3
@@ -365,77 +389,67 @@ const GamePage = () => {
   }
 
   const onSwitchClick = (pos: number) => {
-    if (
-      status === StatusTypes.MAIN &&
-      swap <= 0 &&
-      wait <= -1 &&
-      active[pos]?.current?.hp &&
-      active[pos].current!.hp > 0
-    ) {
-      const data = '#sw:' + pos
-      if (currentMove === '') {
-        setCurrentMove(data)
-        ws.send(data)
-        setCharacters((prev) => {
-          prev[0].anim = {
-            type: Actions.SWITCH,
-          }
-          return prev
-        })
-        return true
-      }
-      if (bufferedMove === '') {
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
-    }
-    return false
-  }
-
-  const onChargeClick = (move: Move, index: number) => {
-    if (
-      status === StatusTypes.MAIN &&
-      wait <= -1 &&
-      active[charPointer].current?.energy &&
-      active[charPointer].current!.energy! >= move.energy
-    ) {
-      const data = `#ca:${index}`
-      if (currentMove === '' && bufferedMove === '') {
-        setCurrentMove(data)
-        ws.send(data)
-        return true
-      }
-      if (
-        !currentMove.startsWith('#ca') &&
-        (bufferedMove === '' || bufferedMove.startsWith('#sw'))
-      ) {
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
-    }
-    return false
-  }
-
-  const onFaintClick = (pos: number) => {
+    const data = '#sw:' + pos
+    setBufferedMove(data)
+    ws.send(data)
     if (
       (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
       active[pos].current?.hp &&
       active[pos].current!.hp > 0
     ) {
-      const data = '#sw:' + pos
-      setCurrentMove(data)
-      ws.send(data)
       setCharacters((prev) => {
         prev[0].anim = {
           type: Actions.SWITCH,
         }
         return prev
       })
-      return true
     }
-    return false
+    if (
+      status === StatusTypes.MAIN &&
+      swap <= 0 &&
+      wait <= -1 &&
+      active[pos]?.current?.hp &&
+      active[pos].current!.hp > 0 &&
+      currentMove === ''
+    ) {
+      setCharacters((prev) => {
+        prev[0].anim = {
+          type: Actions.SWITCH,
+        }
+        return prev
+      })
+    }
+  }
+
+  const onChargeClick = (move: Move, index: number) => {
+    const data = `#ca:${index}`
+    if (currentMove === '' && bufferedMove === '') {
+      setCurrentMove(data)
+      setBufferedMove(data)
+      ws.send(data)
+    } else if (
+      !currentMove.startsWith('#ca') &&
+      (bufferedMove === '' || bufferedMove.startsWith('#sw'))
+    ) {
+      setBufferedMove(data)
+      ws.send(data)
+    }
+    if (
+      status === StatusTypes.MAIN &&
+      wait <= -1 &&
+      active[charPointer].current?.energy !== undefined &&
+      active[charPointer].current!.energy! < move.energy &&
+      currentMove === ''
+    ) {
+      setCharacters((prev) => {
+        setCurrentMove('#fa:')
+        prev[0].anim = {
+          move: moves[charPointer][0],
+          type: Actions.FAST_ATTACK,
+        }
+        return prev
+      })
+    }
   }
 
   const onShield = () => {
@@ -465,21 +479,15 @@ const GamePage = () => {
 
     if (charge1KeyClick) {
       const move = moves[charPointer][1]
-      if (!onChargeClick(move, 0)) {
-        onClick()
-      }
+      onChargeClick(move, 0)
     } else if (charge2KeyClick) {
       const move = moves[charPointer][2]
-      if (!onChargeClick(move, 1)) {
-        onClick()
-      }
+      onChargeClick(move, 1)
     } else if (switch1KeyClick) {
       const pos = active.findIndex(
         (poke, index) => poke.current?.hp && index !== charPointer
       )
-      if (!onSwitchClick(pos)) {
-        onFaintClick(pos)
-      }
+      onSwitchClick(pos)
     } else if (switch2KeyClick) {
       const pos =
         2 -
@@ -488,9 +496,7 @@ const GamePage = () => {
           .findIndex(
             (poke, index) => poke.current?.hp && 2 - index !== charPointer
           )
-      if (!onSwitchClick(pos)) {
-        onFaintClick(pos)
-      }
+      onSwitchClick(pos)
     } else if (shieldKeyClick) {
       onShield()
     }
@@ -561,12 +567,14 @@ const GamePage = () => {
         />
         {showKeys && (
           <label className={style.keylabel}>
-            Press {getKeyDescription(fastKey).toUpperCase()}
+            Hold {getKeyDescription(fastKey).toUpperCase()}
           </label>
         )}
 
         <Popover
-          closed={status === StatusTypes.MAIN}
+          closed={
+            status === StatusTypes.MAIN || status === StatusTypes.ANIMATING
+          }
           showMenu={
             status !== StatusTypes.WAITING && status !== StatusTypes.STARTING
           }
@@ -576,7 +584,7 @@ const GamePage = () => {
               team={active}
               pointer={charPointer}
               countdown={wait}
-              onClick={onFaintClick}
+              onClick={onSwitchClick}
               modal={true}
             />
           )}
