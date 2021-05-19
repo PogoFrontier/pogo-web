@@ -126,6 +126,14 @@ const GamePage = () => {
                 p = prev
                 return ''
               })
+              if (p.startsWith('#sw')) {
+                setCharacters((prevCharacters) => {
+                  prevCharacters[0].anim = {
+                    type: Actions.SWITCH,
+                  }
+                  return prevCharacters
+                })
+              }
               return p
             })
             if (hp !== undefined) {
