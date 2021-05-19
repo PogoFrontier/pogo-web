@@ -435,6 +435,7 @@ const GamePage = () => {
       (bufferedMove === '' || bufferedMove.startsWith('#sw'))
     ) {
       setBufferedMove(data)
+      setStatus(StatusTypes.ANIMATING)
       ws.send(data)
     }
     if (
