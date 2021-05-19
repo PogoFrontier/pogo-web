@@ -88,5 +88,7 @@
 	"defense_abbr": "DEF",
 	"hitpoints_abbr": "HP",
 	"suggestions_none": "Er zijn geen suggesties",
-	"connect_db_failed": "Kan geen verbinding maken met de Pokemon database."
+	"connect_db_failed": "Kan geen verbinding maken met de Pokemon database.",
+	"hold_fastkey_button" : "Hold %1"
+
 }

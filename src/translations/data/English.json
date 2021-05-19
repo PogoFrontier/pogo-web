@@ -89,5 +89,6 @@
 	"hitpoints_abbr" : "HP",
 	"suggestions_none" :"There are no suggestions",
 	"connect_db_failed" :"Failed to connect to the Pokemon database",
-	"choose_pokemon" : "Choose pokemon"
+	"choose_pokemon" : "Choose pokemon",
+	"hold_fastkey_button" : "Hold %1"
 }

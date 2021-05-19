@@ -148,5 +148,7 @@
 	"rock": "Rock",
 	"steel": "Steel",
 	"water": "Water",
-	"female": "(Female)"
+	"female": "(Female)",
+	"hold_fastkey_button" : "Hold %1"
+
 }
