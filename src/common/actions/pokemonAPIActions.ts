@@ -20,7 +20,7 @@ export const getPokemonNames = async (
     const classString = className ? `&class=${className}` : ''
     const queryString = meta
       ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}${classString}&language=${language}`
-      : ''
+      : `?language=${language}`
     const res = await API.get(`api/pokemon${queryString}`)
     return res.data
   } catch (err) {

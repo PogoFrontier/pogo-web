@@ -2,6 +2,10 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './status.module.scss'
 import TypeIcons from '@components/type_icon/TypeIcons'
 import classnames from 'classnames'
+import { useContext, useEffect, useState } from 'react'
+import SettingsContext from '@context/SettingsContext'
+import { getStrings } from '@trans/translations'
+import { getPokemonNames } from '@common/actions/pokemonAPIActions'
 
 interface StatusProps {
   subject: TeamMember
@@ -10,6 +14,20 @@ interface StatusProps {
 }
 
 const Status: React.FC<StatusProps> = ({ subject, shields, remaining }) => {
+  const settings = useContext(SettingsContext)
+  const strings = getStrings(settings.language)
+  const [pokemonNames, setPokemonNames] = useState<any | null>(null)
+
+
+  useEffect(() => {
+    if(pokemonNames !== null) return
+    getPokemonNames(undefined, undefined, undefined, undefined, undefined, settings.language).then(res => {
+      setPokemonNames(res)
+      console.log(res[subject.speciesId])
+    })
+    console.log('test')
+  })
+
   return (
     <div className={style.root}>
       <TypeIcons types={subject.types} />
@@ -27,8 +45,8 @@ const Status: React.FC<StatusProps> = ({ subject, shields, remaining }) => {
           />
         </div>
         <div>
-          <small>CP {subject.cp}</small>
-          <strong>{subject.speciesName}</strong>
+          <small>{strings.cp} {subject.cp}</small>
+          <strong>{pokemonNames ? pokemonNames[subject.speciesId].speciesName : subject.speciesName}</strong>
         </div>
       </div>
       <div className={style.row}>

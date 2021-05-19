@@ -180,7 +180,7 @@ const HomePage = () => {
               </a>
               <a
                 className="btn btn-secondary"
-                href="https://github.com/DeveloperKhan/pogo-web-backend"
+                href="https://lokalise.com/"
                 target="_blank"
                 rel="noreferrer nofollow"
               >

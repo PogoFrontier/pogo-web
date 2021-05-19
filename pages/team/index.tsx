@@ -172,10 +172,10 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
         }
 
         // harcoded check for megas
-        if (pokemon.speciesName?.toLowerCase().includes('mega') && !hasMega) {
+        if (pokemon.speciesId?.includes('mega') && !hasMega) {
           hasMega = true
         }
-        if (pokemon.speciesName?.toLowerCase().includes('mega') && hasMega) {
+        if (pokemon.speciesId?.includes('mega') && hasMega) {
           canPush = false
         }
 

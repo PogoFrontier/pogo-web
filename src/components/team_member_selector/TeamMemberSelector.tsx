@@ -22,7 +22,8 @@ import mapLanguage from '@common/actions/mapLanguage'
 
 //TODO: find better type definition for speciesName
 type pokemonType = {
-  speciesName: any
+  speciesName: any,
+  speciesId: string,
   types: string[]
   tags?: string[]
   dex: number
@@ -213,11 +214,11 @@ const TeamMemberSelector = (props: {
     }
   }
   const getSpeciesId = (name: string) => {
-    
+    //if(settings.language == "English") return parseName(pokemonNames[name].)
     for (const _p in pokemonNames) {
       for (const lang in pokemonNames[_p].speciesName){
         if(pokemonNames[_p].speciesName[lang] === undefined) return parseName(pokemonNames[name].speciesName["en"])
-        if(parseName(pokemonNames[_p].speciesName[lang]) == name){
+        if(pokemonNames[_p].speciesName[lang] == name){
           return parseName(pokemonNames[_p].speciesName["en"])
         }
       }
@@ -429,11 +430,9 @@ const TeamMemberSelector = (props: {
     setShouldSave(false)
   }
 
-  const getSpeciesName = (name: string) => {
+  const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
     const lang = mapLanguage(settings.language)
-    const pokemonID = getSpeciesId(parseName(name))
-    console.log(pokemonID, "id")
-    return pokemonNames[pokemonID].speciesName[lang] ?? pokemonNames[pokemonID].speciesName["en"]
+    return pokemonNames[pokemon.speciesId].speciesName[lang] ?? pokemonNames[pokemon.speciesId].speciesName["en"]
   }
 
   return (
@@ -451,7 +450,7 @@ const TeamMemberSelector = (props: {
               </button>
             )}
           </span>
-          <label className={style.cp}>{getSpeciesName(addToBox.speciesName)}</label>
+          <label className={style.cp}>{getSpeciesName(addToBox)}</label>
           <br />
           <label className={style.cp}>
             {strings.cp} <b>{addToBox.cp}</b>
@@ -616,7 +615,7 @@ const TeamMemberSelector = (props: {
           <Input
             title="Species"
             type="text"
-            placeholder={member ? getSpeciesName(member.speciesName) : strings.choose_pokemon}
+            placeholder={member ? getSpeciesName(member) : strings.choose_pokemon}
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
