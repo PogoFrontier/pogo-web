@@ -1,10 +1,9 @@
 import Input from '@components/input/Input'
 import Modal from '@components/modal/Modal'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
 import Loader from 'react-loader-spinner'
 import style from './style.module.scss'
 import { useContext } from 'react'
+import TranslationContext from '@context/TranslationContext'
 
 interface RoomModalProps {
   onClose: () => void
@@ -21,8 +20,7 @@ const RoomModal: React.FunctionComponent<RoomModalProps> = ({
   isLoading,
   onChange,
 }) => {
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
   return (
     <Modal
       onClose={onClose}

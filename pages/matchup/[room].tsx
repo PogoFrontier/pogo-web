@@ -10,8 +10,7 @@ import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import style from './style.module.scss'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
-import { getStrings } from '@trans/translations'
-import SettingsContext from '@context/SettingsContext'
+import TranslationContext from '@context/TranslationContext'
 
 enum STATUS {
   CHOOSING,
@@ -37,8 +36,7 @@ const MatchupPage = () => {
   const { height } = useWindowSize()
   const { routing, prev } = useContext(HistoryContext)
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
 
   const onMessage = (message: MessageEvent) => {
     if (message.data.startsWith('$end')) {

@@ -1,6 +1,5 @@
 import Modal from '@components/modal/Modal'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 import { useContext } from 'react'
 import style from './style.module.scss'
 
@@ -23,8 +22,7 @@ const ErrorPopup: React.FunctionComponent<ErrorPopupProps> = ({
   title,
   buttons,
 }) => {
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
 
   if (!title) {
     title = String(strings.error)

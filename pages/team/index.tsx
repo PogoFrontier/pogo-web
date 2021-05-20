@@ -21,8 +21,7 @@ import getCP, { BaseStatsProps } from '@common/actions/getCP'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import ImportTeam from '@components/import_team/ImportTeam'
 import calculateStats from '@common/actions/calculateStats'
-import { getStrings } from '@trans/translations'
-import SettingsContext from '@context/SettingsContext'
+import TranslationContext from '@context/TranslationContext'
 
 interface TeamExportProps {
   speciesId: string
@@ -67,8 +66,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   )
   const [isImportLoading, setIsImportLoading] = useState(false)
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
 
   useEffect(() => {
     setIsLoading(false)

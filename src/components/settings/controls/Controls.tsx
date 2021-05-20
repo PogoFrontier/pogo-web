@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import style from './controls.module.scss'
 import returnKey from '@common/actions/getKeyDescription'
 import { isDesktop } from 'react-device-detect'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 
 interface KeyInputProps {
   value: string
@@ -64,7 +64,7 @@ const KeyInput: React.FC<KeyInputProps> = ({
 
 const Controls = () => {
   const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
   const showKeys = settings.showKeys
   const {
     fastKey,

@@ -5,12 +5,10 @@ import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
 import style from './style.module.scss'
 import { useContext } from 'react'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 
 const SettingsPage = () => {
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
 
   return (
     <Layout>

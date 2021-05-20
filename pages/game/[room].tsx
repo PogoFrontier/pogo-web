@@ -27,7 +27,7 @@ import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 
 interface CheckPayload {
   countdown: number
@@ -91,7 +91,7 @@ const GamePage = () => {
   const [toShield, setToShield] = useState(false)
   const [message, setMessage] = useState('')
 
-  const strings = getStrings(language)
+  const strings = useContext(TranslationContext).strings
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
@@ -567,7 +567,7 @@ const GamePage = () => {
         />
         {showKeys && (
           <label className={style.keylabel}>
-            Hold {getKeyDescription(fastKey).toUpperCase()}
+            { strings.hold_fastkey_button.replace("%1", getKeyDescription(fastKey).toUpperCase())}
           </label>
         )}
 

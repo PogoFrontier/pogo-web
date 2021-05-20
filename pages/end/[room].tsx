@@ -7,8 +7,7 @@ import { useState, useContext } from 'react'
 import style from './style.module.scss'
 import { v4 as uuidv4 } from 'uuid'
 import Layout from '@components/layout/Layout'
-import { getStrings } from '@trans/translations'
-import SettingsContext from '@context/SettingsContext'
+import TranslationContext from '@context/TranslationContext'
 
 const EndPage = () => {
   const router = useRouter()
@@ -17,9 +16,8 @@ const EndPage = () => {
   const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
-
+  const strings = useContext(TranslationContext).strings
+  
   function joinRoom() {
     // Connected, let's sign-up for to receive messages for this room
     const data = {

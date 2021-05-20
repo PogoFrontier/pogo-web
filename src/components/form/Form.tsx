@@ -13,8 +13,7 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import RoomModal from '@components/room_modal/RoomModal'
 import { SERVER } from '@config/index'
 import axios from 'axios'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -33,8 +32,7 @@ const Form: React.FunctionComponent = () => {
 
   const [count, setCount] = useState(-1)
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
 
   async function fetchCount() {
     const res = await axios.get(`${SERVER}api/room/status`)

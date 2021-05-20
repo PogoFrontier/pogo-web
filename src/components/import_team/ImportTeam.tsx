@@ -1,8 +1,7 @@
 import style from './ImportTeam.module.scss'
 import Loader from 'react-loader-spinner'
 import { useContext } from 'react'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 
 interface ImportTeamProps {
   visible: boolean
@@ -21,8 +20,7 @@ const ImportTeam: React.FC<ImportTeamProps> = ({
   confirmImport,
   isLoading,
 }) => {
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
 
   return (
     <div

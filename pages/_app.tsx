@@ -21,7 +21,8 @@ import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
-import { getStrings } from '@trans/translations'
+import { standardStrings, StringsType } from '@common/actions/getLanguage'
+import TranslationContext, { defaultStrings } from '@context/TranslationContext'
 
 /**
  * NextJS wrapper
@@ -41,6 +42,7 @@ const isRoomUrlRegex = new RegExp('\\/room.*|\\/matchup.*|\\/game.*')
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [currentTeam, setCurrentTeam] = useState({} as UserTeam)
+  const [currentStrings, setCurrentStrings] = useState<StringsType | null>(null)
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [keys, setKeys1] = useState(defaultKeys)
@@ -49,8 +51,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
 
   const [language, setLanguage] = useState('English')
-
-  const strings = getStrings(language)
 
   useEffect(() => {
     const keysFromStorage: any = localStorage.getItem('settings')
@@ -91,6 +91,18 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       setCurrentTeam(teamJSON)
     } else {
       setCurrentTeam(defaultTeam)
+    }
+    const stringsFromStorage: string | null = localStorage.getItem('strings')
+    if (
+      typeof window !== undefined &&
+      stringsFromStorage &&
+      stringsFromStorage !== 'undefined'
+    ) {
+      const stringsJSON = JSON.parse(stringsFromStorage)
+      setCurrentStrings(stringsJSON)
+    } else {
+      setCurrentStrings(standardStrings)
+      localStorage.setItem('strings', JSON.stringify(standardStrings))
     }
   }, [])
 
@@ -170,9 +182,13 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     localStorage.setItem('team', JSON.stringify(t))
     setCurrentTeam(t)
   }
+  const setStrings = (s : StringsType) => {
+    localStorage.setItem('strings', JSON.stringify(s))
+    setCurrentStrings(s)
+  }
 
   const clear = () => {
-    if (window.confirm(strings.clear_data_confirmation)) {
+    if (window.confirm(currentStrings?.clear_data_confirmation ?? standardStrings.clear_data_confirmation)) {
       localStorage.clear()
       const newUser: User = {
         displayName: uuidv4(),
@@ -182,7 +198,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       localStorage.setItem('user', JSON.stringify(newUser))
       setCurrentTeam(defaultTeam)
       setKeys1(defaultKeys)
-      alert(strings.cookies_cleared)
+      alert(currentStrings?.cookies_cleared ?? standardStrings.cookies_cleared)
     }
   }
 
@@ -210,6 +226,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           <UserContext.Provider
             value={{ user: currentUser!, refreshUser, setTeams }}
           >
+            <TranslationContext.Provider value={{strings : defaultStrings, setStrings }}>
             <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
               <SocketContext.Provider
                 value={{ socket, connect, connectAndJoin }}
@@ -219,6 +236,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                 </HistoryContext.Provider>
               </SocketContext.Provider>
             </TeamContext.Provider>
+            </TranslationContext.Provider>
           </UserContext.Provider>
         </IdContext.Provider>
       </SettingsContext.Provider>

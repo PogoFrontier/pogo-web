@@ -19,8 +19,7 @@ import {
   ListboxPopoverProps,
 } from '@reach/listbox'
 import '@reach/listbox/styles.css'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 
 function truncateString(str: string, num: number) {
   if (str.length > num) {
@@ -71,8 +70,7 @@ const HomePage = () => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(TranslationContext).strings
 
   const onSelect = (id: string) => {
     const newTeam = user.teams.find((x) => x.id === id)

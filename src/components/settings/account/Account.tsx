@@ -1,31 +1,33 @@
-import SettingsContext from '@context/SettingsContext'
 import { useContext, useState } from 'react'
 import style from './account.module.scss'
 
-import { getStrings, languages } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
+import SettingsContext from '@context/SettingsContext'
+import { getStrings, supportedLanguages } from '@common/actions/getLanguage'
 
 const Controls = () => {
-  const clear = useContext(SettingsContext).clear
+  const locale = useContext(TranslationContext)
   const settings = useContext(SettingsContext)
-
+  const strings = locale.strings
   const [lang, setLang] = useState(settings.language)
 
-  // useEffect to live update
-  const strings = getStrings(lang)
-
-  const handleChangeLanguage = (event: any) => {
+  const handleChangeLanguage = async (event: any) => {
     settings.setLanguage(event.target.value)
     setLang(event.target.value)
+    await getStrings(event.target.value).then(data => {
+      locale.setStrings(data)
+      console.log(data)
+    })
   }
 
   return (
     <div className={style.root}>
-      <button className="btn btn-negative" onClick={clear}>
+      <button className="btn btn-negative" onClick={settings.clear}>
         {strings.clear_data}
       </button>
 
       <select onChange={handleChangeLanguage} value={lang}>
-        {languages.map((l) => {
+        {supportedLanguages.map((l) => {
           return (
             <option value={l} key={l}>
               {l}

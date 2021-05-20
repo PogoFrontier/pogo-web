@@ -11,7 +11,7 @@ import metaMap from '@common/actions/metaMap'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import TranslationContext from '@context/TranslationContext'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -49,9 +49,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
-
+  const strings = useContext(TranslationContext).strings
+  
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
     setWorkingTeam(teamToEditCopy.members)
