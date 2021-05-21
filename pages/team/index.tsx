@@ -21,7 +21,7 @@ import getCP, { BaseStatsProps } from '@common/actions/getCP'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import ImportTeam from '@components/import_team/ImportTeam'
 import calculateStats from '@common/actions/calculateStats'
-import TranslationContext from '@context/TranslationContext'
+import LanguageContext from '@context/LanguageContext'
 
 interface TeamExportProps {
   speciesId: string
@@ -66,7 +66,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   )
   const [isImportLoading, setIsImportLoading] = useState(false)
 
-  const strings = useContext(TranslationContext).strings
+  const strings = useContext(LanguageContext).strings
 
   useEffect(() => {
     setIsLoading(false)
@@ -94,7 +94,6 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
    */
   async function handleOnClickAddRandomTeam() {
     setIsRandomTeamLoading(true)
-
 
     const data = await getRandomPokemon(meta)
     if (data === undefined) {

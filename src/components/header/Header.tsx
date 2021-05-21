@@ -4,12 +4,11 @@ import Link from 'next/link'
 import { Menu, MenuButton, MenuList, MenuLink } from '@reach/menu-button'
 import '@reach/menu-button/styles.css'
 import { Icon } from '@components/icon/Icon'
-import TranslationContext from '@context/TranslationContext'
+import LanguageContext from '@context/LanguageContext'
 // import UserContext from '@context/UserContext'
 
 const Header: React.FunctionComponent = () => {
-  const strings = useContext(TranslationContext).strings
-
+  const strings = useContext(LanguageContext).strings
 
   return (
     <header className={style.header}>

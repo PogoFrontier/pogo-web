@@ -17,13 +17,13 @@ import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
 import calculateStats from '@common/actions/calculateStats'
 import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
 import mapLanguage from '@common/actions/mapLanguage'
+import LanguageContext from '@context/LanguageContext'
 
-//TODO: find better type definition for speciesName
+// TODO: find better type definition for speciesName
 type pokemonType = {
-  speciesName: any,
-  speciesId: string,
+  speciesName: any
+  speciesId: string
   types: string[]
   tags?: string[]
   dex: number
@@ -68,9 +68,8 @@ const TeamMemberSelector = (props: {
   const [pokemonNames, setPokemonNames] = useState<any | null>(null)
 
   const imageHandler = new ImageHandler()
-
   const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(LanguageContext).strings
 
   useEffect(() => {
     if (member && member.speciesName) {
@@ -145,7 +144,11 @@ const TeamMemberSelector = (props: {
           }
 
           // Is substring of speciesId?
-          if (suggestion.speciesName[mapLanguage(settings.language)].toLowerCase().indexOf(input) > -1) {
+          if (
+            suggestion.speciesName[mapLanguage(settings.language)]
+              .toLowerCase()
+              .indexOf(input) > -1
+          ) {
             return true
           }
 
@@ -186,7 +189,9 @@ const TeamMemberSelector = (props: {
 
           return false
         })
-        .map((suggestion) => suggestion.speciesName[mapLanguage(settings.language)])
+        .map(
+          (suggestion) => suggestion.speciesName[mapLanguage(settings.language)]
+        )
         .sort((s1, s2) => {
           const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
           const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
@@ -214,16 +219,17 @@ const TeamMemberSelector = (props: {
     }
   }
   const getSpeciesId = (name: string) => {
-    //if(settings.language == "English") return parseName(pokemonNames[name].)
-    for (const _p in pokemonNames) {
-      for (const lang in pokemonNames[_p].speciesName){
-        if(pokemonNames[_p].speciesName[lang] === undefined) return parseName(pokemonNames[name].speciesName["en"])
-        if(pokemonNames[_p].speciesName[lang] == name){
-          return parseName(pokemonNames[_p].speciesName["en"])
+    for (const _p of Object.keys(pokemonNames)) {
+      for (const lang of Object.keys(pokemonNames[_p].speciesName)) {
+        if (pokemonNames[_p].speciesName[lang] === undefined) {
+          return parseName(pokemonNames[name].speciesName.en)
+        }
+        if (pokemonNames[_p].speciesName[lang] === name) {
+          return parseName(pokemonNames[_p].speciesName.en)
         }
       }
     }
-    return "bulbasaur"
+    return 'bulbasaur'
   }
   const setPokemon = (input: string) => {
     setUserInput(input)
@@ -432,7 +438,10 @@ const TeamMemberSelector = (props: {
 
   const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
     const lang = mapLanguage(settings.language)
-    return pokemonNames[pokemon.speciesId].speciesName[lang] ?? pokemonNames[pokemon.speciesId].speciesName["en"]
+    return (
+      pokemonNames[pokemon.speciesId].speciesName[lang] ??
+      pokemonNames[pokemon.speciesId].speciesName.en
+    )
   }
 
   return (
@@ -615,7 +624,9 @@ const TeamMemberSelector = (props: {
           <Input
             title="Species"
             type="text"
-            placeholder={member ? getSpeciesName(member) : strings.choose_pokemon}
+            placeholder={
+              member ? getSpeciesName(member) : strings.choose_pokemon
+            }
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}

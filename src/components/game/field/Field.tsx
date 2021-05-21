@@ -1,7 +1,6 @@
 import { Anim } from '@adibkhan/pogo-web-backend'
 import { Actions } from '@adibkhan/pogo-web-backend/actions'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import LanguageContext from '@context/LanguageContext'
 import classnames from 'classnames'
 import { useEffect, useState, useRef, useContext } from 'react'
 import Character, { CharacterProps } from './Character'
@@ -32,13 +31,11 @@ const AlwaysScrollToBottom = () => {
 
 const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
   const render = () => {
+    const strings = useContext(LanguageContext).strings
     switch (value.type) {
       case 'faint':
-        return <>It's a KO!</>
+        return <>{strings.knock_out}</>
       case Actions.FAST_ATTACK:
-        const settings = useContext(SettingsContext)
-        const strings = getStrings(settings.language)
-
         return (
           <>
             {strings.used}

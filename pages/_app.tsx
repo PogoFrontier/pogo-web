@@ -23,9 +23,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
 
 import axios from 'axios'
-import mapLanguage from '@common/actions/mapLanguage'
 import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
-
+import { standardStrings, StringsType } from '@common/actions/getLanguage'
 
 /**
  * NextJS wrapper
@@ -52,15 +51,15 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
   const [language, setLanguage1] = useState('English')
-  const [strings, setStrings] = useState<any>({})
+  const [strings, setStrings] = useState<StringsType>(standardStrings)
 
   const fetchStrings = async (lang: string) => {
-    const code = mapLanguage(lang)
-    const res = await axios.get(`${CDN_BASE_URL}/locale/${code}.json`)
+    lang = supportedLanguages.includes(lang) ? lang : 'English'
+    const res = await axios.get(`${CDN_BASE_URL}/locale/${lang}.json`)
     if (res.data) {
       const d: any = {}
       for (const key of Object.keys(res.data)) {
-        d[key] = res.data[key].translation
+        d[key] = res.data[key]
       }
       setStrings(d)
     }
@@ -192,7 +191,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const clear = () => {
-    if (window.confirm(strings.clear_data_confirmation)) {
+    if (window.confirm(strings.clear_data_confirm)) {
       localStorage.clear()
       const newUser: User = {
         displayName: uuidv4(),

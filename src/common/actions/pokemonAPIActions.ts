@@ -16,7 +16,7 @@ export const getPokemonNames = async (
     if (!usedPoints) {
       usedPoints = 0
     }
-    language = mapLanguage(language ?? "English")
+    language = mapLanguage(language ?? 'English')
     const classString = className ? `&class=${className}` : ''
     const queryString = meta
       ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}${classString}&language=${language}`

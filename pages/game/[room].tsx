@@ -27,7 +27,7 @@ import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
-import TranslationContext from '@context/TranslationContext'
+import LanguageContext from '@context/LanguageContext'
 
 interface CheckPayload {
   countdown: number
@@ -58,7 +58,7 @@ const GamePage = () => {
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
-  const { showKeys, keys, language } = useContext(SettingsContext)
+  const { showKeys, keys } = useContext(SettingsContext)
   const {
     fastKey,
     charge1Key,
@@ -91,7 +91,7 @@ const GamePage = () => {
   const [toShield, setToShield] = useState(false)
   const [message, setMessage] = useState('')
 
-  const strings = useContext(TranslationContext).strings
+  const strings = useContext(LanguageContext).strings
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
@@ -567,7 +567,10 @@ const GamePage = () => {
         />
         {showKeys && (
           <label className={style.keylabel}>
-            { strings.hold_fastkey_button.replace("%1", getKeyDescription(fastKey).toUpperCase())}
+            {strings.hold_fastkey_button.replace(
+              '%1',
+              getKeyDescription(fastKey).toUpperCase()
+            )}
           </label>
         )}
 

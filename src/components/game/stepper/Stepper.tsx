@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import style from './stepper.module.scss'
 import SettingsContext from '@context/SettingsContext'
 import useKeyPress from '@common/actions/useKeyPress'
-import { getStrings } from '@trans/translations'
+import LanguageContext from '@context/LanguageContext'
 
 interface StepperProps {
   onStep: (x: number) => void
@@ -18,8 +18,7 @@ const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
   const { showKeys, keys } = useContext(SettingsContext)
   const { fastKey } = keys
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(LanguageContext).strings
 
   const fastKeyClick = useKeyPress(fastKey)
 

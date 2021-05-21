@@ -10,8 +10,7 @@ import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import metaMap from '@common/actions/metaMap'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
-import SettingsContext from '@context/SettingsContext'
-import TranslationContext from '@context/TranslationContext'
+import LanguageContext from '@context/LanguageContext'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -49,8 +48,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
 
-  const strings = useContext(TranslationContext).strings
-  
+  const strings = useContext(LanguageContext).strings
+
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
     setWorkingTeam(teamToEditCopy.members)

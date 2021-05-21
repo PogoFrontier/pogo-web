@@ -2,8 +2,7 @@ import ImageHandler from '@common/actions/getImages'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './team.module.scss'
 import { useContext } from 'react'
-import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import LanguageContext from '@context/LanguageContext'
 
 interface TeamProps {
   team: TeamMember[]
@@ -13,8 +12,7 @@ interface TeamProps {
 const Team: React.FC<TeamProps> = ({ team, isPlayer }) => {
   const imageHandler = new ImageHandler()
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(LanguageContext).strings
   return (
     <section className={style.root}>
       {team &&

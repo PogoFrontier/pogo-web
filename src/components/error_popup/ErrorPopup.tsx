@@ -1,5 +1,5 @@
 import Modal from '@components/modal/Modal'
-import TranslationContext from '@context/TranslationContext'
+import LanguageContext from '@context/LanguageContext'
 import { useContext } from 'react'
 import style from './style.module.scss'
 
@@ -22,7 +22,7 @@ const ErrorPopup: React.FunctionComponent<ErrorPopupProps> = ({
   title,
   buttons,
 }) => {
-  const strings = useContext(TranslationContext).strings
+  const strings = useContext(LanguageContext).strings
 
   if (!title) {
     title = String(strings.error)

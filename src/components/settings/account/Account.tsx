@@ -1,23 +1,17 @@
 import { useContext, useState } from 'react'
 import style from './account.module.scss'
 
-import TranslationContext from '@context/TranslationContext'
 import SettingsContext from '@context/SettingsContext'
-import { getStrings, supportedLanguages } from '@common/actions/getLanguage'
+import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 
 const Controls = () => {
-  const locale = useContext(TranslationContext)
   const settings = useContext(SettingsContext)
-  const strings = locale.strings
+  const strings = useContext(LanguageContext).strings
   const [lang, setLang] = useState(settings.language)
 
   const handleChangeLanguage = async (event: any) => {
     settings.setLanguage(event.target.value)
     setLang(event.target.value)
-    await getStrings(event.target.value).then(data => {
-      locale.setStrings(data)
-      console.log(data)
-    })
   }
 
   return (

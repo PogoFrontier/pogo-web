@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import getKeyDescription from '@common/actions/getKeyDescription'
 import style from './shield.module.scss'
 import SettingsContext from '@context/SettingsContext'
-import { getStrings } from '@trans/translations'
+import LanguageContext from '@context/LanguageContext'
 
 interface ShieldProps {
   value: boolean
@@ -21,8 +21,7 @@ const Shield: React.FC<ShieldProps> = ({ value, onShield, shields }) => {
 
   const disabled = value || shields <= 0
 
-  const settings = useContext(SettingsContext)
-  const strings = getStrings(settings.language)
+  const strings = useContext(LanguageContext).strings
 
   return (
     <>
