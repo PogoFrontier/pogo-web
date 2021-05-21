@@ -1,4 +1,5 @@
 import API from '@config/API'
+import { supportedLanguages } from '@context/LanguageContext'
 import mapLanguage from './mapLanguage'
 
 export const getPokemonNames = async (
@@ -48,9 +49,14 @@ export const getPokemonData = async (
   }
 }
 
-export const getValidateTeam = async (team: string, meta: string) => {
+export const getValidateTeam = async (
+  team: string,
+  meta: string,
+  lang: string
+) => {
   try {
-    const res = await API.get(`api/validate/${team}/${meta}`)
+    lang = supportedLanguages.includes(lang) ? lang : 'English'
+    const res = await API.get(`api/validate/${team}/${meta}/${lang}`)
     return res.data
   } catch (err) {
     return err.message

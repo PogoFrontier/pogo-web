@@ -22,6 +22,7 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import ImportTeam from '@components/import_team/ImportTeam'
 import calculateStats from '@common/actions/calculateStats'
 import LanguageContext from '@context/LanguageContext'
+import SettingsContext from '@context/SettingsContext'
 
 interface TeamExportProps {
   speciesId: string
@@ -67,6 +68,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   const [isImportLoading, setIsImportLoading] = useState(false)
 
   const strings = useContext(LanguageContext).strings
+  const language = useContext(SettingsContext).language
 
   useEffect(() => {
     setIsLoading(false)
@@ -155,7 +157,8 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
       loadTeam(parsedImport).then(async (members) => {
         const result = await getValidateTeam(
           JSON.stringify(members),
-          parsedImport.format
+          parsedImport.format,
+          language
         )
         if (result.message) {
           setError(result.message)

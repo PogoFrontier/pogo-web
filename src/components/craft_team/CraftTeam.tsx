@@ -11,6 +11,7 @@ import metaMap from '@common/actions/metaMap'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import LanguageContext from '@context/LanguageContext'
+import SettingsContext from '@context/SettingsContext'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -48,6 +49,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
 
+  const language = useContext(SettingsContext).language
   const strings = useContext(LanguageContext).strings
 
   const setupForEditing = () => {
@@ -83,7 +85,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
-        metaMap[selectedMeta]!.name
+        metaMap[selectedMeta]!.name,
+        language
       )
       if (result.message) {
         setError(result.message)
@@ -111,7 +114,8 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
-        metaMap[selectedMeta]!.name
+        metaMap[selectedMeta]!.name,
+        language
       )
       if (result.message) {
         setError(result.message)
