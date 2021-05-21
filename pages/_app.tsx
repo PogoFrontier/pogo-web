@@ -14,14 +14,16 @@ import HistoryContext from '@context/HistoryContext'
 //   postNewGoogleUser,
 //   signInWithGoogleId,
 // } from '@common/actions/userAPIActions'
-import { WSS } from '@config/index'
+import { CDN_BASE_URL, WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
-import { getStrings } from '@trans/translations'
+import axios from 'axios'
+import mapLanguage from '@common/actions/mapLanguage'
+import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 
 /**
  * NextJS wrapper
@@ -47,12 +49,23 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
+  const [language, setLanguage1] = useState('English')
+  const [strings, setStrings] = useState<any>({})
 
-  const [language, setLanguage] = useState('English')
-
-  const strings = getStrings(language)
+  const fetchStrings = async (lang: string) => {
+    const code = mapLanguage(lang)
+    const res = await axios.get(`${CDN_BASE_URL}/locale/${code}.json`)
+    if (res.data) {
+      const d: any = {}
+      for (const key of Object.keys(res.data)) {
+        d[key] = res.data[key].translation
+      }
+      setStrings(d)
+    }
+  }
 
   useEffect(() => {
+    fetchStrings(language)
     const keysFromStorage: any = localStorage.getItem('settings')
     if (
       typeof window !== undefined &&
@@ -119,6 +132,11 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
   const refreshUser = () => {
     // Yeet
+  }
+
+  const setLanguage = (lang: string) => {
+    setLanguage1(lang)
+    fetchStrings(lang)
   }
 
   const setTeams = (teams: any[]) => {
@@ -206,21 +224,25 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
           setLanguage,
         }}
       >
-        <IdContext.Provider value={{ id, setId }}>
-          <UserContext.Provider
-            value={{ user: currentUser!, refreshUser, setTeams }}
-          >
-            <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
-              <SocketContext.Provider
-                value={{ socket, connect, connectAndJoin }}
-              >
-                <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
-                  <Component {...pageProps} />
-                </HistoryContext.Provider>
-              </SocketContext.Provider>
-            </TeamContext.Provider>
-          </UserContext.Provider>
-        </IdContext.Provider>
+        <LanguageContext.Provider
+          value={{ languages: supportedLanguages, strings }}
+        >
+          <IdContext.Provider value={{ id, setId }}>
+            <UserContext.Provider
+              value={{ user: currentUser!, refreshUser, setTeams }}
+            >
+              <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
+                <SocketContext.Provider
+                  value={{ socket, connect, connectAndJoin }}
+                >
+                  <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
+                    <Component {...pageProps} />
+                  </HistoryContext.Provider>
+                </SocketContext.Provider>
+              </TeamContext.Provider>
+            </UserContext.Provider>
+          </IdContext.Provider>
+        </LanguageContext.Provider>
       </SettingsContext.Provider>
     </>
   )
