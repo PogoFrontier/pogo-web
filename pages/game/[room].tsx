@@ -105,12 +105,12 @@ const GamePage = () => {
     setStatus(StatusTypes.MAIN)
   }
 
-  const endGame = (result: string) => {
+  const endGame = (result: string, data: string) => {
     ws.onclose = null
     if (ws.close) {
       ws.close()
     }
-    router.push(`/end/${room}?result=${result}`)
+    router.push(`/end/${room}?result=${result}&data=${data}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
@@ -129,6 +129,14 @@ const GamePage = () => {
                 p = prev
                 return ''
               })
+              if (p.startsWith('#sw')) {
+                setCharacters((prevCharacters) => {
+                  prevCharacters[0].anim = {
+                    type: Actions.SWITCH,
+                  }
+                  return prevCharacters
+                })
+              }
               return p
             })
             if (hp !== undefined) {
@@ -292,8 +300,8 @@ const GamePage = () => {
 
   const onMessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$end')) {
-      const data = msg.data.slice(4)
-      endGame(data)
+      const [result, data] = msg.data.slice(4).split('|')
+      endGame(result, data)
     } else if (msg.data.startsWith('#')) {
       // Expected format: "#fa:Volt Switch"
       const data = msg.data.slice(1)
@@ -432,6 +440,7 @@ const GamePage = () => {
       (bufferedMove === '' || bufferedMove.startsWith('#sw'))
     ) {
       setBufferedMove(data)
+      setStatus(StatusTypes.ANIMATING)
       ws.send(data)
     }
     if (
