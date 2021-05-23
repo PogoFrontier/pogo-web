@@ -401,6 +401,7 @@ const TeamPage = () => {
   // const { user } = useContext(UserContext)
   const [metas] = useState([
     'Great League',
+    'Venture Cup',
     'Commander Cup',
     'Floating City',
     'Specialist Cup',
