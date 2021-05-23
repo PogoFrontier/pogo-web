@@ -16,7 +16,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     getGoogleSignInRedirectResult().then((result) => {
-      // console.log(result)
       const googleUser = result.user
       if (
         googleUser &&
@@ -27,53 +26,61 @@ const LoginPage = () => {
         // try to load profile via google id
         signInWithGoogleId(googleUser.uid)
           .then((signInResult) => {
-            const { userData, token } = signInResult.token
-            if (userData && token) {
-              // set user, save token, and store auth in local storage
-              setUser(userData)
-              localStorage.setItem(
-                'authedUser',
-                JSON.stringify({
-                  // ALSO SAVE TOKEN!!
-                  googleId: googleUser.uid,
-                  email: googleUser.email,
+            // console.log(signInResult)
+            if (
+              signInResult.error &&
+              signInResult.error === 'User not found.'
+            ) {
+              // make new user
+              postNewGoogleUser({
+                // function can also save a username/teams, if local user, ask to transfer before this
+                uid: googleUser.uid,
+                displayName: googleUser.displayName,
+                email: googleUser.email,
+              })
+                .then((newUser) => {
+                  // console.log(newUser)
+                  // set user, save token, and store auth in local storage
+                  const { userData, token } = newUser
+                  if (userData && token) {
+                    setUser(userData)
+                    localStorage.setItem(
+                      'userToken',
+                      JSON.stringify({
+                        googleId: googleUser.uid,
+                        token,
+                      })
+                    )
+                  } else {
+                    // corrupted data
+                  }
                 })
-              )
+                .catch((/* err */) => {
+                  // all errors here are server error, since we know the user does not already exist
+                  // console.log(err);
+                })
             } else {
-              // corrupted data
+              // set user, save token, and store auth in local storage
+              const { userData, token } = signInResult
+              if (userData && token) {
+                setUser(userData)
+                localStorage.setItem(
+                  'userToken',
+                  JSON.stringify({
+                    googleId: googleUser.uid,
+                    token,
+                  })
+                )
+              } else {
+                // corrupted data
+              }
             }
           })
           .catch((err) => {
+            // console.log(err)
             if (err.response && err.response.status) {
               switch (err.response.status) {
                 case 401:
-                  // user does not exist, create a new one
-                  postNewGoogleUser({
-                    // function can also save a username/teams, if local user, ask to transfer before this
-                    uid: googleUser.uid,
-                    displayName: googleUser.displayName,
-                  })
-                    .then((newUser) => {
-                      // set user, save token, and store auth in local storage
-                      const { userData, token } = newUser.data
-                      if (userData && token) {
-                        setUser(userData)
-                        localStorage.setItem(
-                          'authedUser',
-                          JSON.stringify({
-                            // ALSO SAVE TOKEN!!
-                            googleId: googleUser.uid,
-                            email: googleUser.email,
-                          })
-                        )
-                      } else {
-                        // corrupted data
-                      }
-                    })
-                    .catch((/* err */) => {
-                      // all errors here are server error, since we know the user does not already exist
-                      // console.log(err);
-                    })
                   break
                 case 500:
                   // internal server error, display error message

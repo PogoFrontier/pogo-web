@@ -16,7 +16,7 @@ import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
-import { signInWithGoogleId } from '@common/actions/userAPIActions'
+import { getUserProfile } from '@common/actions/userAPIActions'
 
 /**
  * NextJS wrapper
@@ -56,25 +56,25 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       }
     }
     // first try to load from localstorage and store in context
-    // actually, first try loading authed user data from local,
+    // actually, first try loading authed user data from local, //use user token instead, go right to profile!
     // then load from firebase if there is one
     // or create local user if there is none
     // and then store in context
 
-    const authedUserFromStorage: string | null = localStorage.getItem(
-      'authedUser'
+    const userTokenFromStorage: string | null = localStorage.getItem(
+      'userToken'
     )
     if (
       typeof window !== undefined &&
-      authedUserFromStorage &&
-      authedUserFromStorage !== 'undefined'
+      userTokenFromStorage &&
+      userTokenFromStorage !== 'undefined'
     ) {
-      const parsedUserCredentials = JSON.parse(authedUserFromStorage)
-      if (parsedUserCredentials.googleId && parsedUserCredentials.email) {
-        signInWithGoogleId(parsedUserCredentials.googleId)
-          .then((res) => {
-            if (res.data.email === parsedUserCredentials.email) {
-              const authedUser = res.data
+      const parsedUserToken = JSON.parse(userTokenFromStorage)
+      if (parsedUserToken.googleId && parsedUserToken.token) {
+        getUserProfile(parsedUserToken.token)
+          .then((authedUser) => {
+            // console.log(authedUser)
+            if (authedUser.googleId === parsedUserToken.googleId) {
               setCurrentUser(authedUser)
               if (authedUser.teams && authedUser.teams.length > 0) {
                 setCurrentTeam(authedUser.teams[0])
@@ -86,7 +86,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
             }
           })
           .catch(() => {
-            // handle error messages, if user not found create local user, else display error
+            // token failed, delete local storage of user, redirect to login?
+            localStorage.removeItem('userToken')
+            // perhaps redirect to login here
           })
       } else {
         // add username/password logic to this, right here
@@ -148,10 +150,10 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
   const setUser = (user: User) => {
     setCurrentUser(user)
-    const { googleId, email } = user
-    if (user.googleId) {
-      localStorage.setItem('authedUser', JSON.stringify({ googleId, email }))
-    }
+    /* const { googleId, token } = user
+    if (user.googleId && user.token) {
+      localStorage.setItem('userToken', JSON.stringify({ googleId, token }))
+    } */
   }
 
   const setTeams = (teams: any[]) => {

@@ -15,7 +15,8 @@ export interface User {
   teams: UserTeam[]
   createdAt?: string
   lastLogin?: string
-  isDeleted?: boolean
+  isDeleted?: boolean /* ,
+  token?: string */
 }
 
 const UserContext = createContext({
