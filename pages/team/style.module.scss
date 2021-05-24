@@ -84,9 +84,10 @@
 }
 
 .addButtons{
-  button{
-   margin-right: 1em;
-  }
   display: flex;
   flex-direction: row;
+}
+
+.addButtons *{
+  margin-right: 1em;
 }

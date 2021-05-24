@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import SocketContext from '@context/SocketContext'
 import style from './form.module.scss'
@@ -11,6 +11,8 @@ import classnames from 'classnames'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import RoomModal from '@components/room_modal/RoomModal'
+import { SERVER } from '@config/index'
+import axios from 'axios'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -26,6 +28,20 @@ const Form: React.FunctionComponent = () => {
   const router = useRouter()
   // matchmaking
   const [isMatchmaking, setIsMatchmaking] = useState(false)
+
+  const [count, setCount] = useState(-1)
+
+  async function fetchCount() {
+    const res = await axios.get(`${SERVER}api/room/status`)
+    const resNum = res.data
+    if (resNum > -1) {
+      setCount(resNum)
+    }
+  }
+
+  useEffect(() => {
+    fetchCount()
+  }, [])
 
   socket.onmessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$error')) {
@@ -177,7 +193,14 @@ const Form: React.FunctionComponent = () => {
         />
       )}
       {!!error && <ErrorPopup error={error} onClose={onErrorPopupClose} />}
-      <section className={style.root}>{render()}</section>
+      <section className={style.root}>
+        {render()}
+        {count > -1 && (
+          <span className={style.status}>
+            {count} player{count === 1 ? '' : 's'} online
+          </span>
+        )}
+      </section>
     </>
   )
 }

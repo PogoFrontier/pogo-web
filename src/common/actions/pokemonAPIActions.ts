@@ -3,14 +3,20 @@ import API from '@config/API'
 export const getPokemonNames = async (
   meta?: string,
   position?: number,
-  showIllegal?: boolean
+  showIllegal?: boolean,
+  usedPoints?: number,
+  className?: string
 ) => {
   try {
     if (!position) {
       position = 0
     }
+    if (!usedPoints) {
+      usedPoints = 0
+    }
+    const classString = className ? `&class=${className}` : ''
     const queryString = meta
-      ? `?format=${meta}&position=${position}?showIllegal=${!!showIllegal}`
+      ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}${classString}`
       : ''
     const res = await API.get(`api/pokemon${queryString}`)
     return res.data
@@ -23,13 +29,15 @@ export const getPokemonData = async (
   speciesId: string,
   movesetOption: 'original' | 'mainseries' | 'norestrictions',
   meta?: string,
-  position?: number
+  position?: number,
+  className?: string
 ) => {
   try {
     const metaString = meta ? `&format=${meta}` : ''
     const positionString = position ? `&position=${position}` : ''
+    const classString = className ? `&class=${className}` : ''
     const res = await API.get(
-      `api/pokemon/${speciesId}?movesetOption=${movesetOption}${metaString}${positionString}`
+      `api/pokemon/${speciesId}?movesetOption=${movesetOption}${metaString}${positionString}${classString}`
     )
     return res.data
   } catch (err) {
@@ -52,5 +60,14 @@ export const parseToRule = async (rule: string) => {
     return res.data
   } catch (err) {
     return err.message
+  }
+}
+
+export const getRandomPokemon = async (rule: string) => {
+  try {
+    const res = await API.get(`api/random/${rule}`)
+    return res.data
+  } catch (err) {
+    return err
   }
 }

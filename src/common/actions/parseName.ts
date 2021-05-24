@@ -1,4 +1,25 @@
 const parseName = (name: string) => {
+  if (name === 'Cherrim (Sunshine)') {
+    return 'cherrim_sunny'
+  }
+  if (name === 'Shellos (East)') {
+    return 'shellos_east_sea'
+  }
+  if (name === 'Gastrodon (East)') {
+    return 'gastrodon_east_sea'
+  }
+  if (name === 'Shellos (West)') {
+    return 'shellos_west_sea'
+  }
+  if (name === 'Gastrodon (West)') {
+    return 'gastrodon_west_sea'
+  }
+  if (name === 'Darmanitan (Galarian)') {
+    return 'darmanitan_galarian_standard'
+  }
+  if (name === 'Meowstic (Male)') {
+    return 'meowstic'
+  }
   return name
     .toLowerCase()
     .replace(/[()]/g, '')

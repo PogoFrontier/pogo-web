@@ -3,6 +3,7 @@ const metaMap: {
     name: string
     maxCP: number
     movesetOption: 'original' | 'mainseries' | 'norestrictions'
+    classes?: string[]
   }
 } = {
   'Great League': {
@@ -17,6 +18,31 @@ const metaMap: {
   },
   'Floating City': {
     name: 'Floating City',
+    maxCP: 1500,
+    movesetOption: 'original',
+  },
+  'Specialist Cup': {
+    name: 'Specialist Cup',
+    maxCP: 1500,
+    movesetOption: 'original',
+    classes: [
+      'Ranger',
+      'Ace Trainer',
+      'Beauty',
+      'Scientist',
+      'Rogue',
+      'Hiker',
+      'Mystic',
+      'Warlord',
+    ],
+  },
+  'Nursery Cup': {
+    name: 'Nursery Cup',
+    maxCP: 1500,
+    movesetOption: 'original',
+  },
+  Cliffhanger: {
+    name: 'Cliffhanger',
     maxCP: 1500,
     movesetOption: 'original',
   },

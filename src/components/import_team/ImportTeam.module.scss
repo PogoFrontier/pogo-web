@@ -1,0 +1,17 @@
+.importTeam{
+    margin-top: 1em;
+    textarea{
+      resize:none;
+      width: 50%;
+      height: 30em;
+    }
+  }
+  
+.importTeamButtons{
+    display: flex;
+    flex-direction: row;
+    margin-top: 1em;
+}
+.importTeamButtons *{
+    margin-right: 1em;
+}

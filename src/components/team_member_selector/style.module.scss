@@ -158,10 +158,10 @@
 
   @include lg {
     display: flex;
-  justify-content: flex-end;
-  flex-direction: row;
-  margin-top: 20px;
-  outline: none;
+    justify-content: flex-end;
+    flex-direction: row;
+    margin-top: 20px;
+    outline: none;
   }
 }
 
@@ -213,8 +213,8 @@
   width: 100%;
   @include lg {
     width: 50%;
-  outline: none;
-  margin: 20px 0 0 20px;
+    outline: none;
+    margin: 20px 0 0 20px;
   }
   display: flex;
   flex-direction: column;
@@ -226,8 +226,8 @@
   width: 100%;
   @include lg {
     width: 50%;
-  outline: none;
-  margin-left: 20px;
+    outline: none;
+    margin-left: 20px;
   }
 }
 

@@ -3,7 +3,7 @@ import {
   getPokemonData,
   getPokemonNames,
 } from '@common/actions/pokemonAPIActions'
-import { cpms, ivValues, levelValues, shadowMult } from '@config/statVals'
+import { ivValues, levelValues } from '@config/statVals'
 import ImageHandler from '@common/actions/getImages'
 import style from './style.module.scss'
 import Input from '@components/input/Input'
@@ -15,8 +15,10 @@ import getIVs from '@common/actions/getIVs'
 import getMaxLevel from '@common/actions/getMaxLevel'
 import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
+import calculateStats from '@common/actions/calculateStats'
 
 type pokemonType = {
+  speciesName: string
   types: string[]
   tags?: string[]
   dex: number
@@ -33,6 +35,8 @@ const TeamMemberSelector = (props: {
   deletePokemon: () => void
   meta: string
   position: number
+  metaClassName?: string
+  classSelector: () => React.ReactElement | null
 }) => {
   const {
     cancelEdit,
@@ -41,6 +45,8 @@ const TeamMemberSelector = (props: {
     deletePokemon,
     meta,
     position,
+    metaClassName,
+    classSelector,
   } = props
   const [userInput, setUserInput] = useState('')
   const [suggestions, setSuggestions] = useState<Map<string, pokemonType>>(
@@ -87,14 +93,14 @@ const TeamMemberSelector = (props: {
   }, [member])
 
   useEffect(() => {
-    getPokemonNames(meta, position, true).then((data) => {
+    getPokemonNames(meta, position, false, 0, metaClassName).then((data) => {
       const pokemonData = new Map()
       Object.keys(data).forEach((speciesId) =>
         pokemonData.set(speciesId, data[speciesId])
       )
       setSuggestions(pokemonData)
     })
-  }, [position, meta])
+  }, [position, meta, metaClassName])
 
   const onChange = (e: any) => {
     const input: string = e.currentTarget.value.toLowerCase()
@@ -121,50 +127,61 @@ const TeamMemberSelector = (props: {
 
     setUserInput(input)
     setFilteredSuggestions(
-      Array.from(suggestions.keys()).filter((s) => {
-        // Is substring of speciesId?
-        if (s.toLowerCase().indexOf(input) > -1) {
-          return true
-        }
-        const suggestion = suggestions.get(s)
+      Array.from(suggestions.values())
+        .filter((suggestion) => {
+          // Is all string?
+          if (input === 'all' || input === '@all') {
+            return true
+          }
 
-        // Is the pokémon's type
-        if (suggestion?.types.includes(input)) {
-          return true
-        }
+          // Is substring of speciesId?
+          if (suggestion.speciesName.toLowerCase().indexOf(input) > -1) {
+            return true
+          }
 
-        // Is the pokémon's tag
-        if (suggestion?.tags?.includes(tagNeedle)) {
-          return true
-        }
+          // Is the pokémon's type
+          if (suggestion.types.includes(input)) {
+            return true
+          }
 
-        // Is the pokémon's move
-        const moves = suggestion?.moves.fastMoves.concat(
-          ...suggestion?.moves.chargedMoves
-        )
-        if (
-          input.startsWith('@') &&
-          moves?.some((fastMove) =>
-            fastMove.moveId.includes(
-              input.toUpperCase().slice(1).replace(' ', '_')
-            )
+          // Is the pokémon's tag
+          if (suggestion.tags?.includes(tagNeedle)) {
+            return true
+          }
+
+          // Is the pokémon's move
+          const moves = suggestion.moves.fastMoves.concat(
+            ...suggestion.moves.chargedMoves
           )
-        ) {
-          return true
-        }
+          if (
+            input.startsWith('@') &&
+            moves?.some((fastMove) =>
+              fastMove.moveId.includes(
+                input.toUpperCase().slice(1).replace(' ', '_')
+              )
+            )
+          ) {
+            return true
+          }
 
-        // Is in dex-range
-        if (
-          dexRange &&
-          suggestion?.dex &&
-          suggestion.dex >= dexRange[0] &&
-          suggestion.dex <= dexRange[1]
-        ) {
-          return true
-        }
+          // Is in dex-range
+          if (
+            dexRange &&
+            suggestion?.dex &&
+            suggestion.dex >= dexRange[0] &&
+            suggestion.dex <= dexRange[1]
+          ) {
+            return true
+          }
 
-        return false
-      })
+          return false
+        })
+        .map((suggestion) => suggestion.speciesName)
+        .sort((s1, s2) => {
+          const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
+          const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
+          return s2Val - s1Val
+        })
     )
     setShowSuggestions(true)
   }
@@ -187,40 +204,14 @@ const TeamMemberSelector = (props: {
     }
   }
 
-  const calculateStats = (
-    bs: {
-      atk: number
-      def: number
-      hp: number
-    },
-    level: number,
-    atk: number,
-    def: number,
-    hp: number,
-    shadow?: boolean
-  ) => {
-    const cpm = cpms[(level - 1) * 2]
-    const selectedHP = Math.floor((bs.hp + hp) * cpm)
-    let selectedAtk = (bs.atk + atk) * cpm
-    let selectedDef = (bs.def + def) * cpm
-    if (shadow) {
-      selectedAtk *= shadowMult[0]
-      selectedDef *= shadowMult[1]
-    }
-    return {
-      hp: selectedHP,
-      atk: selectedAtk,
-      def: selectedDef,
-    }
-  }
-
   const setPokemon = (input: string) => {
     setUserInput(input)
     getPokemonData(
       parseName(input),
       metaMap[meta].movesetOption,
       meta,
-      position
+      position,
+      metaClassName
     )
       .then((pokemon) => {
         if (pokemon) {
@@ -609,6 +600,7 @@ const TeamMemberSelector = (props: {
       ) : null}
       {suggestions && suggestions.size > 0 ? (
         <div className={style.searchbar}>
+          {classSelector()}
           <Input
             title="Species"
             type="text"

@@ -19,12 +19,16 @@ const Character: React.FunctionComponent<CharacterProps> = ({
 }) => {
   const imagesHandler = new ImageHandler()
   const [s, setS] = useState('')
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
     if (anim && !(s.startsWith('sw') && anim.type === 'sw')) {
       const cooldown =
         anim.type === Actions.FAST_ATTACK ? anim.move!.cooldown! : 500
       setS(`${anim.type}${cooldown}`)
+      setCount((prev) => prev + 1)
+    } else if (!anim) {
+      setS('')
     }
   }, [anim])
 
@@ -53,7 +57,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
         })}
       >
         <img
-          key={anim ? anim.turn : -1}
+          key={`${count}|${back}`}
           onAnimationEnd={onAnimationEnd}
           className={classnames([
             style.char,
