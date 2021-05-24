@@ -422,6 +422,7 @@ const TeamMemberSelector = (props: {
     <div className={style.container}>
       {selectedPokemonData && addToBox ? (
         <div className={style.info}>
+          <div className={style.memberinfo}>
           <span className={style.btnRow}>
             {!member ? (
               <button className={style.exit} onClick={cancel}>
@@ -449,6 +450,7 @@ const TeamMemberSelector = (props: {
               className="sprite"
             />
           </div>
+          </div>
           <br />
           <div className={style.label}>
             <label className="shiny-label">
@@ -462,6 +464,8 @@ const TeamMemberSelector = (props: {
               />
             </label>
             <br />
+            </div>
+            <div className={style.label}>
             <div className={style.nickname}>
               <label className="name-label">Nickname: </label>
               <input
@@ -481,7 +485,7 @@ const TeamMemberSelector = (props: {
             </div>
           </div>
 
-          <div className={`fast-move ${style.label}`}>
+          <div className={`${style.fastmove} ${style.label}`}>
             <label className="fast-move-label">Fast Move: </label>
             <select
               className="fast-moves-select"
@@ -501,7 +505,7 @@ const TeamMemberSelector = (props: {
             <div>
               <label className="charge-move-label">Charge Moves: </label>
             </div>
-            <div>
+            <div className={style.chargeMovesSelect}>
               <select
                 className="charge-move-1"
                 name="charge-move-1"
@@ -547,7 +551,7 @@ const TeamMemberSelector = (props: {
                 ))}
               </select>
             </div>
-            <div className={`${style.ivs} ${style.label}`}>
+            <div className={`${style.ivs}`}>
               <div>
                 <label className="iv-label">IVs: </label>
               </div>
@@ -584,7 +588,7 @@ const TeamMemberSelector = (props: {
                 </select>
               </div>
               <div>
-                <span className={style.ivLabel}>HP:</span>
+                <span className={style.ivLabel}>HP: </span>
                 <select
                   className="hp"
                   name="hp"

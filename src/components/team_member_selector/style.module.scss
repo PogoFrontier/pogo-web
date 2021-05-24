@@ -24,11 +24,13 @@
 }
 
 .label { 
-  margin-bottom: 10px;
-  text-align: center;
+  margin-bottom: 0.5em;
+  display: flex;
+  flex-direction: row;
+
+  //text-align: center;
   label {
     font-size: 1.2em;
-    align-items: center;
     margin-bottom: 10px;
   
     input[type='checkbox'] {
@@ -42,7 +44,8 @@
     width: auto;
     height: 2em;
     margin-right: 0.5em;
-    margin-left: 0.5em
+    margin-left: 0.5em;
+    width:100%;
   }
 
   input::placeholder {
@@ -50,10 +53,10 @@
   }
 
   select {
-    width: auto;
-    height: 25px;
-    margin-right: 10px;
-    margin-left: 5px;
+    width: 100%;
+    height: 2em;
+    margin-right: 0.5em;
+    margin-left: 0.25em;
     outline: none;
     border: none;
     border-radius: 5px;
@@ -78,6 +81,12 @@
   @include md() {
     flex-direction: row;
   }
+}
+
+.chargeMovesSelect{
+  display:flex;
+  flex-direction: row;
+
 }
 
 .chargedMoves * {
@@ -156,11 +165,10 @@
   }
 }
 
-.ivs{
+.stats{
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  align-items: left;
   margin-top: 1.5em;
   @include md(){
     flex-direction: row;
@@ -170,11 +178,35 @@
   }
 }
 
+.iv{
+  margin-right:0.25em;
+}
+
 .ivs *{
-  margin-bottom: 1em;
-  margin-right: 1em;
+  margin-bottom: 0.25em;
+  span{
+    margin-right:0.5em;
+  }
+  select{
+    width: 100%;
+    height: 25px;
+    margin-right: 10px;
+    margin-left: 5px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    background-color: $color-neutral-light;
+    text-align: center;
+  }
+  display:flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.fastmove{
   display:flex;
   flex-direction: column;
+  margin-right: 0.5em;
 }
 
 .info {
@@ -186,8 +218,7 @@
   }
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  align-items: left;
 }
 
 
@@ -198,6 +229,13 @@
   outline: none;
   margin-left: 20px;
   }
+}
+
+.memberinfo{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .suggestionscontainer {
