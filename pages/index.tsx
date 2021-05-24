@@ -178,7 +178,7 @@ const HomePage = () => {
               </a>
               <a
                 className="btn btn-secondary"
-                href="https://lokalise.com/"
+                href="https://app.lokalise.com/public/991869486095447a82fab4.67696706/"
                 target="_blank"
                 rel="noreferrer nofollow"
               >
