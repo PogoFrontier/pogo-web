@@ -7,6 +7,7 @@ import { useState, useContext } from 'react'
 import style from './style.module.scss'
 import { v4 as uuidv4 } from 'uuid'
 import Layout from '@components/layout/Layout'
+import LanguageContext from '@context/LanguageContext'
 
 const EndPage = () => {
   const router = useRouter()
@@ -14,6 +15,7 @@ const EndPage = () => {
   const { socket, connectAndJoin } = useContext(SocketContext)
   const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
+  const strings = useContext(LanguageContext).strings
 
   function joinRoom() {
     // Connected, let's sign-up for to receive messages for this room
@@ -45,19 +47,32 @@ const EndPage = () => {
     router.push('/')
   }
 
+  const getResult = (msg: string) => {
+    switch (msg) {
+      case 'won':
+        return strings.result_win
+      case 'lost':
+        return strings.result_loss
+      case 'tied':
+        return strings.result_tie
+      default:
+        break
+    }
+  }
+
   return (
     <Layout>
       <div className={style.content}>
-        <h1>Game over</h1>
+        <h1>{strings.game_over}</h1>
         {(result === 'won' || result === 'lost' || result === 'tied') && (
-          <h2>You {result} the game</h2>
+          <h2>{getResult}</h2>
         )}
         <div className={style.buttons}>
           <button onClick={join} className="btn btn-primary">
-            Play again
+            {strings.play_again}
           </button>
           <button onClick={toHome} className="btn btn-primary">
-            Home
+            {strings.homepage}
           </button>
         </div>
       </div>

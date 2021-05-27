@@ -19,6 +19,7 @@ import {
   ListboxPopoverProps,
 } from '@reach/listbox'
 import '@reach/listbox/styles.css'
+import LanguageContext from '@context/LanguageContext'
 
 function truncateString(str: string, num: number) {
   if (str.length > num) {
@@ -69,6 +70,7 @@ const HomePage = () => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
+  const strings = useContext(LanguageContext).strings
 
   const onSelect = (id: string) => {
     const newTeam = user.teams.find((x) => x.id === id)
@@ -96,7 +98,10 @@ const HomePage = () => {
                 <div>
                   <p className={style.teamTitle}>
                     <strong>
-                      {team.name ? truncateString(team.name, 8) : 'Your Team'} /{' '}
+                      {team.name
+                        ? truncateString(team.name, 8)
+                        : strings.your_team}{' '}
+                      /{' '}
                     </strong>
                     {team.format}
                   </p>
@@ -115,7 +120,7 @@ const HomePage = () => {
                 </div>
               </div>
               <ListboxInput
-                aria-label="Select Team"
+                aria-label={strings.select_team}
                 onChange={onSelect}
                 className={style.listbox}
                 defaultValue="defaultTeam"
@@ -124,7 +129,7 @@ const HomePage = () => {
                   <ListboxButton className={style.changeTeam}>
                     <Icon name="down" />
                   </ListboxButton>
-                  <small>Change Team</small>
+                  <small>{strings.change_team}</small>
                 </div>
                 <ListboxPopover className={style.popover} position={right}>
                   <ListboxList>
@@ -138,7 +143,9 @@ const HomePage = () => {
                         />
                       ))
                     ) : (
-                      <p className={style.noteams}>No teams available</p>
+                      <p className={style.noteams}>
+                        {strings.team_not_available}
+                      </p>
                     )}
                   </ListboxList>
                 </ListboxPopover>
@@ -147,11 +154,11 @@ const HomePage = () => {
             <Form />
           </section>
           <section className={classnames([style.container, style.info])}>
-            <h1>Friends</h1>
-            Coming Soon!
+            <h1>{strings.friends}</h1>
+            {strings.coming_soon}
           </section>
           <section className={classnames([style.container, style.info])}>
-            <h1>Links</h1>
+            <h1>{strings.links}</h1>
             <div className={style.links}>
               <a
                 className="btn btn-secondary"
@@ -169,6 +176,14 @@ const HomePage = () => {
               >
                 <Icon name="github" size="medium" /> Github (Backend)
               </a>
+              <a
+                className="btn btn-secondary"
+                href="https://app.lokalise.com/public/991869486095447a82fab4.67696706/"
+                target="_blank"
+                rel="noreferrer nofollow"
+              >
+                <Icon name="lokalise" size="medium" /> Lokalise (translations)
+              </a>
             </div>
           </section>
         </div>
@@ -181,7 +196,7 @@ const HomePage = () => {
         buttonStyle={{ backgroundColor: '#68BFF5', fontSize: '15px' }}
         expires={150}
       >
-        We use cookies to enhance the user experience and save preferences.
+        {strings.cookies_description}
       </CookieConsent>
     </Layout>
   )

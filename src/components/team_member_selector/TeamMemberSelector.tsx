@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   getPokemonData,
   getPokemonNames,
@@ -16,9 +16,14 @@ import getMaxLevel from '@common/actions/getMaxLevel'
 import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
 import calculateStats from '@common/actions/calculateStats'
+import SettingsContext from '@context/SettingsContext'
+import mapLanguage from '@common/actions/mapLanguage'
+import LanguageContext from '@context/LanguageContext'
 
+// TODO: find better type definition for speciesName
 type pokemonType = {
-  speciesName: string
+  speciesName: any
+  speciesId: string
   types: string[]
   tags?: string[]
   dex: number
@@ -60,8 +65,11 @@ const TeamMemberSelector = (props: {
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
   const [shouldSave, setShouldSave] = useState<boolean>(false)
+  const [pokemonNames, setPokemonNames] = useState<any | null>(null)
 
   const imageHandler = new ImageHandler()
+  const settings = useContext(SettingsContext)
+  const strings = useContext(LanguageContext).strings
 
   useEffect(() => {
     if (member && member.speciesName) {
@@ -94,6 +102,7 @@ const TeamMemberSelector = (props: {
 
   useEffect(() => {
     getPokemonNames(meta, position, false, 0, metaClassName).then((data) => {
+      setPokemonNames(data)
       const pokemonData = new Map()
       Object.keys(data).forEach((speciesId) =>
         pokemonData.set(speciesId, data[speciesId])
@@ -135,7 +144,11 @@ const TeamMemberSelector = (props: {
           }
 
           // Is substring of speciesId?
-          if (suggestion.speciesName.toLowerCase().indexOf(input) > -1) {
+          if (
+            suggestion.speciesName[mapLanguage(settings.language)]
+              .toLowerCase()
+              .indexOf(input) > -1
+          ) {
             return true
           }
 
@@ -176,7 +189,9 @@ const TeamMemberSelector = (props: {
 
           return false
         })
-        .map((suggestion) => suggestion.speciesName)
+        .map(
+          (suggestion) => suggestion.speciesName[mapLanguage(settings.language)]
+        )
         .sort((s1, s2) => {
           const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
           const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
@@ -203,11 +218,23 @@ const TeamMemberSelector = (props: {
         break
     }
   }
-
+  const getSpeciesId = (name: string) => {
+    for (const _p of Object.keys(pokemonNames)) {
+      for (const lang of Object.keys(pokemonNames[_p].speciesName)) {
+        if (pokemonNames[_p].speciesName[lang] === undefined) {
+          return parseName(pokemonNames[name].speciesName.en)
+        }
+        if (pokemonNames[_p].speciesName[lang] === name) {
+          return parseName(pokemonNames[_p].speciesName.en)
+        }
+      }
+    }
+    return 'bulbasaur'
+  }
   const setPokemon = (input: string) => {
     setUserInput(input)
     getPokemonData(
-      parseName(input),
+      getSpeciesId(input),
       metaMap[meta].movesetOption,
       meta,
       position,
@@ -243,7 +270,7 @@ const TeamMemberSelector = (props: {
             : pokemon.chargedMoves.splice(0, 2)
           setAddToBox({
             speciesId: pokemon.speciesId,
-            speciesName: pokemon.speciesName,
+            speciesName: pokemon.speciesName[mapLanguage(settings.language)],
             baseStats: pokemon.baseStats,
             hp: stats.hp,
             atk: stats.atk,
@@ -280,7 +307,7 @@ const TeamMemberSelector = (props: {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     if (!addToBox.baseStats) {
-      alert('This Pokemon has corrupted data!')
+      alert(strings.corrupted_data_warning)
       return deletePokemon()
     }
     if (['level', 'atk', 'def', 'hp'].includes(e.target.id)) {
@@ -409,6 +436,14 @@ const TeamMemberSelector = (props: {
     setShouldSave(false)
   }
 
+  const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
+    const lang = mapLanguage(settings.language)
+    return (
+      pokemonNames[pokemon.speciesId].speciesName[lang] ??
+      pokemonNames[pokemon.speciesId].speciesName.en
+    )
+  }
+
   return (
     <div className={style.container}>
       {selectedPokemonData && addToBox ? (
@@ -416,18 +451,18 @@ const TeamMemberSelector = (props: {
           <span className={style.btnRow}>
             {!member ? (
               <button className={style.exit} onClick={cancel}>
-                Cancel
+                {strings.exit}
               </button>
             ) : (
               <button className={style.exit} onClick={handleDelete}>
-                Delete
+                {strings.delete}
               </button>
             )}
           </span>
-          <label className={style.cp}>{addToBox.speciesName}</label>
+          <label className={style.cp}>{getSpeciesName(addToBox)}</label>
           <br />
           <label className={style.cp}>
-            CP <b>{addToBox.cp}</b>
+            {strings.cp} <b>{addToBox.cp}</b>
           </label>
           <br />
           <TypeIcons types={addToBox.types} />
@@ -443,7 +478,7 @@ const TeamMemberSelector = (props: {
           <br />
           <div className={style.label}>
             <label className="shiny-label">
-              Shiny?{' '}
+              {strings.shiny_question}{' '}
               <input
                 type="checkbox"
                 name="shiny"
@@ -453,7 +488,7 @@ const TeamMemberSelector = (props: {
               />
             </label>
             <br />
-            <label className="name-label">Nickname: </label>
+            <label className="name-label">{strings.nickname}: </label>
             <input
               type="text"
               placeholder="None"
@@ -467,12 +502,12 @@ const TeamMemberSelector = (props: {
               id="name-clear-btn"
               onClick={clearPokemonName}
             >
-              Clear
+              {strings.clear}
             </button>
           </div>
 
           <div className={`fast-move ${style.label}`}>
-            <label className="fast-move-label">Fast Move: </label>
+            <label className="fast-move-label">{strings.fast_move}: </label>
             <select
               className="fast-moves-select"
               name="fast-moves-select"
@@ -488,7 +523,9 @@ const TeamMemberSelector = (props: {
             </select>
           </div>
           <div className={style.label}>
-            <label className="charge-move-label">Charge Moves: </label>
+            <label className="charge-move-label">
+              {strings.charge_moves}:{' '}
+            </label>
             <select
               className="charge-move-1"
               name="charge-move-1"
@@ -518,7 +555,7 @@ const TeamMemberSelector = (props: {
           </div>
           <div className="stats">
             <div className={`level ${style.label}`}>
-              <label className="level-label"> Level: </label>
+              <label className="level-label"> {strings.level}: </label>
               <select
                 className="level-select"
                 name="level-select"
@@ -534,8 +571,8 @@ const TeamMemberSelector = (props: {
               </select>
             </div>
             <div className={`ivs ${style.label}`}>
-              <label className="iv-label">IVs : </label>
-              ATK
+              <label className="iv-label">{strings.ivs} : </label>
+              {strings.attack_abbr}
               <select
                 className="atk"
                 name="atk"
@@ -549,7 +586,7 @@ const TeamMemberSelector = (props: {
                   </option>
                 ))}
               </select>
-              DEF
+              {strings.defense_abbr}
               <select
                 className="def"
                 name="def"
@@ -563,7 +600,7 @@ const TeamMemberSelector = (props: {
                   </option>
                 ))}
               </select>
-              HP
+              {strings.hitpointsabbr}
               <select
                 className="hp"
                 name="hp"
@@ -587,7 +624,9 @@ const TeamMemberSelector = (props: {
           <Input
             title="Species"
             type="text"
-            placeholder={member ? member.speciesName : 'Choose Pokemon'}
+            placeholder={
+              member ? getSpeciesName(member) : strings.choose_pokemon
+            }
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
@@ -613,12 +652,12 @@ const TeamMemberSelector = (props: {
                 </ul>
               </div>
             ) : (
-              <p>No suggestions</p>
+              <p>{strings.suggestions_none}</p>
             )
           ) : null}
         </div>
       ) : (
-        <p>Failed to connect to the Pokemon database</p>
+        <p>{strings.connect_db_failed}</p>
       )}
     </div>
   )
