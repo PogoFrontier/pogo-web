@@ -97,7 +97,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   async function handleOnClickAddRandomTeam() {
     setIsRandomTeamLoading(true)
 
-    const data = await getRandomPokemon(meta)
+    const data = await getRandomPokemon(meta, language)
     if (data === undefined) {
       alert('An unexpected error occured')
       return
