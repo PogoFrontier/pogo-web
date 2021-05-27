@@ -55,7 +55,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [strings, setStrings] = useState<StringsType>(standardStrings)
 
   const fetchStrings = async (lang: string) => {
-    lang = supportedLanguages.includes(lang) ? lang : 'English'
+    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
     const res = await axios.get(`${CDN_BASE_URL}/locale/${lang}.json`)
     if (res.data) {
       const d: any = {}
