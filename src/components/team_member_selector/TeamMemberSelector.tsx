@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import {
   getPokemonData,
   getPokemonNames,
@@ -16,6 +16,7 @@ import getMaxLevel from '@common/actions/getMaxLevel'
 import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
 import calculateStats from '@common/actions/calculateStats'
+import LanguageContext from '@context/LanguageContext'
 
 type pokemonType = {
   speciesName: string
@@ -60,6 +61,7 @@ const TeamMemberSelector = (props: {
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
   const [shouldSave, setShouldSave] = useState<boolean>(false)
+  const lang = useContext(LanguageContext).current
 
   const imageHandler = new ImageHandler()
 
@@ -135,7 +137,7 @@ const TeamMemberSelector = (props: {
           }
 
           // Is substring of speciesId?
-          if (suggestion.speciesName.toLowerCase().indexOf(input) > -1) {
+          if (suggestion.speciesName[lang].toLowerCase().indexOf(input) > -1) {
             return true
           }
 
@@ -176,7 +178,7 @@ const TeamMemberSelector = (props: {
 
           return false
         })
-        .map((suggestion) => suggestion.speciesName)
+        .map((suggestion) => suggestion.speciesName[lang])
         .sort((s1, s2) => {
           const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
           const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
@@ -243,7 +245,7 @@ const TeamMemberSelector = (props: {
             : pokemon.chargedMoves.splice(0, 2)
           setAddToBox({
             speciesId: pokemon.speciesId,
-            speciesName: pokemon.speciesName,
+            speciesName: pokemon.speciesName[lang],
             baseStats: pokemon.baseStats,
             hp: stats.hp,
             atk: stats.atk,

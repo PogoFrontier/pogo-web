@@ -25,6 +25,7 @@ import { isDesktop } from 'react-device-detect'
 import axios from 'axios'
 import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 import { standardStrings, StringsType } from '@common/actions/getLanguage'
+import mapLanguage from '@common/actions/mapLanguage'
 
 /**
  * NextJS wrapper
@@ -226,7 +227,11 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         }}
       >
         <LanguageContext.Provider
-          value={{ languages: supportedLanguages, strings }}
+          value={{
+            languages: supportedLanguages,
+            strings,
+            current: mapLanguage(language),
+          }}
         >
           <IdContext.Provider value={{ id, setId }}>
             <UserContext.Provider
