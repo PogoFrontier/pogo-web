@@ -19,7 +19,16 @@ import calculateStats from '@common/actions/calculateStats'
 import LanguageContext from '@context/LanguageContext'
 
 type pokemonType = {
-  speciesName: string
+  speciesName: {
+    "de": string
+    "fr": string
+    "en": string
+    "ja": string
+    "ko": string
+    "ru": string
+    "zh_hans": string
+    "zh_hant": string
+  }
   types: string[]
   tags?: string[]
   dex: number
@@ -136,8 +145,10 @@ const TeamMemberSelector = (props: {
             return true
           }
 
+          const name = suggestion.speciesName[lang] || suggestion.speciesName.en
+
           // Is substring of speciesId?
-          if (suggestion.speciesName[lang].toLowerCase().indexOf(input) > -1) {
+          if (name.toLowerCase().indexOf(input) > -1) {
             return true
           }
 
@@ -178,7 +189,7 @@ const TeamMemberSelector = (props: {
 
           return false
         })
-        .map((suggestion) => suggestion.speciesName[lang])
+        .map((suggestion) => suggestion.speciesName[lang] || suggestion.speciesName.en)
         .sort((s1, s2) => {
           const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
           const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
@@ -245,7 +256,7 @@ const TeamMemberSelector = (props: {
             : pokemon.chargedMoves.splice(0, 2)
           setAddToBox({
             speciesId: pokemon.speciesId,
-            speciesName: pokemon.speciesName[lang],
+            speciesName: pokemon.speciesName[lang] || pokemon.speciesName.en,
             baseStats: pokemon.baseStats,
             hp: stats.hp,
             atk: stats.atk,
