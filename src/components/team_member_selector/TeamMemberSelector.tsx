@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   getPokemonData,
   getPokemonNames,
@@ -16,14 +16,9 @@ import getMaxLevel from '@common/actions/getMaxLevel'
 import metaMap from '@common/actions/metaMap'
 import parseName from '@common/actions/parseName'
 import calculateStats from '@common/actions/calculateStats'
-import SettingsContext from '@context/SettingsContext'
-import mapLanguage from '@common/actions/mapLanguage'
-import LanguageContext from '@context/LanguageContext'
 
-// TODO: find better type definition for speciesName
 type pokemonType = {
-  speciesName: any
-  speciesId: string
+  speciesName: string
   types: string[]
   tags?: string[]
   dex: number
@@ -65,11 +60,8 @@ const TeamMemberSelector = (props: {
   )
   const [addToBox, setAddToBox] = useState<any | null>(null)
   const [shouldSave, setShouldSave] = useState<boolean>(false)
-  const [pokemonNames, setPokemonNames] = useState<any | null>(null)
 
   const imageHandler = new ImageHandler()
-  const settings = useContext(SettingsContext)
-  const strings = useContext(LanguageContext).strings
 
   useEffect(() => {
     if (member && member.speciesName) {
@@ -102,7 +94,6 @@ const TeamMemberSelector = (props: {
 
   useEffect(() => {
     getPokemonNames(meta, position, false, 0, metaClassName).then((data) => {
-      setPokemonNames(data)
       const pokemonData = new Map()
       Object.keys(data).forEach((speciesId) =>
         pokemonData.set(speciesId, data[speciesId])
@@ -144,11 +135,7 @@ const TeamMemberSelector = (props: {
           }
 
           // Is substring of speciesId?
-          if (
-            suggestion.speciesName[mapLanguage(settings.language)]
-              .toLowerCase()
-              .indexOf(input) > -1
-          ) {
+          if (suggestion.speciesName.toLowerCase().indexOf(input) > -1) {
             return true
           }
 
@@ -189,9 +176,7 @@ const TeamMemberSelector = (props: {
 
           return false
         })
-        .map(
-          (suggestion) => suggestion.speciesName[mapLanguage(settings.language)]
-        )
+        .map((suggestion) => suggestion.speciesName)
         .sort((s1, s2) => {
           const s1Val = s1.toLowerCase().startsWith(input) ? 1 : 0
           const s2Val = s2.toLowerCase().startsWith(input) ? 1 : 0
@@ -218,23 +203,11 @@ const TeamMemberSelector = (props: {
         break
     }
   }
-  const getSpeciesId = (name: string) => {
-    for (const _p of Object.keys(pokemonNames)) {
-      for (const lang of Object.keys(pokemonNames[_p].speciesName)) {
-        if (pokemonNames[_p].speciesName[lang] === undefined) {
-          return parseName(pokemonNames[name].speciesName.en)
-        }
-        if (pokemonNames[_p].speciesName[lang] === name) {
-          return parseName(pokemonNames[_p].speciesName.en)
-        }
-      }
-    }
-    return 'bulbasaur'
-  }
+
   const setPokemon = (input: string) => {
     setUserInput(input)
     getPokemonData(
-      getSpeciesId(input),
+      parseName(input),
       metaMap[meta].movesetOption,
       meta,
       position,
@@ -270,7 +243,7 @@ const TeamMemberSelector = (props: {
             : pokemon.chargedMoves.splice(0, 2)
           setAddToBox({
             speciesId: pokemon.speciesId,
-            speciesName: pokemon.speciesName[mapLanguage(settings.language)],
+            speciesName: pokemon.speciesName,
             baseStats: pokemon.baseStats,
             hp: stats.hp,
             atk: stats.atk,
@@ -307,7 +280,7 @@ const TeamMemberSelector = (props: {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     if (!addToBox.baseStats) {
-      alert(strings.corrupted_data_warning)
+      alert('This Pokemon has corrupted data!')
       return deletePokemon()
     }
     if (['level', 'atk', 'def', 'hp'].includes(e.target.id)) {
@@ -436,33 +409,26 @@ const TeamMemberSelector = (props: {
     setShouldSave(false)
   }
 
-  const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
-    const lang = mapLanguage(settings.language)
-    return (
-      pokemonNames[pokemon.speciesId].speciesName[lang] ??
-      pokemonNames[pokemon.speciesId].speciesName.en
-    )
-  }
-
   return (
     <div className={style.container}>
       {selectedPokemonData && addToBox ? (
         <div className={style.info}>
+          <div className={style.memberinfo}>
           <span className={style.btnRow}>
             {!member ? (
               <button className={style.exit} onClick={cancel}>
-                {strings.exit}
+                Cancel
               </button>
             ) : (
               <button className={style.exit} onClick={handleDelete}>
-                {strings.delete}
+                Delete
               </button>
             )}
           </span>
-          <label className={style.cp}>{getSpeciesName(addToBox)}</label>
+          <label className={style.cp}>{addToBox.speciesName}</label>
           <br />
           <label className={style.cp}>
-            {strings.cp} <b>{addToBox.cp}</b>
+            CP <b>{addToBox.cp}</b>
           </label>
           <br />
           <TypeIcons types={addToBox.types} />
@@ -475,10 +441,11 @@ const TeamMemberSelector = (props: {
               className="sprite"
             />
           </div>
+          </div>
           <br />
           <div className={style.label}>
             <label className="shiny-label">
-              {strings.shiny_question}{' '}
+              Shiny?{' '}
               <input
                 type="checkbox"
                 name="shiny"
@@ -488,26 +455,29 @@ const TeamMemberSelector = (props: {
               />
             </label>
             <br />
-            <label className="name-label">{strings.nickname}: </label>
-            <input
-              type="text"
-              placeholder="None"
-              id="name"
-              onChange={handlePokemonChange}
-              maxLength={12}
-              value={addToBox.name ? addToBox.name : ''}
-            />
-            <button
-              className="clear-name-btn"
-              id="name-clear-btn"
-              onClick={clearPokemonName}
-            >
-              {strings.clear}
-            </button>
+            </div>
+            <div className={style.label}>
+            <div className={style.nickname}>
+              <label className="name-label">Nickname: </label>
+              <input
+                type="text"
+                placeholder="None"
+                id="name"
+                onChange={handlePokemonChange}
+                value={addToBox.name ? addToBox.name : ''}
+              />
+              <button
+                className="clear-name-btn"
+                id="name-clear-btn"
+                onClick={clearPokemonName}
+              >
+                Clear
+              </button>
+            </div>
           </div>
 
-          <div className={`fast-move ${style.label}`}>
-            <label className="fast-move-label">{strings.fast_move}: </label>
+          <div className={`${style.fastmove} ${style.label}`}>
+            <label className="fast-move-label">Fast Move: </label>
             <select
               className="fast-moves-select"
               name="fast-moves-select"
@@ -522,40 +492,42 @@ const TeamMemberSelector = (props: {
               ))}
             </select>
           </div>
-          <div className={style.label}>
-            <label className="charge-move-label">
-              {strings.charge_moves}:{' '}
-            </label>
-            <select
-              className="charge-move-1"
-              name="charge-move-1"
-              id="chargeMove1"
-              onChange={handlePokemonChange}
-              value={addToBox.chargeMoves[0]}
-            >
-              {selectedPokemonData.chargedMoves.map((move: string) => (
-                <option value={move} key={move}>
-                  {toTitleCase(move)}
-                </option>
-              ))}
-            </select>
-            <select
-              className="charge-move-2"
-              name="charge-move-2"
-              id="chargeMove2"
-              onChange={handlePokemonChange}
-              value={addToBox.chargeMoves[1]}
-            >
-              {selectedPokemonData.chargedMoves.map((move: string) => (
-                <option value={move} key={move}>
-                  {toTitleCase(move)}
-                </option>
-              ))}
-            </select>
+          <div className={`${style.label} ${style.chargedMoves}`}>
+            <div>
+              <label className="charge-move-label">Charge Moves: </label>
+            </div>
+            <div className={style.chargeMovesSelect}>
+              <select
+                className="charge-move-1"
+                name="charge-move-1"
+                id="chargeMove1"
+                onChange={handlePokemonChange}
+                value={addToBox.chargeMoves[0]}
+              >
+                {selectedPokemonData.chargedMoves.map((move: string) => (
+                  <option value={move} key={move}>
+                    {toTitleCase(move)}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="charge-move-2"
+                name="charge-move-2"
+                id="chargeMove2"
+                onChange={handlePokemonChange}
+                value={addToBox.chargeMoves[1]}
+              >
+                {selectedPokemonData.chargedMoves.map((move: string) => (
+                  <option value={move} key={move}>
+                    {toTitleCase(move)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="stats">
             <div className={`level ${style.label}`}>
-              <label className="level-label"> {strings.level}: </label>
+              <label className="level-label"> Level: </label>
               <select
                 className="level-select"
                 name="level-select"
@@ -570,50 +542,58 @@ const TeamMemberSelector = (props: {
                 ))}
               </select>
             </div>
-            <div className={`ivs ${style.label}`}>
-              <label className="iv-label">{strings.ivs} : </label>
-              {strings.attack_abbr}
-              <select
-                className="atk"
-                name="atk"
-                id="atk"
-                onChange={handlePokemonChange}
-                value={addToBox.iv.atk}
-              >
-                {ivValues.map((val: number) => (
-                  <option value={val} key={val}>
-                    {val}
-                  </option>
-                ))}
-              </select>
-              {strings.defense_abbr}
-              <select
-                className="def"
-                name="def"
-                id="def"
-                onChange={handlePokemonChange}
-                value={addToBox.iv.def}
-              >
-                {ivValues.map((val: number) => (
-                  <option value={val} key={val}>
-                    {val}
-                  </option>
-                ))}
-              </select>
-              {strings.hitpointsabbr}
-              <select
-                className="hp"
-                name="hp"
-                id="hp"
-                onChange={handlePokemonChange}
-                value={addToBox.iv.hp}
-              >
-                {ivValues.map((val: number) => (
-                  <option value={val} key={val}>
-                    {val}
-                  </option>
-                ))}
-              </select>
+            <div className={`${style.ivs}`}>
+              <div>
+                <label className="iv-label">IVs: </label>
+              </div>
+              <div>
+                <span className={style.ivLabel}>ATK:</span>
+                <select
+                  className="atk"
+                  name="atk"
+                  id="atk"
+                  onChange={handlePokemonChange}
+                  value={addToBox.iv.atk}
+                >
+                  {ivValues.map((val: number) => (
+                    <option value={val} key={val}>
+                      {val}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <span className={style.ivLabel}>DEF:</span>
+                <select
+                  className="def"
+                  name="def"
+                  id="def"
+                  onChange={handlePokemonChange}
+                  value={addToBox.iv.def}
+                >
+                  {ivValues.map((val: number) => (
+                    <option value={val} key={val}>
+                      {val}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <span className={style.ivLabel}>HP: </span>
+                <select
+                  className="hp"
+                  name="hp"
+                  id="hp"
+                  onChange={handlePokemonChange}
+                  value={addToBox.iv.hp}
+                >
+                  {ivValues.map((val: number) => (
+                    <option value={val} key={val}>
+                      {val}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -624,9 +604,7 @@ const TeamMemberSelector = (props: {
           <Input
             title="Species"
             type="text"
-            placeholder={
-              member ? getSpeciesName(member) : strings.choose_pokemon
-            }
+            placeholder={member ? member.speciesName : 'Choose Pokemon'}
             onChange={onChange}
             onKeyDown={onKeyDown}
             value={userInput}
@@ -652,12 +630,12 @@ const TeamMemberSelector = (props: {
                 </ul>
               </div>
             ) : (
-              <p>{strings.suggestions_none}</p>
+              <p>No suggestions</p>
             )
           ) : null}
         </div>
       ) : (
-        <p>{strings.connect_db_failed}</p>
+        <p>Failed to connect to the Pokemon database</p>
       )}
     </div>
   )
