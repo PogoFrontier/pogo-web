@@ -43,6 +43,9 @@
       "@config/*": [
         "./src/config/*"
       ],
+      "@trans/*": [
+        "./src/translations/*"
+      ],
     },
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,

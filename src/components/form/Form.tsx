@@ -13,6 +13,7 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import RoomModal from '@components/room_modal/RoomModal'
 import { SERVER } from '@config/index'
 import axios from 'axios'
+import LanguageContext from '@context/LanguageContext'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -30,6 +31,8 @@ const Form: React.FunctionComponent = () => {
   const [isMatchmaking, setIsMatchmaking] = useState(false)
 
   const [count, setCount] = useState(-1)
+
+  const strings = useContext(LanguageContext).strings
 
   async function fetchCount() {
     const res = await axios.get(`${SERVER}api/room/status`)
@@ -155,7 +158,7 @@ const Form: React.FunctionComponent = () => {
               ])}
               onClick={quitQuickPlay}
             >
-              Quit
+              {strings.quit}
             </button>
           )}
         </div>
@@ -168,13 +171,13 @@ const Form: React.FunctionComponent = () => {
             className={classnames([style.button, 'btn', 'btn-primary'])}
             onClick={joinQuickPlay}
           >
-            Quick Play
+            {strings.quick_play}
           </button>
           <button
             className="btn btn-secondary noshrink"
             onClick={openRoomModal}
           >
-            Browse Rooms
+            {strings.browse_rooms}
           </button>
         </>
       )
@@ -197,7 +200,10 @@ const Form: React.FunctionComponent = () => {
         {render()}
         {count > -1 && (
           <span className={style.status}>
-            {count} player{count === 1 ? '' : 's'} online
+            {count}{' '}
+            {count === 1
+              ? strings.players_online_sing
+              : strings.players_online_plur}
           </span>
         )}
       </section>

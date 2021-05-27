@@ -2,6 +2,8 @@ import Input from '@components/input/Input'
 import Modal from '@components/modal/Modal'
 import Loader from 'react-loader-spinner'
 import style from './style.module.scss'
+import { useContext } from 'react'
+import LanguageContext from '@context/LanguageContext'
 
 interface RoomModalProps {
   onClose: () => void
@@ -18,10 +20,11 @@ const RoomModal: React.FunctionComponent<RoomModalProps> = ({
   isLoading,
   onChange,
 }) => {
+  const strings = useContext(LanguageContext).strings
   return (
     <Modal
       onClose={onClose}
-      title="Browse Battle Rooms"
+      title={strings.browse_rooms}
       className={style.modal}
     >
       {isLoading ? (
@@ -30,7 +33,11 @@ const RoomModal: React.FunctionComponent<RoomModalProps> = ({
         <>
           <div className={style.inputWrap}>
             <div className={style.input}>
-              <Input title="Create Room" value={room} onChange={onChange} />
+              <Input
+                title={strings.create_room}
+                value={room}
+                onChange={onChange}
+              />
             </div>
             <button
               className={style.button}

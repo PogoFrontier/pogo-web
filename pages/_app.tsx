@@ -14,13 +14,17 @@ import HistoryContext from '@context/HistoryContext'
 //   postNewGoogleUser,
 //   signInWithGoogleId,
 // } from '@common/actions/userAPIActions'
-import { WSS } from '@config/index'
+import { CDN_BASE_URL, WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
+
+import axios from 'axios'
+import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
+import { standardStrings, StringsType } from '@common/actions/getLanguage'
 
 /**
  * NextJS wrapper
@@ -46,8 +50,23 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
+  const [language, setLanguage1] = useState('English')
+  const [strings, setStrings] = useState<StringsType>(standardStrings)
+
+  const fetchStrings = async (lang: string) => {
+    lang = supportedLanguages.includes(lang) ? lang : 'English'
+    const res = await axios.get(`${CDN_BASE_URL}/locale/${lang}.json`)
+    if (res.data) {
+      const d: any = {}
+      for (const key of Object.keys(res.data)) {
+        d[key] = res.data[key]
+      }
+      setStrings(d)
+    }
+  }
 
   useEffect(() => {
+    fetchStrings(language)
     const keysFromStorage: any = localStorage.getItem('settings')
     if (
       typeof window !== undefined &&
@@ -116,6 +135,11 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     // Yeet
   }
 
+  const setLanguage = (lang: string) => {
+    setLanguage1(lang)
+    fetchStrings(lang)
+  }
+
   const setTeams = (teams: any[]) => {
     const curr: User = { ...currentUser! }
     curr.teams = teams
@@ -167,7 +191,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const clear = () => {
-    if (window.confirm("Are you sure you'd like to clear all your data?")) {
+    if (window.confirm(strings.clear_data_confirm)) {
       localStorage.clear()
       const newUser: User = {
         displayName: uuidv4(),
@@ -177,7 +201,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       localStorage.setItem('user', JSON.stringify(newUser))
       setCurrentTeam(defaultTeam)
       setKeys1(defaultKeys)
-      alert('All cookies cleared.')
+      alert(strings.cookies_cleared)
     }
   }
 
@@ -191,23 +215,35 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
       <SettingsContext.Provider
-        value={{ showKeys, keys, setShowKeys, setKeys, clear }}
+        value={{
+          showKeys,
+          keys,
+          setShowKeys,
+          setKeys,
+          clear,
+          language,
+          setLanguage,
+        }}
       >
-        <IdContext.Provider value={{ id, setId }}>
-          <UserContext.Provider
-            value={{ user: currentUser!, refreshUser, setTeams }}
-          >
-            <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
-              <SocketContext.Provider
-                value={{ socket, connect, connectAndJoin }}
-              >
-                <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
-                  <Component {...pageProps} />
-                </HistoryContext.Provider>
-              </SocketContext.Provider>
-            </TeamContext.Provider>
-          </UserContext.Provider>
-        </IdContext.Provider>
+        <LanguageContext.Provider
+          value={{ languages: supportedLanguages, strings }}
+        >
+          <IdContext.Provider value={{ id, setId }}>
+            <UserContext.Provider
+              value={{ user: currentUser!, refreshUser, setTeams }}
+            >
+              <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
+                <SocketContext.Provider
+                  value={{ socket, connect, connectAndJoin }}
+                >
+                  <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
+                    <Component {...pageProps} />
+                  </HistoryContext.Provider>
+                </SocketContext.Provider>
+              </TeamContext.Provider>
+            </UserContext.Provider>
+          </IdContext.Provider>
+        </LanguageContext.Provider>
       </SettingsContext.Provider>
     </>
   )

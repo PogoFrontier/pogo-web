@@ -1,263 +1,249 @@
 @import 'variables';
 @import 'colors';
-
-
 .suggestions {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .suggestion {
-  cursor: pointer;
-  padding: 0.5em;
-  margin-bottom: 0.5em;
-  transition: margin-left 150ms;
-  &:hover {
-    margin-left: 1em;
-  }
-}
-
-.nickname{
-  display: flex;
-  flex-direction: row;
-}
-
-.label { 
-  margin-bottom: 0.5em;
-  display: flex;
-  flex-direction: row;
-
-  //text-align: center;
-  label {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-  
-    input[type='checkbox'] {
-      width: 20px;
-      height: 20px;
-      margin-bottom: 10px;
-    }
-  }
-
-  input[type='text'] {
-    width: auto;
-    height: 2em;
-    margin-right: 0.5em;
-    margin-left: 0.5em;
-    width:100%;
-  }
-
-  input::placeholder {
-    padding-left: 10px;
-  }
-
-  select {
-    width: 100%;
-    height: 2em;
-    margin-right: 0.5em;
-    margin-left: 0.25em;
-    outline: none;
-    border: none;
-    border-radius: 5px;
-    background-color: $color-neutral-light;
-  }
-
-  button {
-    border: none;
-    background: none;
-    color: $color-brand-primary;
-    font-size: 1em;
     cursor: pointer;
-    font-weight: 600;
-    outline: none;
-  }
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+    transition: margin-left 150ms;
+    &:hover {
+        margin-left: 1em;
+    }
 }
 
-.chargedMoves{
-  margin-top: 0.5em;
-  display:flex;
-  flex-direction:column;
-  @include md() {
+.nickname {
+    display: flex;
     flex-direction: row;
-  }
 }
 
-.chargeMovesSelect{
-  display:flex;
-  flex-direction: row;
+.label {
+    margin-bottom: 0.5em;
+    display: flex;
+    flex-direction: row;
+    //text-align: center;
+    label {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+        input[type='checkbox'] {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 10px;
+        }
+    }
+    input[type='text'] {
+        height: 2em;
+        margin-right: 0.5em;
+        margin-left: 0.5em;
+        width: 100%;
+    }
+    input::placeholder {
+        padding-left: 10px;
+    }
+    select {
+        width: 100%;
+        height: 2em;
+        margin-right: 0.5em;
+        margin-left: 0.25em;
+        outline: none;
+        border: none;
+        border-radius: 5px;
+        background-color: $color-neutral-light;
+    }
+    button {
+        border: none;
+        background: none;
+        color: $color-brand-primary;
+        font-size: 1em;
+        cursor: pointer;
+        font-weight: 600;
+        outline: none;
+    }
+}
 
+.chargedMoves {
+    margin-top: 0.5em;
+    display: flex;
+    flex-direction: column;
+    @include md() {
+        flex-direction: row;
+    }
+}
+
+.chargeMovesSelect {
+    display: flex;
+    flex-direction: row;
 }
 
 .chargedMoves * {
-  margin-bottom: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .btnRow {
-  float: right;
-  button + button {
-    margin: 0 1em 1em 1em;
-  }
+    float: right;
+    button+button {
+        margin: 0 1em 1em 1em;
+    }
 }
 
 .cp {
-  font-size: 1.1em;
-  @include md {
-    font-size: 1.5em;
-  }
+    font-size: 1.1em;
+    @include md {
+        font-size: 1.5em;
+    }
 }
 
 .cp b {
-  font-size: 1.2em;
-  opacity: 0.8;
-  @include md {
-    font-size: 1.6em;
-  }
+    font-size: 1.2em;
+    opacity: 0.8;
+    @include md {
+        font-size: 1.6em;
+    }
 }
 
 .btn {
-  border: none;
-  background: none;
-  color: $color-brand-primary;
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  &:hover {
-    text-decoration: underline;
-  }
+    border: none;
+    background: none;
+    color: $color-brand-primary;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
 }
 
 .exit {
-  border: none;
-  background: none;
-  color: $color-brand-negative;
-  font-size: 1.5em;
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  &:hover {
-    text-decoration: underline;
-  }
+    border: none;
+    background: none;
+    color: $color-brand-negative;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+    }
 }
 
 .imagecontainer {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
-  display: flex;
-  justify-content: flex-end;
-  flex-direction: column-reverse;
-
-  @include lg {
     display: flex;
     justify-content: flex-end;
+    flex-direction: column-reverse;
+    @include lg {
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: row;
+        margin-top: 20px;
+        outline: none;
+    }
+}
+
+.stats {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    margin-top: 1.5em;
+    @include md() {
+        flex-direction: row;
+    }
+    select {
+        margin-top: 0.25em;
+    }
+}
+
+.iv {
+    margin-right: 0.25em;
+}
+
+.ivs * {
+    margin-bottom: 0.25em;
+    span {
+        margin-right: 0.5em;
+    }
+    select {
+        width: 100%;
+        height: 25px;
+        margin-right: 10px;
+        margin-left: 5px;
+        outline: none;
+        border: none;
+        border-radius: 5px;
+        background-color: $color-neutral-light;
+        text-align: center;
+    }
+    display:flex;
     flex-direction: row;
-    margin-top: 20px;
-    outline: none;
-  }
+    align-items: baseline;
 }
 
-.stats{
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  margin-top: 1.5em;
-  @include md(){
-    flex-direction: row;
-  }
-  select {
-    margin-top: 0.25em;
-  }
-}
-
-.iv{
-  margin-right:0.25em;
-}
-
-.ivs *{
-  margin-bottom: 0.25em;
-  span{
-    margin-right:0.5em;
-  }
-  select{
-    width: 100%;
-    height: 25px;
-    margin-right: 10px;
-    margin-left: 5px;
-    outline: none;
-    border: none;
-    border-radius: 5px;
-    background-color: $color-neutral-light;
-    text-align: center;
-  }
-  display:flex;
-  flex-direction: row;
-  align-items: baseline;
-}
-
-.fastmove{
-  display:flex;
-  flex-direction: column;
-  margin-right: 0.5em;
+.fastmove {
+    display: flex;
+    flex-direction: column;
+    margin-right: 0.5em;
 }
 
 .info {
-  width: 100%;
-  @include lg {
-    width: 50%;
-    outline: none;
-    margin: 20px 0 0 20px;
-  }
-  display: flex;
-  flex-direction: column;
-  align-items: left;
+    width: 100%;
+    @include lg {
+        width: 50%;
+        outline: none;
+        margin: 20px 0 0 20px;
+    }
+    display: flex;
+    flex-direction: column;
+    align-items: left;
 }
-
 
 .searchbar {
-  width: 100%;
-  @include lg {
-    width: 50%;
-    outline: none;
-    margin-left: 20px;
-  }
+    width: 100%;
+    @include lg {
+        width: 50%;
+        outline: none;
+        margin-left: 20px;
+    }
 }
 
-.memberinfo{
-  display:flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.memberinfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .suggestionscontainer {
-  max-height: 400px;
-  outline: none;
-  overflow-y: scroll
+    max-height: 400px;
+    outline: none;
+    overflow-y: scroll
 }
 
 .suggestionscontainer::-webkit-scrollbar {
-  width: 10px;
+    width: 10px;
 }
 
 .suggestionscontainer::-webkit-scrollbar-track {
-  background: #f1f1f1;
+    background: #f1f1f1;
 }
 
 .suggestionscontainer::-webkit-scrollbar-thumb {
-  background: #888;
+    background: #888;
 }
 
 .suggestionscontainer::-webkit-scrollbar-thumb:hover {
-  background: #555;
+    background: #555;
 }
-
-

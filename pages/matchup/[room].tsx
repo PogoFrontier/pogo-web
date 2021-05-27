@@ -10,6 +10,7 @@ import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import style from './style.module.scss'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
+import LanguageContext from '@context/LanguageContext'
 
 enum STATUS {
   CHOOSING,
@@ -34,6 +35,8 @@ const MatchupPage = () => {
   const team: TeamMember[] = useContext(TeamContext).team.members
   const { height } = useWindowSize()
   const { routing, prev } = useContext(HistoryContext)
+
+  const strings = useContext(LanguageContext).strings
 
   const onMessage = (message: MessageEvent) => {
     if (message.data.startsWith('$end')) {
@@ -110,10 +113,10 @@ const MatchupPage = () => {
       <div className={style.content}>
         <header className={style.head}>
           <h1>
-            Room Code: <strong>{room}</strong>
+            {strings.room_code} <strong>{room}</strong>
           </h1>
           <button className="btn btn-negative" onClick={toHome}>
-            Exit
+            {strings.exit}
           </button>
         </header>
         <div className={style.teams}>
@@ -130,11 +133,11 @@ const MatchupPage = () => {
           (opponentTeam.length > 0 ? (
             <Select team={team} onSubmit={onSubmit} />
           ) : (
-            <p>Waiting for a player to join...</p>
+            <p>{strings.waiting_for_player}</p>
           ))}
         {status === STATUS.WAITING && (
           <div>
-            <p>Waiting for opponent...</p>
+            <p>{strings.waiting_for_opponent}</p>
             <Loader
               type="TailSpin"
               color="#68BFF5"
