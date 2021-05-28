@@ -25,6 +25,7 @@ import { isDesktop } from 'react-device-detect'
 import axios from 'axios'
 import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 import { standardStrings, StringsType } from '@common/actions/getLanguage'
+import mapLanguage from '@common/actions/mapLanguage'
 
 /**
  * NextJS wrapper
@@ -54,7 +55,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [strings, setStrings] = useState<StringsType>(standardStrings)
 
   const fetchStrings = async (lang: string) => {
-    lang = supportedLanguages.includes(lang) ? lang : 'English'
+    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
     const res = await axios.get(`${CDN_BASE_URL}/locale/${lang}.json`)
     if (res.data) {
       const d: any = {}
@@ -226,7 +227,11 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         }}
       >
         <LanguageContext.Provider
-          value={{ languages: supportedLanguages, strings }}
+          value={{
+            languages: supportedLanguages,
+            strings,
+            current: mapLanguage(language),
+          }}
         >
           <IdContext.Provider value={{ id, setId }}>
             <UserContext.Provider
