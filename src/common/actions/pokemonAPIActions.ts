@@ -55,7 +55,7 @@ export const getValidateTeam = async (
   lang: string
 ) => {
   try {
-    lang = supportedLanguages.includes(lang) ? lang : 'English'
+    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
     const res = await API.get(`api/validate/${team}/${meta}/${lang}`)
     return res.data
   } catch (err) {
@@ -72,9 +72,10 @@ export const parseToRule = async (rule: string) => {
   }
 }
 
-export const getRandomPokemon = async (rule: string) => {
+export const getRandomPokemon = async (rule: string, lang: string) => {
   try {
-    const res = await API.get(`api/random/${rule}`)
+    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
+    const res = await API.get(`api/random/${rule}?language=${lang}`)
     return res.data
   } catch (err) {
     return err

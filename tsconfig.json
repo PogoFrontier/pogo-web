@@ -15,6 +15,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "suppressImplicitAnyIndexErrors": true,
     "baseUrl": ".",
     "typeRoots": [
       "./node_modules/@types",
