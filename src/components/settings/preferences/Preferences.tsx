@@ -4,26 +4,26 @@ import { useContext, useState } from 'react'
 import style from './preferences.module.scss'
 
 const Preferences = () => {
-    const settings = useContext(SettingsContext)
-    const [lang, setLang] = useState(settings.language)
-    const handleChangeLanguage = async (event: any) => {
-        settings.setLanguage(event.target.value)
-        setLang(event.target.value)
-    }
+  const settings = useContext(SettingsContext)
+  const [lang, setLang] = useState(settings.language)
+  const handleChangeLanguage = async (event: any) => {
+    settings.setLanguage(event.target.value)
+    setLang(event.target.value)
+  }
 
-    return (
-        <div className={style.root}>
-            <select onChange={handleChangeLanguage} value={lang}>
-                {supportedLanguages.map((l) => {
-                return (
-                    <option value={l} key={l}>
-                    {l}
-                    </option>
-                )
-                })}
-            </select>
-        </div>
-    )
+  return (
+    <div className={style.root}>
+      <select onChange={handleChangeLanguage} value={lang}>
+        {supportedLanguages.map((l) => {
+          return (
+            <option value={l} key={l}>
+              {l}
+            </option>
+          )
+        })}
+      </select>
+    </div>
+  )
 }
 
 export default Preferences

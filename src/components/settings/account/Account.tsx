@@ -7,7 +7,7 @@ import LanguageContext from '@context/LanguageContext'
 const Controls = () => {
   const settings = useContext(SettingsContext)
   const strings = useContext(LanguageContext).strings
-  
+
   return (
     <div className={style.root}>
       <button className="btn btn-negative" onClick={settings.clear}>
