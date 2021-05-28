@@ -76,7 +76,7 @@
     "charge_one": "Charge 1",
     "charge_two": "Charge 2",
     "cp": "cp",
-    "strings_corrupted_data": "This Pokemon has corrupted data!",
+    "corrupted_data_warning": "This Pokemon has corrupted data!",
     "shiny_question": "Shiny?",
     "nickname": "Nickname",
     "clear": "Clear",
