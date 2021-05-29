@@ -164,7 +164,7 @@
     "team_verify_invalid_level": "Pokemon in index %1 has an invalid level of %2.",
     "team_verify_invalid_cp": "Pokemon in index %1 has too many cp: %2.",
     "team_verify_invalid_nickname": "The nickname %1 exceeds the character limit of 12.",
-    "team_Verify_cursed_nickname": "We don't like the nickname %1. Your pokémon have feelings, too.",
+    "team_verify_cursed_nickname": "We don't like the nickname %1. Your pokémon have feelings, too.",
     "team_verify_clause_by_dex": "Pokemon in index %1 is a duplicate and violates the species clause by dex.",
     "team_verify_clause_by_form": "Pokemon in index %1 is a duplicate and violates the species clause by form.",
     "team_verify_clause_by_type": "Pokemon in index %1 is a duplicate and violates the type clause.",
