@@ -1,7 +1,7 @@
 import Status from '@components/game/status/Status'
 import SocketContext from '@context/SocketContext'
 import { useRouter } from 'next/router'
-import ReactDOM from "react-dom"
+import ReactDOM from 'react-dom'
 import { useContext, useEffect, useState } from 'react'
 import {
   Anim,
@@ -96,8 +96,10 @@ const GamePage = () => {
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
-    setMoves(payload.allMoves)
-    setActive(payload.current)
+    ReactDOM.unstable_batchedUpdates(() => {
+      setMoves(payload.allMoves)
+      setActive(payload.current)
+    })
   }
 
   const startGame = () => {
@@ -125,28 +127,42 @@ const GamePage = () => {
           setCharPointer((prev2) => {
             setCharacters((prev3b) => {
               const prev3 = { ...prev3b }
-              setCurrentMove(() => {
-                let p = ''
-                setBufferedMove((prev) => {
-                  p = prev
-                  return ''
-                })
-                if (p.startsWith('#sw')) {
-                  setCharacters((prevCharacters) => {
-                    prevCharacters[0].anim = {
-                      type: Actions.SWITCH,
-                    }
-                    return prevCharacters
-                  })
-                }
-                return p
-              })
               if (hp !== undefined) {
                 prev1[isActive].current!.hp = hp
               }
               if (energy) {
                 prev1[isActive].current!.energy = energy
               }
+              setMoves((prevMoves) => {
+                setCurrentMove(() => {
+                  let p = ''
+                  setBufferedMove((prev) => {
+                    p = prev
+                    return ''
+                  })
+                  if (p.startsWith('#sw')) {
+                    setCharacters((prevCharacters) => {
+                      prevCharacters[0].anim = {
+                        type: Actions.SWITCH,
+                      }
+                      return prevCharacters
+                    })
+                  }
+                  // Visualize a buffered quick move
+                  if (
+                    p.startsWith('#fa') ||
+                    (p.startsWith('#ca') &&
+                      !hasEnoughEnergy(prev1[isActive], isActive, prevMoves, p))
+                  ) {
+                    prev3[0].anim = {
+                      move: prevMoves[isActive][0],
+                      type: Actions.FAST_ATTACK,
+                    }
+                  }
+                  return p
+                })
+                return prevMoves
+              })
               prev3[0].char = prev1[isActive]
               if (isActive !== prev2 && prev3[0].anim?.type === 'faint') {
                 delete prev3[0].anim
@@ -284,6 +300,19 @@ const GamePage = () => {
       prev[1].anim = data
       return prev
     })
+  }
+
+  const hasEnoughEnergy = (
+    member: TeamMember,
+    memberIndex: number,
+    prevMoves: Move[][],
+    ca: string
+  ): boolean => {
+    const [, indexString] = ca.split(':')
+    return (
+      member.current!.energy >=
+      prevMoves[memberIndex][parseInt(indexString, 10) + 1].energy
+    )
   }
 
   const onSwitch = (data: TeamMember) => {
@@ -443,7 +472,6 @@ const GamePage = () => {
       (bufferedMove === '' || bufferedMove.startsWith('#sw'))
     ) {
       setBufferedMove(data)
-      setStatus(StatusTypes.ANIMATING)
       ws.send(data)
     }
     if (
