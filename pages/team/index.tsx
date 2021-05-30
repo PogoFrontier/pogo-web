@@ -402,8 +402,7 @@ const TeamPage = () => {
   const [metas] = useState([
     'Great League',
     'Venture Cup',
-    'Commander Cup',
-    'Floating City',
+    'Atlantis Field',
     'Specialist Cup',
     'Nursery Cup',
     'Cliffhanger',

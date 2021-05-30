@@ -16,13 +16,8 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
   },
-  'Commander Cup': {
-    name: 'Commander Cup',
-    maxCP: 1500,
-    movesetOption: 'original',
-  },
-  'Floating City': {
-    name: 'Floating City',
+  'Atlantis Field': {
+    name: 'Atlantis Field',
     maxCP: 1500,
     movesetOption: 'original',
   },
