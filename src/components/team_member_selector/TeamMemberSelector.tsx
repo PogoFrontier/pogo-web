@@ -437,6 +437,9 @@ const TeamMemberSelector = (props: {
   }
 
   const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
+    if (!pokemonNames) {
+      return pokemon.speciesName
+    }
     const lang = mapLanguage(settings.language)
     return (
       pokemonNames[pokemon.speciesId].speciesName[lang] ??
