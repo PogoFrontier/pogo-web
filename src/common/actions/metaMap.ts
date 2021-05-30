@@ -11,6 +11,11 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
   },
+  'Venture Cup': {
+    name: 'Venture Cup',
+    maxCP: 1500,
+    movesetOption: 'original',
+  },
   'Commander Cup': {
     name: 'Commander Cup',
     maxCP: 1500,

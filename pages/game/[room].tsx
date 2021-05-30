@@ -1,6 +1,7 @@
 import Status from '@components/game/status/Status'
 import SocketContext from '@context/SocketContext'
 import { useRouter } from 'next/router'
+import ReactDOM from 'react-dom'
 import { useContext, useEffect, useState } from 'react'
 import {
   Anim,
@@ -95,8 +96,10 @@ const GamePage = () => {
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
-    setMoves(payload.allMoves)
-    setActive(payload.current)
+    ReactDOM.unstable_batchedUpdates(() => {
+      setMoves(payload.allMoves)
+      setActive(payload.current)
+    })
   }
 
   const startGame = () => {
@@ -114,148 +117,164 @@ const GamePage = () => {
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
-    if (payload.update[0] !== null && payload.update[0].id === id) {
-      const hp = payload.update[0]!.hp
-      const isActive = payload.update[0].active
-      const energy = payload.update[0]!.energy
-      const isShields = payload.update[0].shields
-      setActive((prev1) => {
-        setCharPointer((prev2) => {
-          setCharacters((prev3b) => {
-            const prev3 = { ...prev3b }
-            setCurrentMove(() => {
-              let p = ''
-              setBufferedMove((prev) => {
-                p = prev
-                return ''
-              })
-              if (p.startsWith('#sw')) {
-                setCharacters((prevCharacters) => {
-                  prevCharacters[0].anim = {
-                    type: Actions.SWITCH,
-                  }
-                  return prevCharacters
-                })
+    ReactDOM.unstable_batchedUpdates(() => {
+      if (payload.update[0] !== null && payload.update[0].id === id) {
+        const hp = payload.update[0]!.hp
+        const isActive = payload.update[0].active
+        const energy = payload.update[0]!.energy
+        const isShields = payload.update[0].shields
+        setActive((prev1) => {
+          setCharPointer((prev2) => {
+            setCharacters((prev3b) => {
+              const prev3 = { ...prev3b }
+              if (hp !== undefined) {
+                prev1[isActive].current!.hp = hp
               }
-              return p
-            })
-            if (hp !== undefined) {
-              prev1[isActive].current!.hp = hp
-            }
-            if (energy) {
-              prev1[isActive].current!.energy = energy
-            }
-            prev3[0].char = prev1[isActive]
-            if (isActive !== prev2 && prev3[0].anim?.type === 'faint') {
-              delete prev3[0].anim
-            }
-            if (isShields) {
-              setShields(isShields)
-            }
-            if (payload.update[0]?.remaining !== undefined) {
-              setRemaining(payload.update[0]!.remaining)
-              prev1[isActive].current!.hp = 0
-              if (isActive === prev2) {
-                setTimeout((_) => setStatus(StatusTypes.FAINT), 3000)
-                prev3[0].anim = {
-                  type: 'faint',
-                  turn: payload.turn,
+              if (energy) {
+                prev1[isActive].current!.energy = energy
+              }
+              setMoves((prevMoves) => {
+                setCurrentMove(() => {
+                  let p = ''
+                  setBufferedMove((prev) => {
+                    p = prev
+                    return ''
+                  })
+                  if (p.startsWith('#sw')) {
+                    setCharacters((prevCharacters) => {
+                      prevCharacters[0].anim = {
+                        type: Actions.SWITCH,
+                      }
+                      return prevCharacters
+                    })
+                  }
+                  // Visualize a buffered quick move
+                  if (
+                    p.startsWith('#fa') ||
+                    (p.startsWith('#ca') &&
+                      !hasEnoughEnergy(prev1[isActive], isActive, prevMoves, p))
+                  ) {
+                    prev3[0].anim = {
+                      move: prevMoves[isActive][0],
+                      type: Actions.FAST_ATTACK,
+                    }
+                  }
+                  return p
+                })
+                return prevMoves
+              })
+              prev3[0].char = prev1[isActive]
+              if (isActive !== prev2 && prev3[0].anim?.type === 'faint') {
+                delete prev3[0].anim
+              }
+              if (isShields) {
+                setShields(isShields)
+              }
+              if (payload.update[0]?.remaining !== undefined) {
+                setRemaining(payload.update[0]!.remaining)
+                prev1[isActive].current!.hp = 0
+                if (isActive === prev2) {
+                  setTimeout((_) => setStatus(StatusTypes.FAINT), 3000)
+                  prev3[0].anim = {
+                    type: 'faint',
+                    turn: payload.turn,
+                  }
                 }
               }
+              if (payload.update[0]?.charge) {
+                if (payload.update[0].charge === 1) {
+                  setStatus(StatusTypes.CHARGE)
+                } else {
+                  setStatus(StatusTypes.SHIELD)
+                }
+              }
+              return prev3
+            })
+            return isActive
+          })
+          return prev1
+        })
+        if (payload.update[0].message) {
+          setMessage(payload.update[0].message)
+        }
+        if (payload.update[0]?.wait) {
+          setWait(payload.update[0]!.wait)
+          if (payload.update[0]!.wait <= -1) {
+            setStatus((prev) => {
+              if (
+                payload.update[1] &&
+                payload.update[1].wait &&
+                payload.update[1].wait <= -1
+              ) {
+                if (prev === StatusTypes.CHARGE) {
+                  setChargeMult(0.25)
+                  setTimeout(() => {
+                    setStatus((currentStatus) => {
+                      if (currentStatus === StatusTypes.ANIMATING) {
+                        return StatusTypes.MAIN
+                      }
+                      return currentStatus
+                    })
+                  }, 3000)
+                  return StatusTypes.ANIMATING
+                } else if (prev === StatusTypes.SHIELD) {
+                  setToShield(false)
+                  setTimeout(() => {
+                    setStatus((currentStatus) => {
+                      if (currentStatus === StatusTypes.ANIMATING) {
+                        return StatusTypes.MAIN
+                      }
+                      return currentStatus
+                    })
+                  }, 3000)
+                  return StatusTypes.ANIMATING
+                }
+              }
+              return StatusTypes.MAIN
+            })
+          }
+        }
+      }
+      if (payload.update[1] !== null) {
+        const hp = payload.update[1]!.hp
+        const isShields = payload.update[1].shields
+        setOpponent((prev1) => {
+          setCharacters((prev3b) => {
+            const prev3 = { ...prev3b }
+            if (hp !== undefined) {
+              prev1[0].current!.hp = hp
             }
-            if (payload.update[0]?.charge) {
-              if (payload.update[0].charge === 1) {
-                setStatus(StatusTypes.CHARGE)
-              } else {
-                setStatus(StatusTypes.SHIELD)
+            if (isShields !== undefined) {
+              setOppShields(isShields)
+            }
+            if (payload.update[1]?.remaining !== undefined) {
+              setOppRemaining((prevOppRemaining) => {
+                if (prevOppRemaining !== payload.update[1]!.remaining) {
+                  prev3[1].anim = {
+                    type: 'faint',
+                    turn: payload.turn,
+                  }
+                }
+                return payload.update[1]?.remaining!
+              })
+              prev1[0].current!.hp = 0
+              if (!payload.update[0]?.remaining) {
+                setStatus((prev4) => {
+                  if (prev4 === StatusTypes.FAINT) {
+                    return prev4
+                  }
+                  return StatusTypes.WAITING
+                })
               }
             }
             return prev3
           })
-          return isActive
+          return prev1
         })
-        return prev1
-      })
-      if (payload.update[0].message) {
-        setMessage(payload.update[0].message)
       }
-      if (payload.update[0]?.wait) {
-        setWait(payload.update[0]!.wait)
-        if (payload.update[0]!.wait <= -1) {
-          setStatus((prev) => {
-            if (
-              payload.update[1] &&
-              payload.update[1].wait &&
-              payload.update[1].wait <= -1
-            ) {
-              if (prev === StatusTypes.CHARGE) {
-                setChargeMult(0.25)
-                setTimeout(() => {
-                  setStatus((currentStatus) => {
-                    if (currentStatus === StatusTypes.ANIMATING) {
-                      return StatusTypes.MAIN
-                    }
-                    return currentStatus
-                  })
-                }, 3000)
-                return StatusTypes.ANIMATING
-              } else if (prev === StatusTypes.SHIELD) {
-                setToShield(false)
-                setTimeout(() => {
-                  setStatus((currentStatus) => {
-                    if (currentStatus === StatusTypes.ANIMATING) {
-                      return StatusTypes.MAIN
-                    }
-                    return currentStatus
-                  })
-                }, 3000)
-                return StatusTypes.ANIMATING
-              }
-            }
-            return StatusTypes.MAIN
-          })
-        }
-      }
-    }
-    if (payload.update[1] !== null) {
-      const hp = payload.update[1]!.hp
-      const isShields = payload.update[1].shields
-      setOpponent((prev1) => {
-        setCharacters((prev3b) => {
-          const prev3 = { ...prev3b }
-          if (hp !== undefined) {
-            prev1[0].current!.hp = hp
-          }
-          if (isShields !== undefined) {
-            setOppShields(isShields)
-          }
-          if (payload.update[1]?.remaining !== undefined) {
-            setOppRemaining((prevOppRemaining) => {
-              if (prevOppRemaining !== payload.update[1]!.remaining) {
-                prev3[1].anim = {
-                  type: 'faint',
-                  turn: payload.turn,
-                }
-              }
-              return payload.update[1]?.remaining!
-            })
-            prev1[0].current!.hp = 0
-            if (!payload.update[0]?.remaining) {
-              setStatus((prev4) => {
-                if (prev4 === StatusTypes.FAINT) {
-                  return prev4
-                }
-                return StatusTypes.WAITING
-              })
-            }
-          }
-          return prev3
-        })
-        return prev1
-      })
-    }
-    setSwap(payload.switch)
-    setTime(payload.time)
+      setSwap(payload.switch)
+      setTime(payload.time)
+    })
   }
 
   // Send updates to charge moev decisions
@@ -281,6 +300,19 @@ const GamePage = () => {
       prev[1].anim = data
       return prev
     })
+  }
+
+  const hasEnoughEnergy = (
+    member: TeamMember,
+    memberIndex: number,
+    prevMoves: Move[][],
+    ca: string
+  ): boolean => {
+    const [, indexString] = ca.split(':')
+    return (
+      member.current!.energy >=
+      prevMoves[memberIndex][parseInt(indexString, 10) + 1].energy
+    )
   }
 
   const onSwitch = (data: TeamMember) => {
@@ -440,7 +472,6 @@ const GamePage = () => {
       (bufferedMove === '' || bufferedMove.startsWith('#sw'))
     ) {
       setBufferedMove(data)
-      setStatus(StatusTypes.ANIMATING)
       ws.send(data)
     }
     if (

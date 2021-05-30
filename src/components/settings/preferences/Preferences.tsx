@@ -13,7 +13,11 @@ const Preferences = () => {
 
   return (
     <div className={style.root}>
-      <select onChange={handleChangeLanguage} className={style.label} value={lang}>
+      <select
+        onChange={handleChangeLanguage}
+        className={style.label}
+        value={lang}
+      >
         {supportedLanguages.map((l) => {
           return (
             <option value={l} key={l}>
