@@ -43,7 +43,7 @@ export const getUserProfile = async (token: string) => {
   }
 }
 
-export const updateUserTeam = async (team: any, token: string) => {
+export const updateUserTeams = async (teams: any[], token: string | null) => {
   try {
     const config = {
       headers: {
@@ -51,7 +51,7 @@ export const updateUserTeam = async (team: any, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     }
-    const res = await API.put(`api/users/teams`, team, config)
+    const res = await API.put(`api/users/setteams`, { teams }, config)
     return res.data
   } catch (err) {
     // console.log(err)

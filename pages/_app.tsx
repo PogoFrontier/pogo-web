@@ -16,7 +16,7 @@ import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
-import { getUserProfile } from '@common/actions/userAPIActions'
+import { getUserProfile, updateUserTeams } from '@common/actions/userAPIActions'
 
 /**
  * NextJS wrapper
@@ -42,6 +42,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
+  const [userToken, setUserToken] = useState<string | null>(null)
 
   useEffect(() => {
     const keysFromStorage: any = localStorage.getItem('settings')
@@ -71,6 +72,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     ) {
       const parsedUserToken = JSON.parse(userTokenFromStorage)
       if (parsedUserToken.googleId && parsedUserToken.token) {
+        setUserToken(parsedUserToken.token)
         getUserProfile(parsedUserToken.token)
           .then((authedUser) => {
             // console.log(authedUser)
@@ -160,7 +162,17 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     const curr: User = { ...currentUser! }
     curr.teams = teams
     setCurrentUser(curr)
-    localStorage.setItem('user', JSON.stringify(curr))
+    if (userToken) {
+      updateUserTeams(teams, userToken)
+        .then(() => {
+          // maybe a modal here or something
+        })
+        .catch(() => {
+          // modal with an error
+        })
+    } else {
+      localStorage.setItem('user', JSON.stringify(curr))
+    }
   }
 
   const connectAndJoin = (id1: string, payload: OnNewRoomPayload) => {

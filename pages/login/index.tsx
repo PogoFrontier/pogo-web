@@ -106,7 +106,7 @@ const LoginPage = () => {
       <main className={style.root}>
         <h1>Sign In Or Sign Up</h1>
         <div>
-          <form action="">
+          {/* <form action="">
             <h3>Sign In</h3>
             <label>Username</label>
             <input type="text" />
@@ -116,16 +116,18 @@ const LoginPage = () => {
             <br />
             <button type="submit">Submit</button>
           </form>
-          <br />
+          <br /> */}
           <button onClick={onSubmitGoogleSignIn}>
-            Or, Sign In With Google
+            Sign In or Create an Account Using Google
           </button>
+          <br />
+          <p>More sign in options coming soon!</p>
         </div>
-        <div>
+        {/* <div>
           <p>
             Don't have an account? <button>Create an Account</button>
           </p>
-        </div>
+        </div> */}
       </main>
     </Layout>
   )
