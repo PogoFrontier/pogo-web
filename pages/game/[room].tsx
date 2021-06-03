@@ -133,36 +133,6 @@ const GamePage = () => {
               if (energy) {
                 prev1[isActive].current!.energy = energy
               }
-              setMoves((prevMoves) => {
-                setCurrentMove(() => {
-                  let p = ''
-                  setBufferedMove((prev) => {
-                    p = prev
-                    return ''
-                  })
-                  if (p.startsWith('#sw')) {
-                    setCharacters((prevCharacters) => {
-                      prevCharacters[0].anim = {
-                        type: Actions.SWITCH,
-                      }
-                      return prevCharacters
-                    })
-                  }
-                  // Visualize a buffered quick move
-                  if (
-                    p.startsWith('#fa') ||
-                    (p.startsWith('#ca') &&
-                      !hasEnoughEnergy(prev1[isActive], isActive, prevMoves, p))
-                  ) {
-                    prev3[0].anim = {
-                      move: prevMoves[isActive][0],
-                      type: Actions.FAST_ATTACK,
-                    }
-                  }
-                  return p
-                })
-                return prevMoves
-              })
               prev3[0].char = prev1[isActive]
               if (isActive !== prev2 && prev3[0].anim?.type === 'faint') {
                 delete prev3[0].anim
@@ -285,6 +255,19 @@ const GamePage = () => {
     ws.send('$s' + (toShield ? 1 : 0).toString())
   }, [toShield])
 
+  // Reset moves between phases
+  useEffect(() => {
+    setCurrentMove('')
+    setBufferedMove('')
+  }, [
+    [
+      StatusTypes.CHARGE,
+      StatusTypes.FAINT,
+      StatusTypes.SHIELD,
+      StatusTypes.WAITING,
+    ].includes(status),
+  ])
+
   const onGameStatus = (payload: CheckPayload) => {
     if (payload.countdown === 4) {
       startGame()
@@ -313,6 +296,48 @@ const GamePage = () => {
       member.current!.energy >=
       prevMoves[memberIndex][parseInt(indexString, 10) + 1].energy
     )
+  }
+
+  const nextCurrentMove = () => {
+    setCurrentMove(() => {
+      let p = ''
+      setBufferedMove((prev) => {
+        p = prev
+        return ''
+      })
+      if (p.startsWith('#sw')) {
+        setCharacters((prevCharacters) => {
+          prevCharacters[0].anim = {
+            type: Actions.SWITCH,
+          }
+          return prevCharacters
+        })
+      }
+      // Visualize a buffered quick move
+      if (
+        p.startsWith('#fa') ||
+        (p.startsWith('#ca') &&
+          !hasEnoughEnergy(active[charPointer], charPointer, moves, p))
+      ) {
+        setCharacters((prevCharacters) => {
+          prevCharacters[0].anim = {
+            move: moves[charPointer][0],
+            type: Actions.FAST_ATTACK,
+          }
+          return prevCharacters
+        })
+        setTimeout(nextCurrentMove, moves[charPointer][0].cooldown)
+      } else if (p.startsWith('#sw')) {
+        setCharacters((prev) => {
+          prev[0].anim = {
+            type: Actions.SWITCH,
+          }
+          return prev
+        })
+        setTimeout(nextCurrentMove, 500)
+      }
+      return p
+    })
   }
 
   const onSwitch = (data: TeamMember) => {
@@ -423,6 +448,9 @@ const GamePage = () => {
         }
         return prev
       })
+      setTimeout(() => {
+        nextCurrentMove()
+      }, moves[charPointer][0].cooldown)
       return true
     }
     return false
@@ -430,7 +458,7 @@ const GamePage = () => {
 
   const onSwitchClick = (pos: number) => {
     const data = '#sw:' + pos
-    setBufferedMove(data)
+
     ws.send(data)
     if (
       (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
@@ -443,8 +471,7 @@ const GamePage = () => {
         }
         return prev
       })
-    }
-    if (
+    } else if (
       status === StatusTypes.MAIN &&
       swap <= 0 &&
       wait <= -1 &&
@@ -458,27 +485,31 @@ const GamePage = () => {
         }
         return prev
       })
+    } else {
+      return
+    }
+
+    if (currentMove === '') {
+      setCurrentMove(data)
+      setTimeout(nextCurrentMove, 500)
+    } else if (bufferedMove === '') {
+      setBufferedMove(data)
     }
   }
 
   const onChargeClick = (move: Move, index: number) => {
     const data = `#ca:${index}`
-    if (currentMove === '' && bufferedMove === '') {
+    ws.send(data)
+    if (status === StatusTypes.MAIN && currentMove === '') {
       setCurrentMove(data)
+    } else if (status === StatusTypes.MAIN && bufferedMove === '') {
       setBufferedMove(data)
-      ws.send(data)
-    } else if (
-      !currentMove.startsWith('#ca') &&
-      (bufferedMove === '' || bufferedMove.startsWith('#sw'))
-    ) {
-      setBufferedMove(data)
-      ws.send(data)
     }
     if (
       status === StatusTypes.MAIN &&
       wait <= -1 &&
-      active[charPointer].current?.energy !== undefined &&
-      active[charPointer].current!.energy! < move.energy &&
+      (active[charPointer].current?.energy === undefined ||
+        active[charPointer].current!.energy! < move.energy) &&
       currentMove === ''
     ) {
       setCharacters((prev) => {
@@ -487,6 +518,9 @@ const GamePage = () => {
           move: moves[charPointer][0],
           type: Actions.FAST_ATTACK,
         }
+        setTimeout(() => {
+          nextCurrentMove()
+        }, moves[charPointer][0].cooldown)
         return prev
       })
     }
