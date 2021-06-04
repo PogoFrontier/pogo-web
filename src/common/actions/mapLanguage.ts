@@ -4,6 +4,7 @@ function mapLanguage(lang: string): string {
     Dutch: 'nl',
     German: 'de',
     French: 'fr',
+    Spanish: 'es',
   }
   return languages[lang] ?? 'en'
 }

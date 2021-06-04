@@ -1,6 +1,12 @@
 import { createContext } from 'react'
 
-export const supportedLanguages = ['English', 'Dutch', 'German', 'French']
+export const supportedLanguages = [
+  'English',
+  'Dutch',
+  'German',
+  'French',
+  'Spanish',
+]
 
 const LanguageContext = createContext({
   languages: supportedLanguages,
