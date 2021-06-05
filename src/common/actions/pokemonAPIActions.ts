@@ -59,7 +59,9 @@ export const getValidateTeam = async (
     const res = await API.get(`api/validate/${team}/${meta}/${lang}`)
     return res.data
   } catch (err) {
-    return err.message
+    return {
+      message: err.message
+    }
   }
 }
 

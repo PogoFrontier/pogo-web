@@ -76,7 +76,7 @@ const TeamMemberSelector = (props: {
       setAddToBox(member)
       getPokemonData(member.speciesId, metaMap[meta].movesetOption).then(
         (pokemon) => {
-          if (pokemon) {
+          if (pokemon && pokemon.chargedMoves) {
             pokemon.chargedMoves.push('NONE')
             if (
               metaMap[meta].movesetOption === 'original' &&
@@ -437,7 +437,10 @@ const TeamMemberSelector = (props: {
   }
 
   const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
-    if (!pokemonNames) {
+    if (!pokemon) {
+      return ""
+    }
+    if (!pokemonNames || !pokemonNames[pokemon.speciesId]) {
       return pokemon.speciesName
     }
     const lang = mapLanguage(settings.language)
