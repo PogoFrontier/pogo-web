@@ -1,3 +1,4 @@
+import { StringsType } from '@common/actions/getLanguage'
 import { createContext } from 'react'
 
 export const supportedLanguages = [
@@ -10,7 +11,7 @@ export const supportedLanguages = [
 
 const LanguageContext = createContext({
   languages: supportedLanguages,
-  strings: {} as any,
+  strings: {} as StringsType,
   current: 'en',
 })
 

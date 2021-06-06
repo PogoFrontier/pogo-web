@@ -273,7 +273,7 @@ const GamePage = () => {
       startGame()
     } else {
       setMessage(
-        strings.battle_start_countdown.replace('%1', payload.countdown)
+        strings.battle_start_countdown.replace('%1', String(payload.countdown))
       )
     }
   }

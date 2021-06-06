@@ -60,7 +60,7 @@ export const getValidateTeam = async (
     return res.data
   } catch (err) {
     return {
-      message: err.message
+      message: err.message,
     }
   }
 }

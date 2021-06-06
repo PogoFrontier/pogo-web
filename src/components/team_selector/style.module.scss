@@ -1,0 +1,66 @@
+@import 'variables';
+@import 'colors';
+
+.member {
+	height: 2.3em;
+	width: 2.3em;
+	object-fit: contain;
+}
+  
+.members {
+	.member {
+		@include md() {
+		height: 3em;
+		width: 3em;
+		}
+	}
+	.member + .member {
+		margin-left: 1em;
+	}
+}
+.popover {
+	max-height: 400px;
+	overflow-y: scroll;
+}
+
+.changeTeam {
+	width: 4.1em;
+	height: 4em;
+	background-color: $color-brand-primary;
+	border: none;
+	box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
+	margin-bottom: 0.5em;
+	margin-left: 0.5em;
+	&:hover {
+	  background-color: darken($color-brand-primary, 10%);
+	}
+	svg {
+	  fill: $color-white;
+	  height: 40px;
+	  width: 40px;
+	  margin-top: -14px;
+	  margin-left: 3px;
+	}
+	@include md() {
+	  margin-left: 0;
+	}
+}
+  
+.noteams {
+	min-width: 200px;
+}
+
+.changeWrap {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	flex-direction: row-reverse;
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-top: 0.25em;
+	@include md() {
+	  margin-right: 0;
+	  margin-right: 2em;
+	  flex-direction: column;
+	}
+  }

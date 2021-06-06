@@ -48,21 +48,19 @@ const EndPage = () => {
   }
 
   function join() {
-    validate().then(
-      isValid => {
-        if (isValid) {
-          if (socket.readyState && socket.readyState === WebSocket.OPEN) {
-            joinRoom()
-          } else if (!isLoading) {
-            if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-              const payload = { room, team: team.members }
-              setIsLoading(true)
-              connectAndJoin(uuidv4(), payload)
-            }
+    validate().then((isValid) => {
+      if (isValid) {
+        if (socket.readyState && socket.readyState === WebSocket.OPEN) {
+          joinRoom()
+        } else if (!isLoading) {
+          if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
+            const payload = { room, team: team.members }
+            setIsLoading(true)
+            connectAndJoin(uuidv4(), payload)
           }
         }
       }
-    )
+    })
   }
 
   const toHome = () => {
