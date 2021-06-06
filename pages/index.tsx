@@ -20,6 +20,7 @@ import {
 } from '@reach/listbox'
 import '@reach/listbox/styles.css'
 import LanguageContext from '@context/LanguageContext'
+import { StringsType } from '@common/actions/getLanguage'
 
 function truncateString(str: string, num: number) {
   if (str.length > num) {
@@ -70,7 +71,7 @@ const HomePage = () => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
-  const strings = useContext(LanguageContext).strings
+  const strings: StringsType = useContext(LanguageContext).strings
 
   const onSelect = (id: string) => {
     const newTeam = user.teams.find((x) => x.id === id)
@@ -182,7 +183,8 @@ const HomePage = () => {
                 target="_blank"
                 rel="noreferrer nofollow"
               >
-                <Icon name="lokalise" size="medium" /> Lokalise (translations)
+                <Icon name="lokalise" size="medium" /> Lokalise (
+                {strings.translations})
               </a>
             </div>
           </section>

@@ -176,5 +176,6 @@
     "team_verify_banned_pokemon": "Pokemon in index %1 is banned",
     "team_verify_invalid_pokemon": "Pokemon in index %1 isn't allowed.",
     "pokemon_sky": "(Sky)",
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "translations": "Translations"
 }
