@@ -177,5 +177,6 @@
     "team_verify_invalid_pokemon": "Pokemon in index %1 isn't allowed.",
     "pokemon_sky": "(Sky)",
     "preferences": "Preferences",
-    "translations": "Translations"
+    "translations": "Translations",
+    "teamSearch" : "Search Team / Meta"
 }

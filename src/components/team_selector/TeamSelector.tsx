@@ -1,29 +1,31 @@
 import { TeamMember } from '@adibkhan/pogo-web-backend'
-import ImageHandler from '@common/actions/getImages'
 import { Icon } from '@components/icon/Icon'
 import LanguageContext from '@context/LanguageContext'
-import UserContext from '@context/UserContext'
+import Input from '@components/input/Input'
+import UserContext, { UserTeam } from '@context/UserContext'
 import {
   ListboxButton,
   ListboxInput,
   ListboxList,
-  ListboxOption,
   ListboxPopover,
   ListboxPopoverProps,
 } from '@reach/listbox'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
+import MetaGroup from './MetaGroup'
 import style from './style.module.scss'
 
 const TeamSelector = (props: { onSelect: (id: string) => void }) => {
   const { onSelect } = props
-
   const user = useContext(UserContext).user
-  interface TeamOptionProps {
-    team: TeamMember[]
-    name: string
-    id: string
-    meta: string
+  const strings = useContext(LanguageContext).strings
+  const [metaVisibility, setMetaVisibility] = useState([])
+  const [userInput, setUserInput] = useState('')
+
+  const onChange = (e: any) => {
+    const input = e.target.value.toLowerCase()
+    setUserInput(input)
   }
+
   const right: ListboxPopoverProps['position'] = (targetRect, popoverRect) => {
     const triggerCenter = targetRect!.left + targetRect!.width
     const left = triggerCenter - popoverRect!.width
@@ -33,25 +35,62 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
       top: targetRect!.bottom + 8 + window.scrollY,
     }
   }
-  const strings = useContext(LanguageContext).strings
 
-  const TeamOption: React.FC<TeamOptionProps> = ({ team, name, id, meta }) => {
-    const imagesHandler = new ImageHandler()
-    return (
-      <ListboxOption value={id} className={style.option}>
-        <strong>{name + meta}</strong>
-        <br />
-        {team.map((member: any, index: number) => (
-          <img
-            key={index}
-            src={imagesHandler.getMini(member.sid)}
-            className={style.member}
-            alt={member.speciesName}
-          />
-        ))}
-      </ListboxOption>
-    )
+  const getFilteredTeams = () => {
+    let filteredTeams: UserTeam[] = user.teams
+    filteredTeams = filteredTeams.filter((team: UserTeam) => {
+      // Is all string?
+      if (userInput === 'all' || userInput === '@all') {
+        return true
+      }
+
+      // Is substring of teamName?
+      if (team.name.toLowerCase().indexOf(userInput) > -1) {
+        return true
+      }
+
+      // Is substring of meta
+      if (team.format.toLowerCase().indexOf(userInput) > -1) {
+        return true
+      }
+
+      // Is substring of a teamMember TODO: add translation for TeamMembers
+      for (const member of team.members) {
+        if (member.speciesName.toLowerCase().indexOf(userInput) > -1) {
+          return true
+        }
+      }
+      return false
+    })
+    return filteredTeams
   }
+
+  const getTeamsPerMeta = () => {
+    const sortedTeams: { meta?: TeamMember[] } = {}
+    const filteredTeams = getFilteredTeams()
+    filteredTeams.forEach((team: UserTeam) => {
+      sortedTeams[team.format]
+        ? sortedTeams[team.format].push(team)
+        : (sortedTeams[team.format] = [team])
+      if (!metaVisibility[team.format]) {
+        setMetaVisibility((prev) => ({ ...prev, [team.format]: 'none' }))
+      }
+    })
+    return sortedTeams
+  }
+
+  const getTeams = () => {
+    const elements = []
+    const sortedTeams = getTeamsPerMeta()
+    for (const meta of Object.keys(sortedTeams)) {
+      elements.push(
+        
+        <MetaGroup meta={meta} teams={sortedTeams[meta]}/>
+      )
+    }
+    return elements
+  }
+
   return (
     <ListboxInput
       aria-label={strings.select_team}
@@ -66,17 +105,18 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
         <small>{strings.change_team}</small>
       </div>
       <ListboxPopover className={style.popover} position={right}>
+        <div className={style.searchbar}>
+          <Input
+            title="Species"
+            type="text"
+            placeholder={strings.teamSearch}
+            onChange={onChange}
+            value={userInput}
+          />
+        </div>
         <ListboxList>
           {user && user.teams && user.teams.length > 0 ? (
-            user.teams.map((x) => (
-              <TeamOption
-                team={x.members}
-                name={x.name}
-                id={x.id}
-                key={x.id}
-                meta={x.format}
-              />
-            ))
+            getTeams()
           ) : (
             <p className={style.noteams}>{strings.team_not_available}</p>
           )}

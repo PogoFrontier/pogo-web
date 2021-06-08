@@ -59,8 +59,29 @@
 	margin-right: 1em;
 	margin-top: 0.25em;
 	@include md() {
-	  margin-right: 0;
-	  margin-right: 2em;
-	  flex-direction: column;
+		margin-right: 0;
+		margin-right: 2em;
+		flex-direction: column;
 	}
-  }
+}
+
+.groupLabel{
+	background-color: $color-neutral-light;
+	display:flex;
+	flex-direction: row;
+}
+
+.metaGroup{
+	margin-bottom: 2em;
+}
+
+.option{
+	border: 1px solid $color-neutral-light;
+	display:flex;
+	flex-direction: column;	
+}
+
+.labelIcon{
+	text-align: right;
+	width:100%
+}
