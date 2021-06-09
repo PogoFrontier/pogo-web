@@ -12,6 +12,7 @@ import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -278,20 +279,26 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           <ul className={style.members}>
             {workingTeam.length > 0 &&
               workingTeam.map((member: any, index: any) => (
-                <li
-                  className={classnames([
-                    style.member,
-                    { [style.selected]: member === selectedPokemon },
-                  ])}
+                <TriangleTooltip
+                  label={
+                    `${member.fastMove}, ${member.chargeMoves.join(', ')}`
+                  }
                   key={index}
-                  id={index}
-                  onClick={handleSelectPokemon}
                 >
-                  <img
-                    src={imageHandler.getMini(member.sid)}
-                    alt={member.speciesName}
-                  />
-                </li>
+                  <li
+                    className={classnames([
+                      style.member,
+                      { [style.selected]: member === selectedPokemon },
+                    ])}
+                    id={index}
+                    onClick={handleSelectPokemon}
+                  >
+                    <img
+                      src={imageHandler.getMini(member.sid)}
+                      alt={member.speciesName}
+                    />
+                  </li>
+                </TriangleTooltip>
               ))}
             {workingTeam.length < 6 && !addingMember && (
               <li key="add-member">
