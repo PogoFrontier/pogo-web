@@ -434,6 +434,8 @@ const GamePage = () => {
   const onClick = () => {
     if (
       status === StatusTypes.MAIN &&
+      active[charPointer].current?.hp &&
+      active[charPointer].current!.hp > 0 &&
       wait <= -1 &&
       currentMove === '' &&
       bufferedMove === ''
@@ -507,6 +509,8 @@ const GamePage = () => {
     }
     if (
       status === StatusTypes.MAIN &&
+      active[charPointer].current?.hp &&
+      active[charPointer].current!.hp > 0 &&
       wait <= -1 &&
       (active[charPointer].current?.energy === undefined ||
         active[charPointer].current!.energy! < move.energy) &&
