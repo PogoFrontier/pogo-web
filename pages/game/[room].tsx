@@ -243,7 +243,7 @@ const GamePage = () => {
         })
       }
       setSwap(payload.switch)
-      setTime(payload.time)
+      setTime(Math.max(payload.time, 0))
     })
   }
 
