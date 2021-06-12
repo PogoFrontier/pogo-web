@@ -10,6 +10,7 @@ export interface UserTeam {
 
 export interface User {
   googleId?: string
+  username?: string
   displayName: string | null
   email?: string | null
   teams: UserTeam[]

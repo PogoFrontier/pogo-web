@@ -51,7 +51,8 @@ export const updateUserTeams = async (teams: any[], token: string | null) => {
         Authorization: `Bearer ${token}`,
       },
     }
-    const res = await API.put(`api/users/setteams`, { teams }, config)
+    const res = await API.post(`api/users/setteams`, { teams }, config)
+    // console.log(res.data)
     return res.data
   } catch (err) {
     // console.log(err)

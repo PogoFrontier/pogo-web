@@ -10,6 +10,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import ImageHandler from '@common/actions/getImages'
 import classnames from 'classnames'
 import { Icon } from '@components/icon/Icon'
+import Link from 'next/link'
 import {
   ListboxInput,
   ListboxButton,
@@ -146,10 +147,16 @@ const HomePage = () => {
             </div>
             <Form />
           </section>
-          <section className={classnames([style.container, style.info])}>
-            <h1>Friends</h1>
-            Coming Soon!
-          </section>
+          {!!user && (!!user.googleId || !!user.username) ? (
+            <section className={classnames([style.container, style.info])}>
+              <h1>Friends</h1>
+              Coming Soon!
+            </section>
+          ) : (
+            <section className={classnames([style.container, style.info])}>
+              <Link href="/login">Login or Create an Account!</Link>
+            </section>
+          )}
           <section className={classnames([style.container, style.info])}>
             <h1>Links</h1>
             <div className={style.links}>

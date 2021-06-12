@@ -151,6 +151,20 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   })
 
   const setUser = (user: User) => {
+    // delete local user if brand new and no teams yet
+    if (!!localStorage.getItem('user')) {
+      const userFromStorageToCheck: string | null = localStorage.getItem('user')
+      if (
+        typeof window !== undefined &&
+        userFromStorageToCheck &&
+        userFromStorageToCheck !== 'undefined'
+      ) {
+        const userJSONToCheck = JSON.parse(userFromStorageToCheck)
+        if (userJSONToCheck.teams && userJSONToCheck.teams.length === 0) {
+          localStorage.removeItem('user')
+        }
+      }
+    }
     setCurrentUser(user)
     /* const { googleId, token } = user
     if (user.googleId && user.token) {
