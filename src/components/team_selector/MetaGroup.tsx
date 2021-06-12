@@ -1,10 +1,11 @@
 import { ListboxGroupLabel, ListboxGroup, ListboxOption } from '@reach/listbox'
 import ImageHandler from '@common/actions/getImages'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
+import { Icon } from '@components/icon/Icon'
 
 import style from './style.module.scss'
 import { UserTeam } from '@context/UserContext'
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 interface MetaGroupProps {
   meta: string
@@ -27,7 +28,7 @@ const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
         style={visibility ? { display: 'flex' } : { display: 'none' }}
       >
         <br />
-        <div>
+        <div className={style.teamMembers}>
           {team.map((member: any, index: number) => (
             <img
               key={index}
@@ -37,7 +38,7 @@ const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
             />
           ))}
         </div>
-        <strong>{name}</strong>
+        <strong className={style.teamName}>{name}</strong>
       </ListboxOption>
     )
   }
@@ -48,7 +49,7 @@ const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
     <ListboxGroup className={style.metaGroup}>
       <div className={style.groupLabel} onClick={changeVisibility}>
         <ListboxGroupLabel>{meta}</ListboxGroupLabel>
-        <span className={style.labelIcon}>{visibility ? 'X' : 'V'}</span>
+        <Icon name={visibility ? 'up' : 'down'} />
       </div>
       {teams.map((x: { members: TeamMember[]; name: string; id: string }) => (
         <TeamOption team={x.members} name={x.name} id={x.id} key={x.id} />

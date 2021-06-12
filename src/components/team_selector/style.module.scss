@@ -2,16 +2,22 @@
 @import 'colors';
 
 .member {
-	height: 2.3em;
-	width: 2.3em;
+	height: 3em;
+	width: 3em;
 	object-fit: contain;
+	@include sm() {
+		height: 5em;
+		width: 5em;
+	}
 }
   
 .members {
 	.member {
+		width:1em;
+		height:1em;
 		@include md() {
-		height: 3em;
-		width: 3em;
+			height: 3em;
+			width: 3em;
 		}
 	}
 	.member + .member {
@@ -19,8 +25,22 @@
 	}
 }
 .popover {
-	max-height: 400px;
+	text-align: left;
 	overflow-y: scroll;
+	margin: auto;
+
+	@include md() {
+		max-width: $xl;
+		margin-right:10em;
+		max-height: 80%;
+		width: 100%;
+	}
+	@include xl(){
+		margin-left:1em;
+	}
+	@include sm(){
+		width:100%;
+	}
 }
 
 .changeTeam {
@@ -56,13 +76,12 @@
 	text-align: center;
 	flex-direction: row-reverse;
 	margin-left: 1em;
-	margin-right: 1em;
+	margin-right: 0.5em;
 	margin-top: 0.25em;
-	@include md() {
-		margin-right: 0;
-		margin-right: 2em;
+	@include sm(){
 		flex-direction: column;
 	}
+
 }
 
 .groupLabel{
@@ -72,7 +91,7 @@
 }
 
 .metaGroup{
-	margin-bottom: 2em;
+	margin-bottom: 0em;
 }
 
 .option{
@@ -84,4 +103,24 @@
 .labelIcon{
 	text-align: right;
 	width:100%
+}
+
+.searchbar{
+	margin: 1em;
+	margin-right:1.5em;
+	width: auto;
+}
+
+.teamName{	
+	margin-bottom: 0.5em;
+	@include sm(){
+		margin-top:1em;
+	}
+}
+
+.teamMembers{
+	height: 3.5em;
+	@include sm(){
+		height:5em;
+	}
 }

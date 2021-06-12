@@ -83,10 +83,7 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
     const elements = []
     const sortedTeams = getTeamsPerMeta()
     for (const meta of Object.keys(sortedTeams)) {
-      elements.push(
-        
-        <MetaGroup meta={meta} teams={sortedTeams[meta]}/>
-      )
+      elements.push(<MetaGroup meta={meta} teams={sortedTeams[meta]} />)
     }
     return elements
   }
