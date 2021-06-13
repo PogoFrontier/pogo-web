@@ -98,21 +98,19 @@ const Form: React.FunctionComponent = () => {
   }
 
   function join() {
-    validate().then(
-      isValid => {
-        if (isValid) {
-          if (socket.readyState && socket.readyState === WebSocket.OPEN) {
-            joinRoom()
-          } else if (state !== 'loading') {
-            if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-              const payload = { room, team: teamMembers, format: team.format }
-              setState('loading')
-              connectAndJoin(uuidv4(), payload)
-            }
+    validate().then((isValid) => {
+      if (isValid) {
+        if (socket.readyState && socket.readyState === WebSocket.OPEN) {
+          joinRoom()
+        } else if (state !== 'loading') {
+          if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
+            const payload = { room, team: teamMembers, format: team.format }
+            setState('loading')
+            connectAndJoin(uuidv4(), payload)
           }
         }
       }
-    )
+    })
   }
 
   function joinQuickPlay() {
@@ -120,23 +118,21 @@ const Form: React.FunctionComponent = () => {
     if (!team.format) {
       return
     }
-    validate().then(
-      isValid => {
-        if (isValid) {
-          setIsMatchmaking(true)
-          setState('loading')
-          const data = {
-            type: CODE.matchmaking_search_battle,
-            payload: {
-              format: team.format,
-            },
-          }
-          connect(uuidv4(), (sock: WebSocket) => {
-            sock.send(JSON.stringify(data))
-          })
+    validate().then((isValid) => {
+      if (isValid) {
+        setIsMatchmaking(true)
+        setState('loading')
+        const data = {
+          type: CODE.matchmaking_search_battle,
+          payload: {
+            format: team.format,
+          },
         }
+        connect(uuidv4(), (sock: WebSocket) => {
+          sock.send(JSON.stringify(data))
+        })
       }
-    )
+    })
   }
 
   function quitQuickPlay() {

@@ -439,7 +439,7 @@ const TeamMemberSelector = (props: {
 
   const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
     if (!pokemon) {
-      return ""
+      return ''
     }
     if (!pokemonNames || !pokemonNames[pokemon.speciesId]) {
       return pokemon.speciesName
