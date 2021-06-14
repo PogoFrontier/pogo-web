@@ -14,6 +14,8 @@ import RoomModal from '@components/room_modal/RoomModal'
 import { SERVER } from '@config/index'
 import axios from 'axios'
 import LanguageContext from '@context/LanguageContext'
+import { getValidateTeam } from '@common/actions/pokemonAPIActions'
+import SettingsContext from '@context/SettingsContext'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -33,6 +35,7 @@ const Form: React.FunctionComponent = () => {
   const [count, setCount] = useState(-1)
 
   const strings = useContext(LanguageContext).strings
+  const language = useContext(SettingsContext).language
 
   async function fetchCount() {
     const res = await axios.get(`${SERVER}api/room/status`)
@@ -59,6 +62,19 @@ const Form: React.FunctionComponent = () => {
     }
   }
 
+  async function validate(): Promise<boolean> {
+    const result = await getValidateTeam(
+      JSON.stringify(teamMembers),
+      team.format,
+      language
+    )
+    if (result.message) {
+      setError(result.message)
+      return false
+    }
+    return true
+  }
+
   function joinRoom(roomId?: string) {
     if (!team.format) {
       return
@@ -82,15 +98,19 @@ const Form: React.FunctionComponent = () => {
   }
 
   function join() {
-    if (socket.readyState && socket.readyState === WebSocket.OPEN) {
-      joinRoom()
-    } else if (state !== 'loading') {
-      if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-        const payload = { room, team: teamMembers, format: team.format }
-        setState('loading')
-        connectAndJoin(uuidv4(), payload)
+    validate().then((isValid) => {
+      if (isValid) {
+        if (socket.readyState && socket.readyState === WebSocket.OPEN) {
+          joinRoom()
+        } else if (state !== 'loading') {
+          if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
+            const payload = { room, team: teamMembers, format: team.format }
+            setState('loading')
+            connectAndJoin(uuidv4(), payload)
+          }
+        }
       }
-    }
+    })
   }
 
   function joinQuickPlay() {
@@ -98,16 +118,20 @@ const Form: React.FunctionComponent = () => {
     if (!team.format) {
       return
     }
-    setIsMatchmaking(true)
-    setState('loading')
-    const data = {
-      type: CODE.matchmaking_search_battle,
-      payload: {
-        format: team.format,
-      },
-    }
-    connect(uuidv4(), (sock: WebSocket) => {
-      sock.send(JSON.stringify(data))
+    validate().then((isValid) => {
+      if (isValid) {
+        setIsMatchmaking(true)
+        setState('loading')
+        const data = {
+          type: CODE.matchmaking_search_battle,
+          payload: {
+            format: team.format,
+          },
+        }
+        connect(uuidv4(), (sock: WebSocket) => {
+          sock.send(JSON.stringify(data))
+        })
+      }
     })
   }
 

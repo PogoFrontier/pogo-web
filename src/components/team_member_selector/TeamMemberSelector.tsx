@@ -19,6 +19,7 @@ import calculateStats from '@common/actions/calculateStats'
 import SettingsContext from '@context/SettingsContext'
 import LanguageContext from '@context/LanguageContext'
 import mapLanguage from '@common/actions/mapLanguage'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 
 // TODO: find better type definition for speciesName
 type pokemonType = {
@@ -76,7 +77,7 @@ const TeamMemberSelector = (props: {
       setAddToBox(member)
       getPokemonData(member.speciesId, metaMap[meta].movesetOption).then(
         (pokemon) => {
-          if (pokemon) {
+          if (pokemon && pokemon.chargedMoves) {
             pokemon.chargedMoves.push('NONE')
             if (
               metaMap[meta].movesetOption === 'original' &&
@@ -437,7 +438,10 @@ const TeamMemberSelector = (props: {
   }
 
   const getSpeciesName = (pokemon: pokemonType | TeamMember) => {
-    if (!pokemonNames) {
+    if (!pokemon) {
+      return ''
+    }
+    if (!pokemonNames || !pokemonNames[pokemon.speciesId]) {
       return pokemon.speciesName
     }
     const lang = mapLanguage(settings.language)
@@ -565,78 +569,85 @@ const TeamMemberSelector = (props: {
               </select>
             </div>
           </div>
-          <div className="stats">
-            <div className={`level ${style.label}`}>
-              <label className="level-label"> {strings.level} </label>
-              <select
-                className="level-select"
-                name="level-select"
-                id="level"
-                onChange={handlePokemonChange}
-                value={addToBox.level}
-              >
-                {levelValues.map((val: number) => (
-                  <option value={val} key={val}>
-                    {val}
-                  </option>
-                ))}
-              </select>
+          <TriangleTooltip label={
+            `ATK: ${addToBox.atk.toFixed(2)},
+            DEF: ${addToBox.def.toFixed(2)},
+            HP: ${addToBox.hp}
+            `
+          }>
+            <div className="stats">
+              <div className={`level ${style.label}`}>
+                <label className="level-label"> {strings.level} </label>
+                <select
+                  className="level-select"
+                  name="level-select"
+                  id="level"
+                  onChange={handlePokemonChange}
+                  value={addToBox.level}
+                >
+                  {levelValues.map((val: number) => (
+                    <option value={val} key={val}>
+                      {val}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className={`${style.ivs}`}>
+                <div>
+                  <label className="iv-label">{strings.ivs} </label>
+                </div>
+                <div>
+                  <span className={style.ivLabel}>{strings.attack_abbr}</span>
+                  <select
+                    className="atk"
+                    name="atk"
+                    id="atk"
+                    onChange={handlePokemonChange}
+                    value={addToBox.iv.atk}
+                  >
+                    {ivValues.map((val: number) => (
+                      <option value={val} key={val}>
+                        {val}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <span className={style.ivLabel}>{strings.defense_abbr}</span>
+                  <select
+                    className="def"
+                    name="def"
+                    id="def"
+                    onChange={handlePokemonChange}
+                    value={addToBox.iv.def}
+                  >
+                    {ivValues.map((val: number) => (
+                      <option value={val} key={val}>
+                        {val}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <span className={style.ivLabel}>{strings.hitpoints_abbr} </span>
+                  <select
+                    className="hp"
+                    name="hp"
+                    id="hp"
+                    onChange={handlePokemonChange}
+                    value={addToBox.iv.hp}
+                  >
+                    {ivValues.map((val: number) => (
+                      <option value={val} key={val}>
+                        {val}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
-            <div className={`${style.ivs}`}>
-              <div>
-                <label className="iv-label">{strings.ivs} </label>
-              </div>
-              <div>
-                <span className={style.ivLabel}>{strings.attack_abbr}</span>
-                <select
-                  className="atk"
-                  name="atk"
-                  id="atk"
-                  onChange={handlePokemonChange}
-                  value={addToBox.iv.atk}
-                >
-                  {ivValues.map((val: number) => (
-                    <option value={val} key={val}>
-                      {val}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <span className={style.ivLabel}>{strings.defense_abbr}</span>
-                <select
-                  className="def"
-                  name="def"
-                  id="def"
-                  onChange={handlePokemonChange}
-                  value={addToBox.iv.def}
-                >
-                  {ivValues.map((val: number) => (
-                    <option value={val} key={val}>
-                      {val}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <span className={style.ivLabel}>{strings.hitpoints_abbr} </span>
-                <select
-                  className="hp"
-                  name="hp"
-                  id="hp"
-                  onChange={handlePokemonChange}
-                  value={addToBox.iv.hp}
-                >
-                  {ivValues.map((val: number) => (
-                    <option value={val} key={val}>
-                      {val}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            </TriangleTooltip>
           </div>
-        </div>
       ) : null}
       {suggestions && suggestions.size > 0 ? (
         <div className={style.searchbar}>

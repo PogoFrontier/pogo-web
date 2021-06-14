@@ -8,6 +8,8 @@ import style from './style.module.scss'
 import { v4 as uuidv4 } from 'uuid'
 import Layout from '@components/layout/Layout'
 import LanguageContext from '@context/LanguageContext'
+import { getValidateTeam } from '@common/actions/pokemonAPIActions'
+import SettingsContext from '@context/SettingsContext'
 
 const EndPage = () => {
   const router = useRouter()
@@ -16,6 +18,20 @@ const EndPage = () => {
   const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
   const strings = useContext(LanguageContext).strings
+  const language = useContext(SettingsContext).language
+
+  async function validate(): Promise<boolean> {
+    const r = await getValidateTeam(
+      JSON.stringify(team.members),
+      team.format,
+      language
+    )
+    if (r.message) {
+      alert(r.message)
+      return false
+    }
+    return true
+  }
 
   function joinRoom() {
     // Connected, let's sign-up for to receive messages for this room
@@ -32,15 +48,19 @@ const EndPage = () => {
   }
 
   function join() {
-    if (socket.readyState && socket.readyState === WebSocket.OPEN) {
-      joinRoom()
-    } else if (!isLoading) {
-      if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
-        const payload = { room, team: team.members }
-        setIsLoading(true)
-        connectAndJoin(uuidv4(), payload)
+    validate().then((isValid) => {
+      if (isValid) {
+        if (socket.readyState && socket.readyState === WebSocket.OPEN) {
+          joinRoom()
+        } else if (!isLoading) {
+          if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
+            const payload = { room, team: team.members }
+            setIsLoading(true)
+            connectAndJoin(uuidv4(), payload)
+          }
+        }
       }
-    }
+    })
   }
 
   const toHome = () => {

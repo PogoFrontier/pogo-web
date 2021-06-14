@@ -65,6 +65,7 @@
         "@reach/listbox": "^0.15.0",
         "@reach/menu-button": "^0.12.1",
         "@reach/tabs": "^0.12.1",
+        "@reach/tooltip": "^0.15.0",
         "@types/classnames": "^2.2.11",
         "@types/jest": "25.1.4",
         "@types/node": "13.9.5",
