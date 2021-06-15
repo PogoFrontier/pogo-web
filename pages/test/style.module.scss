@@ -1,0 +1,23 @@
+@import 'variables';
+@import 'colors';
+.root {
+    @include bg;
+    min-height: 100vh;
+    overflow: hidden;
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+    padding-top: 4em;
+}
+
+.controls {
+    margin-top: 2em;
+    background: $color-overlay;
+    border: solid 1px $color-brand-primary;
+    padding: 0 2em 1em 2em;
+}
