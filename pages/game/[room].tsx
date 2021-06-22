@@ -185,7 +185,7 @@ const GamePage = () => {
                       }
                       return currentStatus
                     })
-                  }, 3000)
+                  }, 3500)
                   return StatusTypes.ANIMATING
                 } else if (prev === StatusTypes.SHIELD) {
                   setToShield(false)
@@ -196,7 +196,7 @@ const GamePage = () => {
                       }
                       return currentStatus
                     })
-                  }, 3000)
+                  }, 3500)
                   return StatusTypes.ANIMATING
                 }
               }
