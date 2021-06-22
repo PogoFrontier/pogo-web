@@ -185,7 +185,7 @@ const GamePage = () => {
                       }
                       return currentStatus
                     })
-                  }, 3000)
+                  }, 3500)
                   return StatusTypes.ANIMATING
                 } else if (prev === StatusTypes.SHIELD) {
                   setToShield(false)
@@ -196,7 +196,7 @@ const GamePage = () => {
                       }
                       return currentStatus
                     })
-                  }, 3000)
+                  }, 3500)
                   return StatusTypes.ANIMATING
                 }
               }
@@ -434,6 +434,8 @@ const GamePage = () => {
   const onClick = () => {
     if (
       status === StatusTypes.MAIN &&
+      active[charPointer].current?.hp &&
+      active[charPointer].current!.hp > 0 &&
       wait <= -1 &&
       currentMove === '' &&
       bufferedMove === ''
@@ -507,6 +509,8 @@ const GamePage = () => {
     }
     if (
       status === StatusTypes.MAIN &&
+      active[charPointer].current?.hp &&
+      active[charPointer].current!.hp > 0 &&
       wait <= -1 &&
       (active[charPointer].current?.energy === undefined ||
         active[charPointer].current!.energy! < move.energy) &&
