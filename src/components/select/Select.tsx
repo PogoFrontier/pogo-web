@@ -35,9 +35,7 @@ const Button: React.FC<ButtonProps> = ({ x, onRegister, i, value }) => {
 
   return (
     <TriangleTooltip
-      label={
-        `${x.fastMove}, ${x.chargeMoves.join(', ')}`
-      }
+      label={`${x.fastMove}, ${x.chargeMoves.join(', ')}`}
       key={i}
     >
       <button className={style.select} type="button" onClick={onClick}>

@@ -280,9 +280,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
             {workingTeam.length > 0 &&
               workingTeam.map((member: any, index: any) => (
                 <TriangleTooltip
-                  label={
-                    `${member.fastMove}, ${member.chargeMoves.join(', ')}`
-                  }
+                  label={`${member.fastMove}, ${member.chargeMoves.join(', ')}`}
                   key={index}
                 >
                   <li
