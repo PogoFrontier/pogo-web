@@ -15,6 +15,9 @@ interface StepperProps {
 const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
   const [stepperCharge, setStepperCharge] = useState(25)
   const [stepperLabel, setStepperLabel] = useState('')
+  const [lastStep, setLastStep] = useState(new Date())
+  // This variable is a dummy to force updates
+  const [renderNum, setRenderNum] = useState(0)
   const { showKeys, keys } = useContext(SettingsContext)
   const { fastKey } = keys
 
@@ -23,6 +26,14 @@ const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
   const fastKeyClick = useKeyPress(fastKey)
 
   const onStepperClick = () => {
+    // Make sure we don't accidently charge up with one tap by adding a cooldown
+    const diff = new Date().getTime() - lastStep.getTime()
+    if (diff < 100) {
+      setTimeout(() => setRenderNum(renderNum + 1), diff)
+      return
+    }
+    setLastStep(new Date())
+
     if (stepperCharge < 100) {
       let stepperCount = stepperCharge
       stepperCount += 5
@@ -50,7 +61,9 @@ const Stepper: React.FC<StepperProps> = ({ onStep, step }) => {
     }
   }, [step])
 
-  useEffect(onStepperClick, [fastKeyClick])
+  if (fastKeyClick) {
+    onStepperClick()
+  }
 
   return (
     <div className={style.column}>
