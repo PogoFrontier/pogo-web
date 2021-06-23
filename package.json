@@ -82,6 +82,7 @@
         "babel-plugin-module-resolver": "4.0.0",
         "classnames": "^2.2.6",
         "firebase": "^8.2.1",
+        "framer-motion": "^4.1.17",
         "next": "^10.0.7",
         "next-redux-wrapper": "6.0.2",
         "node-libs-browser": "^2.2.1",
