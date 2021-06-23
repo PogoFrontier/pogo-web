@@ -569,12 +569,12 @@ const TeamMemberSelector = (props: {
               </select>
             </div>
           </div>
-          <TriangleTooltip label={
-            `ATK: ${addToBox.atk.toFixed(2)},
+          <TriangleTooltip
+            label={`ATK: ${addToBox.atk.toFixed(2)},
             DEF: ${addToBox.def.toFixed(2)},
             HP: ${addToBox.hp}
-            `
-          }>
+            `}
+          >
             <div className="stats">
               <div className={`level ${style.label}`}>
                 <label className="level-label"> {strings.level} </label>
@@ -629,7 +629,9 @@ const TeamMemberSelector = (props: {
                   </select>
                 </div>
                 <div>
-                  <span className={style.ivLabel}>{strings.hitpoints_abbr} </span>
+                  <span className={style.ivLabel}>
+                    {strings.hitpoints_abbr}{' '}
+                  </span>
                   <select
                     className="hp"
                     name="hp"
@@ -646,8 +648,8 @@ const TeamMemberSelector = (props: {
                 </div>
               </div>
             </div>
-            </TriangleTooltip>
-          </div>
+          </TriangleTooltip>
+        </div>
       ) : null}
       {suggestions && suggestions.size > 0 ? (
         <div className={style.searchbar}>
