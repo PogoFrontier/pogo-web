@@ -403,6 +403,8 @@ const TeamPage = () => {
     'Great League',
     'Venture Cup',
     'Atlantis Field',
+    'Bidoof Cup',
+    'Element Cup',
     'Specialist Cup',
     'Nursery Cup',
     'Cliffhanger',
