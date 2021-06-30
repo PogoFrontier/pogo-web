@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import style from './header.module.scss'
 import Link from 'next/link'
 import { Menu, MenuButton, MenuList, MenuLink } from '@reach/menu-button'
 import '@reach/menu-button/styles.css'
 import { Icon } from '@components/icon/Icon'
+import LanguageContext from '@context/LanguageContext'
 // import UserContext from '@context/UserContext'
 
 const Header: React.FunctionComponent = () => {
+  const strings = useContext(LanguageContext).strings
+
   return (
     <header className={style.header}>
       <Link href="/">
@@ -15,17 +18,17 @@ const Header: React.FunctionComponent = () => {
       <ul className={style.links}>
         <li>
           <Link href="/">
-            <a>Home</a>
+            <a>{strings.homepage}</a>
           </Link>
         </li>
         <li>
           <Link href="/team">
-            <a>Team</a>
+            <a>{strings.team}</a>
           </Link>
         </li>
         <li>
           <Link href="/settings">
-            <a>Settings</a>
+            <a>{strings.settings}</a>
           </Link>
         </li>
       </ul>
@@ -34,18 +37,18 @@ const Header: React.FunctionComponent = () => {
           <MenuButton className={style.menubutton}>
             <Icon name="menu" size="medium" />
           </MenuButton>
-          <MenuList>
+          <MenuList className={style.headerButtons}>
             <Link href="/">
-              <MenuLink>Home</MenuLink>
+              <MenuLink>{strings.homepage}</MenuLink>
             </Link>
             <Link href="/team">
-              <MenuLink>Team</MenuLink>
+              <MenuLink>{strings.team}</MenuLink>
             </Link>
             <Link href="/settings">
-              <MenuLink>Settings</MenuLink>
+              <MenuLink>{strings.settings}</MenuLink>
             </Link>
             {/* <MenuItem onSelect={handleAuth} className={style.logout}>
-              Log out
+              {strings.log_out}
             </MenuItem> */}
           </MenuList>
         </Menu>

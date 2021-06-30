@@ -1,0 +1,126 @@
+@import 'variables';
+@import 'colors';
+
+.member {
+	height: 3em;
+	width: 3em;
+	object-fit: contain;
+	@include sm() {
+		height: 5em;
+		width: 5em;
+	}
+}
+  
+.members {
+	.member {
+		width:1em;
+		height:1em;
+		@include md() {
+			height: 3em;
+			width: 3em;
+		}
+	}
+	.member + .member {
+		margin-left: 1em;
+	}
+}
+.popover {
+	text-align: left;
+	overflow-y: scroll;
+	margin: auto;
+
+	@include md() {
+		max-width: $xl;
+		margin-right:10em;
+		max-height: 80%;
+		width: 100%;
+	}
+	@include xl(){
+		margin-left:1em;
+	}
+	@include sm(){
+		width:100%;
+	}
+}
+
+.changeTeam {
+	width: 4.1em;
+	height: 4em;
+	background-color: $color-brand-primary;
+	border: none;
+	box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
+	margin-bottom: 0.5em;
+	margin-left: 0.5em;
+	&:hover {
+	  background-color: darken($color-brand-primary, 10%);
+	}
+	svg {
+	  fill: $color-white;
+	  height: 40px;
+	  width: 40px;
+	  margin-top: -14px;
+	  margin-left: 3px;
+	}
+	@include md() {
+	  margin-left: 0;
+	}
+}
+  
+.noteams {
+	min-width: 200px;
+}
+
+.changeWrap {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	flex-direction: row-reverse;
+	margin-left: 1em;
+	margin-right: 0.5em;
+	margin-top: 0.25em;
+	@include sm(){
+		flex-direction: column;
+	}
+
+}
+
+.groupLabel{
+	background-color: $color-neutral-light;
+	display:flex;
+	flex-direction: row;
+}
+
+.metaGroup{
+	margin-bottom: 0em;
+}
+
+.option{
+	border: 1px solid $color-neutral-light;
+	display:flex;
+	flex-direction: column;	
+}
+
+.labelIcon{
+	text-align: right;
+	width:100%
+}
+
+.searchbar{
+	margin: 1em;
+	margin-right:1.5em;
+	width: auto;
+}
+
+.teamName{	
+	margin-bottom: 0.5em;
+	@include sm(){
+		margin-top:1em;
+	}
+}
+
+.teamMembers{
+	height: 3.5em;
+	@include sm(){
+		height:5em;
+	}
+}

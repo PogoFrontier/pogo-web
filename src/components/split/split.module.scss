@@ -12,6 +12,7 @@
   background-color: $color-neutral-light;
   padding-top: 1em;
   overflow-y: scroll;
+  padding-bottom: 1em;
   @include md() {
     display: flex;
     flex-direction: column;

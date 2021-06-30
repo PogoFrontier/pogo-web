@@ -2,24 +2,17 @@ import Form from '@components/form/Form'
 import Layout from '@components/layout/Layout'
 import TeamContext from '@context/TeamContext'
 import CookieConsent from 'react-cookie-consent'
-import { useContext } from 'react'
+import React, { useContext } from 'react'
 import style from './style.module.scss'
 import UserContext from '@context/UserContext'
 import '@reach/combobox/styles.css'
-import { TeamMember } from '@adibkhan/pogo-web-backend'
 import ImageHandler from '@common/actions/getImages'
 import classnames from 'classnames'
 import { Icon } from '@components/icon/Icon'
 import Link from 'next/link'
-import {
-  ListboxInput,
-  ListboxButton,
-  ListboxPopover,
-  ListboxList,
-  ListboxOption,
-  ListboxPopoverProps,
-} from '@reach/listbox'
-import '@reach/listbox/styles.css'
+import LanguageContext from '@context/LanguageContext'
+import { StringsType } from '@common/actions/getLanguage'
+import TeamSelector from '@components/team_selector/TeamSelector'
 
 function truncateString(str: string, num: number) {
   if (str.length > num) {
@@ -29,47 +22,13 @@ function truncateString(str: string, num: number) {
   }
 }
 
-const right: ListboxPopoverProps['position'] = (targetRect, popoverRect) => {
-  const triggerCenter = targetRect!.left + targetRect!.width
-  const left = triggerCenter - popoverRect!.width
-  const maxLeft = window.innerWidth - popoverRect!.width - 2
-  return {
-    left: Math.min(Math.max(2, left), maxLeft) + window.scrollX,
-    top: targetRect!.bottom + 8 + window.scrollY,
-  }
-}
-
-interface TeamOptionProps {
-  team: TeamMember[]
-  name: string
-  id: string
-}
-
-const TeamOption: React.FC<TeamOptionProps> = ({ team, name, id }) => {
-  const imagesHandler = new ImageHandler()
-
-  return (
-    <ListboxOption value={id} className={style.option}>
-      <strong>{name}</strong>
-      <br />
-      {team.map((member: any, index: number) => (
-        <img
-          key={index}
-          src={imagesHandler.getMini(member.sid)}
-          className={style.member}
-          alt={member.speciesName}
-        />
-      ))}
-    </ListboxOption>
-  )
-}
-
 const myColor = '#FCAC89'
 const myProfile = 2
 const HomePage = () => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
+  const strings: StringsType = useContext(LanguageContext).strings
 
   const onSelect = (id: string) => {
     const newTeam = user.teams.find((x) => x.id === id)
@@ -97,7 +56,10 @@ const HomePage = () => {
                 <div>
                   <p className={style.teamTitle}>
                     <strong>
-                      {team.name ? truncateString(team.name, 8) : 'Your Team'} /{' '}
+                      {team.name
+                        ? truncateString(team.name, 8)
+                        : strings.your_team}{' '}
+                      /{' '}
                     </strong>
                     {team.format}
                   </p>
@@ -115,35 +77,7 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
-              <ListboxInput
-                aria-label="Select Team"
-                onChange={onSelect}
-                className={style.listbox}
-                defaultValue="defaultTeam"
-              >
-                <div className={style.changeWrap}>
-                  <ListboxButton className={style.changeTeam}>
-                    <Icon name="down" />
-                  </ListboxButton>
-                  <small>Change Team</small>
-                </div>
-                <ListboxPopover className={style.popover} position={right}>
-                  <ListboxList>
-                    {user && user.teams && user.teams.length > 0 ? (
-                      user.teams.map((x) => (
-                        <TeamOption
-                          team={x.members}
-                          name={x.name}
-                          id={x.id}
-                          key={x.id}
-                        />
-                      ))
-                    ) : (
-                      <p className={style.noteams}>No teams available</p>
-                    )}
-                  </ListboxList>
-                </ListboxPopover>
-              </ListboxInput>
+              <TeamSelector onSelect={onSelect} />
             </div>
             <Form />
           </section>
@@ -158,7 +92,7 @@ const HomePage = () => {
             </section>
           )}
           <section className={classnames([style.container, style.info])}>
-            <h1>Links</h1>
+            <h1>{strings.links}</h1>
             <div className={style.links}>
               <a
                 className="btn btn-secondary"
@@ -176,6 +110,14 @@ const HomePage = () => {
               >
                 <Icon name="github" size="medium" /> Github (Backend)
               </a>
+              <a
+                className="btn btn-secondary"
+                href="https://app.lokalise.com/public/991869486095447a82fab4.67696706/"
+                target="_blank"
+                rel="noreferrer nofollow"
+              >
+                <Icon name="lokalise" size="medium" /> Lokalise
+              </a>
             </div>
           </section>
         </div>
@@ -188,7 +130,7 @@ const HomePage = () => {
         buttonStyle={{ backgroundColor: '#68BFF5', fontSize: '15px' }}
         expires={150}
       >
-        We use cookies to enhance the user experience and save preferences.
+        {strings.cookies_description}
       </CookieConsent>
     </Layout>
   )

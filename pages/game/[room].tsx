@@ -1,6 +1,7 @@
 import Status from '@components/game/status/Status'
 import SocketContext from '@context/SocketContext'
 import { useRouter } from 'next/router'
+import ReactDOM from 'react-dom'
 import { useContext, useEffect, useState } from 'react'
 import {
   Anim,
@@ -27,6 +28,7 @@ import SettingsContext from '@context/SettingsContext'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
+import LanguageContext from '@context/LanguageContext'
 
 interface CheckPayload {
   countdown: number
@@ -49,6 +51,7 @@ enum StatusTypes {
   FAINT,
   CHARGE,
   SHIELD,
+  ANIMATING,
 }
 
 const GamePage = () => {
@@ -88,139 +91,160 @@ const GamePage = () => {
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
   const [message, setMessage] = useState('')
+
+  const strings = useContext(LanguageContext).strings
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
-    setMoves(payload.allMoves)
-    setActive(payload.current)
+    ReactDOM.unstable_batchedUpdates(() => {
+      setMoves(payload.allMoves)
+      setActive(payload.current)
+    })
   }
 
   const startGame = () => {
     setTime(240)
-    setMessage('GO!')
+    setMessage(strings.battle_start)
     setStatus(StatusTypes.MAIN)
   }
 
-  const endGame = (result: string) => {
+  const endGame = (result: string, data: string) => {
     ws.onclose = null
     if (ws.close) {
       ws.close()
     }
-    router.push(`/end/${room}?result=${result}`)
+    router.push(`/end/${room}?result=${result}&data=${data}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
-    if (payload.update[0] !== null && payload.update[0].id === id) {
-      const hp = payload.update[0]!.hp
-      const isActive = payload.update[0].active
-      const energy = payload.update[0]!.energy
-      const isShields = payload.update[0].shields
-      setActive((prev1) => {
-        setCharPointer((prev2) => {
-          setCharacters((prev3b) => {
-            const prev3 = { ...prev3b }
-            setCurrentMove(() => {
-              let p = ''
-              setBufferedMove((prev) => {
-                p = prev
-                return ''
-              })
-              return p
-            })
-            if (hp) {
-              prev1[isActive].current!.hp = hp
-            }
-            if (energy) {
-              prev1[isActive].current!.energy = energy
-            }
-            prev3[0].char = prev1[isActive]
-            if (isShields) {
-              setShields(isShields)
-            }
-            if (payload.update[0]?.remaining) {
-              setRemaining(payload.update[0]!.remaining)
-              prev1[isActive].current!.hp = 0
-              if (isActive === prev2) {
-                setStatus(StatusTypes.FAINT)
-                prev3[0].anim = {
-                  type: 'faint',
-                  turn: payload.turn,
+    ReactDOM.unstable_batchedUpdates(() => {
+      if (payload.update[0] !== null && payload.update[0].id === id) {
+        const hp = payload.update[0]!.hp
+        const isActive = payload.update[0].active
+        const energy = payload.update[0]!.energy
+        const isShields = payload.update[0].shields
+        setActive((prev1) => {
+          setCharPointer((prev2) => {
+            setCharacters((prev3b) => {
+              const prev3 = { ...prev3b }
+              if (hp !== undefined) {
+                prev1[isActive].current!.hp = hp
+              }
+              if (energy) {
+                prev1[isActive].current!.energy = energy
+              }
+              prev3[0].char = prev1[isActive]
+              if (isActive !== prev2 && prev3[0].anim?.type === 'faint') {
+                delete prev3[0].anim
+              }
+              if (isShields) {
+                setShields(isShields)
+              }
+              if (payload.update[0]?.remaining !== undefined) {
+                setRemaining(payload.update[0]!.remaining)
+                prev1[isActive].current!.hp = 0
+                if (isActive === prev2) {
+                  setTimeout((_) => setStatus(StatusTypes.FAINT), 3000)
+                  prev3[0].anim = {
+                    type: 'faint',
+                    turn: payload.turn,
+                  }
                 }
               }
+              if (payload.update[0]?.charge) {
+                if (payload.update[0].charge === 1) {
+                  setStatus(StatusTypes.CHARGE)
+                } else {
+                  setStatus(StatusTypes.SHIELD)
+                }
+              }
+              return prev3
+            })
+            return isActive
+          })
+          return prev1
+        })
+        if (payload.update[0].message) {
+          setMessage(payload.update[0].message)
+        }
+        if (payload.update[0]?.wait) {
+          setWait(payload.update[0]!.wait)
+          if (payload.update[0]!.wait <= -1) {
+            setStatus((prev) => {
+              if (
+                payload.update[1] &&
+                payload.update[1].wait &&
+                payload.update[1].wait <= -1
+              ) {
+                if (prev === StatusTypes.CHARGE) {
+                  setChargeMult(0.25)
+                  setTimeout(() => {
+                    setStatus((currentStatus) => {
+                      if (currentStatus === StatusTypes.ANIMATING) {
+                        return StatusTypes.MAIN
+                      }
+                      return currentStatus
+                    })
+                  }, 3500)
+                  return StatusTypes.ANIMATING
+                } else if (prev === StatusTypes.SHIELD) {
+                  setToShield(false)
+                  setTimeout(() => {
+                    setStatus((currentStatus) => {
+                      if (currentStatus === StatusTypes.ANIMATING) {
+                        return StatusTypes.MAIN
+                      }
+                      return currentStatus
+                    })
+                  }, 3500)
+                  return StatusTypes.ANIMATING
+                }
+              }
+              return StatusTypes.MAIN
+            })
+          }
+        }
+      }
+      if (payload.update[1] !== null) {
+        const hp = payload.update[1]!.hp
+        const isShields = payload.update[1].shields
+        setOpponent((prev1) => {
+          setCharacters((prev3b) => {
+            const prev3 = { ...prev3b }
+            if (hp !== undefined) {
+              prev1[0].current!.hp = hp
             }
-            if (payload.update[0]?.charge) {
-              if (payload.update[0].charge === 1) {
-                setStatus(StatusTypes.CHARGE)
-              } else {
-                setStatus(StatusTypes.SHIELD)
+            if (isShields !== undefined) {
+              setOppShields(isShields)
+            }
+            if (payload.update[1]?.remaining !== undefined) {
+              setOppRemaining((prevOppRemaining) => {
+                if (prevOppRemaining !== payload.update[1]!.remaining) {
+                  prev3[1].anim = {
+                    type: 'faint',
+                    turn: payload.turn,
+                  }
+                }
+                return payload.update[1]?.remaining!
+              })
+              prev1[0].current!.hp = 0
+              if (!payload.update[0]?.remaining) {
+                setStatus((prev4) => {
+                  if (prev4 === StatusTypes.FAINT) {
+                    return prev4
+                  }
+                  return StatusTypes.WAITING
+                })
               }
             }
             return prev3
           })
-          return isActive
+          return prev1
         })
-        return prev1
-      })
-      if (payload.update[0].message) {
-        setMessage(payload.update[0].message)
       }
-      if (payload.update[0]?.wait) {
-        setWait(payload.update[0]!.wait)
-        if (payload.update[0]!.wait <= -1) {
-          setStatus((prev) => {
-            if (
-              payload.update[1] &&
-              payload.update[1].wait &&
-              payload.update[1].wait <= -1
-            ) {
-              if (prev === StatusTypes.CHARGE) {
-                setChargeMult(0.25)
-              } else if (prev === StatusTypes.SHIELD) {
-                setToShield(false)
-              } else {
-                return StatusTypes.MAIN
-              }
-            }
-            return StatusTypes.MAIN
-          })
-        }
-      }
-    }
-    if (payload.update[1] !== null) {
-      const hp = payload.update[1]!.hp
-      const isShields = payload.update[1].shields
-      setOpponent((prev1) => {
-        setCharacters((prev3b) => {
-          const prev3 = { ...prev3b }
-          if (hp) {
-            prev1[0].current!.hp = hp
-          }
-          if (isShields !== undefined) {
-            setOppShields(isShields)
-          }
-          if (payload.update[1]?.remaining) {
-            setOppRemaining(payload.update[1]?.remaining)
-            prev1[0].current!.hp = 0
-            if (!payload.update[0]?.remaining) {
-              setStatus((prev4) => {
-                if (prev4 === StatusTypes.FAINT) {
-                  return prev4
-                }
-                return StatusTypes.WAITING
-              })
-            }
-            prev3[1].anim = {
-              type: 'faint',
-              turn: payload.turn,
-            }
-          }
-          return prev3
-        })
-        return prev1
-      })
-    }
-    setSwap(payload.switch)
-    setTime(payload.time)
+      setSwap(payload.switch)
+      setTime(Math.max(payload.time, 0))
+    })
   }
 
   // Send updates to charge moev decisions
@@ -231,11 +255,26 @@ const GamePage = () => {
     ws.send('$s' + (toShield ? 1 : 0).toString())
   }, [toShield])
 
+  // Reset moves between phases
+  useEffect(() => {
+    setCurrentMove('')
+    setBufferedMove('')
+  }, [
+    [
+      StatusTypes.CHARGE,
+      StatusTypes.FAINT,
+      StatusTypes.SHIELD,
+      StatusTypes.WAITING,
+    ].includes(status),
+  ])
+
   const onGameStatus = (payload: CheckPayload) => {
     if (payload.countdown === 4) {
       startGame()
     } else {
-      setMessage(`Starting: ${payload.countdown}...`)
+      setMessage(
+        strings.battle_start_countdown.replace('%1', String(payload.countdown))
+      )
     }
   }
 
@@ -243,6 +282,61 @@ const GamePage = () => {
     setCharacters((prev) => {
       prev[1].anim = data
       return prev
+    })
+  }
+
+  const hasEnoughEnergy = (
+    member: TeamMember,
+    memberIndex: number,
+    prevMoves: Move[][],
+    ca: string
+  ): boolean => {
+    const [, indexString] = ca.split(':')
+    return (
+      member.current!.energy >=
+      prevMoves[memberIndex][parseInt(indexString, 10) + 1].energy
+    )
+  }
+
+  const nextCurrentMove = () => {
+    setCurrentMove(() => {
+      let p = ''
+      setBufferedMove((prev) => {
+        p = prev
+        return ''
+      })
+      if (p.startsWith('#sw')) {
+        setCharacters((prevCharacters) => {
+          prevCharacters[0].anim = {
+            type: Actions.SWITCH,
+          }
+          return prevCharacters
+        })
+      }
+      // Visualize a buffered quick move
+      if (
+        p.startsWith('#fa') ||
+        (p.startsWith('#ca') &&
+          !hasEnoughEnergy(active[charPointer], charPointer, moves, p))
+      ) {
+        setCharacters((prevCharacters) => {
+          prevCharacters[0].anim = {
+            move: moves[charPointer][0],
+            type: Actions.FAST_ATTACK,
+          }
+          return prevCharacters
+        })
+        setTimeout(nextCurrentMove, moves[charPointer][0].cooldown)
+      } else if (p.startsWith('#sw')) {
+        setCharacters((prev) => {
+          prev[0].anim = {
+            type: Actions.SWITCH,
+          }
+          return prev
+        })
+        setTimeout(nextCurrentMove, 500)
+      }
+      return p
     })
   }
 
@@ -263,8 +357,8 @@ const GamePage = () => {
 
   const onMessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$end')) {
-      const data = msg.data.slice(4)
-      endGame(data)
+      const [result, data] = msg.data.slice(4).split('|')
+      endGame(result, data)
     } else if (msg.data.startsWith('#')) {
       // Expected format: "#fa:Volt Switch"
       const data = msg.data.slice(1)
@@ -340,6 +434,8 @@ const GamePage = () => {
   const onClick = () => {
     if (
       status === StatusTypes.MAIN &&
+      active[charPointer].current?.hp &&
+      active[charPointer].current!.hp > 0 &&
       wait <= -1 &&
       currentMove === '' &&
       bufferedMove === ''
@@ -354,84 +450,84 @@ const GamePage = () => {
         }
         return prev
       })
+      setTimeout(() => {
+        nextCurrentMove()
+      }, moves[charPointer][0].cooldown)
       return true
     }
     return false
   }
 
   const onSwitchClick = (pos: number) => {
-    if (
-      status === StatusTypes.MAIN &&
-      swap <= 0 &&
-      wait <= -1 &&
-      active[pos]?.current?.hp &&
-      active[pos].current!.hp > 0
-    ) {
-      const data = '#sw:' + pos
-      if (currentMove === '') {
-        setCurrentMove(data)
-        ws.send(data)
-        setCharacters((prev) => {
-          prev[0].anim = {
-            type: Actions.SWITCH,
-          }
-          return prev
-        })
-        return true
-      }
-      if (bufferedMove === '') {
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
-    }
-    return false
-  }
+    const data = '#sw:' + pos
 
-  const onChargeClick = (move: Move, index: number) => {
-    if (
-      status === StatusTypes.MAIN &&
-      wait <= -1 &&
-      active[charPointer].current?.energy &&
-      active[charPointer].current!.energy! >= move.energy
-    ) {
-      const data = `#ca:${index}`
-      if (currentMove === '' && bufferedMove === '') {
-        setCurrentMove(data)
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
-      if (
-        !currentMove.startsWith('#ca') &&
-        (bufferedMove === '' || bufferedMove.startsWith('#sw'))
-      ) {
-        setBufferedMove(data)
-        ws.send(data)
-        return true
-      }
-    }
-    return false
-  }
-
-  const onFaintClick = (pos: number) => {
+    ws.send(data)
     if (
       (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
       active[pos].current?.hp &&
       active[pos].current!.hp > 0
     ) {
-      const data = '#sw:' + pos
-      setCurrentMove(data)
-      ws.send(data)
       setCharacters((prev) => {
         prev[0].anim = {
           type: Actions.SWITCH,
         }
         return prev
       })
-      return true
+    } else if (
+      status === StatusTypes.MAIN &&
+      swap <= 0 &&
+      wait <= -1 &&
+      active[pos]?.current?.hp &&
+      active[pos].current!.hp > 0 &&
+      currentMove === ''
+    ) {
+      setCharacters((prev) => {
+        prev[0].anim = {
+          type: Actions.SWITCH,
+        }
+        return prev
+      })
+    } else {
+      return
     }
-    return false
+
+    if (currentMove === '') {
+      setCurrentMove(data)
+      setTimeout(nextCurrentMove, 500)
+    } else if (bufferedMove === '') {
+      setBufferedMove(data)
+    }
+  }
+
+  const onChargeClick = (move: Move, index: number) => {
+    const data = `#ca:${index}`
+    ws.send(data)
+    if (status === StatusTypes.MAIN && currentMove === '') {
+      setCurrentMove(data)
+    } else if (status === StatusTypes.MAIN && bufferedMove === '') {
+      setBufferedMove(data)
+    }
+    if (
+      status === StatusTypes.MAIN &&
+      active[charPointer].current?.hp &&
+      active[charPointer].current!.hp > 0 &&
+      wait <= -1 &&
+      (active[charPointer].current?.energy === undefined ||
+        active[charPointer].current!.energy! < move.energy) &&
+      currentMove === ''
+    ) {
+      setCharacters((prev) => {
+        setCurrentMove('#fa:')
+        prev[0].anim = {
+          move: moves[charPointer][0],
+          type: Actions.FAST_ATTACK,
+        }
+        setTimeout(() => {
+          nextCurrentMove()
+        }, moves[charPointer][0].cooldown)
+        return prev
+      })
+    }
   }
 
   const onShield = () => {
@@ -461,21 +557,15 @@ const GamePage = () => {
 
     if (charge1KeyClick) {
       const move = moves[charPointer][1]
-      if (!onChargeClick(move, 0)) {
-        onClick()
-      }
+      onChargeClick(move, 0)
     } else if (charge2KeyClick) {
       const move = moves[charPointer][2]
-      if (!onChargeClick(move, 1)) {
-        onClick()
-      }
+      onChargeClick(move, 1)
     } else if (switch1KeyClick) {
       const pos = active.findIndex(
         (poke, index) => poke.current?.hp && index !== charPointer
       )
-      if (!onSwitchClick(pos)) {
-        onFaintClick(pos)
-      }
+      onSwitchClick(pos)
     } else if (switch2KeyClick) {
       const pos =
         2 -
@@ -484,9 +574,7 @@ const GamePage = () => {
           .findIndex(
             (poke, index) => poke.current?.hp && 2 - index !== charPointer
           )
-      if (!onSwitchClick(pos)) {
-        onFaintClick(pos)
-      }
+      onSwitchClick(pos)
     } else if (shieldKeyClick) {
       onShield()
     }
@@ -557,12 +645,17 @@ const GamePage = () => {
         />
         {showKeys && (
           <label className={style.keylabel}>
-            Press {getKeyDescription(fastKey).toUpperCase()}
+            {strings.hold_fastkey_button.replace(
+              '%1',
+              getKeyDescription(fastKey).toUpperCase()
+            )}
           </label>
         )}
 
         <Popover
-          closed={status === StatusTypes.MAIN}
+          closed={
+            status === StatusTypes.MAIN || status === StatusTypes.ANIMATING
+          }
           showMenu={
             status !== StatusTypes.WAITING && status !== StatusTypes.STARTING
           }
@@ -572,7 +665,7 @@ const GamePage = () => {
               team={active}
               pointer={charPointer}
               countdown={wait}
-              onClick={onFaintClick}
+              onClick={onSwitchClick}
               modal={true}
             />
           )}

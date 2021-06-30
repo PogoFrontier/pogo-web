@@ -1,11 +1,14 @@
 import API from '@config/API'
+import { supportedLanguages } from '@context/LanguageContext'
+import mapLanguage from './mapLanguage'
 
 export const getPokemonNames = async (
   meta?: string,
   position?: number,
   showIllegal?: boolean,
   usedPoints?: number,
-  className?: string
+  className?: string,
+  language?: string
 ) => {
   try {
     if (!position) {
@@ -14,10 +17,11 @@ export const getPokemonNames = async (
     if (!usedPoints) {
       usedPoints = 0
     }
+    language = mapLanguage(language ?? 'English')
     const classString = className ? `&class=${className}` : ''
     const queryString = meta
-      ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}${classString}`
-      : ''
+      ? `?format=${meta}&position=${position}&showIllegal=${!!showIllegal}&usedPoints=${usedPoints}${classString}&language=${language}`
+      : `?language=${language}`
     const res = await API.get(`api/pokemon${queryString}`)
     return res.data
   } catch (err) {
@@ -45,12 +49,19 @@ export const getPokemonData = async (
   }
 }
 
-export const getValidateTeam = async (team: string, meta: string) => {
+export const getValidateTeam = async (
+  team: string,
+  meta: string,
+  lang: string
+) => {
   try {
-    const res = await API.get(`api/validate/${team}/${meta}`)
+    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
+    const res = await API.get(`api/validate/${team}/${meta}/${lang}`)
     return res.data
   } catch (err) {
-    return err.message
+    return {
+      message: err.message,
+    }
   }
 }
 
@@ -63,9 +74,10 @@ export const parseToRule = async (rule: string) => {
   }
 }
 
-export const getRandomPokemon = async (rule: string) => {
+export const getRandomPokemon = async (rule: string, lang: string) => {
   try {
-    const res = await API.get(`api/random/${rule}`)
+    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
+    const res = await API.get(`api/random/${rule}?language=${lang}`)
     return res.data
   } catch (err) {
     return err

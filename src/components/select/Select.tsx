@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './select.module.scss'
 import classnames from 'classnames'
 import ImageHandler from '@common/actions/getImages'
+import LanguageContext from '@context/LanguageContext'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 
 interface SelectProps {
   team: TeamMember[]
@@ -32,10 +34,15 @@ const Button: React.FC<ButtonProps> = ({ x, onRegister, i, value }) => {
   }
 
   return (
-    <button className={style.select} type="button" onClick={onClick}>
-      <img src={imageHandler.getMini(x.sid)} alt={x.speciesName} />
-      {value > -1 && <div>{value}</div>}
-    </button>
+    <TriangleTooltip
+      label={`${x.fastMove}, ${x.chargeMoves.join(', ')}`}
+      key={i}
+    >
+      <button className={style.select} type="button" onClick={onClick}>
+        <img src={imageHandler.getMini(x.sid)} alt={x.speciesName} />
+        {value > -1 && <div>{value}</div>}
+      </button>
+    </TriangleTooltip>
   )
 }
 
@@ -44,6 +51,7 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
   const [map, setMap] = useState(new Array<number>(requiredAmount!).fill(-1))
   const [count, setCount] = useState(0)
   const [current, setCurrent] = useState(1)
+  const strings = useContext(LanguageContext).strings
 
   const register = (index: number) => {
     const deepCopy = [...values]
@@ -90,7 +98,7 @@ const Select: React.FC<SelectProps> = ({ team, onSubmit, requiredAmount }) => {
         type="submit"
         disabled={count !== requiredAmount}
       >
-        Start
+        {strings.start}
       </button>
     </form>
   )

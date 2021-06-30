@@ -11,14 +11,24 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
   },
-  'Commander Cup': {
-    name: 'Commander Cup',
+  'Venture Cup': {
+    name: 'Venture Cup',
     maxCP: 1500,
     movesetOption: 'original',
   },
-  'Floating City': {
-    name: 'Floating City',
+  'Atlantis Field': {
+    name: 'Atlantis Field',
     maxCP: 1500,
+    movesetOption: 'original',
+  },
+  'Bidoof Cup': {
+    name: 'Bidoof Cup',
+    maxCP: 500,
+    movesetOption: 'original',
+  },
+  'Element Cup': {
+    name: 'Element Cup',
+    maxCP: 500,
     movesetOption: 'original',
   },
   'Specialist Cup': {

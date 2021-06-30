@@ -1,0 +1,16 @@
+@import 'variables';
+@import 'colors';
+.root {
+    @include twocolumn;
+}
+
+.label {
+    width: 100%;
+    height: 2em;
+    margin-right: 0.5em;
+    margin-left: 0.25em;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    background-color: $color-neutral-light;
+  }
