@@ -13,6 +13,7 @@ import Link from 'next/link'
 import LanguageContext from '@context/LanguageContext'
 import { StringsType } from '@common/actions/getLanguage'
 import TeamSelector from '@components/team_selector/TeamSelector'
+import '@reach/listbox/styles.css'
 
 function truncateString(str: string, num: number) {
   if (str.length > num) {
