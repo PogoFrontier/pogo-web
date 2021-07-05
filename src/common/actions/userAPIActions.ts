@@ -1,5 +1,7 @@
 import API from '@config/API'
 
+// add username/password login actions
+
 export const postNewGoogleUser = async (
   userAuth: any,
   username?: string,
@@ -41,7 +43,7 @@ export const getUserProfile = async (token: string) => {
   }
 }
 
-export const updateUserTeam = async (team: any, token: string) => {
+export const updateUserTeams = async (teams: any[], token: string | null) => {
   try {
     const config = {
       headers: {
@@ -49,7 +51,8 @@ export const updateUserTeam = async (team: any, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     }
-    const res = await API.put(`api/users/teams`, team, config)
+    const res = await API.post(`api/users/setteams`, { teams }, config)
+    // console.log(res.data)
     return res.data
   } catch (err) {
     // console.log(err)
