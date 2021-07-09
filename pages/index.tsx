@@ -82,16 +82,16 @@ const HomePage = () => {
             </div>
             <Form />
           </section>
-          {!!user && (!!user.googleId || !!user.username) ? (
-            <section className={classnames([style.container, style.info])}>
-              <h1>Friends</h1>
-              Coming Soon!
-            </section>
-          ) : (
-            <section className={classnames([style.container, style.info])}>
-              <Link href="/login">Login or Create an Account!</Link>
-            </section>
-          )}
+          <section className={classnames([style.container, style.info])}>
+            <h1>Friends</h1>
+            {!!user && (!!user.googleId || !!user.username) ? (
+              <>Coming Soon!</>
+            ) : (
+              <>
+                <Link href="/login">Login or Create an Account!</Link>
+              </>
+            )}
+          </section>
           <section className={classnames([style.container, style.info])}>
             <h1>{strings.links}</h1>
             <div className={style.links}>
