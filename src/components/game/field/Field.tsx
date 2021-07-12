@@ -95,6 +95,7 @@ const Field: React.FunctionComponent<FieldProps> = ({
         const d: Message = {
           message: message!,
           type: 'message',
+          id: message
         }
         newM.push(d)
         return newM

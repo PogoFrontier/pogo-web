@@ -4,6 +4,7 @@ import Field from "@components/game/field/Field"
 import { defaultTeam } from "@context/TeamContext"
 import React, { useState } from "react"
 import style from './style.module.scss'
+import { v4 as uuidv4 } from 'uuid'
 
 const defaultFa: Move = {
     "moveId": "MUD_SHOT",
@@ -115,7 +116,8 @@ const TestPage: React.FC = () => {
             prev[char].anim = {
                 move,
                 type,
-                turn: -1
+                turn: -1,
+                id: uuidv4()
             }
             return newPrev
         })

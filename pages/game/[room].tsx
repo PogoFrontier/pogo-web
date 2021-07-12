@@ -29,6 +29,7 @@ import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
 import LanguageContext from '@context/LanguageContext'
+import { v4 as uuidv4 } from 'uuid'
 
 interface CheckPayload {
   countdown: number
@@ -148,6 +149,7 @@ const GamePage = () => {
                   prev3[0].anim = {
                     type: 'faint',
                     turn: payload.turn,
+                    id: uuidv4()
                   }
                 }
               }
@@ -223,6 +225,7 @@ const GamePage = () => {
                   prev3[1].anim = {
                     type: 'faint',
                     turn: payload.turn,
+                    id: uuidv4()
                   }
                 }
                 return payload.update[1]?.remaining!
@@ -309,6 +312,7 @@ const GamePage = () => {
         setCharacters((prevCharacters) => {
           prevCharacters[0].anim = {
             type: Actions.SWITCH,
+            id: uuidv4()
           }
           return prevCharacters
         })
@@ -323,6 +327,7 @@ const GamePage = () => {
           prevCharacters[0].anim = {
             move: moves[charPointer][0],
             type: Actions.FAST_ATTACK,
+            id: uuidv4()
           }
           return prevCharacters
         })
@@ -331,6 +336,7 @@ const GamePage = () => {
         setCharacters((prev) => {
           prev[0].anim = {
             type: Actions.SWITCH,
+            id: uuidv4()
           }
           return prev
         })
@@ -348,6 +354,7 @@ const GamePage = () => {
         prev[1].char = data
         prev[1].anim = {
           type: Actions.SWITCH,
+          id: uuidv4()
         }
         return prev
       })
@@ -447,6 +454,7 @@ const GamePage = () => {
         prev[0].anim = {
           move: moves[charPointer][0],
           type: Actions.FAST_ATTACK,
+          id: uuidv4()
         }
         return prev
       })
@@ -470,6 +478,7 @@ const GamePage = () => {
       setCharacters((prev) => {
         prev[0].anim = {
           type: Actions.SWITCH,
+          id: uuidv4()
         }
         return prev
       })
@@ -484,6 +493,7 @@ const GamePage = () => {
       setCharacters((prev) => {
         prev[0].anim = {
           type: Actions.SWITCH,
+          id: uuidv4()
         }
         return prev
       })
@@ -521,6 +531,7 @@ const GamePage = () => {
         prev[0].anim = {
           move: moves[charPointer][0],
           type: Actions.FAST_ATTACK,
+          id: uuidv4()
         }
         setTimeout(() => {
           nextCurrentMove()

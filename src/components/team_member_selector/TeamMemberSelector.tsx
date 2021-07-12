@@ -23,7 +23,7 @@ import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 
 // TODO: find better type definition for speciesName
 type pokemonType = {
-  speciesName: any
+  speciesName: string | object
   speciesId: string
   types: string[]
   tags?: string[]
