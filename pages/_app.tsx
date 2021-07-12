@@ -213,14 +213,15 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
-  const connectAndJoin = (id1: string, payload: OnNewRoomPayload) => {
-    connect(id1, (s: WebSocket) => {
+  const connectAndJoin = (payload: OnNewRoomPayload) => {
+    connect((s: WebSocket) => {
       const data = { type: CODE.room, payload }
       s.send(JSON.stringify(data))
     })
   }
 
-  const connect = (id1: string, callback: (socket: WebSocket) => void) => {
+  const connect = (callback: (socket: WebSocket) => void) => {
+    const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
     const s: any = new WebSocket(`${WSS}${id1}`)
     setWsHeartbeat(s, '{"kind":"ping"}', {
       pingInterval: 30000, // every 30 seconds, send a ping message to the server.

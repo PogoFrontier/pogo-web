@@ -5,7 +5,6 @@ import TeamContext from '@context/TeamContext'
 import { useRouter } from 'next/router'
 import { useState, useContext } from 'react'
 import style from './style.module.scss'
-import { v4 as uuidv4 } from 'uuid'
 import Layout from '@components/layout/Layout'
 import LanguageContext from '@context/LanguageContext'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
@@ -56,7 +55,7 @@ const EndPage = () => {
           if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
             const payload = { room, team: team.members }
             setIsLoading(true)
-            connectAndJoin(uuidv4(), payload)
+            connectAndJoin(payload)
           }
         }
       }
