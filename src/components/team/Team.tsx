@@ -24,7 +24,9 @@ const Team: React.FC<TeamProps> = ({ team, isPlayer }) => {
             <img
               className={style.sprite}
               src={imageHandler.getImage(x.sid, x.shiny, isPlayer)}
-              alt={x.speciesName}
+              alt={typeof x.speciesName === "string"
+              ? x.speciesName
+              : x.speciesId}
             />
           </span>
         ))}

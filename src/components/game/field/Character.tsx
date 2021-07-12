@@ -68,7 +68,9 @@ const Character: React.FunctionComponent<CharacterProps> = ({
           ])}
           draggable="false"
           src={imagesHandler.getImage(char.sid, char.shiny, back)}
-          alt={char.speciesName}
+          alt={typeof char.speciesName === "string"
+          ? char.speciesName
+          : char.speciesId}
         />
       </div>
     </div>

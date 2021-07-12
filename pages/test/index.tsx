@@ -5,17 +5,28 @@ import { defaultTeam } from "@context/TeamContext"
 import React, { useState } from "react"
 import style from './style.module.scss'
 
-const defaultFa = {
+const defaultFa: Move = {
     "moveId": "MUD_SHOT",
     "name": "Mud Shot",
     "type": "ground",
     "power": 3,
     "energy": 0,
     "energyGain": 9,
-    "cooldown": 1000
+    "cooldown": 1000,
+    animation: {
+        type: "fa",
+        particles: [
+            {
+                startPos: {x: 0, y: 0},
+                name: "mudwhisp",
+                preset: "projectile"
+            }
+        ],
+        self: "basic"
+    }
 }
 
-const defaultCa = {
+const defaultCa: Move = {
     "moveId": "NIGHT_SLASH",
     "name": "Night Slash",
     "type": "dark",
@@ -23,6 +34,43 @@ const defaultCa = {
     "energy": 35,
     "energyGain": 0,
     "cooldown": 500,
+    animation: {
+        type: "ca",
+        particles: [
+            {
+                startPos: {x: 100, y: 0},
+                keyframes: [
+                    {
+                        time: 0,
+                        opacity: 0,
+                        rotation: 45
+                    },
+                    {
+                        time: 0.2,
+                        opacity: 0
+                    },
+                    {
+                        time: 0.3,
+                        opacity: 1
+                    },
+                    {
+                        time: 0.7,
+                        pos: {x: 0, y: 0},
+                    },
+                    {
+                        time: 0.8,
+                        opacity: 0
+                    }
+                ],
+                name: "rightslash",
+                preset: "opponent"
+            }
+        ],
+        background: {
+            color: "#191970"
+        },
+        self: "jump"
+    }
 }
 
 const TestPage: React.FC = () => {

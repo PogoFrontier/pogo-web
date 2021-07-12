@@ -56,7 +56,7 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
 
       // Is substring of a teamMember TODO: add translation for TeamMembers
       for (const member of team.members) {
-        if (member.speciesName.toLowerCase().indexOf(userInput) > -1) {
+        if (typeof member.speciesName === "string" && member.speciesName.toLowerCase().indexOf(userInput) > -1) {
           return true
         }
       }
