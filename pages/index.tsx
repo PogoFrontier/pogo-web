@@ -9,10 +9,11 @@ import '@reach/combobox/styles.css'
 import ImageHandler from '@common/actions/getImages'
 import classnames from 'classnames'
 import { Icon } from '@components/icon/Icon'
-import '@reach/listbox/styles.css'
+import Link from 'next/link'
 import LanguageContext from '@context/LanguageContext'
 import { StringsType } from '@common/actions/getLanguage'
 import TeamSelector from '@components/team_selector/TeamSelector'
+import '@reach/listbox/styles.css'
 
 function truncateString(str: string, num: number) {
   if (str.length > num) {
@@ -81,10 +82,16 @@ const HomePage = () => {
             </div>
             <Form />
           </section>
-          <section className={classnames([style.container, style.info])}>
-            <h1>{strings.friends}</h1>
-            {strings.coming_soon}
-          </section>
+          {!!user && (!!user.googleId || !!user.username) ? (
+            <section className={classnames([style.container, style.info])}>
+              <h1>Friends</h1>
+              Coming Soon!
+            </section>
+          ) : (
+            <section className={classnames([style.container, style.info])}>
+              <Link href="/login">Login or Create an Account!</Link>
+            </section>
+          )}
           <section className={classnames([style.container, style.info])}>
             <h1>{strings.links}</h1>
             <div className={style.links}>
@@ -110,8 +117,7 @@ const HomePage = () => {
                 target="_blank"
                 rel="noreferrer nofollow"
               >
-                <Icon name="lokalise" size="medium" /> Lokalise (
-                {strings.translations})
+                <Icon name="lokalise" size="medium" /> Lokalise
               </a>
             </div>
           </section>

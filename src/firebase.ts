@@ -24,4 +24,8 @@ provider.setCustomParameters({
   promt: 'select_account',
 })
 
-export const getSignInWithGooglePopup = () => auth.signInWithPopup(provider)
+export const getSignInWithGooglePopup = () => auth.signInWithPopup(provider) // pop ups can be blocked, better to use redirect
+
+export const googleSignInWithRedirect = () => auth.signInWithRedirect(provider)
+
+export const getGoogleSignInRedirectResult = () => auth.getRedirectResult()

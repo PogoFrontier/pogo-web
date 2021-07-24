@@ -9,11 +9,7 @@ import TeamContext, { defaultTeam } from '@context/TeamContext'
 // import { auth } from '../src/firebase'
 import UserContext, { User, UserTeam } from '@context/UserContext'
 import HistoryContext from '@context/HistoryContext'
-// import {
-//   getUserProfile,
-//   postNewGoogleUser,
-//   signInWithGoogleId,
-// } from '@common/actions/userAPIActions'
+import { getUserProfile, updateUserTeams } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
 import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
@@ -21,7 +17,6 @@ import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
 import { isDesktop } from 'react-device-detect'
-
 import axios from 'axios'
 import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 import { standardStrings, StringsType } from '@common/actions/getLanguage'
@@ -51,6 +46,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
   const [prevRoute, setPrevRoute] = useState<string | null>(null)
+  const [userToken, setUserToken] = useState<string | null>(null)
   const [language, setLanguage1] = useState('English')
   const [strings, setStrings] = useState<StringsType>(standardStrings)
 
@@ -80,32 +76,73 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       }
     }
     // first try to load from localstorage and store in context
-    const userFromStorage: string | null = localStorage.getItem('user')
+    // actually, first try loading authed user data from local, //use user token instead, go right to profile!
+    // then load from firebase if there is one
+    // or create local user if there is none
+    // and then store in context
+
+    const userTokenFromStorage: string | null = localStorage.getItem(
+      'userToken'
+    )
     if (
       typeof window !== undefined &&
-      userFromStorage &&
-      userFromStorage !== 'undefined'
+      userTokenFromStorage &&
+      userTokenFromStorage !== 'undefined'
     ) {
-      const userJSON = JSON.parse(userFromStorage)
-      setCurrentUser(userJSON)
-    } else {
-      const newUser: User = {
-        displayName: uuidv4(),
-        teams: [],
+      const parsedUserToken = JSON.parse(userTokenFromStorage)
+      if (parsedUserToken.googleId && parsedUserToken.token) {
+        setUserToken(parsedUserToken.token)
+        getUserProfile(parsedUserToken.token)
+          .then((authedUser) => {
+            // console.log(authedUser)
+            if (authedUser.googleId === parsedUserToken.googleId) {
+              setCurrentUser(authedUser)
+              if (authedUser.teams && authedUser.teams.length > 0) {
+                setCurrentTeam(authedUser.teams[0])
+              } else {
+                setCurrentTeam(defaultTeam)
+              }
+            } else {
+              // data is tampered with, create local user like nothing ever happened B-)
+            }
+          })
+          .catch(() => {
+            // token failed, delete local storage of user, redirect to login?
+            localStorage.removeItem('userToken')
+            // perhaps redirect to login here
+          })
+      } else {
+        // add username/password logic to this, right here
       }
-      setCurrentUser(newUser)
-      localStorage.setItem('user', JSON.stringify(newUser))
-    }
-    const teamFromStorage: string | null = localStorage.getItem('team')
-    if (
-      typeof window !== undefined &&
-      teamFromStorage &&
-      teamFromStorage !== 'undefined'
-    ) {
-      const teamJSON: UserTeam = JSON.parse(teamFromStorage)
-      setCurrentTeam(teamJSON)
     } else {
-      setCurrentTeam(defaultTeam)
+      // NOW we can check for a local user.
+      const userFromStorage: string | null = localStorage.getItem('user')
+      if (
+        typeof window !== undefined &&
+        userFromStorage &&
+        userFromStorage !== 'undefined'
+      ) {
+        const userJSON = JSON.parse(userFromStorage)
+        setCurrentUser(userJSON)
+      } else {
+        const newUser: User = {
+          displayName: uuidv4(),
+          teams: [],
+        }
+        setCurrentUser(newUser)
+        localStorage.setItem('user', JSON.stringify(newUser))
+      }
+      const teamFromStorage: string | null = localStorage.getItem('team')
+      if (
+        typeof window !== undefined &&
+        teamFromStorage &&
+        teamFromStorage !== 'undefined'
+      ) {
+        const teamJSON: UserTeam = JSON.parse(teamFromStorage)
+        setCurrentTeam(teamJSON)
+      } else {
+        setCurrentTeam(defaultTeam)
+      }
     }
   }, [])
 
@@ -132,8 +169,26 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   })
 
-  const refreshUser = () => {
-    // Yeet
+  const setUser = (user: User) => {
+    // delete local user if brand new and no teams yet
+    if (!!localStorage.getItem('user')) {
+      const userFromStorageToCheck: string | null = localStorage.getItem('user')
+      if (
+        typeof window !== undefined &&
+        userFromStorageToCheck &&
+        userFromStorageToCheck !== 'undefined'
+      ) {
+        const userJSONToCheck = JSON.parse(userFromStorageToCheck)
+        if (userJSONToCheck.teams && userJSONToCheck.teams.length === 0) {
+          localStorage.removeItem('user')
+        }
+      }
+    }
+    setCurrentUser(user)
+    /* const { googleId, token } = user
+    if (user.googleId && user.token) {
+      localStorage.setItem('userToken', JSON.stringify({ googleId, token }))
+    } */
   }
 
   const setLanguage = (lang: string) => {
@@ -145,17 +200,28 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     const curr: User = { ...currentUser! }
     curr.teams = teams
     setCurrentUser(curr)
-    localStorage.setItem('user', JSON.stringify(curr))
+    if (userToken) {
+      updateUserTeams(teams, userToken)
+        .then(() => {
+          // maybe a modal here or something
+        })
+        .catch(() => {
+          // modal with an error
+        })
+    } else {
+      localStorage.setItem('user', JSON.stringify(curr))
+    }
   }
 
-  const connectAndJoin = (id1: string, payload: OnNewRoomPayload) => {
-    connect(id1, (s: WebSocket) => {
+  const connectAndJoin = (payload: OnNewRoomPayload) => {
+    connect((s: WebSocket) => {
       const data = { type: CODE.room, payload }
       s.send(JSON.stringify(data))
     })
   }
 
-  const connect = (id1: string, callback: (socket: WebSocket) => void) => {
+  const connect = (callback: (socket: WebSocket) => void) => {
+    const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
     const s: any = new WebSocket(`${WSS}${id1}`)
     setWsHeartbeat(s, '{"kind":"ping"}', {
       pingInterval: 30000, // every 30 seconds, send a ping message to the server.
@@ -235,7 +301,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         >
           <IdContext.Provider value={{ id, setId }}>
             <UserContext.Provider
-              value={{ user: currentUser!, refreshUser, setTeams }}
+              value={{ user: currentUser!, setUser, setTeams }}
             >
               <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
                 <SocketContext.Provider

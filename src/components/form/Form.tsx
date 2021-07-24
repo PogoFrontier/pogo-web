@@ -5,7 +5,6 @@ import style from './form.module.scss'
 import TeamContext from '@context/TeamContext'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
-import { v4 as uuidv4 } from 'uuid'
 import classnames from 'classnames'
 // import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
@@ -106,7 +105,7 @@ const Form: React.FunctionComponent = () => {
           if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
             const payload = { room, team: teamMembers, format: team.format }
             setState('loading')
-            connectAndJoin(uuidv4(), payload)
+            connectAndJoin(payload)
           }
         }
       }
@@ -128,7 +127,7 @@ const Form: React.FunctionComponent = () => {
             format: team.format,
           },
         }
-        connect(uuidv4(), (sock: WebSocket) => {
+        connect((sock: WebSocket) => {
           sock.send(JSON.stringify(data))
         })
       }
