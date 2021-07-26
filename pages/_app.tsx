@@ -11,8 +11,6 @@ import UserContext, { User, UserTeam } from '@context/UserContext'
 import HistoryContext from '@context/HistoryContext'
 import { getUserProfile, updateUserTeams } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
-import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
-import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
@@ -21,6 +19,7 @@ import axios from 'axios'
 import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 import { standardStrings, StringsType } from '@common/actions/getLanguage'
 import mapLanguage from '@common/actions/mapLanguage'
+import getUserToken from '@common/actions/getUserToken'
 
 /**
  * NextJS wrapper
@@ -42,6 +41,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentTeam, setCurrentTeam] = useState({} as UserTeam)
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
+  const [isSocketAuthenticated, setIsSocketAuthenticated] = useState(false)
   const [keys, setKeys1] = useState(defaultKeys)
   const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
@@ -213,14 +213,15 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
-  const connectAndJoin = (payload: OnNewRoomPayload) => {
-    connect((s: WebSocket) => {
-      const data = { type: CODE.room, payload }
-      s.send(JSON.stringify(data))
-    })
-  }
+  const connect = () => {
+    if (socket.readyState === WebSocket.OPEN) {
+      return
+    }
 
-  const connect = (callback: (socket: WebSocket) => void) => {
+    if (!currentUser) {
+      return
+    }
+
     const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
     const s: any = new WebSocket(`${WSS}${id1}`)
     setWsHeartbeat(s, '{"kind":"ping"}', {
@@ -236,13 +237,31 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
     const x = setInterval(() => {
       if (s.readyState === WebSocket.OPEN) {
-        callback(s)
+        // Authenticate
+        s.onmessage = (msg: MessageEvent) => {
+          if (msg.data.startsWith('$Authentication')) {
+            setIsSocketAuthenticated(msg.data === '$Authentication Success')
+
+            // Reset if it authentication fails
+            if (msg.data !== '$Authentication Success') {
+              setSocket({} as WebSocket)
+            }
+          }
+        }
+        s.send(
+          JSON.stringify({
+            type: 'AUTHENTICATION', // TODO: Change to constant
+            token: getUserToken(),
+          })
+        )
         clearInterval(x)
       } else if (s.readyState === WebSocket.CLOSED) {
         clearInterval(x)
       }
     }, 100)
   }
+
+  useEffect(connect, [currentUser])
 
   const setId = (id1: string) => {
     setId1(id1)
@@ -305,7 +324,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
             >
               <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
                 <SocketContext.Provider
-                  value={{ socket, connect, connectAndJoin }}
+                  value={{ socket, isSocketAuthenticated, connect }}
                 >
                   <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
                     <Component {...pageProps} />
