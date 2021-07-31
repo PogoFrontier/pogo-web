@@ -94,10 +94,11 @@ const MatchupPage = () => {
   }
 
   const toHome = () => {
-    if (ws.close) {
-      ws.close()
-    }
     router.push('/')
+  }
+
+  const forfeit = () => {
+    ws.send('forfeit')
   }
 
   const toGame = () => {
@@ -115,7 +116,7 @@ const MatchupPage = () => {
           <h1>
             {strings.room_code} <strong>{room}</strong>
           </h1>
-          <button className="btn btn-negative" onClick={toHome}>
+          <button className="btn btn-negative" onClick={forfeit}>
             {strings.exit}
           </button>
         </header>
