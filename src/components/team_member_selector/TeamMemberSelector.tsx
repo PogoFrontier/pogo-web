@@ -139,6 +139,11 @@ const TeamMemberSelector = (props: {
     setFilteredSuggestions(
       Array.from(suggestions.values())
         .filter((suggestion) => {
+          // In case a pokemon isn't translated yet, don't include it
+          if (!suggestion.speciesName[mapLanguage(settings.language)]) {
+            return false
+          }
+
           // Is all string?
           if (input === 'all' || input === '@all') {
             return true
