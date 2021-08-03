@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { w3cwebsocket as WebSocket } from 'websocket'
-import { setWsHeartbeat } from 'ws-heartbeat/client'
+import { setWsHeartbeat, WebSocketBase } from 'ws-heartbeat/client'
 import { AppProps } from 'next/app'
 import SocketContext from '@context/SocketContext'
 import IdContext from '@context/IdContext'
@@ -11,8 +11,6 @@ import UserContext, { User, UserTeam } from '@context/UserContext'
 import HistoryContext from '@context/HistoryContext'
 import { getUserProfile, updateUserTeams } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
-import { OnNewRoomPayload } from '@adibkhan/pogo-web-backend/index'
-import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
 import { v4 as uuidv4 } from 'uuid'
@@ -21,6 +19,7 @@ import axios from 'axios'
 import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 import { standardStrings, StringsType } from '@common/actions/getLanguage'
 import mapLanguage from '@common/actions/mapLanguage'
+import getUserToken from '@common/actions/getUserToken'
 
 /**
  * NextJS wrapper
@@ -35,13 +34,12 @@ const defaultKeys = {
   shieldKey: 'd',
 }
 
-const isRoomUrlRegex = new RegExp('\\/room.*|\\/matchup.*|\\/game.*')
-
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [currentTeam, setCurrentTeam] = useState({} as UserTeam)
   const [id, setId1] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
+  const [isSocketAuthenticated, setIsSocketAuthenticated] = useState(false)
   const [keys, setKeys1] = useState(defaultKeys)
   const [showKeys, setShowKeys] = useState(isDesktop)
   const [routing, setRouting] = useState(false)
@@ -49,6 +47,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [userToken, setUserToken] = useState<string | null>(null)
   const [language, setLanguage1] = useState('English')
   const [strings, setStrings] = useState<StringsType>(standardStrings)
+  const [authForced, forceAuth] = useState(false)
 
   const fetchStrings = async (lang: string) => {
     lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
@@ -148,13 +147,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      if (!isRoomUrlRegex.test(url) && socket.readyState) {
-        socket.onclose = () => {
-          // Do nothing
-        }
-        socket.close()
-      }
-
       setRouting(true)
       setPrevRoute(url)
     }
@@ -213,36 +205,72 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
-  const connectAndJoin = (payload: OnNewRoomPayload) => {
-    connect((s: WebSocket) => {
-      const data = { type: CODE.room, payload }
-      s.send(JSON.stringify(data))
-    })
-  }
-
-  const connect = (callback: (socket: WebSocket) => void) => {
-    const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
-    const s: any = new WebSocket(`${WSS}${id1}`)
-    setWsHeartbeat(s, '{"kind":"ping"}', {
-      pingInterval: 30000, // every 30 seconds, send a ping message to the server.
-      pingTimeout: 60000, // in 60 seconds, if no message accepted from server, close the connection.
-    })
-    s.onclose = () => {
-      setRouting(false)
-      router.push('/')
+  // authenticate with user
+  const authenticate = () => {
+    forceAuth(false)
+    if (!currentUser) {
+      return
     }
-    setSocket(s)
-    setId1(id1)
+    if (socket.readyState !== WebSocket.OPEN) {
+      return
+    }
+    if (isSocketAuthenticated) {
+      return
+    }
 
-    const x = setInterval(() => {
-      if (s.readyState === WebSocket.OPEN) {
-        callback(s)
-        clearInterval(x)
-      } else if (s.readyState === WebSocket.CLOSED) {
-        clearInterval(x)
-      }
-    }, 100)
+    socket.send(
+      JSON.stringify({
+        type: 'AUTHENTICATION', // TODO: Change to constant
+        token: getUserToken(),
+      })
+    )
   }
+
+  const connect = () => {
+    setSocket((prev) => {
+      if (socket.readyState === WebSocket.OPEN) {
+        return prev
+      }
+      setIsSocketAuthenticated(false)
+
+      const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
+      const s: any = new WebSocket(`${WSS}${id1}`)
+      setWsHeartbeat(s as WebSocketBase, '{"kind":"ping"}', {
+        pingInterval: 30000, // every 30 seconds, send a ping message to the server.
+        pingTimeout: 60000, // in 60 seconds, if no message accepted from server, close the connection.
+      })
+
+      // Force an authentication when the websocket is opened
+      let prevReadyState = s.readyState
+      const x = setInterval(() => {
+        if (prevReadyState !== s.readyState) {
+          prevReadyState = s.readyState
+          forceAuth(s.readyState === WebSocket.OPEN)
+        }
+      })
+
+      s.onclose = () => {
+        clearInterval(x)
+        // Try to reconnect every 5s
+        setTimeout(connect, 5000)
+        setRouting(false)
+        router.push('/')
+      }
+
+      setId1(id1)
+
+      return s
+    })
+  }
+
+  // Reconnect if disconnected every 5 seconds
+  useEffect(connect, [])
+  useEffect(authenticate, [
+    socket.readyState,
+    currentUser,
+    isSocketAuthenticated,
+    authForced,
+  ])
 
   const setId = (id1: string) => {
     setId1(id1)
@@ -305,7 +333,12 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
             >
               <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
                 <SocketContext.Provider
-                  value={{ socket, connect, connectAndJoin }}
+                  value={{
+                    socket,
+                    isSocketAuthenticated,
+                    setIsSocketAuthenticated,
+                    connect,
+                  }}
                 >
                   <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
                     <Component {...pageProps} />

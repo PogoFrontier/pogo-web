@@ -19,7 +19,11 @@ import SettingsContext from '@context/SettingsContext'
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
   const [room, setRoom] = useState('')
-  const { socket, connect, connectAndJoin } = useContext(SocketContext)
+  const {
+    socket,
+    isSocketAuthenticated,
+    setIsSocketAuthenticated,
+  } = useContext(SocketContext)
   const team = useContext(TeamContext).team
   let teamMembers: TeamMember[]
   if (team) {
@@ -49,7 +53,9 @@ const Form: React.FunctionComponent = () => {
   }, [])
 
   socket.onmessage = (msg: MessageEvent) => {
-    if (msg.data.startsWith('$error')) {
+    if (msg.data.startsWith('$Authentication')) {
+      setIsSocketAuthenticated(msg.data === '$Authentication Success')
+    } else if (msg.data.startsWith('$error')) {
       const data = msg.data.slice(6)
       setState('quick')
       setError(data)
@@ -105,7 +111,8 @@ const Form: React.FunctionComponent = () => {
           if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
             const payload = { room, team: teamMembers, format: team.format }
             setState('loading')
-            connectAndJoin(payload)
+            const data = { type: CODE.room, payload }
+            socket.send(JSON.stringify(data))
           }
         }
       }
@@ -117,6 +124,10 @@ const Form: React.FunctionComponent = () => {
     if (!team.format) {
       return
     }
+    if (!isSocketAuthenticated) {
+      return
+    }
+
     validate().then((isValid) => {
       if (isValid) {
         setIsMatchmaking(true)
@@ -127,9 +138,7 @@ const Form: React.FunctionComponent = () => {
             format: team.format,
           },
         }
-        connect((sock: WebSocket) => {
-          sock.send(JSON.stringify(data))
-        })
+        socket.send(JSON.stringify(data))
       }
     })
   }
