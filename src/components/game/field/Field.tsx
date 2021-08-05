@@ -70,12 +70,25 @@ const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
   )
 }
 
+interface Background {
+  color: string,
+  name?: string
+}
+
 const Field: React.FunctionComponent<FieldProps> = ({
   characters,
   message,
 }) => {
   const [messages, setMessages] = useState<(Message | Anim)[]>([])
+  const [background, setBackground] = useState<Background | undefined | null>(null)
   useEffect(() => {
+    if (
+      characters[0].anim?.move?.animation?.background
+      || characters[1].anim?.move?.animation?.background
+    ) {
+      const bg = characters[0].anim?.move?.animation?.background || characters[1].anim?.move?.animation?.background
+      setBackground(bg)
+    }
     if (
       characters[1].anim &&
       (messages.length === 0 ||
@@ -87,7 +100,7 @@ const Field: React.FunctionComponent<FieldProps> = ({
         return newM
       })
     }
-  }, [characters[1].anim])
+  }, [characters[1].anim, characters[0].anim])
   useEffect(() => {
     if (message) {
       setMessages((prev) => {
@@ -104,6 +117,12 @@ const Field: React.FunctionComponent<FieldProps> = ({
   }, [message])
   return (
     <section className={style.root}>
+      {
+        background
+        && (
+          <div />
+        )
+      }
       <div className={style.log}>
         {messages.map((x: any, i: number) => (
           <LogMessage value={x} key={`${x.turn}${i}`} />

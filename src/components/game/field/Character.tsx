@@ -1,10 +1,13 @@
 import classnames from 'classnames'
 import style from './character.module.scss'
 import getColor from '@common/actions/getColor'
-import { useEffect, useState } from 'react'
 import ImageHandler from '@common/actions/getImages'
-import { Anim, TeamMember } from '@adibkhan/pogo-web-backend'
-import { Actions } from '@adibkhan/pogo-web-backend/actions'
+import { Anim, TeamMember, MoveAnimParticle } from '@adibkhan/pogo-web-backend'
+import styled from 'styled-components'
+import animateChar from '@common/actions/animateChar'
+import animateParticle from '@common/actions/animateParticle'
+
+const chargedDuration = 3000
 
 export interface CharacterProps {
   anim?: Anim
@@ -12,29 +15,35 @@ export interface CharacterProps {
   back?: boolean
 }
 
+interface CharProps {
+  anim?: Anim
+  back?: boolean
+}
+
+interface ParticleProps {
+  particle: MoveAnimParticle
+  duration: number
+  back?: boolean
+}
+
+const Char = styled.img<CharProps>`
+  display: block;
+  margin: auto;
+  ${({ anim, back }) => animateChar(anim, back)}
+`
+
+const Particle = styled.img<ParticleProps>`
+  position: absolute;
+  ${({ particle, back }) => animateParticle(particle, back)}
+  animation-duration: ${({duration}) => duration}ms;
+`
+
 const Character: React.FunctionComponent<CharacterProps> = ({
   char,
   back,
   anim,
 }) => {
   const imagesHandler = new ImageHandler()
-  const [s, setS] = useState('')
-  const [count, setCount] = useState(0)
-
-  useEffect(() => {
-    if (anim && !(s.startsWith('sw') && anim.type === 'sw')) {
-      const cooldown =
-        anim.type === Actions.FAST_ATTACK ? anim.move!.cooldown! : 500
-      setS(`${anim.type}${cooldown}`)
-      setCount((prev) => prev + 1)
-    } else if (!anim) {
-      setS('')
-    }
-  }, [anim])
-
-  const onAnimationEnd = () => {
-    setS('')
-  }
 
   if (!char) {
     return <div />
@@ -56,18 +65,24 @@ const Character: React.FunctionComponent<CharacterProps> = ({
           [style.back]: back,
         })}
       >
-        <img
-          key={`${count}|${back}`}
-          onAnimationEnd={onAnimationEnd}
-          className={classnames([
-            style.char,
-            style[s],
-            {
-              [style.back]: back,
-            },
-          ])}
+        {
+          anim && anim.move && anim.move.animation && anim.move.animation.particles.map(
+            (x, i) => (
+              <Particle
+                key={`${i}`}
+                src={require(`../../../assets/img/fx/${x.name}.png`)}
+                particle={x}
+                duration={anim.move?.type === "ca" ? chargedDuration : anim.move!.cooldown!}
+                back={back}
+              />
+            )
+          )
+        }
+        <Char
           draggable="false"
           src={imagesHandler.getImage(char.sid, char.shiny, back)}
+          anim={anim}
+          back={back}
           alt={typeof char.speciesName === "string"
           ? char.speciesName
           : char.speciesId}
