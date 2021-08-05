@@ -1,6 +1,7 @@
 import API from '@config/API'
 import { supportedLanguages } from '@context/LanguageContext'
 import mapLanguage from './mapLanguage'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 export const getPokemonNames = async (
   meta?: string,
@@ -57,7 +58,7 @@ export const getValidateTeam = async (
   try {
     lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
     const res = await API.get(
-      `api/validate/${team}/${meta.split('_UNRANKED')[0]}/${lang}`
+      `api/validate/${team}/${meta.split(CODE.UnrankedSuffix)[0]}/${lang}`
     )
     return res.data
   } catch (err) {

@@ -20,6 +20,7 @@ import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 import { standardStrings, StringsType } from '@common/actions/getLanguage'
 import mapLanguage from '@common/actions/mapLanguage'
 import getUserToken from '@common/actions/getUserToken'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 /**
  * NextJS wrapper
@@ -220,7 +221,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
     socket.send(
       JSON.stringify({
-        type: 'AUTHENTICATION', // TODO: Change to constant
+        type: CODE.authentication,
         token: getUserToken(),
       })
     )

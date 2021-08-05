@@ -164,7 +164,7 @@ const MatchupPage = () => {
             onClick={startTimer}
             disabled={false}
           >
-            Start timer
+            {strings.start_teampreview_timer}
           </button>
         )}
         {timerStarted && <div>{counter}</div>}

@@ -178,5 +178,10 @@
     "pokemon_sky": "(Sky)",
     "preferences": "Preferences",
     "translations": "Translations",
-    "teamSearch" : "Search Team / Meta"
+    "teamSearch" : "Search Team / Meta",
+    "offer_account": "Login or Create an Account",
+    "offer_guest": "Play as guest",
+    "error_please_authenticate": "If you want to play, you need to login with an account. You can also play as a guest, but guest players can only play unranked.",
+    "not_authenticated_title": "You are not authenticated",
+    "start_teampreview_timer": "Start timer"
 }
