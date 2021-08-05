@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
+import classnames from 'classnames'
 import SocketContext from '@context/SocketContext'
 import TeamContext from '@context/TeamContext'
 import HistoryContext from '@context/HistoryContext'
@@ -35,6 +36,16 @@ const MatchupPage = () => {
   const team: TeamMember[] = useContext(TeamContext).team.members
   const { height } = useWindowSize()
   const { routing, prev } = useContext(HistoryContext)
+  const [timerStarted, setTimerStarted] = useState(false)
+  const [counter, setCounter] = useState(90)
+
+  // Third Attempts
+  useEffect(() => {
+    if (timerStarted && counter > 0) {
+      const timer = setInterval(() => setCounter(counter - 1), 1000)
+      return () => clearInterval(timer)
+    }
+  }, [timerStarted, counter])
 
   const strings = useContext(LanguageContext).strings
 
@@ -48,6 +59,9 @@ const MatchupPage = () => {
     switch (data.type) {
       case CODE.room_join:
         setOpponentTeam(data.payload!.team!)
+        break
+      case CODE.start_timer:
+        setTimerStarted(true)
         break
       case CODE.room_leave:
         setStatus(STATUS.CHOOSING)
@@ -109,6 +123,14 @@ const MatchupPage = () => {
     router.push(`/end/${room}?result=${result}`)
   }
 
+  const startTimer = () => {
+    ws.send(
+      JSON.stringify({
+        type: CODE.start_timer,
+      })
+    )
+  }
+
   return (
     <main className={style.root} style={{ height }}>
       <div className={style.content}>
@@ -136,6 +158,16 @@ const MatchupPage = () => {
           ) : (
             <p>{strings.waiting_for_player}</p>
           ))}
+        {timerStarted || (
+          <button
+            className={classnames([style.submit, 'btn', 'btn-primary'])}
+            onClick={startTimer}
+            disabled={false}
+          >
+            Start timer
+          </button>
+        )}
+        {timerStarted && <div>{counter}</div>}
         {status === STATUS.WAITING && (
           <div>
             <p>{strings.waiting_for_opponent}</p>

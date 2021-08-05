@@ -397,8 +397,8 @@ const GamePage = () => {
         const player = currentRoom.players[playerIndex]
         const oppon = currentRoom.players[playerIndex === 0 ? 1 : 0]
         if (player && oppon && player.current && oppon.current) {
-          setActive(player.current.team)
-          setOpponent(oppon.current.team)
+          setActive(player.current.team as TeamMember[])
+          setOpponent(oppon.current.team as TeamMember[])
           setCharacters((prevState) => {
             prevState[0].char = player.current?.team[0]
             prevState[1].char = oppon.current?.team[0]

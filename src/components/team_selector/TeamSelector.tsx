@@ -57,7 +57,9 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
 
       // Is substring of a teamMember TODO: add translation for TeamMembers
       for (const member of team.members) {
-        if (member.speciesName.toLowerCase().indexOf(userInput) > -1) {
+        if (
+          (member.speciesName as string).toLowerCase().indexOf(userInput) > -1
+        ) {
           return true
         }
       }
@@ -85,7 +87,11 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
     const sortedTeams = getTeamsPerMeta()
     for (const meta of Object.keys(sortedTeams)) {
       elements.push(
-        <MetaGroup meta={metaMap[meta].name} teams={sortedTeams[meta]} />
+        <MetaGroup
+          key={meta}
+          meta={metaMap[meta].name}
+          teams={sortedTeams[meta]}
+        />
       )
     }
     return elements

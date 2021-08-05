@@ -66,7 +66,7 @@ const Selector: React.FC<SelectorProps> = ({
           },
         ])}
         src={image}
-        alt={member.speciesName}
+        alt={member.speciesName as string}
         draggable="false"
       />
       <div

@@ -334,7 +334,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
                           <img
                             key={index}
                             src={imagesHandler.getMini(member.sid)}
-                            alt={member.speciesName}
+                            alt={member.speciesName as string}
                           />
                         )
                       )}
