@@ -12,6 +12,7 @@ import style from './style.module.scss'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import LanguageContext from '@context/LanguageContext'
+import { standardStrings } from '@common/actions/getLanguage'
 
 enum STATUS {
   CHOOSING,
@@ -164,7 +165,7 @@ const MatchupPage = () => {
             onClick={startTimer}
             disabled={false}
           >
-            Start timer
+            {standardStrings.start_teampreview_timer}
           </button>
         )}
         {timerStarted && <div>{counter}</div>}

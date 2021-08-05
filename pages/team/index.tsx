@@ -24,6 +24,7 @@ import calculateStats from '@common/actions/calculateStats'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
 import metaMap from '@common/actions/metaMap'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 interface TeamExportProps {
   speciesId: string
@@ -98,7 +99,10 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   async function handleOnClickAddRandomTeam() {
     setIsRandomTeamLoading(true)
 
-    const data = await getRandomPokemon(meta.split('_UNRANKED')[0], language)
+    const data = await getRandomPokemon(
+      meta.split(CODE.UnrankedSuffix)[0],
+      language
+    )
     if (data === undefined) {
       alert('An unexpected error occured')
       return

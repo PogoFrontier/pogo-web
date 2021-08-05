@@ -2,6 +2,8 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import { useRouter } from 'next/router'
 import { useContext } from 'react'
 import SocketContext from '@context/SocketContext'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
+import { standardStrings } from '@common/actions/getLanguage'
 
 interface UnauthenticatedPopupProps {
   offerGuestUser: boolean
@@ -18,7 +20,7 @@ const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> =
 
   const buttons = [
     {
-      title: 'Login or Create an Account',
+      title: standardStrings.offer_account,
       onClick: () => {
         router.push('/login')
       },
@@ -27,11 +29,11 @@ const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> =
   ]
   if (offerGuestUser) {
     buttons.push({
-      title: 'Play as guest',
+      title: standardStrings.offer_guest,
       onClick: () => {
         socket.send(
           JSON.stringify({
-            type: 'AUTHENTICATION', // TODO: Change to constant
+            type: CODE.authentication,
             asGuestUser: true,
           })
         )
@@ -44,10 +46,8 @@ const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> =
   return (
     <ErrorPopup
       onClose={onClose}
-      error={
-        'If you want to play, you need to login with an account. You can also play as a guest, but guest players can only play unranked.'
-      }
-      title={'You are not authenticated'}
+      error={standardStrings.error_please_authenticate}
+      title={standardStrings.not_authenticated_title}
       buttons={buttons}
     />
   )

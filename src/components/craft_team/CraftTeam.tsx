@@ -13,6 +13,7 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
 import TriangleTooltip from '@components/tooltip/TriangleTooltip'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -316,7 +317,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           savePokemon={savePokemon}
           member={selectedPokemon}
           deletePokemon={deletePokemon}
-          meta={selectedMeta.split('_UNRANKED')[0]}
+          meta={selectedMeta.split(CODE.UnrankedSuffix)[0]}
           position={editingIndex}
           metaClassName={className}
           classSelector={classSelector}
