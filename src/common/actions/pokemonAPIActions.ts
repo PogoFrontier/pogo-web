@@ -56,7 +56,9 @@ export const getValidateTeam = async (
 ) => {
   try {
     lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
-    const res = await API.get(`api/validate/${team}/${meta}/${lang}`)
+    const res = await API.get(
+      `api/validate/${team}/${meta.split('_UNRANKED')[0]}/${lang}`
+    )
     return res.data
   } catch (err) {
     return {

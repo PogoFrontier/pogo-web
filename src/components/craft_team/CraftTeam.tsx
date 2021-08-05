@@ -86,7 +86,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
-        metaMap[selectedMeta]!.name,
+        selectedMeta,
         language
       )
       if (result.message) {
@@ -115,7 +115,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
-        metaMap[selectedMeta]!.name,
+        selectedMeta,
         language
       )
       if (result.message) {
@@ -316,7 +316,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           savePokemon={savePokemon}
           member={selectedPokemon}
           deletePokemon={deletePokemon}
-          meta={selectedMeta}
+          meta={selectedMeta.split('_UNRANKED')[0]}
           position={editingIndex}
           metaClassName={className}
           classSelector={classSelector}

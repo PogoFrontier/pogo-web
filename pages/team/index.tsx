@@ -23,6 +23,7 @@ import ImportTeam from '@components/import_team/ImportTeam'
 import calculateStats from '@common/actions/calculateStats'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
+import metaMap from '@common/actions/metaMap'
 
 interface TeamExportProps {
   speciesId: string
@@ -97,7 +98,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   async function handleOnClickAddRandomTeam() {
     setIsRandomTeamLoading(true)
 
-    const data = await getRandomPokemon(meta, language)
+    const data = await getRandomPokemon(meta.split('_UNRANKED')[0], language)
     if (data === undefined) {
       alert('An unexpected error occured')
       return
@@ -399,17 +400,8 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
 
 const TeamPage = () => {
   // const { user } = useContext(UserContext)
-  const [metas] = useState([
-    'Great League',
-    '2021 Continentals',
-    'Atlantis Field',
-    'Specialist Cup',
-    'Nursery Cup',
-    'Cliffhanger',
-    'MainSeries Cup',
-    'Ultra League',
-    'Master League',
-  ])
+  const [metas] = useState(Object.keys(metaMap))
+  const [metaNames] = useState(metas.map((meta) => metaMap[meta].name))
   const [index, setIndex] = useState(0)
 
   // useEffect(() => {
@@ -455,7 +447,7 @@ const TeamPage = () => {
   return (
     <Layout>
       <Split
-        tabs={metas}
+        tabs={metaNames}
         // buttonProps={{ title: "New Meta", onClick: addMeta }}
         tabProps={{ index, onChange, children: null }}
       >

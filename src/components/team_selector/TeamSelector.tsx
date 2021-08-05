@@ -13,6 +13,7 @@ import {
 import React, { useContext, useState } from 'react'
 import MetaGroup from './MetaGroup'
 import style from './style.module.scss'
+import metaMap from '@common/actions/metaMap'
 
 const TeamSelector = (props: { onSelect: (id: string) => void }) => {
   const { onSelect } = props
@@ -83,7 +84,9 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
     const elements = []
     const sortedTeams = getTeamsPerMeta()
     for (const meta of Object.keys(sortedTeams)) {
-      elements.push(<MetaGroup meta={meta} teams={sortedTeams[meta]} />)
+      elements.push(
+        <MetaGroup meta={metaMap[meta].name} teams={sortedTeams[meta]} />
+      )
     }
     return elements
   }
