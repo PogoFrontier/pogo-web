@@ -130,6 +130,10 @@
     "pokemon_heat": "(Heat)",
     "pokemon_mow": "(Mow)",
     "pokemon_wash": "(Wash)",
+    "pokemon_kariyushi" : "(Kariyushi)",
+    "pokemon_rockstar" : "(Rock Star)",
+    "pokemon_popstar" : "(Pop Star)",
+    "pokemon_5thanniversary" : "(5th Anniversary)",
     "bug": "Bug",
     "dark": "Dark",
     "normal": "Normal",
@@ -178,5 +182,6 @@
     "pokemon_sky": "(Sky)",
     "preferences": "Preferences",
     "translations": "Translations",
-    "teamSearch" : "Search Team / Meta"
+    "teamSearch" : "Search Team / Meta",
+    "login_homepage" : "Login or Create an Account!"
 }
