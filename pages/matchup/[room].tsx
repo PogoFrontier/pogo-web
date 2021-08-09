@@ -158,7 +158,7 @@ const MatchupPage = () => {
           ) : (
             <p>{strings.waiting_for_player}</p>
           ))}
-        {timerStarted || (
+        {(timerStarted || opponentTeam.length <= 0) || (
           <button
             className={classnames([style.submit, 'btn', 'btn-primary'])}
             onClick={startTimer}
@@ -167,7 +167,7 @@ const MatchupPage = () => {
             {strings.start_teampreview_timer}
           </button>
         )}
-        {timerStarted && <div>{counter}</div>}
+        {timerStarted && <h1 style={{ margin: 0 }}>{counter}</h1>}
         {status === STATUS.WAITING && (
           <div>
             <p>{strings.waiting_for_opponent}</p>
