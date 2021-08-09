@@ -27,6 +27,8 @@ interface Data {
   payload?: Payload
 }
 
+const INITIAL_COUNTER = 90;
+
 const MatchupPage = () => {
   const router = useRouter()
   const [opponentTeam, setOpponentTeam] = useState([] as TeamMember[])
@@ -37,7 +39,7 @@ const MatchupPage = () => {
   const { height } = useWindowSize()
   const { routing, prev } = useContext(HistoryContext)
   const [timerStarted, setTimerStarted] = useState(false)
-  const [counter, setCounter] = useState(90)
+  const [counter, setCounter] = useState(INITIAL_COUNTER)
 
   // Third Attempts
   useEffect(() => {
@@ -66,6 +68,8 @@ const MatchupPage = () => {
       case CODE.room_leave:
         setStatus(STATUS.CHOOSING)
         setOpponentTeam([])
+        setTimerStarted(false)
+        setCounter(INITIAL_COUNTER)
         break
       case CODE.team_confirm:
         toGame()
