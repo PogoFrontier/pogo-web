@@ -90,7 +90,7 @@ const HomePage = () => {
             </section>
           ) : (
             <section className={classnames([style.container, style.info])}>
-              <Link href="/login">Login or Create an Account!</Link>
+              <Link href="/login">{strings.login_homepage}</Link>
             </section>
           )}
           <section className={classnames([style.container, style.info])}>
