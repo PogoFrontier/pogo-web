@@ -4,7 +4,7 @@ import { UserTeam } from '@context/UserContext'
 export const defaultTeam: UserTeam = {
   name: 'Default',
   id: 'defaultTeam',
-  format: 'Great League',
+  format: 'Great League_UNRANKED',
   members: [
     {
       speciesId: 'dragonite',
