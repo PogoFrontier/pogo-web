@@ -12,6 +12,7 @@ import { Icon } from '@components/icon/Icon'
 import Link from 'next/link'
 import LanguageContext from '@context/LanguageContext'
 import { StringsType } from '@common/actions/getLanguage'
+import metaMap from '@common/actions/metaMap'
 import TeamSelector from '@components/team_selector/TeamSelector'
 import '@reach/listbox/styles.css'
 
@@ -62,7 +63,7 @@ const HomePage = () => {
                         : strings.your_team}{' '}
                       /{' '}
                     </strong>
-                    {team.format}
+                    {team.format ? metaMap[team.format].name : ''}
                   </p>
                   <div className={style.members}>
                     {team &&

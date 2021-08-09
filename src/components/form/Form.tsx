@@ -9,12 +9,14 @@ import classnames from 'classnames'
 // import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
+import UnauthenticatedPopup from '@components/unauthenticated_popup/UnauthenticatedPopup'
 import RoomModal from '@components/room_modal/RoomModal'
 import { SERVER } from '@config/index'
 import axios from 'axios'
 import LanguageContext from '@context/LanguageContext'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import SettingsContext from '@context/SettingsContext'
+import metaMap from '@common/actions/metaMap'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
@@ -34,6 +36,8 @@ const Form: React.FunctionComponent = () => {
   const router = useRouter()
   // matchmaking
   const [isMatchmaking, setIsMatchmaking] = useState(false)
+  const [showUnauthenticatedPopup, setUnauthenticatedPopup] = useState(false)
+  const [offerGuestUser, setOfferGuestUser] = useState(false)
 
   const [count, setCount] = useState(-1)
 
@@ -103,6 +107,11 @@ const Form: React.FunctionComponent = () => {
   }
 
   function join() {
+    if (!isSocketAuthenticated) {
+      setUnauthenticatedPopup(true)
+      setOfferGuestUser(!!metaMap[team.format].unranked)
+      return
+    }
     validate().then((isValid) => {
       if (isValid) {
         if (socket.readyState && socket.readyState === WebSocket.OPEN) {
@@ -125,6 +134,8 @@ const Form: React.FunctionComponent = () => {
       return
     }
     if (!isSocketAuthenticated) {
+      setUnauthenticatedPopup(true)
+      setOfferGuestUser(!!metaMap[team.format].unranked)
       return
     }
 
@@ -175,6 +186,10 @@ const Form: React.FunctionComponent = () => {
     setError('')
   }
 
+  function closeUnauthenticatedPopup() {
+    setUnauthenticatedPopup(false)
+  }
+
   function render() {
     if (state === 'loading') {
       return (
@@ -199,6 +214,12 @@ const Form: React.FunctionComponent = () => {
     if (state === 'quick') {
       return (
         <>
+          {showUnauthenticatedPopup && (
+            <UnauthenticatedPopup
+              offerGuestUser={offerGuestUser}
+              onClose={closeUnauthenticatedPopup}
+            />
+          )}
           <button
             className={classnames([style.button, 'btn', 'btn-primary'])}
             onClick={joinQuickPlay}

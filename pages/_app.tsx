@@ -20,6 +20,7 @@ import LanguageContext, { supportedLanguages } from '@context/LanguageContext'
 import { standardStrings, StringsType } from '@common/actions/getLanguage'
 import mapLanguage from '@common/actions/mapLanguage'
 import getUserToken from '@common/actions/getUserToken'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 /**
  * NextJS wrapper
@@ -208,7 +209,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   // authenticate with user
   const authenticate = () => {
     forceAuth(false)
-    if (!currentUser) {
+    const token = getUserToken()
+
+    if (!currentUser || !token) {
       return
     }
     if (socket.readyState !== WebSocket.OPEN) {
@@ -220,21 +223,28 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
 
     socket.send(
       JSON.stringify({
-        type: 'AUTHENTICATION', // TODO: Change to constant
-        token: getUserToken(),
+        type: CODE.authentication,
+        token,
       })
     )
   }
 
   const connect = () => {
     setSocket((prev) => {
-      if (socket.readyState === WebSocket.OPEN) {
+      if (prev.readyState === WebSocket.OPEN) {
         return prev
+      }
+
+      // Reset connection
+      if (prev.close) {
+        prev.close()
       }
       setIsSocketAuthenticated(false)
 
+      // Create new socket
       const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
       const s: any = new WebSocket(`${WSS}${id1}`)
+      setId1(id1)
       setWsHeartbeat(s as WebSocketBase, '{"kind":"ping"}', {
         pingInterval: 30000, // every 30 seconds, send a ping message to the server.
         pingTimeout: 60000, // in 60 seconds, if no message accepted from server, close the connection.
@@ -249,6 +259,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         }
       })
 
+      // Setup a reconnection after the socket closes
       s.onclose = () => {
         clearInterval(x)
         // Try to reconnect every 5s
@@ -256,8 +267,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         setRouting(false)
         router.push('/')
       }
-
-      setId1(id1)
 
       return s
     })

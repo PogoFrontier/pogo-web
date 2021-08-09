@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
+import classnames from 'classnames'
 import SocketContext from '@context/SocketContext'
 import TeamContext from '@context/TeamContext'
 import HistoryContext from '@context/HistoryContext'
@@ -26,6 +27,8 @@ interface Data {
   payload?: Payload
 }
 
+const INITIAL_COUNTER = 90;
+
 const MatchupPage = () => {
   const router = useRouter()
   const [opponentTeam, setOpponentTeam] = useState([] as TeamMember[])
@@ -35,6 +38,16 @@ const MatchupPage = () => {
   const team: TeamMember[] = useContext(TeamContext).team.members
   const { height } = useWindowSize()
   const { routing, prev } = useContext(HistoryContext)
+  const [timerStarted, setTimerStarted] = useState(false)
+  const [counter, setCounter] = useState(INITIAL_COUNTER)
+
+  // Third Attempts
+  useEffect(() => {
+    if (timerStarted && counter > 0) {
+      const timer = setInterval(() => setCounter(counter - 1), 1000)
+      return () => clearInterval(timer)
+    }
+  }, [timerStarted, counter])
 
   const strings = useContext(LanguageContext).strings
 
@@ -49,9 +62,14 @@ const MatchupPage = () => {
       case CODE.room_join:
         setOpponentTeam(data.payload!.team!)
         break
+      case CODE.start_timer:
+        setTimerStarted(true)
+        break
       case CODE.room_leave:
         setStatus(STATUS.CHOOSING)
         setOpponentTeam([])
+        setTimerStarted(false)
+        setCounter(INITIAL_COUNTER)
         break
       case CODE.team_confirm:
         toGame()
@@ -109,6 +127,14 @@ const MatchupPage = () => {
     router.push(`/end/${room}?result=${result}`)
   }
 
+  const startTimer = () => {
+    ws.send(
+      JSON.stringify({
+        type: CODE.start_timer,
+      })
+    )
+  }
+
   return (
     <main className={style.root} style={{ height }}>
       <div className={style.content}>
@@ -136,6 +162,16 @@ const MatchupPage = () => {
           ) : (
             <p>{strings.waiting_for_player}</p>
           ))}
+        {(timerStarted || opponentTeam.length <= 0) || (
+          <button
+            className={classnames([style.submit, 'btn', 'btn-primary'])}
+            onClick={startTimer}
+            disabled={false}
+          >
+            {strings.start_teampreview_timer}
+          </button>
+        )}
+        {timerStarted && <h1 style={{ margin: 0 }}>{counter}</h1>}
         {status === STATUS.WAITING && (
           <div>
             <p>{strings.waiting_for_opponent}</p>

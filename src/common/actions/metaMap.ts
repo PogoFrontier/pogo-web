@@ -4,12 +4,19 @@ const metaMap: {
     maxCP: number
     movesetOption: 'original' | 'mainseries' | 'norestrictions'
     classes?: string[]
+    unranked?: boolean
   }
 } = {
   'Great League': {
     name: 'Great League',
     maxCP: 1500,
     movesetOption: 'original',
+  },
+  'Great League_UNRANKED': {
+    name: 'Great League (Unranked)',
+    maxCP: 1500,
+    movesetOption: 'original',
+    unranked: true,
   },
   'Atlantis Field': {
     name: 'Atlantis Field',
