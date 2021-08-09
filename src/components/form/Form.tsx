@@ -107,6 +107,11 @@ const Form: React.FunctionComponent = () => {
   }
 
   function join() {
+    if (!isSocketAuthenticated) {
+      setUnauthenticatedPopup(true)
+      setOfferGuestUser(!!metaMap[team.format].unranked)
+      return
+    }
     validate().then((isValid) => {
       if (isValid) {
         if (socket.readyState && socket.readyState === WebSocket.OPEN) {
