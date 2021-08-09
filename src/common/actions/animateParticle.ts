@@ -1,5 +1,5 @@
-import { MoveAnimParticle } from "@adibkhan/pogo-web-backend";
-import { keyframes } from "styled-components";
+import { MoveAnimParticle } from "@adibkhan/pogo-web-backend"
+import { keyframes, css } from "styled-components"
 
 const Animation = (particle: MoveAnimParticle) => keyframes`
     ${calculateKeyframes(particle)}
@@ -21,8 +21,8 @@ const animateParticle = (particle: MoveAnimParticle, back?: boolean) => {
         return ''
     }
 
-    return `
-        animation: ${Animation(particle)}
+    return css`
+        animation: ${Animation(particle)} ease-in-out
     `
 }
 

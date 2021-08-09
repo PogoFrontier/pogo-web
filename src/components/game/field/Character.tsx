@@ -70,7 +70,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
             (x, i) => (
               <Particle
                 key={`${i}`}
-                src={require(`../../../assets/img/fx/${x.name}.png`)}
+                src={`../../../assets/img/fx/${x.name}.png`}
                 particle={x}
                 duration={anim.move?.type === "ca" ? chargedDuration : anim.move!.cooldown!}
                 back={back}
