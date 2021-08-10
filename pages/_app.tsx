@@ -250,6 +250,17 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         pingTimeout: 60000, // in 60 seconds, if no message accepted from server, close the connection.
       })
 
+      // Default onmessage. Register authentication responses
+      s.onmessage = (msg: MessageEvent) => {
+        if (msg.data.startsWith('$Authentication')) {
+          const success = msg.data.startsWith('$Authentication Success')
+          setIsSocketAuthenticated(success)
+          if (success && msg.data.length > '$Authentication Success'.length) {
+            setId(msg.data.split(': ')[1])
+          }
+        }
+      }
+
       // Force an authentication when the websocket is opened
       let prevReadyState = s.readyState
       const x = setInterval(() => {

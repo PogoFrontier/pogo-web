@@ -62,7 +62,7 @@ const Form: React.FunctionComponent = () => {
     if (msg.data.startsWith('$Authentication')) {
       const success = msg.data.startsWith('$Authentication Success')
       setIsSocketAuthenticated(success)
-      if (success) {
+      if (success && msg.data.length > '$Authentication Success'.length) {
         setId(msg.data.split(': ')[1])
       }
     } else if (msg.data.startsWith('$error')) {
