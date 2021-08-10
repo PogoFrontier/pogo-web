@@ -16,6 +16,7 @@ import axios from 'axios'
 import LanguageContext from '@context/LanguageContext'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import SettingsContext from '@context/SettingsContext'
+import IdContext from '@context/IdContext'
 import metaMap from '@common/actions/metaMap'
 
 const Form: React.FunctionComponent = () => {
@@ -43,6 +44,7 @@ const Form: React.FunctionComponent = () => {
 
   const strings = useContext(LanguageContext).strings
   const language = useContext(SettingsContext).language
+  const { setId } = useContext(IdContext)
 
   async function fetchCount() {
     const res = await axios.get(`${SERVER}api/room/status`)
@@ -58,7 +60,11 @@ const Form: React.FunctionComponent = () => {
 
   socket.onmessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$Authentication')) {
-      setIsSocketAuthenticated(msg.data === '$Authentication Success')
+      const success = msg.data.startsWith('$Authentication Success')
+      setIsSocketAuthenticated(success)
+      if (success) {
+        setId(msg.data.split(': ')[1])
+      }
     } else if (msg.data.startsWith('$error')) {
       const data = msg.data.slice(6)
       setState('quick')
