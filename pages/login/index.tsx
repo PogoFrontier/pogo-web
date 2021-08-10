@@ -3,6 +3,7 @@ import {
   signInWithGoogleId,
 } from '@common/actions/userAPIActions'
 import Layout from '@components/layout/Layout'
+import LanguageContext from '@context/LanguageContext'
 import UserContext from '@context/UserContext'
 import { useRouter } from 'next/router'
 import React, { useContext, useEffect } from 'react'
@@ -14,6 +15,7 @@ import style from './style.module.scss'
 
 const LoginPage = () => {
   const { setUser, user } = useContext(UserContext)
+  const strings = useContext(LanguageContext).strings
   const router = useRouter()
 
   useEffect(() => {
@@ -113,39 +115,43 @@ const LoginPage = () => {
     <Layout>
       <main className={style.root}>
         <div className={style.container}>
-          <h1>{isLoggedIn ? `Logged in${user.displayName ? ` as: ${user.displayName}` : "."}` : "Join the Battle!"}</h1>
+          <h1>
+            {isLoggedIn
+              ? `${
+                  user.displayName
+                    ? strings.user_logged_in_name.replace(
+                        '%1',
+                        user.displayName
+                      )
+                    : strings.logged_in
+                }`
+              : strings.join_battle}
+          </h1>
           <div>
-            {
-              isLoggedIn
-              ? (
-                <div>
-                  <button
-                    className="btn btn-primary"
-                    onClick={toHome}
-                  >
-                    Start Battling
-                  </button>
-                  {/* <button
+            {isLoggedIn ? (
+              <div>
+                <button className="btn btn-primary" onClick={toHome}>
+                  {strings.start_battling}
+                </button>
+                {/* <button
                     className="btn btn-negative"
                     onClick={logout}
                   >
-                    Logout
+                    strings.log_out
                   </button> */}
-                </div>
-              )
-              : (
-                <div>
-                  <button
-                    className="btn btn-primary"
-                    onClick={onSubmitGoogleSignIn}
-                  >
-                    Login with Google
-                  </button>
-                  <br />
-                  <p>More sign in options coming soon!</p>
-                </div>
-              )
-            }
+              </div>
+            ) : (
+              <div>
+                <button
+                  className="btn btn-primary"
+                  onClick={onSubmitGoogleSignIn}
+                >
+                  {strings.login_button_google}
+                </button>
+                <br />
+                <p>{strings.login_more_options}</p>
+              </div>
+            )}
           </div>
         </div>
       </main>
