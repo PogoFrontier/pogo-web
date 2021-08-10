@@ -1,4 +1,4 @@
-import standardStrings from './standardStrings.json'
+import standardStrings from './standardStrings'
 
 type StringsType = typeof standardStrings
 

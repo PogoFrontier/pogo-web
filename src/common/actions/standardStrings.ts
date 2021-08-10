@@ -1,4 +1,4 @@
-{
+export default {
     "project_title": "Project Grookey",
     "your_team": "Your team",
     "select_team": "Select team",
