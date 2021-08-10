@@ -4,6 +4,7 @@ import {
 } from '@common/actions/userAPIActions'
 import Layout from '@components/layout/Layout'
 import UserContext from '@context/UserContext'
+import { useRouter } from 'next/router'
 import React, { useContext, useEffect } from 'react'
 import {
   getGoogleSignInRedirectResult,
@@ -12,7 +13,8 @@ import {
 import style from './style.module.scss'
 
 const LoginPage = () => {
-  const { setUser } = useContext(UserContext)
+  const { setUser, user } = useContext(UserContext)
+  const router = useRouter()
 
   useEffect(() => {
     getGoogleSignInRedirectResult().then((result) => {
@@ -101,33 +103,51 @@ const LoginPage = () => {
     googleSignInWithRedirect() /* .then(res => console.log(res)).catch(err => console.log(err)); */
   }
 
+  const toHome = () => {
+    router.push('/')
+  }
+
+  const isLoggedIn = user && user.email
+
   return (
     <Layout>
       <main className={style.root}>
-        <h1>Sign In Or Sign Up</h1>
-        <div>
-          {/* <form action="">
-            <h3>Sign In</h3>
-            <label>Username</label>
-            <input type="text" />
-            <br />
-            <label>Password</label>
-            <input type="password" />
-            <br />
-            <button type="submit">Submit</button>
-          </form>
-          <br /> */}
-          <button onClick={onSubmitGoogleSignIn}>
-            Sign In or Create an Account Using Google
-          </button>
-          <br />
-          <p>More sign in options coming soon!</p>
+        <div className={style.container}>
+          <h1>{isLoggedIn ? `Logged in as: ${user.displayName}` : "Join the Battle!"}</h1>
+          <div>
+            {
+              isLoggedIn
+              ? (
+                <div>
+                  <button
+                    className="btn btn-primary"
+                    onClick={toHome}
+                  >
+                    Start Battling
+                  </button>
+                  {/* <button
+                    className="btn btn-negative"
+                    onClick={logout}
+                  >
+                    Logout
+                  </button> */}
+                </div>
+              )
+              : (
+                <div>
+                  <button
+                    className="btn btn-primary"
+                    onClick={onSubmitGoogleSignIn}
+                  >
+                    Login with Google
+                  </button>
+                  <br />
+                  <p>More sign in options coming soon!</p>
+                </div>
+              )
+            }
+          </div>
         </div>
-        {/* <div>
-          <p>
-            Don't have an account? <button>Create an Account</button>
-          </p>
-        </div> */}
       </main>
     </Layout>
   )
