@@ -533,6 +533,7 @@ const GamePage = () => {
   }
 
   const onQuit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    ws.send('forfeit')
     e.preventDefault()
     e.stopPropagation()
     toHome()
