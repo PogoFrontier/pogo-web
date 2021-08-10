@@ -113,7 +113,7 @@ const LoginPage = () => {
     <Layout>
       <main className={style.root}>
         <div className={style.container}>
-          <h1>{isLoggedIn ? `Logged in as: ${user.displayName}` : "Join the Battle!"}</h1>
+          <h1>{isLoggedIn ? `Logged in${user.displayName ? ` as: ${user.displayName}` : "."}` : "Join the Battle!"}</h1>
           <div>
             {
               isLoggedIn
