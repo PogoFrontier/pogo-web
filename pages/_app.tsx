@@ -38,7 +38,7 @@ const defaultKeys = {
 const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [currentTeam, setCurrentTeam] = useState({} as UserTeam)
-  const [id, setId1] = useState('')
+  const [id, setId] = useState('')
   const [socket, setSocket] = useState({} as WebSocket)
   const [isSocketAuthenticated, setIsSocketAuthenticated] = useState(false)
   const [keys, setKeys1] = useState(defaultKeys)
@@ -244,7 +244,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       // Create new socket
       const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
       const s: any = new WebSocket(`${WSS}${id1}`)
-      setId1(id1)
+      setId(id1)
       setWsHeartbeat(s as WebSocketBase, '{"kind":"ping"}', {
         pingInterval: 30000, // every 30 seconds, send a ping message to the server.
         pingTimeout: 60000, // in 60 seconds, if no message accepted from server, close the connection.
@@ -272,6 +272,18 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     })
   }
 
+  const updateId = () => {
+    setCurrentUser(prevUser => {
+    setId(prevId => {
+        if(prevUser?.googleId) {
+          prevId = prevUser.googleId
+        }
+      return prevId
+    })
+      return prevUser
+    })
+  }
+
   // Reconnect if disconnected every 5 seconds
   useEffect(connect, [])
   useEffect(authenticate, [
@@ -280,10 +292,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     isSocketAuthenticated,
     authForced,
   ])
-
-  const setId = (id1: string) => {
-    setId1(id1)
-  }
+  useEffect(updateId, [currentUser])
 
   const setKeys = (keys1: typeof defaultKeys) => {
     setKeys1(keys1)
