@@ -9,17 +9,24 @@ import classnames from 'classnames'
 // import { getSignInWithGooglePopup } from 'src/firebase'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
+import UnauthenticatedPopup from '@components/unauthenticated_popup/UnauthenticatedPopup'
 import RoomModal from '@components/room_modal/RoomModal'
 import { SERVER } from '@config/index'
 import axios from 'axios'
 import LanguageContext from '@context/LanguageContext'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import SettingsContext from '@context/SettingsContext'
+import IdContext from '@context/IdContext'
+import metaMap from '@common/actions/metaMap'
 
 const Form: React.FunctionComponent = () => {
   const [error, setError] = useState('')
   const [room, setRoom] = useState('')
-  const { socket, connect, connectAndJoin } = useContext(SocketContext)
+  const {
+    socket,
+    isSocketAuthenticated,
+    setIsSocketAuthenticated,
+  } = useContext(SocketContext)
   const team = useContext(TeamContext).team
   let teamMembers: TeamMember[]
   if (team) {
@@ -30,11 +37,14 @@ const Form: React.FunctionComponent = () => {
   const router = useRouter()
   // matchmaking
   const [isMatchmaking, setIsMatchmaking] = useState(false)
+  const [showUnauthenticatedPopup, setUnauthenticatedPopup] = useState(false)
+  const [offerGuestUser, setOfferGuestUser] = useState(false)
 
   const [count, setCount] = useState(-1)
 
   const strings = useContext(LanguageContext).strings
   const language = useContext(SettingsContext).language
+  const { setId } = useContext(IdContext)
 
   async function fetchCount() {
     const res = await axios.get(`${SERVER}api/room/status`)
@@ -49,7 +59,13 @@ const Form: React.FunctionComponent = () => {
   }, [])
 
   socket.onmessage = (msg: MessageEvent) => {
-    if (msg.data.startsWith('$error')) {
+    if (msg.data.startsWith('$Authentication')) {
+      const success = msg.data.startsWith('$Authentication Success')
+      setIsSocketAuthenticated(success)
+      if (success && msg.data.length > '$Authentication Success'.length) {
+        setId(msg.data.split(': ')[1])
+      }
+    } else if (msg.data.startsWith('$error')) {
       const data = msg.data.slice(6)
       setState('quick')
       setError(data)
@@ -97,6 +113,11 @@ const Form: React.FunctionComponent = () => {
   }
 
   function join() {
+    if (!isSocketAuthenticated) {
+      setUnauthenticatedPopup(true)
+      setOfferGuestUser(!!metaMap[team.format].unranked)
+      return
+    }
     validate().then((isValid) => {
       if (isValid) {
         if (socket.readyState && socket.readyState === WebSocket.OPEN) {
@@ -105,7 +126,8 @@ const Form: React.FunctionComponent = () => {
           if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
             const payload = { room, team: teamMembers, format: team.format }
             setState('loading')
-            connectAndJoin(payload)
+            const data = { type: CODE.room, payload }
+            socket.send(JSON.stringify(data))
           }
         }
       }
@@ -117,6 +139,12 @@ const Form: React.FunctionComponent = () => {
     if (!team.format) {
       return
     }
+    if (!isSocketAuthenticated) {
+      setUnauthenticatedPopup(true)
+      setOfferGuestUser(!!metaMap[team.format].unranked)
+      return
+    }
+
     validate().then((isValid) => {
       if (isValid) {
         setIsMatchmaking(true)
@@ -127,9 +155,7 @@ const Form: React.FunctionComponent = () => {
             format: team.format,
           },
         }
-        connect((sock: WebSocket) => {
-          sock.send(JSON.stringify(data))
-        })
+        socket.send(JSON.stringify(data))
       }
     })
   }
@@ -166,6 +192,10 @@ const Form: React.FunctionComponent = () => {
     setError('')
   }
 
+  function closeUnauthenticatedPopup() {
+    setUnauthenticatedPopup(false)
+  }
+
   function render() {
     if (state === 'loading') {
       return (
@@ -190,6 +220,12 @@ const Form: React.FunctionComponent = () => {
     if (state === 'quick') {
       return (
         <>
+          {showUnauthenticatedPopup && (
+            <UnauthenticatedPopup
+              offerGuestUser={offerGuestUser}
+              onClose={closeUnauthenticatedPopup}
+            />
+          )}
           <button
             className={classnames([style.button, 'btn', 'btn-primary'])}
             onClick={joinQuickPlay}

@@ -40,12 +40,12 @@ const ErrorPopup: React.FunctionComponent<ErrorPopupProps> = ({
   return (
     <Modal onClose={onClose} title={title}>
       <div className={style.errormessage}>
-        {error.split('\n').map((item) => {
+        {error.split('\n').map((item, index) => {
           return (
-            <>
+            <div key={index}>
               {item}
               <br />
-            </>
+            </div>
           )
         })}
       </div>

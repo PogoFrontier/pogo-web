@@ -13,6 +13,7 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
 import TriangleTooltip from '@components/tooltip/TriangleTooltip'
+import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -86,7 +87,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
-        metaMap[selectedMeta]!.name,
+        selectedMeta,
         language
       )
       if (result.message) {
@@ -115,7 +116,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     if (selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
-        metaMap[selectedMeta]!.name,
+        selectedMeta,
         language
       )
       if (result.message) {
@@ -316,7 +317,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           savePokemon={savePokemon}
           member={selectedPokemon}
           deletePokemon={deletePokemon}
-          meta={selectedMeta}
+          meta={selectedMeta.split(CODE.UnrankedSuffix)[0]}
           position={editingIndex}
           metaClassName={className}
           classSelector={classSelector}

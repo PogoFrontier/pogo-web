@@ -1,7 +1,25 @@
-@import 'colors';
 @import 'variables';
-
+@import 'colors';
 .root {
-  height: 100%;
-  overflow-x: hidden;
+    height: 100%;
+    background-image: url('../../src/assets/img/home.jpg');
+    background-position: center;
+    background-size: cover;
+    overflow-x: hidden;
+    padding-top: 2em;
+}
+
+.container {
+    width: 100%;
+    margin: auto;
+    background-color: $color-white;
+    box-shadow: 0px 0px 15px rgba($color-dark, 0.25);
+    padding: 1em;
+    h1 {
+        margin-top: 0;
+    }
+    @include md() {
+        max-width: $xl;
+        padding: 2em;
+    }
 }

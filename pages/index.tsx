@@ -12,6 +12,7 @@ import { Icon } from '@components/icon/Icon'
 import Link from 'next/link'
 import LanguageContext from '@context/LanguageContext'
 import { StringsType } from '@common/actions/getLanguage'
+import metaMap from '@common/actions/metaMap'
 import TeamSelector from '@components/team_selector/TeamSelector'
 import '@reach/listbox/styles.css'
 
@@ -62,7 +63,7 @@ const HomePage = () => {
                         : strings.your_team}{' '}
                       /{' '}
                     </strong>
-                    {team.format}
+                    {team.format ? metaMap[team.format].name : ''}
                   </p>
                   <div className={style.members}>
                     {team &&
@@ -82,16 +83,16 @@ const HomePage = () => {
             </div>
             <Form />
           </section>
-          <section className={classnames([style.container, style.info])}>
-            <h1>Friends</h1>
-            {!!user && (!!user.googleId || !!user.username) ? (
-              <>Coming Soon!</>
-            ) : (
-              <>
-                <Link href="/login">Login or Create an Account!</Link>
-              </>
-            )}
-          </section>
+          {!!user && (!!user.googleId || !!user.username) ? (
+            <section className={classnames([style.container, style.info])}>
+              <h1>Friends</h1>
+              Coming Soon!
+            </section>
+          ) : (
+            <section className={classnames([style.container, style.info])}>
+              <Link href="/login">{strings.login_homepage}</Link>
+            </section>
+          )}
           <section className={classnames([style.container, style.info])}>
             <h1>{strings.links}</h1>
             <div className={style.links}>

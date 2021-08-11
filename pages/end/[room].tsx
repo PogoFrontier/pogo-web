@@ -13,7 +13,7 @@ import SettingsContext from '@context/SettingsContext'
 const EndPage = () => {
   const router = useRouter()
   const { room, result } = router.query
-  const { socket, connectAndJoin } = useContext(SocketContext)
+  const { socket } = useContext(SocketContext)
   const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
   const strings = useContext(LanguageContext).strings
@@ -55,7 +55,8 @@ const EndPage = () => {
           if (!socket.readyState || socket.readyState === WebSocket.CLOSED) {
             const payload = { room, team: team.members }
             setIsLoading(true)
-            connectAndJoin(payload)
+            const data = { type: CODE.room, payload }
+            socket.send(JSON.stringify(data))
           }
         }
       }

@@ -29,3 +29,5 @@ export const getSignInWithGooglePopup = () => auth.signInWithPopup(provider) // 
 export const googleSignInWithRedirect = () => auth.signInWithRedirect(provider)
 
 export const getGoogleSignInRedirectResult = () => auth.getRedirectResult()
+
+export const logout = () => auth.signOut()

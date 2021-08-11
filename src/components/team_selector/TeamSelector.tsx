@@ -13,6 +13,7 @@ import {
 import React, { useContext, useState } from 'react'
 import MetaGroup from './MetaGroup'
 import style from './style.module.scss'
+import metaMap from '@common/actions/metaMap'
 
 const TeamSelector = (props: { onSelect: (id: string) => void }) => {
   const { onSelect } = props
@@ -56,7 +57,9 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
 
       // Is substring of a teamMember TODO: add translation for TeamMembers
       for (const member of team.members) {
-        if (typeof member.speciesName === "string" && member.speciesName.toLowerCase().indexOf(userInput) > -1) {
+        if (
+          (member.speciesName as string).toLowerCase().indexOf(userInput) > -1
+        ) {
           return true
         }
       }
@@ -83,7 +86,13 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
     const elements = []
     const sortedTeams = getTeamsPerMeta()
     for (const meta of Object.keys(sortedTeams)) {
-      elements.push(<MetaGroup meta={meta} teams={sortedTeams[meta]} />)
+      elements.push(
+        <MetaGroup
+          key={meta}
+          meta={metaMap[meta].name}
+          teams={sortedTeams[meta]}
+        />
+      )
     }
     return elements
   }
