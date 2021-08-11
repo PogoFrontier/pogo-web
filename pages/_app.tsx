@@ -284,13 +284,13 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const updateId = () => {
-    setCurrentUser(prevUser => {
-    setId(prevId => {
-        if(prevUser?.googleId) {
+    setCurrentUser((prevUser) => {
+      setId((prevId) => {
+        if (prevUser?.googleId) {
           prevId = prevUser.googleId
         }
-      return prevId
-    })
+        return prevId
+      })
       return prevUser
     })
   }
