@@ -62,8 +62,9 @@ export const getValidateTeam = async (
     )
     return res.data
   } catch (err) {
+    const error = err as any
     return {
-      message: err.message,
+      message: error.message,
     }
   }
 }
@@ -73,7 +74,8 @@ export const parseToRule = async (rule: string) => {
     const res = await API.get(`api/rule/${rule}`)
     return res.data
   } catch (err) {
-    return err.message
+    const error = err as any
+    return error.message
   }
 }
 
