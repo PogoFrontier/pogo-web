@@ -82,7 +82,7 @@
         "babel-plugin-module-resolver": "4.0.0",
         "classnames": "^2.2.6",
         "firebase": "^8.2.1",
-        "next": "^10.0.7",
+        "next": "^11.1.0",
         "next-redux-wrapper": "6.0.2",
         "node-libs-browser": "^2.2.1",
         "node-sass": "^5.0.0",
