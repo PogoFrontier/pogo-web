@@ -87,6 +87,7 @@ const Field: React.FunctionComponent<FieldProps> = ({
       || characters[1].anim?.move?.animation?.background
     ) {
       const bg = characters[0].anim?.move?.animation?.background || characters[1].anim?.move?.animation?.background
+      // if there is a charge move that requires a background change
       setBackground(bg)
     }
     if (

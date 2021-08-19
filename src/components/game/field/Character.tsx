@@ -6,6 +6,7 @@ import { Anim, TeamMember, MoveAnimParticle } from '@adibkhan/pogo-web-backend'
 import styled from 'styled-components'
 import animateChar from '@common/actions/animateChar'
 import animateParticle from '@common/actions/animateParticle'
+import getFx from '@common/actions/getFx'
 
 const chargedDuration = 3000
 
@@ -70,7 +71,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
             (x, i) => (
               <Particle
                 key={`${i}`}
-                src={`../../../assets/img/fx/${x.name}.png`}
+                src={getFx[x.name]}
                 particle={x}
                 duration={anim.move?.type === "ca" ? chargedDuration : anim.move!.cooldown!}
                 back={back}
