@@ -140,7 +140,7 @@ const TeamMemberSelector = (props: {
       Array.from(suggestions.values())
         .filter((suggestion) => {
           // In case a pokemon isn't translated yet, don't include it
-          if (!suggestion || !suggestion.speciesName[mapLanguage(settings.language)]) {
+          if (!suggestion || !suggestion.speciesName || !suggestion.speciesName[mapLanguage(settings.language)]) {
             return false
           }
 
