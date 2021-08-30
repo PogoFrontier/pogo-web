@@ -59,7 +59,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@adibkhan/pogo-web-backend": "^1.0.40",
+        "@adibkhan/pogo-web-backend": "^1.0.42",
         "@babel/core": "7.9.0",
         "@reach/combobox": "^0.13.2",
         "@reach/listbox": "^0.15.0",
