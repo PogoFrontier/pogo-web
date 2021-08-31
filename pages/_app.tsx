@@ -9,7 +9,7 @@ import TeamContext, { defaultTeam } from '@context/TeamContext'
 // import { auth } from '../src/firebase'
 import UserContext, { User, UserTeam } from '@context/UserContext'
 import HistoryContext from '@context/HistoryContext'
-import { getUserProfile, updateUserTeams } from '@common/actions/userAPIActions'
+import { getUserProfile, updateUserTeams, updateUsername } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
 import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
@@ -206,6 +206,17 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
+  const setUsername = async (username: string) => {
+    const res = await updateUsername(username, userToken)
+
+    if(res instanceof Error) {
+      throw res
+    }
+
+    setCurrentUser(res)
+    localStorage.setItem('user', JSON.stringify(res))
+  }
+
   // authenticate with user
   const authenticate = () => {
     forceAuth(false)
@@ -358,7 +369,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         >
           <IdContext.Provider value={{ id, setId }}>
             <UserContext.Provider
-              value={{ user: currentUser!, setUser, setTeams }}
+              value={{ user: currentUser!, setUser, setTeams, setUsername }}
             >
               <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
                 <SocketContext.Provider

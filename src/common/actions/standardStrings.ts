@@ -208,4 +208,7 @@ export default {
   user_logged_in_name: 'Logged in as %1',
   logged_in: 'Logged in.',
   start_battling: 'Start battling',
+  no_username: 'Your account doesn\'t have a username.Please choose a unique name for your account.You may change it later in the settings.',
+  duplicate_username: 'This username already exists. Please choose another one.',
+  username_change_confirm: 'Confirm',
 }

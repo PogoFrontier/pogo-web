@@ -59,3 +59,18 @@ export const updateUserTeams = async (teams: any[], token: string | null) => {
     return err
   }
 }
+
+export const updateUsername = async (username: string, token: string | null) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+    const res = await API.post(`api/users/username`, { username }, config)
+    return res.data
+  } catch (err) {
+    return err
+  }
+}
