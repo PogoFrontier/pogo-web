@@ -32,26 +32,28 @@ const Account = () => {
 
   return (
     <div className={style.root}>
-      <div >
-        {strings.username_change_settings}
-      </div>
-      <input
-        type="text"
-        placeholder="None"
-        id="name"
-        onChange={onInputChange}
-        value={input}
-      />
-      {!!usernameFeedback && <div className={style.errormessage}>
-        {usernameFeedback}
-      </div>}
-      <div className={style.actions}>
-        <button
-          onClick={updateUsername}
-        >
-          {strings.username_change_confirm}
-        </button>
-      </div>
+      {user?.email && <>
+        <div >
+          {strings.username_change_settings}
+        </div>
+        <input
+          type="text"
+          placeholder="None"
+          id="name"
+          onChange={onInputChange}
+          value={input}
+        />
+        {!!usernameFeedback && <div className={style.errormessage}>
+          {usernameFeedback}
+        </div>}
+        <div className={style.actions}>
+          <button
+            onClick={updateUsername}
+          >
+            {strings.username_change_confirm}
+          </button>
+        </div>
+      </>}
 
       <button className="btn btn-negative" onClick={settings.clear}>
         {strings.clear_data}
