@@ -15,7 +15,7 @@ const UsernamePopup: React.FunctionComponent<UsernamePopupProps> = ({
   const [showDuplicateMessage, setShowDuplicateMessage] = useState(false)
 
   const updateUsername = () => {
-    setUsername(input).catch(err => {
+    setUsername(input).catch(_ => {
       setShowDuplicateMessage(true)
     })
   }
