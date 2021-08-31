@@ -14,6 +14,7 @@ import LanguageContext from '@context/LanguageContext'
 import { StringsType } from '@common/actions/getLanguage'
 import metaMap from '@common/actions/metaMap'
 import TeamSelector from '@components/team_selector/TeamSelector'
+import UsernamePopup from '@components/username_popup/UsernamePopup'
 import '@reach/listbox/styles.css'
 
 function truncateString(str: string, num: number) {
@@ -134,6 +135,7 @@ const HomePage = () => {
       >
         {strings.cookies_description}
       </CookieConsent>
+      {user && user.email && !user.username && <UsernamePopup />}
     </Layout>
   )
 }

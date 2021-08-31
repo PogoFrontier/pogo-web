@@ -28,6 +28,9 @@ const UserContext = createContext({
   setTeams: (_teams: any[]) => {
     return
   },
+  setUsername: async (_username: string) => {
+    return
+  }
 })
 
 export default UserContext
