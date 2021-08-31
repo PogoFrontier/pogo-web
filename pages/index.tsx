@@ -135,7 +135,7 @@ const HomePage = () => {
       >
         {strings.cookies_description}
       </CookieConsent>
-      {user && user.email && !user.username && <UsernamePopup/>}
+      {user && user.email && !user.username && <UsernamePopup />}
     </Layout>
   )
 }

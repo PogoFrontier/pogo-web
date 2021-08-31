@@ -9,7 +9,11 @@ import TeamContext, { defaultTeam } from '@context/TeamContext'
 // import { auth } from '../src/firebase'
 import UserContext, { User, UserTeam } from '@context/UserContext'
 import HistoryContext from '@context/HistoryContext'
-import { getUserProfile, updateUserTeams, updateUsername } from '@common/actions/userAPIActions'
+import {
+  getUserProfile,
+  updateUserTeams,
+  updateUsername,
+} from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
 import SettingsContext from '@context/SettingsContext'
 import Head from 'next/head'
@@ -209,7 +213,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const setUsername = async (username: string) => {
     const res = await updateUsername(username, userToken)
 
-    if(res instanceof Error) {
+    if (res instanceof Error) {
       throw res
     }
 
