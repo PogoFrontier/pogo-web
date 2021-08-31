@@ -3,11 +3,9 @@ import LanguageContext from '@context/LanguageContext'
 import { useContext, useState, ChangeEvent } from 'react'
 import style from './style.module.scss'
 import UserContext from '@context/UserContext'
+import Input from '@components/input/Input'
 
-interface UsernamePopupProps {
-}
-
-const UsernamePopup: React.FunctionComponent<UsernamePopupProps> = ({
+const UsernamePopup: React.FunctionComponent = ({
 }) => {
   const strings = useContext(LanguageContext).strings
   const setUsername = useContext(UserContext).setUsername
@@ -25,27 +23,27 @@ const UsernamePopup: React.FunctionComponent<UsernamePopupProps> = ({
   }
 
   return (
-    <Modal  title={"You don't have a username"}>
+    <Modal title={"You don't have a username"}>
       <div className={style.errormessage}>
         {strings.no_username}
       </div>
-      <input
+      <Input
+        title="username"
         type="text"
-        placeholder="None"
-        id="name"
+        placeholder="Enter Username"
+        id="username"
         onChange={onInputChange}
         value={input}
       />
       {showDuplicateMessage && <div className={style.errormessage}>
         {strings.duplicate_username}
       </div>}
-      <div className={style.actions}>
-        <button
-          onClick={updateUsername}
-        >
-          {strings.username_change_confirm}
-        </button>
-      </div>
+      <button
+        className="btn btn-primary"
+        onClick={updateUsername}
+      >
+        {strings.username_change_confirm}
+      </button>
     </Modal>
   )
 }

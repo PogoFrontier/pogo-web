@@ -4,6 +4,7 @@ import style from './account.module.scss'
 import SettingsContext from '@context/SettingsContext'
 import LanguageContext from '@context/LanguageContext'
 import UserContext from '@context/UserContext'
+import Input from '@components/input/Input'
 
 const Account = () => {
   const settings = useContext(SettingsContext)
@@ -32,32 +33,37 @@ const Account = () => {
 
   return (
     <div className={style.root}>
-      {user?.email && <>
-        <div >
-          {strings.username_change_settings}
-        </div>
-        <input
-          type="text"
-          placeholder="None"
-          id="name"
-          onChange={onInputChange}
-          value={input}
-        />
-        {!!usernameFeedback && <div className={style.errormessage}>
-          {usernameFeedback}
-        </div>}
-        <div className={style.actions}>
+      <div>
+        {user?.email && (
+        <section>
+          <div >
+            {strings.username_change_settings}
+          </div>
+          <Input
+            title="username"
+            type="text"
+            placeholder="None"
+            id="name"
+            onChange={onInputChange}
+            value={input}
+          />
+          {!!usernameFeedback && <div className={style.errormessage}>
+            {usernameFeedback}
+          </div>}
           <button
+            className="btn btn-secondary"
             onClick={updateUsername}
           >
             {strings.username_change_confirm}
           </button>
-        </div>
-      </>}
-
-      <button className="btn btn-negative" onClick={settings.clear}>
-        {strings.clear_data}
-      </button>
+          <hr />
+        </section>)}
+        <section>
+          <button className="btn btn-negative btn-block" onClick={settings.clear}>
+            {strings.clear_data}
+          </button>
+        </section>
+      </div>
     </div>
   )
 }
