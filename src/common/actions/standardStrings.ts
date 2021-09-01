@@ -213,5 +213,16 @@ export default {
   username_change_settings: 'Change username',
   username_change_confirm: 'Confirm',
   username_unchanged: 'That\'s your old name',
-  username_change_success: 'Username successfully changed'
+  username_change_success: 'Username successfully changed',
+  fr_popup_header_default: 'Do you want to send a friend request to %1?',
+  fr_popup_header_error: 'Friend request to %1 doesn\'t work.',
+  fr_popup_header_success: 'Friend request was sent successfully to %1.',
+  yes: 'Yes',
+  no: 'No',
+  close: 'Close',
+  send_fr_to_self_error: 'This is you',
+  user_does_not_exist_error: "A user with this name doesn't exist",
+  fr_duplicate_error: "You've already sent a friend request to %1",
+  send_friend_request: "Send friend request",
+  send: "Send"
 }

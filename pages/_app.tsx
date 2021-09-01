@@ -13,6 +13,8 @@ import {
   getUserProfile,
   updateUserTeams,
   updateUsername,
+  isFriendRequestPossible,
+  sendFriendRequest,
 } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
 import SettingsContext from '@context/SettingsContext'
@@ -25,6 +27,7 @@ import { standardStrings, StringsType } from '@common/actions/getLanguage'
 import mapLanguage from '@common/actions/mapLanguage'
 import getUserToken from '@common/actions/getUserToken'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
+import FriendContext from '@context/FriendContext'
 
 /**
  * NextJS wrapper
@@ -344,6 +347,22 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
+  const isFRPossible = async (username: string) => {
+    let result = await isFriendRequestPossible(username, userToken)
+
+    if (result.error === "Error: Request failed with status code 404") {
+      result.error = strings.user_does_not_exist_error
+    } else if (result.error === "Error: Request failed with status code 403") {
+      result.error = strings.fr_duplicate_error?.replace("%1", username)
+    }
+
+    return result
+  }
+
+  const sendFR = (username: string) => {
+    return sendFriendRequest(username, userToken)
+  }
+
   return (
     <>
       <Head>
@@ -385,7 +404,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                   }}
                 >
                   <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
-                    <Component {...pageProps} />
+                    <FriendContext.Provider value={{ isFriendRequestPossible: isFRPossible, sendFriendRequest: sendFR}}>
+                      <Component {...pageProps} />
+                    </FriendContext.Provider>
                   </HistoryContext.Provider>
                 </SocketContext.Provider>
               </TeamContext.Provider>
