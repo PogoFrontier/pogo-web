@@ -354,6 +354,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       result.error = strings.user_does_not_exist_error
     } else if (result.error === "Error: Request failed with status code 403") {
       result.error = strings.fr_duplicate_error?.replace("%1", username)
+    } else if (result.error === "Error: Request failed with status code 409") {
+      result.error = strings.fr_conflict_error?.replace("%1", username)
     }
 
     return result

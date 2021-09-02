@@ -223,6 +223,7 @@ export default {
   send_fr_to_self_error: 'This is you',
   user_does_not_exist_error: "A user with this name doesn't exist",
   fr_duplicate_error: "You've already sent a friend request to %1",
+  fr_conflict_error: "You've already received a friend request from %1",
   send_friend_request: "Send friend request",
   send: "Send"
 }
