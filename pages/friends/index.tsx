@@ -1,13 +1,18 @@
 import Layout from '@components/layout/Layout'
 import LanguageContext from '@context/LanguageContext'
+import SocketContext from '@context/SocketContext'
+import UserContext from '@context/UserContext'
 import style from './style.module.scss'
 import classnames from 'classnames'
 import React, { useContext, useState, ChangeEvent} from 'react'
 import Input from '@components/input/Input'
 import FriendRequestPopup from '@components/send_fr_popup/FriendRequestPopup'
+import UnauthenticatedPopup from '@components/unauthenticated_popup/UnauthenticatedPopup'
 
 
 const TeamPage = () => {
+  const { user } = useContext(UserContext)
+  const { isSocketAuthenticated } = useContext(SocketContext)
   const strings = useContext(LanguageContext).strings
   const [friendToSendFR, setFriendToSendFR] = useState("")
   const [frPopupTarget, setFrPopupTarget] = useState("")
@@ -26,6 +31,8 @@ const TeamPage = () => {
       setFriendToSendFR("")
     }
   }
+
+  const placebo = () => {}
 
   return (
     <Layout>
@@ -53,6 +60,7 @@ const TeamPage = () => {
         </div>
       </main>
       {frPopupTarget && <FriendRequestPopup onClose={onFriendRequestPopupClose} username={frPopupTarget} />}
+      {!isSocketAuthenticated && <UnauthenticatedPopup offerGuestUser={false} onClose={placebo}/>}
     </Layout>
   )
 }
