@@ -113,3 +113,25 @@ export const sendFriendRequest = async (username: string, token: string | null) 
   const res = await API.post(`api/users/request/send`, { username }, config)
   return res.data
 }
+
+export const declineFriendRequest = async (id: string, token: string | null) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
+  }
+  const res = await API.post(`api/users/request/deny`, { googleId: id }, config)
+  return res.data
+}
+
+export const acceptFriendRequest = async (id: string, token: string | null) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
+  }
+  const res = await API.post(`api/users/request/accept`, { googleId: id }, config)
+  return res.data
+}
