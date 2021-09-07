@@ -28,7 +28,7 @@ const UsernamePopup: React.FunctionComponent = ({
         {strings.no_username}
       </div>
       <Input
-        title="username"
+        title=""
         type="text"
         placeholder="Enter Username"
         id="username"

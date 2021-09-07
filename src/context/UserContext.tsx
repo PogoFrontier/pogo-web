@@ -8,12 +8,18 @@ export interface UserTeam {
   members: TeamMember[]
 }
 
+export interface FriendRequest {
+  id: string
+  username: string
+}
+
 export interface User {
   googleId?: string
   username?: string
   displayName: string | null
   email?: string | null
   teams: UserTeam[]
+  requests?: FriendRequest[]
   createdAt?: string
   lastLogin?: string
   isDeleted?: boolean /* ,
