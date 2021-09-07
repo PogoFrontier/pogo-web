@@ -16,6 +16,9 @@ const FriendContext = createContext({
   acceptFriendRequest: (_: string) => {
     return Promise.resolve(undefined)
   },
+  getFriends: () => {
+    return Promise.resolve(undefined)
+  },
 } as {
   isFriendRequestPossible: (username: string) => Promise<{
     possible: boolean,
@@ -24,6 +27,7 @@ const FriendContext = createContext({
   sendFriendRequest: (username: string) => Promise<any>
   declineFriendRequest: (id: string) => Promise<any>
   acceptFriendRequest: (id: string) => Promise<any>
+  getFriends: () => Promise<any>
 })
 
 export default FriendContext

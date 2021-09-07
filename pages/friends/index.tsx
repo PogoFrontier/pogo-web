@@ -4,20 +4,38 @@ import SocketContext from '@context/SocketContext'
 import UserContext, { FriendRequest } from '@context/UserContext'
 import style from './style.module.scss'
 import classnames from 'classnames'
-import React, { useContext, useState, ChangeEvent} from 'react'
+import React, { useContext, useState, ChangeEvent, useEffect} from 'react'
 import Input from '@components/input/Input'
 import FriendRequestPopup from '@components/send_fr_popup/FriendRequestPopup'
 import UnauthenticatedPopup from '@components/unauthenticated_popup/UnauthenticatedPopup'
 import FriendRequestDisplay from '@components/friend_request_display/FriendRequestDisplay'
+import FriendContext from '@context/FriendContext'
 
 
-const TeamPage = () => {
+const FriendsPage = () => {
   const { user, setUser } = useContext(UserContext)
   const { isSocketAuthenticated } = useContext(SocketContext)
+  const { getFriends } = useContext(FriendContext)
   const strings = useContext(LanguageContext).strings
   const [friendToSendFR, setFriendToSendFR] = useState("")
   const [frPopupTarget, setFrPopupTarget] = useState("")
   const [, setRequests] = useState(user?.requests)
+  const [ friends, setFriends ] = useState([] as {
+    username: string
+    status: string | null
+    lastActivity?: {
+      _seconds: number
+    }
+  }[])
+
+  useEffect(() => {
+    if (user) {
+      getFriends().then(response => {
+        console.log(response)
+        setFriends(response)
+      })
+    }
+  }, [user])
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFriendToSendFR(event.target.value)
@@ -71,7 +89,20 @@ const TeamPage = () => {
               Friend Requests
             </strong>
             {user?.requests?.map(friendRequest => {
-              return (<FriendRequestDisplay request={friendRequest} key={friendRequest.id} removeRequest={removeRequest}/>)
+              return (<FriendRequestDisplay request={friendRequest} key={friendRequest.id} removeRequest={removeRequest} />)
+            })}
+          </section>
+
+          <section className={classnames([style.container, style.info])}>
+            <strong>
+              Friends
+            </strong>
+            {friends.map((friend, index) => {
+              console.log(friend.lastActivity?._seconds)
+              console.log(new Date().getTime()/1000 - (friend.lastActivity ? friend.lastActivity._seconds : 0))
+              return (<div key={index}>
+                {friend.username} {friend.status || (Math.floor(new Date().getTime()/1000) - (friend.lastActivity ? friend.lastActivity._seconds : 0))}s ago
+              </div>)
             })}
           </section>
         </div>
@@ -82,4 +113,4 @@ const TeamPage = () => {
   )
 }
 
-export default TeamPage
+export default FriendsPage

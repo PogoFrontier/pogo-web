@@ -17,6 +17,7 @@ import {
   sendFriendRequest,
   declineFriendRequest,
   acceptFriendRequest,
+  getFriendList
 } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
 import SettingsContext from '@context/SettingsContext'
@@ -375,6 +376,10 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     return acceptFriendRequest(id, userToken)
   }
 
+  const getFriends = () => {
+    return getFriendList(userToken)
+  }
+
   return (
     <>
       <Head>
@@ -416,7 +421,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                   }}
                 >
                   <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
-                    <FriendContext.Provider value={{ isFriendRequestPossible: isFRPossible, sendFriendRequest: sendFR, declineFriendRequest: declineFR, acceptFriendRequest: acceptFR}}>
+                    <FriendContext.Provider value={{ isFriendRequestPossible: isFRPossible, sendFriendRequest: sendFR, declineFriendRequest: declineFR, acceptFriendRequest: acceptFR, getFriends: getFriends}}>
                       <Component {...pageProps} />
                     </FriendContext.Provider>
                   </HistoryContext.Provider>

@@ -135,3 +135,18 @@ export const acceptFriendRequest = async (id: string, token: string | null) => {
   const res = await API.post(`api/users/request/accept`, { googleId: id }, config)
   return res.data
 }
+
+export const getFriendList = async (token: string) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    }
+    const res = await API.get(`api/users/friends`, config)
+    return res.data
+  } catch (err) {
+    return err
+  }
+}
