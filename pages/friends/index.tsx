@@ -9,7 +9,8 @@ import Input from '@components/input/Input'
 import FriendRequestPopup from '@components/send_fr_popup/FriendRequestPopup'
 import UnauthenticatedPopup from '@components/unauthenticated_popup/UnauthenticatedPopup'
 import FriendRequestDisplay from '@components/friend_request_display/FriendRequestDisplay'
-import FriendContext from '@context/FriendContext'
+import RecentOpponentDisplay from '@components/recent_opponent_display/RecentOpponentDisplay'
+import FriendContext, { FriendInfo } from '@context/FriendContext'
 
 
 const FriendsPage = () => {
@@ -20,18 +21,11 @@ const FriendsPage = () => {
   const [friendToSendFR, setFriendToSendFR] = useState("")
   const [frPopupTarget, setFrPopupTarget] = useState("")
   const [, setRequests] = useState(user?.requests)
-  const [ friends, setFriends ] = useState([] as {
-    username: string
-    status: string | null
-    lastActivity?: {
-      _seconds: number
-    }
-  }[])
+  const [ friends, setFriends ] = useState([] as FriendInfo[])
 
   useEffect(() => {
     if (user) {
       getFriends().then(response => {
-        console.log(response)
         setFriends(response)
       })
     }
@@ -98,11 +92,18 @@ const FriendsPage = () => {
               Friends
             </strong>
             {friends.map((friend, index) => {
-              console.log(friend.lastActivity?._seconds)
-              console.log(new Date().getTime()/1000 - (friend.lastActivity ? friend.lastActivity._seconds : 0))
               return (<div key={index}>
-                {friend.username} {friend.status || (Math.floor(new Date().getTime()/1000) - (friend.lastActivity ? friend.lastActivity._seconds : 0))}s ago
+                {friend.username} {friend.status || (Math.floor(new Date().getTime() / 1000) - (friend.lastActivity ? friend.lastActivity._seconds : 0)) + "s ago"}
               </div>)
+            })}
+          </section>
+
+          <section className={classnames([style.container, style.info])}>
+            <strong>
+              Recently played
+            </strong>
+            {user.battleHistory?.map((opponent, i) => {
+              return (<RecentOpponentDisplay opponent={opponent} send={onSendFriendRequest} friends={friends} key={i}/>)
             })}
           </section>
         </div>

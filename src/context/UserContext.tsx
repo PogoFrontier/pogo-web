@@ -16,10 +16,14 @@ export interface FriendRequest {
 export interface User {
   googleId?: string
   username?: string
-  displayName: string | null
   email?: string | null
   teams: UserTeam[]
   requests?: FriendRequest[]
+  battleHistory?: Array<{
+    googleId: string
+    username: string
+    isGuest: boolean
+  }>
   createdAt?: string
   lastLogin?: string
   isDeleted?: boolean /* ,

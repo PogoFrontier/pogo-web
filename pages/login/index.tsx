@@ -24,7 +24,6 @@ const LoginPage = () => {
       if (
         googleUser &&
         googleUser.uid &&
-        googleUser.displayName &&
         googleUser.email
       ) {
         // try to load profile via google id
@@ -39,7 +38,6 @@ const LoginPage = () => {
               postNewGoogleUser({
                 // function can also save a username/teams, if local user, ask to transfer before this
                 uid: googleUser.uid,
-                displayName: googleUser.displayName,
                 email: googleUser.email,
               })
                 .then((newUser) => {
@@ -117,14 +115,7 @@ const LoginPage = () => {
         <div className={style.container}>
           <h1>
             {isLoggedIn
-              ? `${
-                  user.displayName
-                    ? strings.user_logged_in_name.replace(
-                        '%1',
-                        user.displayName
-                      )
-                    : strings.logged_in
-                }`
+              ? strings.logged_in
               : strings.join_battle}
           </h1>
           <div>

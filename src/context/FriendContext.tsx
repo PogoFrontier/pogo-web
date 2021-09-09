@@ -1,5 +1,14 @@
 import { createContext } from 'react'
 
+
+export interface FriendInfo {
+  username: string
+  status: string | null
+  lastActivity?: {
+    _seconds: number
+  }
+}
+
 const FriendContext = createContext({
   isFriendRequestPossible: (_: string) => {
     return Promise.resolve({

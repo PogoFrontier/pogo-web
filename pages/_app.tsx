@@ -136,7 +136,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         setCurrentUser(userJSON)
       } else {
         const newUser: User = {
-          displayName: uuidv4(),
           teams: [],
         }
         setCurrentUser(newUser)
@@ -263,7 +262,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       setIsSocketAuthenticated(false)
 
       // Create new socket
-      const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
+      const id1 = currentUser?.googleId || uuidv4()
       const s: any = new WebSocket(`${WSS}${id1}`)
       setId(id1)
       setWsHeartbeat(s as WebSocketBase, '{"kind":"ping"}', {
@@ -339,7 +338,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     if (window.confirm(strings.clear_data_confirm)) {
       localStorage.clear()
       const newUser: User = {
-        displayName: uuidv4(),
         teams: [],
       }
       setCurrentUser(newUser)
