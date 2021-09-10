@@ -136,7 +136,7 @@ export const acceptFriendRequest = async (id: string, token: string | null) => {
   return res.data
 }
 
-export const getFriendList = async (token: string) => {
+export const getFriendList = async (token: string | null) => {
   try {
     const config = {
       headers: {
@@ -149,4 +149,15 @@ export const getFriendList = async (token: string) => {
   } catch (err) {
     return err
   }
+}
+
+export const sendUnfriend = async (id: string, token: string | null) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
+  }
+  const res = await API.post(`api/users/unfriend`, { googleId: id }, config)
+  return res.data
 }

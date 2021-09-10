@@ -11,6 +11,9 @@ import UnauthenticatedPopup from '@components/unauthenticated_popup/Unauthentica
 import FriendRequestDisplay from '@components/friend_request_display/FriendRequestDisplay'
 import RecentOpponentDisplay from '@components/recent_opponent_display/RecentOpponentDisplay'
 import FriendContext, { FriendInfo } from '@context/FriendContext'
+import FriendDisplay from '@components/friend_display/FriendDisplay'
+import FriendPopup from '@components/friend_popup/FriendPopup'
+import UnfriendPopup from '@components/unfriend_popup/UnfriendPopup'
 
 
 const FriendsPage = () => {
@@ -21,15 +24,19 @@ const FriendsPage = () => {
   const [friendToSendFR, setFriendToSendFR] = useState("")
   const [frPopupTarget, setFrPopupTarget] = useState("")
   const [, setRequests] = useState(user?.requests)
-  const [ friends, setFriends ] = useState([] as FriendInfo[])
+  const [friends, setFriends] = useState([] as FriendInfo[])
+  const [friendPopup, setFriendPopup] = useState<FriendInfo | null>(null)
+  const [unfriendPopup, setUnfriendPopup] = useState<FriendInfo | null>(null)
 
-  useEffect(() => {
+  const loadFriends = () => {
     if (user) {
       getFriends().then(response => {
         setFriends(response)
       })
     }
-  }, [user])
+  }
+
+  useEffect(loadFriends, [user])
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFriendToSendFR(event.target.value)
@@ -52,6 +59,26 @@ const FriendsPage = () => {
     user.requests = user.requests?.filter(r => r.id !== req.id)
     setUser(user)
     setRequests(user.requests)
+  }
+
+  const openFriendPopup = (friend: FriendInfo) => {
+    setFriendPopup(friend)
+  }
+
+  const closeFriendPopup = () => {
+    setFriendPopup(null)
+  }
+
+  const openUnfriendPopup = (friend: FriendInfo) => {
+    setUnfriendPopup(friend)
+  }
+
+  const closeUnfriendPopup = (includeFriendPopup: boolean) => {
+    setUnfriendPopup(null)
+    setFriendPopup(includeFriendPopup ? null : friendPopup)
+    if(includeFriendPopup) {
+      loadFriends()
+    }
   }
 
   return (
@@ -92,9 +119,7 @@ const FriendsPage = () => {
               Friends
             </strong>
             {friends.map((friend, index) => {
-              return (<div key={index}>
-                {friend.username} {friend.status || (Math.floor(new Date().getTime() / 1000) - (friend.lastActivity ? friend.lastActivity._seconds : 0)) + "s ago"}
-              </div>)
+              return (<FriendDisplay friend={friend} key={index} openPopup={openFriendPopup}></FriendDisplay>)
             })}
           </section>
 
@@ -102,14 +127,16 @@ const FriendsPage = () => {
             <strong>
               Recently played
             </strong>
-            {user.battleHistory?.map((opponent, i) => {
+            {user?.battleHistory?.map((opponent, i) => {
               return (<RecentOpponentDisplay opponent={opponent} send={onSendFriendRequest} friends={friends} key={i}/>)
             })}
           </section>
         </div>
       </main>
       {frPopupTarget && <FriendRequestPopup onClose={onFriendRequestPopupClose} username={frPopupTarget} />}
-      {!isSocketAuthenticated && <UnauthenticatedPopup offerGuestUser={false} onClose={placebo}/>}
+      {!isSocketAuthenticated && <UnauthenticatedPopup offerGuestUser={false} onClose={placebo} />}
+      {friendPopup && <FriendPopup friend={friendPopup} onClose={closeFriendPopup} openUnfriendPopup={openUnfriendPopup} />}
+      {unfriendPopup && <UnfriendPopup friend={unfriendPopup} onClose={closeUnfriendPopup}/>}
     </Layout>
   )
 }
