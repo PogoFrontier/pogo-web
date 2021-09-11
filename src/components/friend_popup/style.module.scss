@@ -1,3 +1,4 @@
+@import 'variables';
 @import 'colors';
 
 .errormessage {
@@ -12,4 +13,16 @@
     button:last-of-type{
         margin-right: 0;
     }
+}
+
+.game {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border-bottom: solid 1px $color-neutral-light;
+  padding: 1em 0;
+  @include md() {
+    padding: 0;
+  }
 }

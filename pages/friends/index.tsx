@@ -46,6 +46,10 @@ const FriendsPage = () => {
     setFrPopupTarget(friendToSendFR)
   }
 
+  const sendFriendRequestTo = (username: string) => {
+    setFrPopupTarget(username)
+  }
+
   const onFriendRequestPopupClose = (success: boolean) => {
     setFrPopupTarget("")
     if(success) {
@@ -59,6 +63,7 @@ const FriendsPage = () => {
     user.requests = user.requests?.filter(r => r.id !== req.id)
     setUser(user)
     setRequests(user.requests)
+    loadFriends()
   }
 
   const openFriendPopup = (friend: FriendInfo) => {
@@ -119,7 +124,7 @@ const FriendsPage = () => {
               Friends
             </strong>
             {friends.map((friend, index) => {
-              return (<FriendDisplay friend={friend} key={index} openPopup={openFriendPopup}></FriendDisplay>)
+              return (<FriendDisplay friend={friend} key={index} openPopup={openFriendPopup}/>)
             })}
           </section>
 
@@ -128,7 +133,7 @@ const FriendsPage = () => {
               Recently played
             </strong>
             {user?.battleHistory?.map((opponent, i) => {
-              return (<RecentOpponentDisplay opponent={opponent} send={onSendFriendRequest} friends={friends} key={i}/>)
+              return (<RecentOpponentDisplay opponent={opponent} send={sendFriendRequestTo} friends={friends} key={i}/>)
             })}
           </section>
         </div>
