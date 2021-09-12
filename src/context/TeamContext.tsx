@@ -119,6 +119,9 @@ export const defaultTeam: UserTeam = {
   ],
 }
 
-const TeamContext = createContext({} as any)
+const TeamContext = createContext({} as {
+  team: UserTeam,
+  setTeam: (team: UserTeam) => void
+})
 
 export default TeamContext

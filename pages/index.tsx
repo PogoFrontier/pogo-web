@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
+import ChallengeDisplay from '@components/challenge_display/ChallengeDisplay'
 
 const myColor = '#FCAC89'
 const myProfile = 2
@@ -150,9 +151,7 @@ const HomePage = () => {
               <section className={classnames([style.container, style.info])}>
                 <h1>Challenges</h1>
                 {challenges.map((challenge, index) => {
-                  return (<div key={index}>
-                    Challenged by {challenge?.challenger?.username}
-                  </div>)
+                  return (<ChallengeDisplay key={index} challenge={challenge} challengeHook={[challenges, setChallenges]} setError={setError}/>)
                 })}
               </section>
               <section className={classnames([style.container, style.info])}>

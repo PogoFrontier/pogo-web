@@ -15,8 +15,13 @@ import MetaGroup from './MetaGroup'
 import style from './style.module.scss'
 import metaMap from '@common/actions/metaMap'
 
-const TeamSelector = (props: { onSelect: (id: string) => void }) => {
-  const { onSelect } = props
+interface TeamSelectorProps {
+  onSelect: (id: string) => void
+  formatFilter?: string
+}
+
+const TeamSelector = (props: TeamSelectorProps) => {
+  const { onSelect, formatFilter } = props
   const user = useContext(UserContext).user
   const strings = useContext(LanguageContext).strings
   const [metaVisibility, setMetaVisibility] = useState([])
@@ -27,7 +32,7 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
     setUserInput(input)
   }
 
-  const right: ListboxPopoverProps['position'] = (targetRect, popoverRect) => {
+  const right: ListboxPopoverProps['position'] = (targetRect: any, popoverRect: any) => {
     const triggerCenter = targetRect!.left + targetRect!.width
     const left = triggerCenter - popoverRect!.width
     const maxLeft = window.innerWidth - popoverRect!.width - 2
@@ -40,6 +45,11 @@ const TeamSelector = (props: { onSelect: (id: string) => void }) => {
   const getFilteredTeams = () => {
     let filteredTeams: UserTeam[] = user.teams
     filteredTeams = filteredTeams.filter((team: UserTeam) => {
+      // Does it not match the format fiter?
+      if (formatFilter && (team.format !== formatFilter)) {
+        return false
+      }
+
       // Is all string?
       if (userInput === 'all' || userInput === '@all') {
         return true

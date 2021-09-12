@@ -8,7 +8,8 @@ import TeamSelector from '@components/team_selector/TeamSelector'
 import TeamPreview from '@components/team_preview/TeamPreview'
 import style from './style.module.scss'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
-
+import ErrorPopup from '@components/error_popup/ErrorPopup'
+import { useRouter } from 'next/router'
 
 interface FriendRequestPopupProps {
   friend: FriendInfo
@@ -23,8 +24,45 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
 }) => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
-  const [status, setStatus] = useState<"default" | "challenge" | "waiting">("default")
+  const [status, setStatus] = useState<"default" | "challenge" | "waiting" | "error" | "declined">("default")
+  const [err, setErr] = useState("")
+  const [room, setRoom] = useState("")
   const { socket } = useContext(SocketContext)
+  const router = useRouter()
+
+  socket.onmessage = (msg: MessageEvent) => {
+    if (msg.data.startsWith('$error')) {
+      const data = msg.data.slice(6)
+      setStatus("error")
+      setErr(data)
+    } else if (msg.data.startsWith('$PROMT_JOIN')) {
+      const roomId = msg.data.slice('$PROMT_JOIN'.length)
+      joinRoom(roomId)
+      setRoom(roomId)
+    } else if (msg.data.startsWith('$start')) {
+      router.push(`/matchup/${room}`)
+    } else if (msg.data.startsWith('$challengeDeclined')) {
+      setStatus("declined")
+      setErr(`${friend.username} declined your challenge`)
+    }
+  }
+
+  function joinRoom(roomId?: string) {
+    if (!team.format) {
+      return
+    }
+
+    // Connected, let's sign-up for to receive messages for this room
+    const data = {
+      type: CODE.room,
+      payload: {
+        room: roomId,
+        format: team.format,
+        team: team.members,
+      },
+    }
+    socket.send(JSON.stringify(data))
+  }
 
   const onSelect = (id: string) => {
     const newTeam = user.teams.find((x) => x.id === id)
@@ -73,6 +111,10 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
     }
     socket.send(JSON.stringify(data))
     setStatus("challenge")
+  }
+
+  if (err) {
+    return (<ErrorPopup error={err} onClose={close} title={status === "declined" ? "Challenge declined" : ""}/>)
   }
 
   return (
