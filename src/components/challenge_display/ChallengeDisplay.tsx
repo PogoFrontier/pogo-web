@@ -7,6 +7,7 @@ import Modal from '@components/modal/Modal'
 import TeamSelector from '@components/team_selector/TeamSelector'
 import TeamPreview from '@components/team_preview/TeamPreview'
 import style from './style.module.scss'
+import LanguageContext from '@context/LanguageContext'
 
 interface FriendRequestDisplayProps {
     challenge: {
@@ -29,6 +30,7 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
     const { socket } = useContext(SocketContext)
     const [challenges, setChallenges] = challengeHook
     const { team, setTeam } = useContext(TeamContext)
+    const strings = useContext(LanguageContext).strings
     const [ modalOpen, setModalOpen ] = useState(false)
 
     const decline = () => {
@@ -50,7 +52,7 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
         }
 
         if(!defaultTeam) {
-            setError(`You don't have a team for the format ${challenge.format}`)
+            setError(strings.no_team_with_format_error?.replace("%1", challenge.format))
             return
         }
 
@@ -84,20 +86,20 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
                 {challenge.challenger.username}
             </strong>
             <div>
-                {challenge.format.toString()}
+                {challenge.format}
             </div>
         </div>
         <button
             className="btn btn-primary"
             onClick={accept}
         >
-            accept
+            {strings.accept}
         </button>
         <button
             className="btn btn-negative"
             onClick={decline}
         >
-            decline
+            {strings.decline}
         </button>
 
         {modalOpen && <Modal title={`Accept challenge from ${challenge.challenger.username}`} onClose={closeModal}>
@@ -105,7 +107,7 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
                 className="btn btn-negative"
                 onClick={closeModal}
             >
-                Cancel
+                {strings.cancel}
             </button>
 
             <TeamPreview />
@@ -116,7 +118,7 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
                 className="btn btn-primary"
                 onClick={confirmAccept}
             >
-                Confirm
+                {strings.confirm}
             </button>
         </Modal>}
     </>)

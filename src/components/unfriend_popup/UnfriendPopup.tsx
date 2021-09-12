@@ -31,7 +31,7 @@ const UnfriendPopup: React.FunctionComponent<UnfriendPopupProps> = ({
   }
 
   return (
-    <Modal title={`Unfriend ${friend.username}?`} onClose={close}>
+    <Modal title={strings.unfriend_popup_title?.replace("%1", friend.username)} onClose={close}>
 
       {(status === "default") && <>
         <button
@@ -49,7 +49,7 @@ const UnfriendPopup: React.FunctionComponent<UnfriendPopupProps> = ({
       </>}
 
       {(status === "success") && <> <div>
-          {`Friendship ended with ${friend.username}.`}
+          {strings.unfriend_confirm?.replace("%1", friend.username)}
         </div>
 
         {(status === "success") && <button

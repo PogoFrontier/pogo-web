@@ -10,6 +10,7 @@ import style from './style.module.scss'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import { useRouter } from 'next/router'
+import LanguageContext from '@context/LanguageContext'
 
 interface FriendRequestPopupProps {
   friend: FriendInfo
@@ -24,6 +25,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
 }) => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
+  const strings = useContext(LanguageContext).strings
   const [status, setStatus] = useState<"default" | "challenge" | "waiting" | "error" | "declined">("default")
   const [err, setErr] = useState("")
   const [room, setRoom] = useState("")
@@ -114,7 +116,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
   }
 
   if (err) {
-    return (<ErrorPopup error={err} onClose={close} title={status === "declined" ? "Challenge declined" : ""}/>)
+    return (<ErrorPopup error={err} onClose={close} title={status === "declined" ? strings.challenge_declined_title : ""}/>)
   }
 
   return (
@@ -124,14 +126,14 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
           className="btn btn-primary"
           onClick={openChallenge}
         >
-          Challenge
+          {strings.challenge}
         </button>
 
         <button
           className="btn btn-negative"
           onClick={unfriend}
         >
-          Unfriend
+          {strings.unfriend}
         </button>
       </>}
 
@@ -140,7 +142,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
           className="btn btn-negative"
           onClick={cancelChallengeMode}
         >
-          Cancel
+          {strings.cancel}
         </button>
 
         <TeamPreview />
@@ -151,7 +153,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
           className="btn btn-primary"
           onClick={sendChallenge}
         >
-          Challenge
+          {strings.challenge}
         </button>
       </>}
 
@@ -164,7 +166,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
           className="btn btn-negative"
           onClick={quitChallenge}
         >
-          Quit
+          {strings.quit}
         </button>
       </>}
 
