@@ -1,127 +1,126 @@
 @import 'variables';
 @import 'colors';
-
 .root {
-  height: 100%;
-  background-image: url('../src/assets/img/home.jpg');
-  background-position: center;
-  background-size: cover;
-  overflow-x: hidden;
-  padding-top: 2em;
+    height: 100%;
+    background-image: url('../src/assets/img/home.jpg');
+    background-position: center;
+    background-size: cover;
+    overflow-x: hidden;
+    padding-top: 2em;
 }
 
 .content {
-  margin: auto;
-  width: 100%;
-  @include md() {
-    display: grid;
-    grid-template-columns: auto auto;
-    column-gap: 2em;
-    row-gap: 2em;
-    max-width: $xl;
-  }
+    margin: auto;
+    width: 100%;
+    @include md() {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        column-gap: 2em;
+        row-gap: 2em;
+        max-width: $xl;
+    }
 }
 
 .container {
-  width: 100%;
-  background-color: $color-white;
-  box-shadow: 0px 0px 15px rgba($color-dark, 0.25);
-  margin-bottom: 1em;
-  h1 {
-    margin-top: 0;
-  }
-  &.info {
-    padding: 1em;
-  }
-  @include md() {
-    margin-bottom: 0;
-    &.info {
-      padding: 2em;
+    width: 100%;
+    background-color: $color-white;
+    box-shadow: 0px 0px 15px rgba($color-dark, 0.25);
+    margin-bottom: 1em;
+    h1 {
+        margin-top: 0;
     }
-  }
+    &.info {
+        padding: 1em;
+    }
+    @include md() {
+        margin-bottom: 0;
+        &.info {
+            padding: 2em;
+        }
+    }
 }
 
 .full {
-  @include md() {
-    grid-column-start: 1;
-    grid-column-end: 3;
-  }
+    @include md() {
+        grid-column-start: 1;
+        grid-column-end: 3;
+    }
 }
 
 .game {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  border-bottom: solid 1px $color-neutral-light;
-  padding: 1em 0;
-  @include md() {
-    padding: 0;
-  }
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border-bottom: solid 1px $color-neutral-light;
+    padding: 1em 0;
+    @include md() {
+        padding: 0;
+    }
 }
 
 .profileImage {
-  display: none;
-  @include md() {
-    display: block;
-    height: 130px;
-  }
+    display: none;
+    @include md() {
+        display: block;
+        height: 130px;
+    }
 }
 
 .teamPreview {
-  display: flex;
-  flex-grow: 1;
-  padding-left: 1em;
-  
+    display: flex;
+    flex-grow: 1;
+    padding-left: 1em;
 }
 
 .teamTitle {
-  font-size: large;
-  margin-top: 0;
-  margin-bottom: 0.5em;
-  strong {
-    font-size: 1.3em;
-  }
-}
-.member {
-	height: 2.3em;
-	width: 2.3em;
-	object-fit: contain;
-}
-.members {
-	.member {
-		@include md() {
-		height: 3em;
-		width: 3em;
-		}
-	}
-	.member + .member {
-		margin-left: 1em;
-	}
-}
-.option {
-  img {
-    height: 1.5em;
-    @include md() {
-      height: 2em;
+    font-size: large;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    strong {
+        font-size: 1.3em;
     }
-  }
-  img + img {
-    margin-left: 0.5em;
-  }
-  border-bottom: 1px solid $color-neutral-light;
 }
 
+.member {
+    height: 2.3em;
+    width: 2.3em;
+    object-fit: contain;
+}
+
+.members {
+    .member {
+        @include md() {
+            height: 3em;
+            width: 3em;
+        }
+    }
+    .member+.member {
+        margin-left: 1em;
+    }
+}
+
+.option {
+    img {
+        height: 1.5em;
+        @include md() {
+            height: 2em;
+        }
+    }
+    img+img {
+        margin-left: 0.5em;
+    }
+    border-bottom: 1px solid $color-neutral-light;
+}
 
 .links {
-  a {
-    text-decoration: none;
-    display: inline-block;
-    margin-right: 1em;
-    margin-bottom: 1em;
-  }
-  svg {
-    margin-top: -2px;
-  }
+    a {
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 1em;
+        margin-bottom: 1em;
+    }
+    svg {
+        margin-top: -2px;
+    }
 }
-

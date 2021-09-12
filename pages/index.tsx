@@ -53,9 +53,11 @@ const HomePage = () => {
   useEffect(() => {
     if (isSocketAuthenticated) {
       setChallenges([])
-      socket.send(JSON.stringify({
-        type: CODE.challenge_reload
-      }))
+      socket.send(
+        JSON.stringify({
+          type: CODE.challenge_reload,
+        })
+      )
     }
   }, [isSocketAuthenticated, user?.username])
 
@@ -86,8 +88,14 @@ const HomePage = () => {
       const challengeData = msg.data.slice('$challengedBy|'.length)
       setChallenges([...challenges, JSON.parse(challengeData)])
     } else if (msg.data.startsWith('$challengeCancelled')) {
-      const challengeData = JSON.parse(msg.data.slice('$challengeCancelled|'.length))
-      setChallenges(challenges.filter(challenge => challenge?.challenger?.googleId !== challengeData?.id))
+      const challengeData = JSON.parse(
+        msg.data.slice('$challengeCancelled|'.length)
+      )
+      setChallenges(
+        challenges.filter(
+          (challenge) => challenge?.challenger?.googleId !== challengeData?.id
+        )
+      )
     }
   }
 
@@ -141,17 +149,28 @@ const HomePage = () => {
                 src={imagesHandler.getProfile(myProfile)}
                 className={style.profileImage}
               />
-              <TeamPreview/>
+              <TeamPreview />
               <TeamSelector onSelect={onSelect} />
             </div>
-            <Form joinRoom={joinRoom} hooks={[error, setError, room, setRoom, state, setState]} validate={validate}/>
+            <Form
+              joinRoom={joinRoom}
+              hooks={[error, setError, room, setRoom, state, setState]}
+              validate={validate}
+            />
           </section>
           {!!user && (!!user.googleId || !!user.username) ? (
             <>
               <section className={classnames([style.container, style.info])}>
-                <h1>Challenges</h1>
+                <h1>Challenges ({challenges.length})</h1>
                 {challenges.map((challenge, index) => {
-                  return (<ChallengeDisplay key={index} challenge={challenge} challengeHook={[challenges, setChallenges]} setError={setError}/>)
+                  return (
+                    <ChallengeDisplay
+                      key={index}
+                      challenge={challenge}
+                      challengeHook={[challenges, setChallenges]}
+                      setError={setError}
+                    />
+                  )
                 })}
               </section>
               <section className={classnames([style.container, style.info])}>

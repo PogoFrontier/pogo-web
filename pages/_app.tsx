@@ -18,7 +18,7 @@ import {
   declineFriendRequest,
   acceptFriendRequest,
   getFriendList,
-  sendUnfriend
+  sendUnfriend,
 } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
 import SettingsContext from '@context/SettingsContext'
@@ -350,14 +350,14 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const isFRPossible = async (username: string) => {
-    let result = await isFriendRequestPossible(username, userToken)
+    const result = await isFriendRequestPossible(username, userToken)
 
-    if (result.error === "Error: Request failed with status code 404") {
+    if (result.error === 'Error: Request failed with status code 404') {
       result.error = strings.user_does_not_exist_error
-    } else if (result.error === "Error: Request failed with status code 403") {
-      result.error = strings.fr_duplicate_error?.replace("%1", username)
-    } else if (result.error === "Error: Request failed with status code 409") {
-      result.error = strings.fr_conflict_error?.replace("%1", username)
+    } else if (result.error === 'Error: Request failed with status code 403') {
+      result.error = strings.fr_duplicate_error?.replace('%1', username)
+    } else if (result.error === 'Error: Request failed with status code 409') {
+      result.error = strings.fr_conflict_error?.replace('%1', username)
     }
 
     return result
@@ -367,20 +367,20 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     return sendFriendRequest(username, userToken)
   }
 
-  const declineFR = (id: string) => {
-    return declineFriendRequest(id, userToken)
+  const declineFR = (_id: string) => {
+    return declineFriendRequest(_id, userToken)
   }
 
-  const acceptFR = (id: string) => {
-    return acceptFriendRequest(id, userToken)
+  const acceptFR = (_id: string) => {
+    return acceptFriendRequest(_id, userToken)
   }
 
   const getFriends = () => {
     return getFriendList(userToken)
   }
 
-  const unfriend = (id: string) => {
-    return sendUnfriend(id, userToken)
+  const unfriend = (_id: string) => {
+    return sendUnfriend(_id, userToken)
   }
 
   return (
@@ -424,7 +424,16 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                   }}
                 >
                   <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
-                    <FriendContext.Provider value={{ isFriendRequestPossible: isFRPossible, sendFriendRequest: sendFR, declineFriendRequest: declineFR, acceptFriendRequest: acceptFR, getFriends: getFriends, unfriend: unfriend}}>
+                    <FriendContext.Provider
+                      value={{
+                        isFriendRequestPossible: isFRPossible,
+                        sendFriendRequest: sendFR,
+                        declineFriendRequest: declineFR,
+                        acceptFriendRequest: acceptFR,
+                        getFriends,
+                        unfriend,
+                      }}
+                    >
                       <Component {...pageProps} />
                     </FriendContext.Provider>
                   </HistoryContext.Provider>

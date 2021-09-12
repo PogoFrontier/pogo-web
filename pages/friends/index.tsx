@@ -57,7 +57,9 @@ const FriendsPage = () => {
     }
   }
 
-  const placebo = () => {}
+  const placebo = () => {
+    // Placebo
+  }
 
   const removeRequest = (req: FriendRequest) => {
     user.requests = user.requests?.filter(r => r.id !== req.id)
@@ -91,11 +93,11 @@ const FriendsPage = () => {
       <main className={style.root}>
         <div className={style.content}>
           <section className={classnames([style.container, style.info])}>
-            <strong>
+            <h1>
               {strings.send_friend_request}
-            </strong>
+            </h1>
             <Input
-              title=""
+              title="Friend's Username"
               type="text"
               placeholder="None"
               id="FRTarget"
@@ -111,27 +113,27 @@ const FriendsPage = () => {
           </section>
 
           <section className={classnames([style.container, style.info])}>
-            <strong>
+            <h1>
               Friend Requests
-            </strong>
+            </h1>
             {user?.requests?.map(friendRequest => {
               return (<FriendRequestDisplay request={friendRequest} key={friendRequest.id} removeRequest={removeRequest} />)
             })}
           </section>
 
           <section className={classnames([style.container, style.info])}>
-            <strong>
+            <h1>
               Friends
-            </strong>
+            </h1>
             {friends.map((friend, index) => {
               return (<FriendDisplay friend={friend} key={index} openPopup={openFriendPopup}/>)
             })}
           </section>
 
           <section className={classnames([style.container, style.info])}>
-            <strong>
+            <h1>
               Recently played
-            </strong>
+            </h1>
             {user?.battleHistory?.map((opponent, i) => {
               return (<RecentOpponentDisplay opponent={opponent} send={sendFriendRequestTo} friends={friends} key={i}/>)
             })}
