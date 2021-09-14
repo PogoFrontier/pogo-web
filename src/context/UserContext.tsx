@@ -19,11 +19,11 @@ export interface User {
   email?: string | null
   teams: UserTeam[]
   requests?: FriendRequest[]
-  battleHistory?: Array<{
+  battleHistory?: {
     googleId: string
     username: string
     isGuest: boolean
-  }>
+  }[]
   createdAt?: string
   lastLogin?: string
   isDeleted?: boolean /* ,

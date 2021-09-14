@@ -5,7 +5,12 @@ import style from './style.module.scss'
 import UserContext from '@context/UserContext'
 import Input from '@components/input/Input'
 
-const UsernamePopup: React.FunctionComponent = ({
+interface UsernamePopupProps {
+  onComplete?: () => void
+}
+
+const UsernamePopup: React.FunctionComponent<UsernamePopupProps> = ({
+  onComplete
 }) => {
   const strings = useContext(LanguageContext).strings
   const setUsername = useContext(UserContext).setUsername
@@ -13,7 +18,13 @@ const UsernamePopup: React.FunctionComponent = ({
   const [showDuplicateMessage, setShowDuplicateMessage] = useState(false)
 
   const updateUsername = () => {
-    setUsername(input).catch(_ => {
+    setUsername(input)
+    .then(() => {
+      if (onComplete) {
+        onComplete()
+      }
+    })
+    .catch(_ => {
       setShowDuplicateMessage(true)
     })
   }
