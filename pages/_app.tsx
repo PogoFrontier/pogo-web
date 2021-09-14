@@ -73,25 +73,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
-  useEffect(() => {
-    fetchStrings(language)
-    const keysFromStorage: any = localStorage.getItem('settings')
-    if (
-      typeof window !== undefined &&
-      keysFromStorage &&
-      keysFromStorage !== 'undefined'
-    ) {
-      const keysJSON = JSON.parse(keysFromStorage)
-      if (keysJSON && keysJSON.fastKey) {
-        setKeys1(keysJSON)
-      }
-    }
-    // first try to load from localstorage and store in context
-    // actually, first try loading authed user data from local, //use user token instead, go right to profile!
-    // then load from firebase if there is one
-    // or create local user if there is none
-    // and then store in context
-
+  const loadUser = () => {
     const userTokenFromStorage: string | null = localStorage.getItem(
       'userToken'
     )
@@ -154,6 +136,28 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         setCurrentTeam(defaultTeam)
       }
     }
+  }
+
+  useEffect(() => {
+    fetchStrings(language)
+    const keysFromStorage: any = localStorage.getItem('settings')
+    if (
+      typeof window !== undefined &&
+      keysFromStorage &&
+      keysFromStorage !== 'undefined'
+    ) {
+      const keysJSON = JSON.parse(keysFromStorage)
+      if (keysJSON && keysJSON.fastKey) {
+        setKeys1(keysJSON)
+      }
+    }
+    // first try to load from localstorage and store in context
+    // actually, first try loading authed user data from local, //use user token instead, go right to profile!
+    // then load from firebase if there is one
+    // or create local user if there is none
+    // and then store in context
+
+    loadUser()
   }, [])
 
   useEffect(() => {
@@ -412,7 +416,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         >
           <IdContext.Provider value={{ id, setId }}>
             <UserContext.Provider
-              value={{ user: currentUser!, setUser, setTeams, setUsername }}
+              value={{ user: currentUser!, setUser, setTeams, setUsername, loadUser }}
             >
               <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
                 <SocketContext.Provider

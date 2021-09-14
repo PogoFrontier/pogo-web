@@ -15,12 +15,12 @@ const FriendRequestDisplay: React.FunctionComponent<FriendRequestDisplayProps> =
     const { declineFriendRequest, acceptFriendRequest } = useContext(FriendContext)
     const strings = useContext(LanguageContext).strings
 
-    const decline = () => {
-        declineFriendRequest(request.id)
+    const decline = async () => {
+        await declineFriendRequest(request.id)
         removeRequest(request)
     }
-    const accept = () => {
-        acceptFriendRequest(request.id)
+    const accept = async () => {
+        await acceptFriendRequest(request.id)
         removeRequest(request)
     }
 
