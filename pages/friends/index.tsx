@@ -17,7 +17,7 @@ import UnfriendPopup from '@components/unfriend_popup/UnfriendPopup'
 
 
 const FriendsPage = () => {
-  const { user, setUser } = useContext(UserContext)
+  const { user, setUser, loadUser } = useContext(UserContext)
   const { isSocketAuthenticated } = useContext(SocketContext)
   const { getFriends } = useContext(FriendContext)
   const strings = useContext(LanguageContext).strings
@@ -63,7 +63,7 @@ const FriendsPage = () => {
     user.requests = user.requests?.filter(r => r.id !== req.id)
     setUser(user)
     setRequests(user.requests)
-    loadFriends()
+    loadUser()
   }
 
   const openFriendPopup = (friend: FriendInfo) => {
@@ -82,7 +82,7 @@ const FriendsPage = () => {
     setUnfriendPopup(null)
     setFriendPopup(includeFriendPopup ? null : friendPopup)
     if(includeFriendPopup) {
-      loadFriends()
+      loadUser()
     }
   }
 
