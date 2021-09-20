@@ -93,6 +93,10 @@ hr {
             width: 100%;
             fill: $color-white;
         }
+        background-color: $color-brand-primary;
+        &:hover {
+            background-color: darken($color-brand-primary, 10%);
+        }
     }
     &.btn-positive {
         background-color: $color-brand-positive;
