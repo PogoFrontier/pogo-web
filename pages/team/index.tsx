@@ -163,7 +163,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
       loadTeam(parsedImport).then(async (members) => {
         const result = await getValidateTeam(
           JSON.stringify(members),
-          parsedImport.format,
+          meta,
           language
         )
         if (result.message) {
@@ -174,12 +174,9 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
           updateTeam({
             name: parsedImport.name,
             id: uuidv4(),
-            format: parsedImport.format,
+            format: meta,
             members,
           })
-          if (parsedImport.format !== meta) {
-            switchMeta(parsedImport.format)
-          }
           setIsImportingTeam(false)
         }
         setIsImportLoading(false)
