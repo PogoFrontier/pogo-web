@@ -43,9 +43,9 @@ const FriendRequestPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
   const send = () => {
     sendFriendRequest(username).then(_ => {
       setStatus("success")
-    }).catch(err => {
+    }).catch(error => {
       setStatus("error")
-      setErr(err.toString())
+      setErr(error.toString())
     })
   }
 
@@ -60,14 +60,15 @@ const FriendRequestPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
       {(status === "default") && <>
         <button
           className="btn btn-primary"
+          style={{ marginRight: 10 }}
           onClick={send}
         >
           {strings.yes}
       </button>
-        <button
-          className="btn btn-primary"
-          onClick={close}
-        >
+      <button
+        className="btn btn-negative"
+        onClick={close}
+      >
           {strings.no}
       </button>
       </>}

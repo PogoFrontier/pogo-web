@@ -94,50 +94,51 @@ const FriendsPage = () => {
         <div className={style.content}>
           <section className={classnames([style.container, style.info])}>
             <h1>
-              {strings.send_friend_request}
-            </h1>
-            <Input
-              title="Friend's Username"
-              type="text"
-              placeholder="None"
-              id="FRTarget"
-              onChange={onInputChange}
-              value={friendToSendFR}
-            />
-            <button
-              className="btn btn-secondary"
-              onClick={onSendFriendRequest}
-            >
-              {strings.send}
-            </button>
-          </section>
-
-          <section className={classnames([style.container, style.info])}>
-            <h1>
-              Friend Requests
-            </h1>
-            {user?.requests?.map(friendRequest => {
-              return (<FriendRequestDisplay request={friendRequest} key={friendRequest.id} removeRequest={removeRequest} />)
-            })}
-          </section>
-
-          <section className={classnames([style.container, style.info])}>
-            <h1>
               Friends
             </h1>
             {friends.map((friend, index) => {
               return (<FriendDisplay friend={friend} key={index} openPopup={openFriendPopup}/>)
             })}
           </section>
+          <div>
+            <section className={classnames([style.container, style.info])}>
+              <h1>
+                {strings.send_friend_request}
+              </h1>
+              <Input
+                title="Friend's Username"
+                type="text"
+                placeholder="None"
+                id="FRTarget"
+                onChange={onInputChange}
+                value={friendToSendFR}
+              />
+              <button
+                className="btn btn-secondary"
+                onClick={onSendFriendRequest}
+              >
+                {strings.send}
+              </button>
+            </section>
 
-          <section className={classnames([style.container, style.info])}>
-            <h1>
-              Recently played
-            </h1>
-            {user?.battleHistory?.map((opponent, i) => {
-              return (<RecentOpponentDisplay opponent={opponent} send={sendFriendRequestTo} friends={friends} key={i}/>)
-            })}
-          </section>
+            <section className={classnames([style.container, style.info])}>
+              <h1>
+                Friend Requests
+              </h1>
+              {user?.requests?.map(friendRequest => {
+                return (<FriendRequestDisplay request={friendRequest} key={friendRequest.id} removeRequest={removeRequest} />)
+              })}
+            </section>
+
+            <section className={classnames([style.container, style.info])}>
+              <h1>
+                Recently played
+              </h1>
+              {user?.battleHistory?.map((opponent, i) => {
+                return (<RecentOpponentDisplay opponent={opponent} send={sendFriendRequestTo} friends={friends} key={i}/>)
+              })}
+            </section>
+          </div>
         </div>
       </main>
       {frPopupTarget && <FriendRequestPopup onClose={onFriendRequestPopupClose} username={frPopupTarget} />}

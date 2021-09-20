@@ -416,7 +416,13 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         >
           <IdContext.Provider value={{ id, setId }}>
             <UserContext.Provider
-              value={{ user: currentUser!, setUser, setTeams, setUsername, loadUser }}
+              value={{
+                user: currentUser!,
+                setUser,
+                setTeams,
+                setUsername,
+                loadUser,
+              }}
             >
               <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
                 <SocketContext.Provider

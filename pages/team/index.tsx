@@ -51,7 +51,7 @@ interface ButtonProps {
   className: string
 }
 
-const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
+const Content: React.FC<ContentProps> = ({ meta }) => {
   const { user, setTeams } = useContext(UserContext)
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
