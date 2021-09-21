@@ -120,7 +120,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
   }
 
   return (
-    <Modal title={""} onClose={close}>
+    <Modal title={friend.username} onClose={close}>
       {status === "default" && <>
         <button
           className="btn btn-primary"
@@ -128,7 +128,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
         >
           {strings.challenge}
         </button>
-
+        <hr />
         <button
           className="btn btn-negative"
           onClick={unfriend}
@@ -138,22 +138,22 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
       </>}
 
       {status === "challenge" && <>
-        <button
-          className="btn btn-negative"
-          onClick={cancelChallengeMode}
-        >
-          {strings.cancel}
-        </button>
-
         <TeamPreview />
         <div className={style.game}>
           <TeamSelector onSelect={onSelect} />
         </div>
+        <br />
         <button
           className="btn btn-primary"
           onClick={sendChallenge}
         >
           {strings.challenge}
+        </button>
+        <button
+          className="btn btn-negative"
+          onClick={cancelChallengeMode}
+        >
+          {strings.cancel}
         </button>
       </>}
 

@@ -1,7 +1,7 @@
 import { useContext } from 'react'
-import LanguageContext from '@context/LanguageContext'
 import UserContext from '@context/UserContext'
 import { FriendInfo } from '@context/FriendContext'
+import { Icon } from '@components/icon/Icon'
 
 interface FriendRequestDisplayProps {
     opponent: {
@@ -19,21 +19,20 @@ const RecentOpponentDisplay: React.FunctionComponent<FriendRequestDisplayProps> 
     friends
 }) => {
     const { user } = useContext(UserContext)
-    const strings = useContext(LanguageContext).strings
 
     const sendFR = () => {
         send(opponent.username)
     }
 
     return (
-    <div>
+    <div className="row-spaced">
         {opponent.isGuest ? "Guest" : opponent.username}
         <button
-            className="btn btn-secondary"
+            className="btn btn-icon"
             onClick={sendFR}
             disabled={opponent.isGuest || user.requests?.map(r => r.username).includes(opponent.username) || friends.map(f => f.username).includes(opponent.username)}
         >
-            {strings.send}
+            <Icon name="plus" size="medium" />
         </button>
     </div>)
 }

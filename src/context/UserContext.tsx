@@ -41,7 +41,9 @@ const UserContext = createContext({
   setUsername: async (_username: string) => {
     return
   },
-  loadUser: () => {}
+  loadUser: () => {
+    return
+  }
 })
 
 export default UserContext

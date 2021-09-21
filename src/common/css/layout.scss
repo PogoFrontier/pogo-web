@@ -80,6 +80,30 @@ hr {
             box-shadow: none;
         }
     }
+    &.btn-icon {
+        height: 2rem;
+        min-width: 2rem;
+        width: 2rem;
+        text-align: center;
+        padding: 0;
+        svg {
+            display: block;
+            margin: auto;
+            height: 100%;
+            width: 100%;
+            fill: $color-white;
+        }
+        background-color: $color-brand-primary;
+        &:hover {
+            background-color: darken($color-brand-primary, 10%);
+        }
+    }
+    &.btn-positive {
+        background-color: $color-brand-positive;
+        &:hover {
+            background-color: darken($color-brand-positive, 10%);
+        }
+    }
     &.btn-secondary {
         background-color: $color-brand-secondary;
         &:hover {
@@ -104,4 +128,14 @@ img {
 
 .no-click {
     pointer-events: none;
+}
+
+.row-spaced {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.large {
+    font-size: 1.2em;
 }

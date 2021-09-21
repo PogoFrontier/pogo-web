@@ -47,7 +47,7 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
         let defaultTeam: UserTeam | undefined = team;
         if(defaultTeam.format !== challenge.format) {
             defaultTeam = user.teams.find(userTeam => {
-                userTeam.format === challenge.format
+                return userTeam.format === challenge.format
             })
         }
 

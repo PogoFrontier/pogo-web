@@ -1,7 +1,7 @@
 import { FriendRequest } from '@context/UserContext'
 import { useContext } from 'react'
 import FriendContext from '@context/FriendContext'
-import LanguageContext from '@context/LanguageContext'
+import { Icon } from '@components/icon/Icon'
 
 interface FriendRequestDisplayProps {
     request: FriendRequest
@@ -13,7 +13,6 @@ const FriendRequestDisplay: React.FunctionComponent<FriendRequestDisplayProps> =
     removeRequest
 }) => {
     const { declineFriendRequest, acceptFriendRequest } = useContext(FriendContext)
-    const strings = useContext(LanguageContext).strings
 
     const decline = async () => {
         await declineFriendRequest(request.id)
@@ -24,18 +23,21 @@ const FriendRequestDisplay: React.FunctionComponent<FriendRequestDisplayProps> =
         removeRequest(request)
     }
 
-    return (<div>
-        {request.username}
-        <button 
-            onClick={accept}
-            className="btn btn-primary">
-            {strings.accept}
-        </button>
-        <button 
-            onClick={decline}
-            className="btn btn-negative">
-            {strings.decline}
-        </button>
+    return (<div className="row-spaced">
+        <div className="large">{request.username}</div>
+        <div>
+            <button 
+                onClick={accept}
+                style={{ marginRight: 10 }}
+                className="btn btn-icon btn-positive">
+                <Icon name="check" size="medium" />
+            </button>
+            <button 
+                onClick={decline}
+                className="btn btn-icon btn-negative">
+                <Icon name="times" size="medium" />
+            </button>
+        </div>
     </div>)
 }
 
