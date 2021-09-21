@@ -11,10 +11,8 @@ import classnames from 'classnames'
 import { Icon } from '@components/icon/Icon'
 import Link from 'next/link'
 import LanguageContext from '@context/LanguageContext'
-import SettingsContext from '@context/SettingsContext'
 import SocketContext from '@context/SocketContext'
 import IdContext from '@context/IdContext'
-import { StringsType } from '@common/actions/getLanguage'
 import TeamSelector from '@components/team_selector/TeamSelector'
 import UsernamePopup from '@components/username_popup/UsernamePopup'
 import '@reach/listbox/styles.css'
@@ -31,7 +29,10 @@ const HomePage = () => {
   const user = useContext(UserContext).user
   const { setTeam } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
-  const strings: StringsType = useContext(LanguageContext).strings
+  const {
+    strings,
+    current: language
+  } = useContext(LanguageContext)
   const {
     socket,
     isSocketAuthenticated,
@@ -44,7 +45,6 @@ const HomePage = () => {
   const [state, setState] = useState<'quick' | 'loading'>('quick')
   const [challenges, setChallenges] = useState([] as any[])
   const team = useContext(TeamContext).team
-  const language = useContext(SettingsContext).language
   let teamMembers: TeamMember[]
   if (team) {
     teamMembers = team.members

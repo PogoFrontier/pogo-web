@@ -8,7 +8,6 @@ import style from './style.module.scss'
 import Layout from '@components/layout/Layout'
 import LanguageContext from '@context/LanguageContext'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
-import SettingsContext from '@context/SettingsContext'
 
 const EndPage = () => {
   const router = useRouter()
@@ -16,8 +15,10 @@ const EndPage = () => {
   const { socket } = useContext(SocketContext)
   const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
-  const strings = useContext(LanguageContext).strings
-  const language = useContext(SettingsContext).language
+  const {
+    strings,
+    current: language
+  } = useContext(LanguageContext)
 
   async function validate(): Promise<boolean> {
     const r = await getValidateTeam(
