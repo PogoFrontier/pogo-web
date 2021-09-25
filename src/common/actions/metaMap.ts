@@ -18,13 +18,8 @@ const metaMap: {
     movesetOption: 'original',
     unranked: true,
   },
-  'Atlantis Field': {
-    name: 'Atlantis Field',
-    maxCP: 1500,
-    movesetOption: 'original',
-  },
-  '2021 Continentals': {
-    name: '2021 Continentals',
+  'Lunar Cup': {
+    name: 'Lunar Cup',
     maxCP: 1500,
     movesetOption: 'original',
   },
