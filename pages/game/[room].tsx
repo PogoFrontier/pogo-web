@@ -151,7 +151,10 @@ const GamePage = () => {
                 if (payload.update[0].charge === 1) {
                   setStatus(StatusTypes.CHARGE)
                 } else {
-                  setStatus(StatusTypes.SHIELD)
+                  setStatus(StatusTypes.ANIMATING)
+                  setTimeout(_ => {
+                    setStatus(StatusTypes.SHIELD)
+                  }, 1000)
                 }
               }
               return prev3
@@ -196,7 +199,7 @@ const GamePage = () => {
                   return StatusTypes.ANIMATING
                 }
               }
-              return StatusTypes.MAIN
+              return [StatusTypes.CHARGE, StatusTypes.SHIELD].includes(prev) ? prev : StatusTypes.MAIN
             })
           }
         }
