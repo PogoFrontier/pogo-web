@@ -5,6 +5,7 @@ const metaMap: {
     movesetOption: 'original' | 'mainseries' | 'norestrictions'
     classes?: string[]
     unranked?: boolean
+    random?: boolean
   }
 } = {
   'Great League': {
@@ -17,6 +18,12 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
     unranked: true,
+  },
+  'Autorekt': {
+    name: 'Autorekt',
+    maxCP: 1500,
+    movesetOption: 'original',
+    random: true
   },
   'Lunar Cup': {
     name: 'Lunar Cup',

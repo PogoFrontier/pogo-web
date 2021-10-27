@@ -123,7 +123,6 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     setIsImportLoading(true)
     try {
       const importedTeam = await unformatTeam(importString)
-      console.log(importedTeam)
 
       const result = await getValidateTeam(
         JSON.stringify(importedTeam.members),
@@ -197,7 +196,6 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
       if (!levelString || !atkIvString || !defIvString || !hpIvString) {
         const cap = metaMap[meta].maxCP
-        console.log(p)
         const ivs = getIVs({
           pokemon: p,
           targetCP: cap ? cap : 10000,
@@ -416,7 +414,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 const TeamPage = () => {
   // const { user } = useContext(UserContext)
   const [metas] = useState(Object.keys(metaMap))
-  const [metaNames] = useState(metas.map((meta) => metaMap[meta].name))
+  const [metaNames] = useState(metas.filter(meta => !metaMap[meta].random).map((meta) => metaMap[meta].name))
   const [index, setIndex] = useState(0)
 
   // useEffect(() => {

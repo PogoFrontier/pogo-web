@@ -67,7 +67,16 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
   }
 
   const onSelect = (id: string) => {
-    const newTeam = user.teams.find((x) => x.id === id)
+    let newTeam = user.teams.find((x) => x.id === id)
+    if (id.startsWith("randomMeta:")) {
+      newTeam = {
+        name: "random",
+        id: id,
+        format: id.substr("randomMeta:".length),
+        members: []
+      }
+    }
+    
     if (newTeam) {
       setTeam(newTeam)
     }

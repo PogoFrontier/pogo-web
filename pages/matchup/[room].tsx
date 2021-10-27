@@ -35,7 +35,7 @@ const MatchupPage = () => {
   const [status, setStatus] = useState(STATUS.CHOOSING)
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
-  const team: TeamMember[] = useContext(TeamContext).team.members
+  const [team, setTeam] = useState(useContext(TeamContext).team.members)
   const { height } = useWindowSize()
   const { routing, prev } = useContext(HistoryContext)
   const [timerStarted, setTimerStarted] = useState(false)
@@ -52,9 +52,16 @@ const MatchupPage = () => {
   const strings = useContext(LanguageContext).strings
 
   const onMessage = (message: MessageEvent) => {
+    console.log(message);
     if (message.data.startsWith('$end')) {
       const result = message.data.slice(4)
       endGame(result)
+      return
+    }
+    if (message.data.startsWith('$yourTeamIs:')) {
+      console.log("your team is")
+      const teamString = message.data.slice('$yourTeamIs:'.length)
+      setTeam(JSON.parse(teamString))
       return
     }
     const data: Data = JSON.parse(message.data)
@@ -89,6 +96,14 @@ const MatchupPage = () => {
           })
         )
       }
+      ws.send(
+        JSON.stringify({
+          type: CODE.get_own_team,
+          payload: {
+            room,
+          },
+        })
+      )
       ws.onmessage = onMessage
     } else {
       toHome()

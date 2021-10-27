@@ -6,6 +6,7 @@ import { Icon } from '@components/icon/Icon'
 import style from './style.module.scss'
 import { UserTeam } from '@context/UserContext'
 import React, { useState } from 'react'
+import metaMap from '@common/actions/metaMap'
 
 interface MetaGroupProps {
   meta: string
@@ -21,6 +22,8 @@ const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
   }
   const TeamOption: React.FC<TeamOptionProps> = ({ team, name, id }) => {
     const imagesHandler = new ImageHandler()
+    const isRandom = !!metaMap[meta]?.random;
+
     return (
       <ListboxOption
         value={id}
@@ -29,12 +32,20 @@ const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
       >
         <br />
         <div className={style.teamMembers}>
-          {team.map((member: any, index: number) => (
+          {isRandom || team.map((member: any, index: number) => (
             <img
               key={index}
               src={imagesHandler.getMini(member.sid)}
               className={style.member}
               alt={member.speciesName}
+            />
+          ))}
+          {isRandom &&  [1,1,1,1,1,1].map((_, i) => (
+            <img
+              key={i}
+              src={imagesHandler.getQuestionmark()}
+              className={style.member}
+              alt={"random member"}
             />
           ))}
         </div>

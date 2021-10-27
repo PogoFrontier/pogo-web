@@ -104,6 +104,20 @@ const TeamSelector = (props: TeamSelectorProps) => {
         />
       )
     }
+    for (const randomMeta of Object.keys(metaMap).filter(meta => metaMap[meta].random)) {
+      elements.push(
+        <MetaGroup
+          key={randomMeta}
+          meta={metaMap[randomMeta].name}
+          teams={[{
+            name: "random",
+            id: "randomMeta:" + randomMeta,
+            format: randomMeta,
+            members: []
+          }]}
+        />
+      )
+    }
     return elements
   }
 

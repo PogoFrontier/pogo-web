@@ -19,6 +19,7 @@ const TeamPreview = () => {
   const { team } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
   const strings: StringsType = useContext(LanguageContext).strings
+  metaMap[team?.format]?.random
 
   return (<div className={style.teamPreview}>
       <div>
@@ -42,6 +43,14 @@ const TeamPreview = () => {
                 alt={member.speciesName}
               />
             ))}
+        {metaMap[team?.format]?.random && [1,1,1,1,1,1].map((_, i) => (
+          <img
+            key={i}
+            className={style.member}
+            src={imagesHandler.getQuestionmark()}
+            alt={"random member"}
+          />
+        ))}
         </div>
       </div>
     </div>)

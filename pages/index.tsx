@@ -22,6 +22,7 @@ import { TeamMember } from '@adibkhan/pogo-web-backend'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import ChallengeDisplay from '@components/challenge_display/ChallengeDisplay'
+import metaMap from '@common/actions/metaMap'
 
 const myColor = '#FCAC89'
 const myProfile = 2
@@ -62,7 +63,15 @@ const HomePage = () => {
   }, [isSocketAuthenticated, user?.username])
 
   const onSelect = (id: string) => {
-    const newTeam = user.teams.find((x) => x.id === id)
+    let newTeam = user.teams.find((x) => x.id === id)
+    if (id.startsWith("randomMeta:")) {
+      newTeam = {
+        name: "random",
+        id: id,
+        format: id.substr("randomMeta:".length),
+        members: []
+      }
+    }
     if (newTeam) {
       setTeam(newTeam)
     }
@@ -122,6 +131,10 @@ const HomePage = () => {
   }
 
   async function validate(): Promise<boolean> {
+    if (metaMap[team?.format]?.random) {
+      return true
+    }
+
     const result = await getValidateTeam(
       JSON.stringify(teamMembers),
       team.format,
