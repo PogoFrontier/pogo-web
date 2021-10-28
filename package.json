@@ -59,7 +59,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@adibkhan/pogo-web-backend": "^1.0.44",
+        "@adibkhan/pogo-web-backend": "^1.0.45",
         "@babel/core": "7.9.0",
         "@reach/combobox": "^0.13.2",
         "@reach/listbox": "^0.15.0",
@@ -81,6 +81,7 @@
         "babel-loader": "8.1.0",
         "babel-plugin-module-resolver": "4.0.0",
         "classnames": "^2.2.6",
+        "dayjs": "^1.10.7",
         "firebase": "^8.2.1",
         "next": "^11.1.0",
         "next-redux-wrapper": "6.0.2",
