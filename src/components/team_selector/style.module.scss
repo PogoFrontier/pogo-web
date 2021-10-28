@@ -28,6 +28,8 @@
 	text-align: left;
 	overflow-y: scroll;
 	margin: auto;
+    z-index: 99991;
+    background-color: white;
 
 	@include md() {
 		max-width: $xl;
@@ -97,7 +99,7 @@
 .option{
 	border: 1px solid $color-neutral-light;
 	display:flex;
-	flex-direction: column;	
+	flex-direction: column;
 }
 
 .labelIcon{

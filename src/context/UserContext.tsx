@@ -16,10 +16,14 @@ export interface FriendRequest {
 export interface User {
   googleId?: string
   username?: string
-  displayName: string | null
   email?: string | null
   teams: UserTeam[]
   requests?: FriendRequest[]
+  battleHistory?: {
+    googleId: string
+    username: string
+    isGuest: boolean
+  }[]
   createdAt?: string
   lastLogin?: string
   isDeleted?: boolean /* ,
@@ -35,6 +39,9 @@ const UserContext = createContext({
     return
   },
   setUsername: async (_username: string) => {
+    return
+  },
+  loadUser: () => {
     return
   }
 })

@@ -1,22 +1,16 @@
 import { createContext } from 'react'
 
-const FriendContext = createContext({
-  isFriendRequestPossible: (_: string) => {
-    return Promise.resolve({
-      possible: false,
-      error: ""
-    })
-  },
-  sendFriendRequest: (_: string) => {
-    return Promise.resolve(undefined)
-  },
-  declineFriendRequest: (_: string) => {
-    return Promise.resolve(undefined)
-  },
-  acceptFriendRequest: (_: string) => {
-    return Promise.resolve(undefined)
-  },
-} as {
+
+export interface FriendInfo {
+  username: string
+  status: string | null
+  lastActivity?: {
+    _seconds: number
+  }
+  id: string
+}
+
+const FriendContext = createContext({} as {
   isFriendRequestPossible: (username: string) => Promise<{
     possible: boolean,
     error?: string
@@ -24,6 +18,8 @@ const FriendContext = createContext({
   sendFriendRequest: (username: string) => Promise<any>
   declineFriendRequest: (id: string) => Promise<any>
   acceptFriendRequest: (id: string) => Promise<any>
+  getFriends: () => Promise<any>
+  unfriend: (id: string) => Promise<any>
 })
 
 export default FriendContext

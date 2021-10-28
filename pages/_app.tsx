@@ -17,6 +17,8 @@ import {
   sendFriendRequest,
   declineFriendRequest,
   acceptFriendRequest,
+  getFriendList,
+  sendUnfriend,
 } from '@common/actions/userAPIActions'
 import { CDN_BASE_URL, WSS } from '@config/index'
 import SettingsContext from '@context/SettingsContext'
@@ -71,25 +73,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     }
   }
 
-  useEffect(() => {
-    fetchStrings(language)
-    const keysFromStorage: any = localStorage.getItem('settings')
-    if (
-      typeof window !== undefined &&
-      keysFromStorage &&
-      keysFromStorage !== 'undefined'
-    ) {
-      const keysJSON = JSON.parse(keysFromStorage)
-      if (keysJSON && keysJSON.fastKey) {
-        setKeys1(keysJSON)
-      }
-    }
-    // first try to load from localstorage and store in context
-    // actually, first try loading authed user data from local, //use user token instead, go right to profile!
-    // then load from firebase if there is one
-    // or create local user if there is none
-    // and then store in context
-
+  const loadUser = () => {
     const userTokenFromStorage: string | null = localStorage.getItem(
       'userToken'
     )
@@ -135,7 +119,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         setCurrentUser(userJSON)
       } else {
         const newUser: User = {
-          displayName: uuidv4(),
           teams: [],
         }
         setCurrentUser(newUser)
@@ -153,6 +136,28 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         setCurrentTeam(defaultTeam)
       }
     }
+  }
+
+  useEffect(() => {
+    fetchStrings(language)
+    const keysFromStorage: any = localStorage.getItem('settings')
+    if (
+      typeof window !== undefined &&
+      keysFromStorage &&
+      keysFromStorage !== 'undefined'
+    ) {
+      const keysJSON = JSON.parse(keysFromStorage)
+      if (keysJSON && keysJSON.fastKey) {
+        setKeys1(keysJSON)
+      }
+    }
+    // first try to load from localstorage and store in context
+    // actually, first try loading authed user data from local, //use user token instead, go right to profile!
+    // then load from firebase if there is one
+    // or create local user if there is none
+    // and then store in context
+
+    loadUser()
   }, [])
 
   useEffect(() => {
@@ -262,7 +267,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
       setIsSocketAuthenticated(false)
 
       // Create new socket
-      const id1 = currentUser?.googleId || currentUser?.displayName || uuidv4()
+      const id1 = currentUser?.googleId || uuidv4()
       const s: any = new WebSocket(`${WSS}${id1}`)
       setId(id1)
       setWsHeartbeat(s as WebSocketBase, '{"kind":"ping"}', {
@@ -338,7 +343,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     if (window.confirm(strings.clear_data_confirm)) {
       localStorage.clear()
       const newUser: User = {
-        displayName: uuidv4(),
         teams: [],
       }
       setCurrentUser(newUser)
@@ -350,14 +354,14 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const isFRPossible = async (username: string) => {
-    let result = await isFriendRequestPossible(username, userToken)
+    const result = await isFriendRequestPossible(username, userToken)
 
-    if (result.error === "Error: Request failed with status code 404") {
+    if (result.error === 'Error: Request failed with status code 404') {
       result.error = strings.user_does_not_exist_error
-    } else if (result.error === "Error: Request failed with status code 403") {
-      result.error = strings.fr_duplicate_error?.replace("%1", username)
-    } else if (result.error === "Error: Request failed with status code 409") {
-      result.error = strings.fr_conflict_error?.replace("%1", username)
+    } else if (result.error === 'Error: Request failed with status code 403') {
+      result.error = strings.fr_duplicate_error?.replace('%1', username)
+    } else if (result.error === 'Error: Request failed with status code 409') {
+      result.error = strings.fr_conflict_error?.replace('%1', username)
     }
 
     return result
@@ -367,12 +371,20 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     return sendFriendRequest(username, userToken)
   }
 
-  const declineFR = (id: string) => {
-    return declineFriendRequest(id, userToken)
+  const declineFR = (_id: string) => {
+    return declineFriendRequest(_id, userToken)
   }
 
-  const acceptFR = (id: string) => {
-    return acceptFriendRequest(id, userToken)
+  const acceptFR = (_id: string) => {
+    return acceptFriendRequest(_id, userToken)
+  }
+
+  const getFriends = () => {
+    return getFriendList(userToken)
+  }
+
+  const unfriend = (_id: string) => {
+    return sendUnfriend(_id, userToken)
   }
 
   return (
@@ -404,7 +416,13 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         >
           <IdContext.Provider value={{ id, setId }}>
             <UserContext.Provider
-              value={{ user: currentUser!, setUser, setTeams, setUsername }}
+              value={{
+                user: currentUser!,
+                setUser,
+                setTeams,
+                setUsername,
+                loadUser,
+              }}
             >
               <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
                 <SocketContext.Provider
@@ -416,7 +434,16 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                   }}
                 >
                   <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
-                    <FriendContext.Provider value={{ isFriendRequestPossible: isFRPossible, sendFriendRequest: sendFR, declineFriendRequest: declineFR, acceptFriendRequest: acceptFR}}>
+                    <FriendContext.Provider
+                      value={{
+                        isFriendRequestPossible: isFRPossible,
+                        sendFriendRequest: sendFR,
+                        declineFriendRequest: declineFR,
+                        acceptFriendRequest: acceptFR,
+                        getFriends,
+                        unfriend,
+                      }}
+                    >
                       <Component {...pageProps} />
                     </FriendContext.Provider>
                   </HistoryContext.Provider>

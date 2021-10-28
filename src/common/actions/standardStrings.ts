@@ -225,5 +225,16 @@ export default {
   fr_duplicate_error: "You've already sent a friend request to %1",
   fr_conflict_error: "You've already received a friend request from %1",
   send_friend_request: "Send friend request",
-  send: "Send"
+  send: "Send",
+  challenge: "Challenge",
+  unfriend: "Unfriend",
+  cancel: "Cancel",
+  no_team_with_format_error: "You don't have a team for the format %1",
+  accept: "Accept",
+  decline: "Decline",
+  confirm: "Confirm",
+  unfriend_confirm: "Friendship ended with %1",
+  unfriend_popup_title: "Unfriend %1?",
+  challenge_declined_title: "Challenge declined",
+  challenge_declined_message: "%1 declined your challenge."
 }

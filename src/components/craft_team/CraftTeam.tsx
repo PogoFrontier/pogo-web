@@ -11,7 +11,6 @@ import metaMap from '@common/actions/metaMap'
 import Loader from 'react-loader-spinner'
 import ErrorPopup from '@components/error_popup/ErrorPopup'
 import LanguageContext from '@context/LanguageContext'
-import SettingsContext from '@context/SettingsContext'
 import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
@@ -34,6 +33,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   updateTeam,
   onExit,
 }) => {
+  const [edited, setEdited] = useState(false)
   const [workingTeam, setWorkingTeam] = useState([] as TeamMember[])
   const [selectedPokemon, setSelectedPokemon] = useState<any | null>(null)
   const [addingMember, setAddingMember] = useState(false)
@@ -51,8 +51,10 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
 
-  const language = useContext(SettingsContext).language
-  const strings = useContext(LanguageContext).strings
+  const {
+    strings,
+    current: language
+  } = useContext(LanguageContext)
 
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
@@ -113,7 +115,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     // set loading if it needs too much time
     const timeout = setTimeout(() => setIsLoading(true), 1000)
 
-    if (selectedMeta in metaMap) {
+    if (edited && (selectedMeta in metaMap)) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
         selectedMeta,
@@ -137,10 +139,12 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
       } else {
         onExit()
       }
-    } else {
+    } else if(edited) {
       setError(strings.meta_not_existing.replace('%1', selectedMeta))
       setPopupTitle(strings.not_possible)
       setPopupButtons(undefined)
+    } else {
+      onExit()
     }
 
     clearTimeout(timeout)
@@ -167,6 +171,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     setEditingIndex(0)
     setWorkingTeam(newTeam)
     setAddingMember(false)
+    setEdited(true)
   }
 
   const saveTeam = async (team?: TeamMember[], name?: string) => {
@@ -186,6 +191,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
       members: team,
     }
     updateTeam(teamToUpdate)
+    setEdited(true)
   }
 
   const handleTeamNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -265,7 +271,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
           onClick={handleExit}
           disabled={isLoading}
         >
-          Exit
+          {strings.exit}
         </button>
         <button
           className="btn btn-secondary"

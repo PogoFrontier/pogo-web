@@ -1,5 +1,4 @@
 import API from '@config/API'
-import { supportedLanguages } from '@context/LanguageContext'
 import mapLanguage from './mapLanguage'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 
@@ -56,7 +55,6 @@ export const getValidateTeam = async (
   lang: string
 ) => {
   try {
-    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
     const res = await API.get(
       `api/validate/${team}/${meta.split(CODE.UnrankedSuffix)[0]}/${lang}`
     )
@@ -79,7 +77,6 @@ export const parseToRule = async (rule: string) => {
 
 export const getRandomPokemon = async (rule: string, lang: string) => {
   try {
-    lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
     const res = await API.get(`api/random/${rule}?language=${lang}`)
     return res.data
   } catch (err) {

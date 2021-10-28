@@ -25,7 +25,7 @@ const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> =
       onClick: () => {
         router.push('/login')
       },
-      className: 'btn btn-secondary',
+      className: 'btn btn-primary',
     },
   ]
   if (offerGuestUser) {
