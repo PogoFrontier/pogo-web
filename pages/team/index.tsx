@@ -413,8 +413,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
 const TeamPage = () => {
   // const { user } = useContext(UserContext)
-  const [metas] = useState(Object.keys(metaMap))
-  const [metaNames] = useState(metas.filter(meta => !metaMap[meta].random).map((meta) => metaMap[meta].name))
+  const [metas] = useState(Object.keys(metaMap).filter(meta => !metaMap[meta].random))
+  const [metaNames] = useState(metas.map((meta) => metaMap[meta].name))
   const [index, setIndex] = useState(0)
 
   // useEffect(() => {

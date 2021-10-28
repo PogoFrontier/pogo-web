@@ -30,6 +30,11 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
   },
+  'Brawler Cup': {
+    name: 'Brawler Cup',
+    maxCP: 1500,
+    movesetOption: 'original',
+  },
   'Specialist Cup': {
     name: 'Specialist Cup',
     maxCP: 1500,
