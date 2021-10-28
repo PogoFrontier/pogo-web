@@ -52,14 +52,12 @@ const MatchupPage = () => {
   const strings = useContext(LanguageContext).strings
 
   const onMessage = (message: MessageEvent) => {
-    console.log(message);
     if (message.data.startsWith('$end')) {
       const result = message.data.slice(4)
       endGame(result)
       return
     }
     if (message.data.startsWith('$yourTeamIs:')) {
-      console.log("your team is")
       const teamString = message.data.slice('$yourTeamIs:'.length)
       setTeam(JSON.parse(teamString))
       return
