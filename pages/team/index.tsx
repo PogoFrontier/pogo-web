@@ -190,7 +190,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         }
       }
 
-      let iv, level = 0;
+      let iv
+      let level = 0
       const p = await getPokemonData(speciesId, 'norestrictions')
       const bs = p.baseStats as BaseStatsProps
 

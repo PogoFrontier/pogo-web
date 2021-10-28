@@ -1,11 +1,16 @@
 import { FriendInfo } from '@context/FriendContext'
 import style from './style.module.scss'
 import classNames from 'classnames'
+import day from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
 interface FriendDisplayProps {
     friend: FriendInfo
     openPopup: (friend: FriendInfo) => void
 }
+
+const dayjs = day
+dayjs.extend(relativeTime)
 
 const FriendDisplay: React.FunctionComponent<FriendDisplayProps> = ({
     friend,
@@ -23,7 +28,7 @@ const FriendDisplay: React.FunctionComponent<FriendDisplayProps> = ({
                 {friend.username}
             </div>
             <div>
-                {friend.status || (Math.floor(new Date().getTime() / 1000) - (friend.lastActivity ? friend.lastActivity._seconds : 0)) + "s ago"}
+                {friend.status || friend.lastActivity ? dayjs.unix(friend.lastActivity!._seconds).fromNow() : "0s ago"}
             </div>
         </div>
     </div>)

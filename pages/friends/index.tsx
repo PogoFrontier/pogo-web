@@ -15,7 +15,6 @@ import FriendDisplay from '@components/friend_display/FriendDisplay'
 import FriendPopup from '@components/friend_popup/FriendPopup'
 import UnfriendPopup from '@components/unfriend_popup/UnfriendPopup'
 
-
 const FriendsPage = () => {
   const { user, setUser, loadUser } = useContext(UserContext)
   const { isSocketAuthenticated } = useContext(SocketContext)
