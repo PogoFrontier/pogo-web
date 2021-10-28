@@ -17,11 +17,7 @@
         "prettier": "prettier  --write **/*.{ts,tsx,js}",
         "lint:ts": "npm run prettier && tslint -c tslint.json -t stylish --fix {pages,src,server}/**/*.{ts,tsx}",
         "lint:scss": "stylelint --fix {src,pages}/**/*.scss",
-        "lint:types": "tsc -p . --noEmit",
-        "secrets": "npm run secrets:logout && cross-env-shell BW_SESSION=`bw login projectgrookey@gmail.com --raw` \"npm run secrets:sync\"",
-        "secrets:logout": "(bw logout || exit 0)",
-        "secrets:login": "bw login projectgrookey@gmail.com",
-        "secrets:sync": "bw sync && bw get item c5675478-77d1-41c3-bff3-aca7012a2a87 | fx .notes > \".env.local\""
+        "lint:types": "tsc -p . --noEmit"
     },
     "husky": {
         "hooks": {
@@ -64,6 +60,7 @@
         "@reach/combobox": "^0.13.2",
         "@reach/listbox": "^0.15.0",
         "@reach/menu-button": "^0.12.1",
+        "@reach/portal": "^0.16.2",
         "@reach/tabs": "^0.12.1",
         "@reach/tooltip": "^0.15.0",
         "@types/classnames": "^2.2.11",
@@ -109,7 +106,6 @@
     },
     "devDependencies": {
         "@babel/core": "7.9.0",
-        "@bitwarden/cli": "^1.13.3",
         "acorn": "7.1.1",
         "cross-env": "^7.0.3",
         "enzyme": "3.11.0",
