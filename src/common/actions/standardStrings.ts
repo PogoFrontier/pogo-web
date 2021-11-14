@@ -236,5 +236,8 @@ export default {
   unfriend_confirm: "Friendship ended with %1",
   unfriend_popup_title: "Unfriend %1?",
   challenge_declined_title: "Challenge declined",
-  challenge_declined_message: "%1 declined your challenge."
+  challenge_declined_message: "%1 declined your challenge.",
+  used_chargemove_message: "%1 used %2!",
+  it_was_shielded_message: "It was shielded!",
+  stat_change_message: "%1's stats were changed."
 }

@@ -29,6 +29,7 @@ import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
 import LanguageContext from '@context/LanguageContext'
+import { Message } from '@adibkhan/pogo-web-backend/handlers'
 
 interface CheckPayload {
   countdown: number
@@ -164,7 +165,8 @@ const GamePage = () => {
           return prev1
         })
         if (payload.update[0].message) {
-          setMessage(payload.update[0].message)
+          
+          setMessage(translateMessage(payload.update[0].message))
         }
         if (payload.update[0]?.wait) {
           setWait(payload.update[0]!.wait)
@@ -275,6 +277,28 @@ const GamePage = () => {
         strings.battle_start_countdown.replace('%1', String(payload.countdown))
       )
     }
+  }
+
+  const translateMessage = (input: string | Message[]) => {
+    if(typeof input === "string") {
+      return input;
+    }
+    let translatedMessage = "";
+    
+    input.forEach((message, index) => {
+      if(index !== 0) {
+        translatedMessage += " ";
+      }
+      let translation = strings[message.messageKey];
+      message.substitutions.forEach((sub, subIndex) => {
+        const needle = "%" + subIndex;
+        let replacement = sub.id;
+        // TODO: Translate the replacement according to sub.type
+        translation.replace(needle, replacement)
+      })
+    })
+
+    return translatedMessage;
   }
 
   const onFastMove = (data: Anim) => {
