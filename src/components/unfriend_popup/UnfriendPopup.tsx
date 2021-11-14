@@ -11,60 +11,58 @@ interface UnfriendPopupProps {
 
 const UnfriendPopup: React.FunctionComponent<UnfriendPopupProps> = ({
   friend,
-  onClose
+  onClose,
 }) => {
   const strings = useContext(LanguageContext).strings
   const { unfriend } = useContext(FriendContext)
-  const [status, setStatus] = useState<"default" | "error" | "success">("default")
-  const [err, setErr] = useState("")
+  const [status, setStatus] = useState<'default' | 'error' | 'success'>(
+    'default'
+  )
+  const [err, setErr] = useState('')
 
   const close = () => {
-    onClose(status !== "default")
+    onClose(status !== 'default')
   }
   const yes = () => {
-    unfriend(friend.id).then(_ => {
-      setStatus("success")
-    }).catch(err => {
-      setStatus("error")
-      setErr(err.toString())
-    })
+    unfriend(friend.id)
+      .then((_) => {
+        setStatus('success')
+      })
+      .catch((errException) => {
+        setStatus('error')
+        setErr(errException.toString())
+      })
   }
 
   return (
-    <Modal title={strings.unfriend_popup_title?.replace("%1", friend.username)} onClose={close}>
+    <Modal
+      title={strings.unfriend_popup_title?.replace('%1', friend.username)}
+      onClose={close}
+    >
+      {status === 'default' && (
+        <>
+          <button className="btn btn-negative" onClick={yes}>
+            {strings.yes}
+          </button>
+          <button className="btn btn-primary" onClick={close}>
+            {strings.no}
+          </button>
+        </>
+      )}
 
-      {(status === "default") && <>
-        <button
-          className="btn btn-negative"
-          onClick={yes}
-        >
-          {strings.yes}
-        </button>
-        <button
-          className="btn btn-primary"
-          onClick={close}
-        >
-          {strings.no}
-        </button>
-      </>}
+      {status === 'success' && (
+        <>
+          {' '}
+          <div>{strings.unfriend_confirm?.replace('%1', friend.username)}</div>
+          {status === 'success' && (
+            <button className="btn btn-primary" onClick={close}>
+              {strings.close}
+            </button>
+          )}
+        </>
+      )}
 
-      {(status === "success") && <> <div>
-          {strings.unfriend_confirm?.replace("%1", friend.username)}
-        </div>
-
-        {(status === "success") && <button
-          className="btn btn-primary"
-          onClick={close}
-        >
-          {strings.close}
-        </button>}
-      </>}
-
-      {!!err &&
-        <div className={style.errormessage}>
-          {err}
-        </div>}
-
+      {!!err && <div className={style.errormessage}>{err}</div>}
     </Modal>
   )
 }

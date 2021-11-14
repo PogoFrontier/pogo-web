@@ -1,10 +1,19 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useCallback } from 'react'
 import { TeamMember } from '@adibkhan/pogo-web-backend'
 import style from './select.module.scss'
 import classnames from 'classnames'
 import ImageHandler from '@common/actions/getImages'
 import LanguageContext from '@context/LanguageContext'
 import TriangleTooltip from '@components/tooltip/TriangleTooltip'
+import { useMoves } from '../contexts/PokemonMovesContext'
+
+const toTitleCase = (text: string) => {
+  return text
+    .toLowerCase()
+    .split('_')
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ')
+}
 
 interface SelectProps {
   team: TeamMember[]
@@ -33,9 +42,25 @@ const Button: React.FC<ButtonProps> = ({ x, onRegister, i, value }) => {
     onRegister(i)
   }
 
+  const [moves] = useMoves() || []
+  const { current } = useContext(LanguageContext)
+
+  const getMoveName = useCallback(
+    (move: string): string => {
+      return (
+        moves?.[move]?.name[current] ||
+        moves?.[move]?.name.en ||
+        toTitleCase(move)
+      )
+    },
+    [moves, current]
+  )
+
   return (
     <TriangleTooltip
-      label={`${x.fastMove}, ${x.chargeMoves.join(', ')}`}
+      label={`${getMoveName(x.fastMove)}, ${x.chargeMoves
+        .map(getMoveName)
+        .join(', ')}`}
       key={i}
     >
       <button className={style.select} type="button" onClick={onClick}>

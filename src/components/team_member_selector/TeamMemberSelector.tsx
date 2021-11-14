@@ -20,6 +20,7 @@ import SettingsContext from '@context/SettingsContext'
 import LanguageContext from '@context/LanguageContext'
 import mapLanguage from '@common/actions/mapLanguage'
 import TriangleTooltip from '@components/tooltip/TriangleTooltip'
+import { useMoves } from '../contexts/PokemonMovesContext'
 
 // TODO: find better type definition for speciesName
 type pokemonType = {
@@ -70,7 +71,7 @@ const TeamMemberSelector = (props: {
 
   const imageHandler = new ImageHandler()
   const settings = useContext(SettingsContext)
-  const strings = useContext(LanguageContext).strings
+  const { strings, current } = useContext(LanguageContext)
 
   useEffect(() => {
     if (member && member.speciesName) {
@@ -140,7 +141,11 @@ const TeamMemberSelector = (props: {
       Array.from(suggestions.values())
         .filter((suggestion) => {
           // In case a pokemon isn't translated yet, don't include it
-          if (!suggestion || !suggestion.speciesName || !suggestion.speciesName[mapLanguage(settings.language)]) {
+          if (
+            !suggestion ||
+            !suggestion.speciesName ||
+            !suggestion.speciesName[mapLanguage(settings.language)]
+          ) {
             return false
           }
 
@@ -456,6 +461,8 @@ const TeamMemberSelector = (props: {
     )
   }
 
+  const [movesMap] = useMoves() || []
+
   return (
     <div className={style.container}>
       {selectedPokemonData && addToBox ? (
@@ -534,7 +541,9 @@ const TeamMemberSelector = (props: {
             >
               {selectedPokemonData.fastMoves.map((move: string) => (
                 <option value={move} key={move}>
-                  {toTitleCase(move)}
+                  {movesMap?.[move]?.name?.[current]
+                    ? movesMap[move].name[current]
+                    : toTitleCase(move)}
                 </option>
               ))}
             </select>
@@ -555,7 +564,9 @@ const TeamMemberSelector = (props: {
               >
                 {selectedPokemonData.chargedMoves.map((move: string) => (
                   <option value={move} key={move}>
-                    {toTitleCase(move)}
+                    {movesMap?.[move]?.name?.[current]
+                      ? movesMap[move].name[current]
+                      : toTitleCase(move)}
                   </option>
                 ))}
               </select>
@@ -568,7 +579,9 @@ const TeamMemberSelector = (props: {
               >
                 {selectedPokemonData.chargedMoves.map((move: string) => (
                   <option value={move} key={move}>
-                    {toTitleCase(move)}
+                    {movesMap?.[move]?.name?.[current]
+                      ? movesMap[move].name[current]
+                      : toTitleCase(move)}
                   </option>
                 ))}
               </select>

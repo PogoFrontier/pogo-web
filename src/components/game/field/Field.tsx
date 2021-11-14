@@ -1,8 +1,9 @@
 import { Anim } from '@adibkhan/pogo-web-backend'
 import { Actions } from '@adibkhan/pogo-web-backend/actions'
+import { useMoves } from '../../contexts/PokemonMovesContext'
 import LanguageContext from '@context/LanguageContext'
 import classnames from 'classnames'
-import { useEffect, useState, useRef, useContext } from 'react'
+import { useEffect, useState, useRef, useContext, useCallback } from 'react'
 import Character, { CharacterProps } from './Character'
 import style from './field.module.scss'
 
@@ -29,7 +30,40 @@ const AlwaysScrollToBottom = () => {
   return <div ref={elementRef} />
 }
 
+const toTitleCase = (text: string) => {
+  return text
+    .toLowerCase()
+    .split('_')
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ')
+}
+
 const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
+  const [moves] = useMoves() || []
+  const { current } = useContext(LanguageContext)
+
+  const getMoveName = useCallback(
+    (move: string): string => {
+      return (
+        moves?.[move]?.name[current] ||
+        moves?.[move]?.name.en ||
+        toTitleCase(move)
+      )
+    },
+    [moves, current]
+  )
+
+  const eventuallyReplaceMove = useCallback((sentence: string): string => {
+    const regex = /.*?{(.+?)}.*/
+    const matches = regex.exec(sentence)
+    const toReplace = matches?.[1]
+    let retval = sentence
+    if (toReplace) {
+      retval = sentence.replace(`{${toReplace}}`, getMoveName(toReplace))
+    }
+    return retval
+  }, [])
+
   const render = () => {
     const strings = useContext(LanguageContext).strings
     switch (value.type) {
@@ -42,7 +76,7 @@ const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
             <strong
               className={classnames([style.move, style[value.move!.type]])}
             >
-              {value.move!.moveId}
+              {getMoveName(value.move!.moveId)}
             </strong>
             .
           </>
@@ -54,7 +88,7 @@ const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
     }
     const v = value as Message
     if (v.message) {
-      return <>{v.message}</>
+      return <>{eventuallyReplaceMove(v.message)}</>
     }
   }
   return (
