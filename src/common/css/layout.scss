@@ -1,103 +1,141 @@
 @import 'colors';
 @import 'variables';
+@font-face {
+    font-family: 'Graphik';
+    font-weight: 900;
+    src: url('../../assets/fonts/GraphikBlack.otf') format('opentype');
+}
 
 @font-face {
-  font-family: 'Graphik';
-  font-weight: 900;
-  src: url('../../assets/fonts/GraphikBlack.otf') format('opentype');
+    font-family: 'Graphik';
+    font-weight: 700;
+    src: url('../../assets/fonts/GraphikBold.otf') format('opentype');
 }
+
 @font-face {
-  font-family: 'Graphik';
-  font-weight: 700;
-  src: url('../../assets/fonts/GraphikBold.otf') format('opentype');
+    font-family: 'Graphik';
+    font-weight: 500;
+    src: url('../../assets/fonts/GraphikMedium.otf') format('opentype');
 }
+
 @font-face {
-  font-family: 'Graphik';
-  font-weight: 500;
-  src: url('../../assets/fonts/GraphikMedium.otf') format('opentype');
+    font-family: 'Graphik';
+    font-weight: 400;
+    src: url('../../assets/fonts/GraphikRegular.otf') format('opentype');
 }
+
 @font-face {
-  font-family: 'Graphik';
-  font-weight: 400;
-  src: url('../../assets/fonts/GraphikRegular.otf') format('opentype');
-}
-@font-face {
-  font-family: 'Graphik';
-  font-weight: 600;
-  src: url('../../assets/fonts/GraphikSemibold.otf') format('opentype');
+    font-family: 'Graphik';
+    font-weight: 600;
+    src: url('../../assets/fonts/GraphikSemibold.otf') format('opentype');
 }
 
 html {
-  font-family: Graphik,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+    font-family: Graphik, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
 }
 
 body {
-  margin: 0;
-  * {
-    box-sizing: border-box;
-  }
+    margin: 0;
+    * {
+        box-sizing: border-box;
+    }
 }
 
 h1 {
-  font-weight: 600;
+    font-weight: 600;
+}
+
+hr {
+    border-color: $color-overlay-disabled;
+    margin: 1em 0;
 }
 
 .btn {
-  min-width: 8rem;
-  padding: 0.4rem 1em;
-  border-radius: $border-radius;
-  border: none;
-  cursor: pointer;
-  @include md {
-    font-size: 1.4rem;
-    min-width: 10rem;
-  }
-  &:active {
-    transform: scale(0.95);
-  }
-  &:disabled {
-    cursor: default;
-  }
-
-  &.btn-primary {
-    font-size: 1.4rem;
-    min-width: 10rem;
-    background-color: $color-brand-primary;
-    font-weight: bold;
-    box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
-    &:hover {
-      background-color: darken($color-brand-primary, 10%);
+    min-width: 8rem;
+    padding: 0.4rem 1em;
+    border-radius: $border-radius;
+    border: none;
+    cursor: pointer;
+    @include md {
+        font-size: 1.4rem;
+        min-width: 10rem;
+    }
+    &:active {
+        transform: scale(0.95);
     }
     &:disabled {
-      background-color: $color-neutral-light;
-      box-shadow: none;
+        cursor: default;
     }
-  }
-
-  &.btn-secondary {
-    background-color: $color-brand-secondary;
-    &:hover {
-      background-color: darken($color-brand-secondary, 10%);
+    &.btn-primary {
+        font-size: 1.4rem;
+        min-width: 10rem;
+        background-color: $color-brand-primary;
+        font-weight: bold;
+        box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
+        &:hover {
+            background-color: darken($color-brand-primary, 10%);
+        }
+        &:disabled {
+            background-color: $color-neutral-light;
+            box-shadow: none;
+        }
     }
-  }
-
-  &.btn-negative {
-    background-color: $color-brand-negative;
-    &:hover {
-      background-color: darken($color-brand-negative, 10%);
+    &.btn-icon {
+        height: 2rem;
+        min-width: 2rem;
+        width: 2rem;
+        text-align: center;
+        padding: 0;
+        svg {
+            display: block;
+            margin: auto;
+            height: 100%;
+            width: 100%;
+            fill: $color-white;
+        }
+        background-color: $color-brand-primary;
+        &:hover {
+            background-color: darken($color-brand-primary, 10%);
+        }
     }
-  }
-
-  &.noshrink {
-    font-size: 1.4rem;
-    min-width: 10rem;
-  }
+    &.btn-positive {
+        background-color: $color-brand-positive;
+        &:hover {
+            background-color: darken($color-brand-positive, 10%);
+        }
+    }
+    &.btn-secondary {
+        background-color: $color-brand-secondary;
+        &:hover {
+            background-color: darken($color-brand-secondary, 10%);
+        }
+    }
+    &.btn-negative {
+        background-color: $color-brand-negative;
+        &:hover {
+            background-color: darken($color-brand-negative, 10%);
+        }
+    }
+    &.noshrink {
+        font-size: 1.4rem;
+        min-width: 10rem;
+    }
 }
 
 img {
-  user-select:none;
+    user-select: none;
 }
 
 .no-click {
-  pointer-events: none;
+    pointer-events: none;
+}
+
+.row-spaced {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.large {
+    font-size: 1.2em;
 }

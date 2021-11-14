@@ -1,0 +1,22 @@
+@import 'variables';
+@import 'colors';
+.errormessage {
+    color: $color-error
+}
+
+.actions {
+    text-align: center;
+    margin-top: 1em;
+    button {
+        margin-right: 1em;
+    }
+    button:last-of-type {
+        margin-right: 0;
+    }
+}
+
+.game {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

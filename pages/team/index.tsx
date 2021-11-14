@@ -3,7 +3,6 @@ import UserContext, { UserTeam } from '@context/UserContext'
 import React, { useContext, useEffect, useState } from 'react'
 import CraftTeam from '@components/craft_team/CraftTeam'
 // import { updateUserTeam } from '@common/actions/userAPIActions'
-import { v4 as uuidv4 } from 'uuid'
 import ImageHandler from '@common/actions/getImages'
 import Split from '@components/split/Split'
 import { TabPanel } from '@reach/tabs'
@@ -22,23 +21,9 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import ImportTeam from '@components/import_team/ImportTeam'
 import calculateStats from '@common/actions/calculateStats'
 import LanguageContext from '@context/LanguageContext'
-import SettingsContext from '@context/SettingsContext'
 import metaMap from '@common/actions/metaMap'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
-
-interface TeamExportProps {
-  speciesId: string
-  name?: string
-  chargeMoves: string[]
-  fastMove: string
-  level: number
-  iv: {
-    atk: number
-    def: number
-    hp: number
-  }
-  shiny?: boolean
-}
+import getIVs from '@common/actions/getIVs'
 
 interface ContentProps {
   meta: string
@@ -51,7 +36,7 @@ interface ButtonProps {
   className: string
 }
 
-const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
+const Content: React.FC<ContentProps> = ({ meta }) => {
   const { user, setTeams } = useContext(UserContext)
   const [isCrafting, setIsCrafting] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState<UserTeam | null>(null)
@@ -69,8 +54,10 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   )
   const [isImportLoading, setIsImportLoading] = useState(false)
 
-  const strings = useContext(LanguageContext).strings
-  const language = useContext(SettingsContext).language
+  const {
+    strings, 
+    current: language
+  } = useContext(LanguageContext)
 
   useEffect(() => {
     setIsLoading(false)
@@ -90,6 +77,15 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
       }
 
       setTeams(user.teams)
+    }
+  }
+
+  const getNewName = (action: string): string => {
+    for (let iteration = 1; true; iteration++) {
+      const suggestion = action + "_" + iteration
+      if(!user.teams.map(team => team.name).includes(suggestion)) {
+        return suggestion
+      }
     }
   }
 
@@ -116,73 +112,33 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
     setIsRandomTeamLoading(false)
 
     updateTeam({
-      name: Math.random().toString(36).substring(7),
+      name: getNewName("Random"),
       id: Math.random().toString(36).substring(7),
       format: meta,
       members,
     })
   }
 
-  async function loadTeam(t: UserTeam) {
-    if (!t || !t.members || !t.format || !t.name) {
-      throw new Error()
-    }
-    return Promise.all(
-      t.members.map(async (x) => {
-        const p = await getPokemonData(x.speciesId, 'norestrictions')
-        const bs = p.baseStats as BaseStatsProps
-        const cp = getCP(bs, [x.level, x.iv.atk, x.iv.def, x.iv.hp])
-        const stats = calculateStats(bs, x.level, x.iv.atk, x.iv.def, x.iv.hp)
-        const m = {
-          speciesId: x.speciesId,
-          name: x.name,
-          chargeMoves: x.chargeMoves,
-          fastMove: x.fastMove,
-          level: x.level,
-          iv: x.iv,
-          shiny: x.shiny,
-          speciesName: p.speciesName,
-          cp,
-          types: p.types,
-          sid: p.sid,
-          hp: stats.hp,
-          atk: stats.atk,
-          def: stats.def,
-          baseStats: bs,
-        }
-        return m
-      })
-    )
-  }
-
   async function handleImportTeam() {
     setIsImportLoading(true)
     try {
-      const parsedImport = await JSON.parse(importString)
-      loadTeam(parsedImport).then(async (members) => {
-        const result = await getValidateTeam(
-          JSON.stringify(members),
-          parsedImport.format,
-          language
-        )
-        if (result.message) {
-          setError(result.message)
-          setPopupTitle(strings.invalid_team)
-          setPopupButtons(undefined)
-        } else {
-          updateTeam({
-            name: parsedImport.name,
-            id: uuidv4(),
-            format: parsedImport.format,
-            members,
-          })
-          if (parsedImport.format !== meta) {
-            switchMeta(parsedImport.format)
-          }
-          setIsImportingTeam(false)
-        }
-        setIsImportLoading(false)
-      })
+      const importedTeam = await unformatTeam(importString)
+
+      const result = await getValidateTeam(
+        JSON.stringify(importedTeam.members),
+        meta,
+        language
+      )
+      if (result.message) {
+        setError(result.message)
+        setPopupTitle(strings.invalid_team)
+        setPopupButtons(undefined)
+      } else {
+        updateTeam(importedTeam)
+        setIsImportingTeam(false)
+      }
+      setIsImportLoading(false)
+
     } catch (error) {
       setError(strings.invalid_team_object)
       setPopupTitle(strings.invalid_team)
@@ -203,6 +159,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   }
 
   const cancelTeamImport = () => {
+    setIsImportLoading(false)
     setIsImportingTeam(false)
   }
 
@@ -211,24 +168,77 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
   }
 
   const formatTeam = (t: UserTeam): string => {
-    const members = t.members.map((x) => {
-      const s: TeamExportProps = {
-        speciesId: x.speciesId,
-        name: x.name,
-        chargeMoves: x.chargeMoves,
-        fastMove: x.fastMove,
-        level: x.level,
-        iv: x.iv,
-        shiny: x.shiny,
+    return t.members.map((poke) => {
+      return  [
+        [poke.speciesId, poke.fastMove, ...poke.chargeMoves, poke.level, poke.iv.atk, poke.iv.def, poke.iv.hp].join(","),
+        poke.name || "",
+        poke.shiny ? "SHINY" : "NOTSHINY"
+      ].join("|")
+    }).join("\n");
+  }
+
+  const unformatTeam = async (s: string): Promise<UserTeam> => {
+    const members: TeamMember[] = await Promise.all( s.split("\n").map(async line => {
+
+      const [prefix, nickname, isShinyString] = line.split("|")
+      let [speciesId, fastMove, chargeMove1, chargeMove2, levelString, atkIvString, defIvString, hpIvString] = prefix.split(",")
+
+      if(speciesId?.endsWith("-shadow")) {
+        speciesId = speciesId.split("-shadow")[0]
+        if(!speciesId.endsWith("_shadow")) {
+          speciesId = speciesId + "_shadow"
+        }
       }
-      return s
-    })
-    const d = {
-      name: t.name,
-      format: t.format,
+
+      let iv
+      let level = 0
+      const p = await getPokemonData(speciesId, 'norestrictions')
+      const bs = p.baseStats as BaseStatsProps
+
+      if (!levelString || !atkIvString || !defIvString || !hpIvString) {
+        const cap = metaMap[meta].maxCP
+        const ivs = getIVs({
+          pokemon: p,
+          targetCP: cap ? cap : 10000,
+        })[0]
+        iv = ivs.ivs
+        level = ivs.level
+        
+      } else {
+        iv = {
+          atk: +atkIvString,
+          def: +defIvString,
+          hp: +hpIvString
+        }
+        level = +levelString
+      }
+
+      const cp = getCP(bs, [level, iv.atk, iv.def, iv.hp])
+      const stats = calculateStats(bs, level, iv.atk, iv.def, iv.hp)
+
+      return {
+        speciesId,
+        speciesName: p.speciesName[language],
+        name: nickname || undefined,
+        shiny: isShinyString === "SHINY",
+        fastMove,
+        chargeMoves: [chargeMove1, chargeMove2] as [string, string],
+        level,
+        iv,
+        baseStats: bs,
+        ...stats,
+        cp,
+        types: p.types,
+        sid: p.sid
+      }
+    }))
+
+    return {
+      name: getNewName("Import"),
+      id: Math.random().toString(36).substring(7),
+      format: meta,
       members,
     }
-    return JSON.stringify(d)
   }
 
   const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -404,7 +414,7 @@ const Content: React.FC<ContentProps> = ({ meta, switchMeta }) => {
 
 const TeamPage = () => {
   // const { user } = useContext(UserContext)
-  const [metas] = useState(Object.keys(metaMap))
+  const [metas] = useState(Object.keys(metaMap).filter(meta => !metaMap[meta].random))
   const [metaNames] = useState(metas.map((meta) => metaMap[meta].name))
   const [index, setIndex] = useState(0)
 

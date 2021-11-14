@@ -2,7 +2,7 @@
 @import 'colors';
 .root {
     height: 100%;
-    background-image: url('../src/assets/img/home.jpg');
+    background-image: url('../../src/assets/img/home.jpg');
     background-position: center;
     background-size: cover;
     overflow-x: hidden;
@@ -14,7 +14,7 @@
     width: 100%;
     @include md() {
         display: grid;
-        grid-template-columns: 50% 50%;
+        grid-template-columns: auto auto;
         column-gap: 2em;
         row-gap: 2em;
         max-width: $xl;
@@ -31,6 +31,7 @@
     }
     &.info {
         padding: 1em;
+        margin-bottom: 2em;
     }
     @include md() {
         margin-bottom: 0;

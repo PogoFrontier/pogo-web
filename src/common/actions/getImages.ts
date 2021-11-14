@@ -25,6 +25,9 @@ class ImageHandler {
   getProfile(id: number) {
     return `${this.baseUrl}/profiles/${id}.png`
   }
+  getQuestionmark() {
+    return this.getMini(6459);
+  }
 }
 
 export default ImageHandler

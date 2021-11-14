@@ -1,0 +1,34 @@
+@import 'variables';
+@import 'colors';
+
+.teamPreview {
+  display: flex;
+  flex-grow: 1;
+  padding-left: 1em;
+  
+}
+
+.teamTitle {
+  font-size: large;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  strong {
+    font-size: 1.3em;
+  }
+}
+.member {
+	height: 2.3em;
+	width: 2.3em;
+	object-fit: contain;
+}
+.members {
+	.member {
+		@include md() {
+		height: 3em;
+		width: 3em;
+		}
+	}
+	.member + .member {
+		margin-left: 1em;
+	}
+}

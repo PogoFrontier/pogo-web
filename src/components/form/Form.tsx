@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import SocketContext from '@context/SocketContext'
 import style from './form.module.scss'
 import TeamContext from '@context/TeamContext'
@@ -14,37 +13,38 @@ import RoomModal from '@components/room_modal/RoomModal'
 import { SERVER } from '@config/index'
 import axios from 'axios'
 import LanguageContext from '@context/LanguageContext'
-import { getValidateTeam } from '@common/actions/pokemonAPIActions'
-import SettingsContext from '@context/SettingsContext'
-import IdContext from '@context/IdContext'
 import metaMap from '@common/actions/metaMap'
 
-const Form: React.FunctionComponent = () => {
-  const [error, setError] = useState('')
-  const [room, setRoom] = useState('')
+interface FormProps {
+  joinRoom: (roomId?: string) => void
+  hooks: [string, (err: string) => void, string, (room: string) => void, string, (state: "quick" | "loading") => void]
+  validate: () => Promise<boolean>
+}
+
+const Form: React.FunctionComponent<FormProps> = ({
+  joinRoom,
+  hooks,
+  validate
+}) => {
   const {
     socket,
     isSocketAuthenticated,
-    setIsSocketAuthenticated,
   } = useContext(SocketContext)
   const team = useContext(TeamContext).team
   let teamMembers: TeamMember[]
   if (team) {
     teamMembers = team.members
   }
-  const [state, setState] = useState<'quick' | 'loading'>('quick')
   const [showRoom, setShowRoom] = useState(false)
-  const router = useRouter()
   // matchmaking
   const [isMatchmaking, setIsMatchmaking] = useState(false)
   const [showUnauthenticatedPopup, setUnauthenticatedPopup] = useState(false)
   const [offerGuestUser, setOfferGuestUser] = useState(false)
+  const [ error, setError, room, setRoom, state, setState ] = hooks
 
   const [count, setCount] = useState(-1)
 
   const strings = useContext(LanguageContext).strings
-  const language = useContext(SettingsContext).language
-  const { setId } = useContext(IdContext)
 
   async function fetchCount() {
     const res = await axios.get(`${SERVER}api/room/status`)
@@ -57,60 +57,6 @@ const Form: React.FunctionComponent = () => {
   useEffect(() => {
     fetchCount()
   }, [])
-
-  socket.onmessage = (msg: MessageEvent) => {
-    if (msg.data.startsWith('$Authentication')) {
-      const success = msg.data.startsWith('$Authentication Success')
-      setIsSocketAuthenticated(success)
-      if (success && msg.data.length > '$Authentication Success'.length) {
-        setId(msg.data.split(': ')[1])
-      }
-    } else if (msg.data.startsWith('$error')) {
-      const data = msg.data.slice(6)
-      setState('quick')
-      setError(data)
-    } else if (msg.data.startsWith('$start')) {
-      router.push(`/matchup/${room}`)
-    } else if (msg.data.startsWith('$PROMT_JOIN')) {
-      const roomId = msg.data.slice('$PROMT_JOIN'.length)
-      joinRoom(roomId)
-    }
-  }
-
-  async function validate(): Promise<boolean> {
-    const result = await getValidateTeam(
-      JSON.stringify(teamMembers),
-      team.format,
-      language
-    )
-    if (result.message) {
-      setError(result.message)
-      return false
-    }
-    return true
-  }
-
-  function joinRoom(roomId?: string) {
-    if (!team.format) {
-      return
-    }
-    if (roomId) {
-      setRoom(roomId)
-    } else {
-      roomId = room
-    }
-
-    // Connected, let's sign-up for to receive messages for this room
-    const data = {
-      type: CODE.room,
-      payload: {
-        room: roomId,
-        format: team.format,
-        team: teamMembers,
-      },
-    }
-    socket.send(JSON.stringify(data))
-  }
 
   function join() {
     if (!isSocketAuthenticated) {

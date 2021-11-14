@@ -8,12 +8,22 @@ export interface UserTeam {
   members: TeamMember[]
 }
 
+export interface FriendRequest {
+  id: string
+  username: string
+}
+
 export interface User {
   googleId?: string
   username?: string
-  displayName: string | null
   email?: string | null
   teams: UserTeam[]
+  requests?: FriendRequest[]
+  battleHistory?: {
+    googleId: string
+    username: string
+    isGuest: boolean
+  }[]
   createdAt?: string
   lastLogin?: string
   isDeleted?: boolean /* ,
@@ -28,6 +38,12 @@ const UserContext = createContext({
   setTeams: (_teams: any[]) => {
     return
   },
+  setUsername: async (_username: string) => {
+    return
+  },
+  loadUser: () => {
+    return
+  }
 })
 
 export default UserContext

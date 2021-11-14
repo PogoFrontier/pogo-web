@@ -5,6 +5,7 @@ const metaMap: {
     movesetOption: 'original' | 'mainseries' | 'norestrictions'
     classes?: string[]
     unranked?: boolean
+    random?: boolean
   }
 } = {
   'Great League': {
@@ -18,13 +19,19 @@ const metaMap: {
     movesetOption: 'original',
     unranked: true,
   },
-  'Atlantis Field': {
-    name: 'Atlantis Field',
+  'Autorekt': {
+    name: 'Autorekt',
+    maxCP: 1500,
+    movesetOption: 'original',
+    random: true
+  },
+  'Lunar Cup': {
+    name: 'Lunar Cup',
     maxCP: 1500,
     movesetOption: 'original',
   },
-  '2021 Continentals': {
-    name: '2021 Continentals',
+  'Brawler Cup': {
+    name: 'Brawler Cup',
     maxCP: 1500,
     movesetOption: 'original',
   },
