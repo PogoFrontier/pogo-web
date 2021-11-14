@@ -83,7 +83,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   const getNewName = (action: string): string => {
     for (let iteration = 1; true; iteration++) {
       const suggestion = action + "_" + iteration
-      if(!user.teams.map(team => team.name).includes(suggestion)) {
+      if(!user.teams.map(_team => _team.name).includes(suggestion)) {
         return suggestion
       }
     }
@@ -181,8 +181,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     const members: TeamMember[] = await Promise.all( s.split("\n").map(async line => {
 
       const [prefix, nickname, isShinyString] = line.split("|")
-      let [speciesId, fastMove, chargeMove1, chargeMove2, levelString, atkIvString, defIvString, hpIvString] = prefix.split(",")
-
+      const [_speciesId, fastMove, chargeMove1, chargeMove2, levelString, atkIvString, defIvString, hpIvString] = prefix.split(",")
+      let speciesId = _speciesId
       if(speciesId?.endsWith("-shadow")) {
         speciesId = speciesId.split("-shadow")[0]
         if(!speciesId.endsWith("_shadow")) {

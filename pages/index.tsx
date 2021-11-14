@@ -30,10 +30,7 @@ const HomePage = () => {
   const user = useContext(UserContext).user
   const { setTeam } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
-  const {
-    strings,
-    current: language
-  } = useContext(LanguageContext)
+  const { strings, current: language } = useContext(LanguageContext)
   const {
     socket,
     isSocketAuthenticated,
@@ -64,12 +61,12 @@ const HomePage = () => {
 
   const onSelect = (id: string) => {
     let newTeam = user.teams.find((x) => x.id === id)
-    if (id.startsWith("randomMeta:")) {
+    if (id.startsWith('randomMeta:')) {
       newTeam = {
-        name: "random",
-        id: id,
-        format: id.substr("randomMeta:".length),
-        members: []
+        name: 'random',
+        id,
+        format: id.substr('randomMeta:'.length),
+        members: [],
       }
     }
     if (newTeam) {
