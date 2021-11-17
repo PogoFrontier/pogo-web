@@ -6,7 +6,6 @@ import metaMap from '@common/actions/metaMap'
 import LanguageContext from '@context/LanguageContext'
 import { StringsType } from '@common/actions/getLanguage'
 
-
 function truncateString(str: string, num: number) {
   if (str.length > num) {
     return str.slice(0, num) + '...'
@@ -19,16 +18,13 @@ const TeamPreview = () => {
   const { team } = useContext(TeamContext)
   const imagesHandler = new ImageHandler()
   const strings: StringsType = useContext(LanguageContext).strings
-  metaMap[team?.format]?.random
 
-  return (<div className={style.teamPreview}>
+  return (
+    <div className={style.teamPreview}>
       <div>
         <p className={style.teamTitle}>
           <strong>
-            {team.name
-              ? truncateString(team.name, 8)
-              : strings.your_team}{' '}
-            /{' '}
+            {team.name ? truncateString(team.name, 8) : strings.your_team} /{' '}
           </strong>
           {team.format ? metaMap[team.format].name : ''}
         </p>
@@ -43,17 +39,19 @@ const TeamPreview = () => {
                 alt={member.speciesName}
               />
             ))}
-        {metaMap[team?.format]?.random && [1,1,1,1,1,1].map((_, i) => (
-          <img
-            key={i}
-            className={style.member}
-            src={imagesHandler.getQuestionmark()}
-            alt={"random member"}
-          />
-        ))}
+          {metaMap[team?.format]?.random &&
+            [1, 1, 1, 1, 1, 1].map((_, i) => (
+              <img
+                key={i}
+                className={style.member}
+                src={imagesHandler.getQuestionmark()}
+                alt={'random member'}
+              />
+            ))}
         </div>
       </div>
-    </div>)
+    </div>
+  )
 }
 
 export default TeamPreview

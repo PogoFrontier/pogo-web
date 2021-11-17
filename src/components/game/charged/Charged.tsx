@@ -3,6 +3,7 @@ import { Icon, IconName } from '@components/icon/Icon'
 import classnames from 'classnames'
 import style from './charged.module.scss'
 import SettingsContext from '@context/SettingsContext'
+import LanguageContext from '@context/LanguageContext'
 import { useContext } from 'react'
 import getKeyDescription from '@common/actions/getKeyDescription'
 
@@ -33,6 +34,8 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
   currentMove,
   bufferedMove,
 }) => {
+  const { current } = useContext(LanguageContext)
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     e.stopPropagation()
@@ -79,7 +82,9 @@ const ChargedButton: React.FunctionComponent<ChargedButtonProps> = ({
           <Icon name={move.type as IconName} size="medium" />
         </div>
       </button>
-      <span className={style.label}>{move.name}</span>
+      <span className={style.label}>
+        {move.name[current] || move.name.en}
+      </span>
     </div>
   )
 }

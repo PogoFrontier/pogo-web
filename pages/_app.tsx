@@ -32,6 +32,7 @@ import mapLanguage from '@common/actions/mapLanguage'
 import getUserToken from '@common/actions/getUserToken'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import FriendContext from '@context/FriendContext'
+import PokemonMovesContextProvider from '../src/components/contexts/PokemonMovesContext'
 
 /**
  * NextJS wrapper
@@ -396,63 +397,67 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         />
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
-      <SettingsContext.Provider
-        value={{
-          showKeys,
-          keys,
-          setShowKeys,
-          setKeys,
-          clear,
-          language,
-          setLanguage,
-        }}
-      >
-        <LanguageContext.Provider
+      <PokemonMovesContextProvider>
+        <SettingsContext.Provider
           value={{
-            languages: supportedLanguages,
-            strings,
-            current: mapLanguage(language),
+            showKeys,
+            keys,
+            setShowKeys,
+            setKeys,
+            clear,
+            language,
+            setLanguage,
           }}
         >
-          <IdContext.Provider value={{ id, setId }}>
-            <UserContext.Provider
-              value={{
-                user: currentUser!,
-                setUser,
-                setTeams,
-                setUsername,
-                loadUser,
-              }}
-            >
-              <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
-                <SocketContext.Provider
-                  value={{
-                    socket,
-                    isSocketAuthenticated,
-                    setIsSocketAuthenticated,
-                    connect,
-                  }}
-                >
-                  <HistoryContext.Provider value={{ prev: prevRoute, routing }}>
-                    <FriendContext.Provider
-                      value={{
-                        isFriendRequestPossible: isFRPossible,
-                        sendFriendRequest: sendFR,
-                        declineFriendRequest: declineFR,
-                        acceptFriendRequest: acceptFR,
-                        getFriends,
-                        unfriend,
-                      }}
+          <LanguageContext.Provider
+            value={{
+              languages: supportedLanguages,
+              strings,
+              current: mapLanguage(language),
+            }}
+          >
+            <IdContext.Provider value={{ id, setId }}>
+              <UserContext.Provider
+                value={{
+                  user: currentUser!,
+                  setUser,
+                  setTeams,
+                  setUsername,
+                  loadUser,
+                }}
+              >
+                <TeamContext.Provider value={{ team: currentTeam, setTeam }}>
+                  <SocketContext.Provider
+                    value={{
+                      socket,
+                      isSocketAuthenticated,
+                      setIsSocketAuthenticated,
+                      connect,
+                    }}
+                  >
+                    <HistoryContext.Provider
+                      value={{ prev: prevRoute, routing }}
                     >
-                      <Component {...pageProps} />
-                    </FriendContext.Provider>
-                  </HistoryContext.Provider>
-                </SocketContext.Provider>
-              </TeamContext.Provider>
-            </UserContext.Provider>
-          </IdContext.Provider>
-        </LanguageContext.Provider>
-      </SettingsContext.Provider>
+                      <FriendContext.Provider
+                        value={{
+                          isFriendRequestPossible: isFRPossible,
+                          sendFriendRequest: sendFR,
+                          declineFriendRequest: declineFR,
+                          acceptFriendRequest: acceptFR,
+                          getFriends,
+                          unfriend,
+                        }}
+                      >
+                        <Component {...pageProps} />
+                      </FriendContext.Provider>
+                    </HistoryContext.Provider>
+                  </SocketContext.Provider>
+                </TeamContext.Provider>
+              </UserContext.Provider>
+            </IdContext.Provider>
+          </LanguageContext.Provider>
+        </SettingsContext.Provider>
+      </PokemonMovesContextProvider>
     </>
   )
 }

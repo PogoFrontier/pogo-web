@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import TeamMemberSelector from '@components/team_member_selector/TeamMemberSelector'
 import ImageHandler from '@common/actions/getImages'
 import Input from '@components/input/Input'
@@ -13,6 +13,15 @@ import ErrorPopup from '@components/error_popup/ErrorPopup'
 import LanguageContext from '@context/LanguageContext'
 import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
+import { useMoves } from '../contexts/PokemonMovesContext'
+
+const toTitleCase = (text: string) => {
+  return text
+    .toLowerCase()
+    .split('_')
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ')
+}
 
 interface CraftTeamProps {
   selectedMeta: string
@@ -51,10 +60,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
   const [isLoading, setIsLoading] = useState(false)
   const imageHandler = new ImageHandler()
 
-  const {
-    strings,
-    current: language
-  } = useContext(LanguageContext)
+  const { strings, current: language } = useContext(LanguageContext)
 
   const setupForEditing = () => {
     const teamToEditCopy = { ...teamToEdit }
@@ -115,7 +121,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     // set loading if it needs too much time
     const timeout = setTimeout(() => setIsLoading(true), 1000)
 
-    if (edited && (selectedMeta in metaMap)) {
+    if (edited && selectedMeta in metaMap) {
       const result = await getValidateTeam(
         JSON.stringify(workingTeam),
         selectedMeta,
@@ -139,7 +145,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
       } else {
         onExit()
       }
-    } else if(edited) {
+    } else if (edited) {
       setError(strings.meta_not_existing.replace('%1', selectedMeta))
       setPopupTitle(strings.not_possible)
       setPopupButtons(undefined)
@@ -245,6 +251,20 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
     return null
   }
 
+  const [moves] = useMoves() || []
+  const { current } = useContext(LanguageContext)
+
+  const getMoveName = useCallback(
+    (move: string): string => {
+      return (
+        moves?.[move]?.name[current] ||
+        moves?.[move]?.name.en ||
+        toTitleCase(move)
+      )
+    },
+    [moves, current]
+  )
+
   return (
     <div>
       {!!error && (
@@ -287,7 +307,9 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
             {workingTeam.length > 0 &&
               workingTeam.map((member: any, index: any) => (
                 <TriangleTooltip
-                  label={`${member.fastMove}, ${member.chargeMoves.join(', ')}`}
+                  label={`${getMoveName(
+                    member.fastMove
+                  )}, ${member.chargeMoves.map(getMoveName).join(', ')}`}
                   key={index}
                 >
                   <li
