@@ -1,11 +1,11 @@
-@import 'colors';
-@import 'variables';
+@import "colors";
+@import "variables";
 
 .root {
   @include bg;
   min-height: 100%;
   overflow: hidden;
-  -webkit-user-select: none; /* Safari */        
+  -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
@@ -122,4 +122,34 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.clickEffect {
+  position: fixed;
+  pointer-events: none;
+  top: calc(var(--top, 0) * 1px);
+  left: calc(var(--left, 0) * 1px);
+  border: 3px black solid;
+  box-sizing: border-box;
+  border-radius: 50%;
+  z-index: 99999;
+  width: 100px;
+  height: 100px;
+  transform-origin: center;
+  animation: clickEffect 0.5s ease-out;
+}
+
+@keyframes clickEffect {
+  0% {
+    opacity: 1;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
 }

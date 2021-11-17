@@ -102,6 +102,21 @@ const GamePage = () => {
   const [pokemonNames, setPokemonNames] = useState<PokemonNamesType>()
 
   useEffect(() => {
+    const clickEffect = (e: MouseEvent) => {
+      const clickDiv: HTMLDivElement = document.createElement('div')
+      clickDiv.classList.add(style.clickEffect)
+      clickDiv.style.setProperty('--top', (e.clientY - 50).toString())
+      clickDiv.style.setProperty('--left', (e.clientX - 50).toString())
+      document.body.appendChild(clickDiv)
+      clickDiv.addEventListener('animationend', (_) => {
+        clickDiv?.parentElement?.removeChild(clickDiv)
+      })
+    }
+    document.addEventListener('click', clickEffect)
+    return () => document.removeEventListener('click', clickEffect)
+  }, [])
+
+  useEffect(() => {
     ;(async () => {
       const names = await getPokemonNames(
         undefined,
