@@ -2,7 +2,7 @@ import Status from '@components/game/status/Status'
 import SocketContext from '@context/SocketContext'
 import { useRouter } from 'next/router'
 import ReactDOM from 'react-dom'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import {
   Anim,
   TeamMember,
@@ -29,7 +29,12 @@ import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import getKeyDescription from '@common/actions/getKeyDescription'
 import LanguageContext from '@context/LanguageContext'
-import { Message } from '@adibkhan/pogo-web-backend/handlers'
+import {
+  Message,
+  MessageSubsitution,
+} from '@adibkhan/pogo-web-backend/handlers'
+import { useMoves } from '@components/contexts/PokemonMovesContext'
+import { getPokemonNames } from '@common/actions/pokemonAPIActions'
 
 interface CheckPayload {
   countdown: number
@@ -60,7 +65,7 @@ const GamePage = () => {
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
-  const { showKeys, keys } = useContext(SettingsContext)
+  const { showKeys, keys, language } = useContext(SettingsContext)
   const {
     fastKey,
     charge1Key,
@@ -91,9 +96,86 @@ const GamePage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
-  const [message, setMessage] = useState('')
 
-  const strings = useContext(LanguageContext).strings
+  type PokemonNamesType = { [speciesId: string]: { speciesName: string } }
+
+  const [pokemonNames, setPokemonNames] = useState<PokemonNamesType>()
+
+  useEffect(() => {
+    ;(async () => {
+      const names = await getPokemonNames(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        language
+      )
+      setPokemonNames(names)
+    })()
+  }, [])
+
+  const toTitleCase = (text: string) => {
+    return text
+      .toLowerCase()
+      .split('_')
+      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+      .join(' ')
+  }
+
+  const translateMessage = (input: string | Message[]) => {
+    if (typeof input === 'string') {
+      return input
+    }
+    let translatedMessage = ''
+
+    input.forEach((messageToSubstitute: Message, index) => {
+      if (index !== 0) {
+        translatedMessage += ' '
+      }
+      let translation = strings[messageToSubstitute.messageKey]
+      messageToSubstitute.substitutions.forEach(
+        (sub: MessageSubsitution, subIndex) => {
+          const needle = '%' + (subIndex + 1)
+          let replacement = sub.id
+          // TODO: Translate the replacement according to sub.type
+          switch (sub.type) {
+            case 'moveId':
+              replacement =
+                movesObj?.[replacement]?.name?.[currentLanguage] ||
+                movesObj?.[replacement]?.name?.en ||
+                toTitleCase(replacement)
+              break
+            case 'speciesId':
+              replacement =
+                pokemonNames?.[replacement]?.speciesName ||
+                toTitleCase(replacement)
+              break
+          }
+          translation = translation.replace(needle, replacement)
+        }
+      )
+      translatedMessage += translation
+    })
+    return translatedMessage
+  }
+
+  const { strings, current: currentLanguage } = useContext(LanguageContext)
+  const [movesObj] = useMoves() || []
+
+  // to use the translateMessage function that rely on pokemonNames i had to change
+  // this bit of code. Basically given that we add onTurn as event handler for ws before
+  // the call that sets pokemonNames is finished the latter is always undefined inside that
+  // function. To avoid this i've changed message to be an useMemo that have a dependency
+  // on messageToTranslate (that is what is being set by setMessage). Basically calling setMessage
+  // will trigger a change in useMemo that will check if it's a string or an Array of Message and
+  // call the updated translateMessage function.
+  const [messageToTranslate, setMessage] = useState<string | Message[]>('')
+  const message = useMemo(() => {
+    if (typeof messageToTranslate === 'string') return messageToTranslate
+    return translateMessage(messageToTranslate)
+  }, [messageToTranslate, pokemonNames, strings, movesObj])
+
   // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
@@ -153,7 +235,7 @@ const GamePage = () => {
                   setStatus(StatusTypes.CHARGE)
                 } else {
                   setStatus(StatusTypes.ANIMATING)
-                  setTimeout(_ => {
+                  setTimeout((_) => {
                     setStatus(StatusTypes.SHIELD)
                   }, 1000)
                 }
@@ -165,8 +247,7 @@ const GamePage = () => {
           return prev1
         })
         if (payload.update[0].message) {
-          
-          setMessage(translateMessage(payload.update[0].message))
+          setMessage(payload.update[0].message)
         }
         if (payload.update[0]?.wait) {
           setWait(payload.update[0]!.wait)
@@ -201,7 +282,9 @@ const GamePage = () => {
                   return StatusTypes.ANIMATING
                 }
               }
-              return [StatusTypes.CHARGE, StatusTypes.SHIELD].includes(prev) ? prev : StatusTypes.MAIN
+              return [StatusTypes.CHARGE, StatusTypes.SHIELD].includes(prev)
+                ? prev
+                : StatusTypes.MAIN
             })
           }
         }
@@ -277,28 +360,6 @@ const GamePage = () => {
         strings.battle_start_countdown.replace('%1', String(payload.countdown))
       )
     }
-  }
-
-  const translateMessage = (input: string | Message[]) => {
-    if(typeof input === "string") {
-      return input;
-    }
-    let translatedMessage = "";
-    
-    input.forEach((message, index) => {
-      if(index !== 0) {
-        translatedMessage += " ";
-      }
-      let translation = strings[message.messageKey];
-      message.substitutions.forEach((sub, subIndex) => {
-        const needle = "%" + subIndex;
-        let replacement = sub.id;
-        // TODO: Translate the replacement according to sub.type
-        translation.replace(needle, replacement)
-      })
-    })
-
-    return translatedMessage;
   }
 
   const onFastMove = (data: Anim) => {
