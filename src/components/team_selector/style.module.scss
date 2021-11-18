@@ -1,5 +1,5 @@
-@import 'variables';
-@import 'colors';
+@import "variables";
+@import "colors";
 
 .member {
 	height: 3em;
@@ -10,11 +10,11 @@
 		width: 5em;
 	}
 }
-  
+
 .members {
 	.member {
-		width:1em;
-		height:1em;
+		width: 1em;
+		height: 1em;
 		@include md() {
 			height: 3em;
 			width: 3em;
@@ -28,20 +28,20 @@
 	text-align: left;
 	overflow-y: scroll;
 	margin: auto;
-    z-index: 99991;
-    background-color: white;
+	z-index: 99991;
+	background-color: rgba(255, 255, 255, 1);
 
 	@include md() {
 		max-width: $xl;
-		margin-right:10em;
+		margin-right: 10em;
 		max-height: 80%;
 		width: 100%;
 	}
-	@include xl(){
-		margin-left:1em;
+	@include xl() {
+		margin-left: 1em;
 	}
-	@include sm(){
-		width:100%;
+	@include sm() {
+		width: 100%;
 	}
 }
 
@@ -50,24 +50,24 @@
 	height: 4em;
 	background-color: $color-brand-primary;
 	border: none;
-	box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: .15);
+	box-shadow: 0.25rem 0.25rem 0.25rem rgba($color: $color-dark, $alpha: 0.15);
 	margin-bottom: 0.5em;
 	margin-left: 0.5em;
 	&:hover {
-	  background-color: darken($color-brand-primary, 10%);
+		background-color: darken($color-brand-primary, 10%);
 	}
 	svg {
-	  fill: $color-white;
-	  height: 40px;
-	  width: 40px;
-	  margin-top: -14px;
-	  margin-left: 3px;
+		fill: $color-white;
+		height: 40px;
+		width: 40px;
+		margin-top: -14px;
+		margin-left: 3px;
 	}
 	@include md() {
-	  margin-left: 0;
+		margin-left: 0;
 	}
 }
-  
+
 .noteams {
 	min-width: 200px;
 }
@@ -80,49 +80,48 @@
 	margin-left: 1em;
 	margin-right: 0.5em;
 	margin-top: 0.25em;
-	@include sm(){
+	@include sm() {
 		flex-direction: column;
 	}
-
 }
 
-.groupLabel{
+.groupLabel {
 	background-color: $color-neutral-light;
-	display:flex;
+	display: flex;
 	flex-direction: row;
 }
 
-.metaGroup{
+.metaGroup {
 	margin-bottom: 0em;
 }
 
-.option{
+.option {
 	border: 1px solid $color-neutral-light;
-	display:flex;
+	display: flex;
 	flex-direction: column;
 }
 
-.labelIcon{
+.labelIcon {
 	text-align: right;
-	width:100%
+	width: 100%;
 }
 
-.searchbar{
+.searchbar {
 	margin: 1em;
-	margin-right:1.5em;
+	margin-right: 1.5em;
 	width: auto;
 }
 
-.teamName{	
+.teamName {
 	margin-bottom: 0.5em;
-	@include sm(){
-		margin-top:1em;
+	@include sm() {
+		margin-top: 1em;
 	}
 }
 
-.teamMembers{
+.teamMembers {
 	height: 3.5em;
-	@include sm(){
-		height:5em;
+	@include sm() {
+		height: 5em;
 	}
 }
