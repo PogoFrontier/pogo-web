@@ -1,40 +1,47 @@
-import Status from '@components/game/status/Status'
-import SocketContext from '@context/SocketContext'
-import { useRouter } from 'next/router'
-import ReactDOM from 'react-dom'
-import { useContext, useEffect, useMemo, useState } from 'react'
 import {
   Anim,
-  TeamMember,
-  ResolveTurnPayload,
   Move,
+  ResolveTurnPayload,
   Room,
+  TeamMember,
 } from '@adibkhan/pogo-web-backend'
-import { CODE, Actions } from '@adibkhan/pogo-web-backend/actions'
-import { Icon } from '@components/icon/Icon'
-import style from './style.module.scss'
-import Field from '@components/game/field/Field'
-import { CharacterProps } from '@components/game/field/Character'
-import Switch from '@components/game/switch/Switch'
-import Popover from '@components/game/popover/Popover'
-import Charged from '@components/game/charged/Charged'
-import axios from 'axios'
-import { SERVER } from '@config/index'
-import IdContext from '@context/IdContext'
-import Shield from '@components/game/shield/Shield'
-import Stepper from '@components/game/stepper/Stepper'
-import useKeyPress from '@common/actions/useKeyPress'
-import SettingsContext from '@context/SettingsContext'
-import useWindowSize from '@common/actions/useWindowSize'
-import Loader from 'react-loader-spinner'
-import getKeyDescription from '@common/actions/getKeyDescription'
-import LanguageContext from '@context/LanguageContext'
+import { Actions, CODE } from '@adibkhan/pogo-web-backend/actions'
 import {
   Message,
   MessageSubsitution,
 } from '@adibkhan/pogo-web-backend/handlers'
-import { useMoves } from '@components/contexts/PokemonMovesContext'
+import getKeyDescription from '@common/actions/getKeyDescription'
 import { getPokemonNames } from '@common/actions/pokemonAPIActions'
+import useKeyPress from '@common/actions/useKeyPress'
+import useWindowSize from '@common/actions/useWindowSize'
+import { useMoves } from '@components/contexts/PokemonMovesContext'
+import Charged from '@components/game/charged/Charged'
+import { CharacterProps } from '@components/game/field/Character'
+import Field from '@components/game/field/Field'
+import Popover from '@components/game/popover/Popover'
+import Shield from '@components/game/shield/Shield'
+import Status from '@components/game/status/Status'
+import Stepper from '@components/game/stepper/Stepper'
+import Switch from '@components/game/switch/Switch'
+import { Icon } from '@components/icon/Icon'
+import { SERVER } from '@config/index'
+import IdContext from '@context/IdContext'
+import LanguageContext from '@context/LanguageContext'
+import SettingsContext from '@context/SettingsContext'
+import SocketContext from '@context/SocketContext'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import {
+  RefObject,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import ReactDOM from 'react-dom'
+import Loader from 'react-loader-spinner'
+import style from './style.module.scss'
 
 interface CheckPayload {
   countdown: number
@@ -58,6 +65,31 @@ enum StatusTypes {
   CHARGE,
   SHIELD,
   ANIMATING,
+}
+
+type ClickEffectProps = { x: number; y: number }
+
+const addClickDiv = (e: ClickEffectProps) => {
+  const clickDiv: HTMLDivElement = document.createElement('div')
+  clickDiv.classList.add(style.clickEffect)
+  clickDiv.style.setProperty('--top', (e.y - 50).toString())
+  clickDiv.style.setProperty('--left', (e.x - 50).toString())
+  document.body.appendChild(clickDiv)
+  clickDiv.addEventListener('animationend', (_) => {
+    clickDiv?.parentElement?.removeChild(clickDiv)
+  })
+}
+
+const addClickFromRef = (elem: RefObject<HTMLElement>) => {
+  const buttonPosition = elem.current?.getBoundingClientRect()
+  if (buttonPosition) {
+    addClickDiv({
+      x: buttonPosition.x + buttonPosition.width / 2,
+      y: buttonPosition?.y + buttonPosition?.height / 2,
+    })
+  } else {
+    addClickDiv({ x: window.screen.width / 2, y: window.screen.height / 2 })
+  }
 }
 
 const GamePage = () => {
@@ -100,21 +132,6 @@ const GamePage = () => {
   type PokemonNamesType = { [speciesId: string]: { speciesName: string } }
 
   const [pokemonNames, setPokemonNames] = useState<PokemonNamesType>()
-
-  useEffect(() => {
-    const clickEffect = (e: MouseEvent) => {
-      const clickDiv: HTMLDivElement = document.createElement('div')
-      clickDiv.classList.add(style.clickEffect)
-      clickDiv.style.setProperty('--top', (e.clientY - 50).toString())
-      clickDiv.style.setProperty('--left', (e.clientX - 50).toString())
-      document.body.appendChild(clickDiv)
-      clickDiv.addEventListener('animationend', (_) => {
-        clickDiv?.parentElement?.removeChild(clickDiv)
-      })
-    }
-    document.addEventListener('click', clickEffect)
-    return () => document.removeEventListener('click', clickEffect)
-  }, [])
 
   useEffect(() => {
     ;(async () => {
@@ -529,7 +546,14 @@ const GamePage = () => {
       .catch(toHome)
   }
 
-  const onClick = () => {
+  const pressSpaceRef = useRef<HTMLLabelElement>(null)
+  const chargeOneRef = useRef<HTMLButtonElement>(null)
+  const chargeTwoRef = useRef<HTMLButtonElement>(null)
+
+  const onClick = (e?: React.MouseEvent) => {
+    if (e) {
+      addClickDiv({ x: e.clientX, y: e.clientY })
+    }
     if (
       status === StatusTypes.MAIN &&
       active[charPointer].current?.hp &&
@@ -538,6 +562,9 @@ const GamePage = () => {
       currentMove === '' &&
       bufferedMove === ''
     ) {
+      if (!e) {
+        addClickFromRef(pressSpaceRef)
+      }
       const data = '#fa:'
       setCurrentMove(data)
       ws.send(data)
@@ -656,9 +683,11 @@ const GamePage = () => {
 
     if (charge1KeyClick) {
       const move = moves[charPointer][1]
+      addClickFromRef(chargeOneRef)
       onChargeClick(move, 0)
     } else if (charge2KeyClick) {
       const move = moves[charPointer][2]
+      addClickFromRef(chargeTwoRef)
       onChargeClick(move, 1)
     } else if (switch1KeyClick) {
       const pos = active.findIndex(
@@ -737,13 +766,14 @@ const GamePage = () => {
               ? moves[charPointer].filter((_, i) => i !== 0)
               : []
           }
+          refs={[chargeOneRef, chargeTwoRef]}
           currentMove={currentMove}
           bufferedMove={bufferedMove}
           energy={current && current.current ? current.current.energy : 0}
           onClick={onChargeClick}
         />
         {showKeys && (
-          <label className={style.keylabel}>
+          <label ref={pressSpaceRef} className={style.keylabel}>
             {strings.hold_fastkey_button.replace(
               '%1',
               getKeyDescription(fastKey).toUpperCase()
