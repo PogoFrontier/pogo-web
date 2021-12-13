@@ -25,6 +25,7 @@ export const defaultTeam: UserTeam = {
       sid: 4768,
       name: 'Henry',
       shiny: true,
+      gender: "F"
     },
     {
       speciesId: 'blastoise',
@@ -43,6 +44,7 @@ export const defaultTeam: UserTeam = {
       fastMove: 'WATER_GUN',
       chargeMoves: ['HYDRO_CANNON', 'ICE_BEAM'],
       sid: 288,
+      gender: "M"
     },
     {
       speciesId: 'charizard',
@@ -61,6 +63,7 @@ export const defaultTeam: UserTeam = {
       fastMove: 'FIRE_SPIN',
       chargeMoves: ['DRAGON_CLAW', 'BLAST_BURN'],
       sid: 192,
+      gender: "M"
     },
     {
       speciesId: 'venusaur',
@@ -79,6 +82,7 @@ export const defaultTeam: UserTeam = {
       fastMove: 'VINE_WHIP',
       chargeMoves: ['FRENZY_PLANT', 'SLUDGE_BOMB'],
       sid: 96,
+      gender: "F"
     },
     {
       speciesId: 'mew',
@@ -97,6 +101,7 @@ export const defaultTeam: UserTeam = {
       fastMove: 'SHADOW_CLAW',
       chargeMoves: ['SURF', 'WILD_CHARGE'],
       sid: 4832,
+      gender: "N"
     },
     {
       speciesId: 'mewtwo_shadow',
@@ -115,6 +120,7 @@ export const defaultTeam: UserTeam = {
       fastMove: 'PSYCHO_CUT',
       chargeMoves: ['FLAMETHROWER', 'PSYSTRIKE'],
       sid: 4800,
+      gender: "N"
     },
   ],
 }

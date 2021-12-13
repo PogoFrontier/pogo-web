@@ -279,6 +279,7 @@ const TeamMemberSelector = (props: {
           const chargeMoves = pokemon.moveset
             ? pokemon.moveset.slice(1)
             : pokemon.chargedMoves.splice(0, 2)
+            const gender = pokemon.gender ? pokemon.gender : ["M", "F"][Math.round(Math.random())];
           setAddToBox({
             speciesId: pokemon.speciesId,
             speciesName: pokemon.speciesName[mapLanguage(settings.language)],
@@ -297,6 +298,7 @@ const TeamMemberSelector = (props: {
             fastMove,
             chargeMoves,
             sid: pokemon.sid,
+            gender: gender
           })
           setShouldSave(true)
         }
@@ -392,6 +394,12 @@ const TeamMemberSelector = (props: {
       setAddToBox((prevState: any) => ({
         ...prevState,
         [e.target.id]: target.checked,
+      }))
+    } else if (e.target.id === 'gender') {
+      const target = e.target as HTMLInputElement
+      setAddToBox((prevState: any) => ({
+        ...prevState,
+        [e.target.id]: target.value.slice(0, 1),
       }))
     } else if (e.target.id.startsWith('name')) {
       handleNicknameChange(e.target.value)
@@ -489,8 +497,8 @@ const TeamMemberSelector = (props: {
             <br />
             <div className={style.imagecontainer}>
               <img
-                src={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
-                key={imageHandler.getImage(addToBox.sid, addToBox.shiny, false)}
+                src={imageHandler.getImage(addToBox.sid, addToBox.shiny, addToBox.gender, false)}
+                key={imageHandler.getImage(addToBox.sid, addToBox.shiny, addToBox.gender, false)}
                 alt={addToBox.speciesName}
                 className="sprite"
               />
@@ -510,6 +518,22 @@ const TeamMemberSelector = (props: {
             </label>
             <br />
           </div>
+          {!!selectedPokemonData.gender || <div className={`${style.gender} ${style.label}`}>
+            <label className="gender-label">{strings.gender_question} </label>
+            <select
+              className="gender-select"
+              name="gender-select"
+              id="gender"
+              onChange={handlePokemonChange}
+              value={{"M": strings.gender_male, "F": strings.gender_female}[addToBox.gender]}
+            >
+              {[strings.gender_male, strings.gender_female].map((gender: string) => (
+                <option value={gender} key={gender}>
+                  {gender}
+                </option>
+              ))}
+            </select>
+          </div>}
           <div className={style.label}>
             <div className={style.nickname}>
               <label className="name-label">{strings.nickname} </label>

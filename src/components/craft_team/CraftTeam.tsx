@@ -321,7 +321,7 @@ const CraftTeam: React.FC<CraftTeamProps> = ({
                     onClick={handleSelectPokemon}
                   >
                     <img
-                      src={imageHandler.getMini(member.sid)}
+                      src={imageHandler.getMini(member.sid, member.gender)}
                       alt={member.speciesName}
                     />
                   </li>

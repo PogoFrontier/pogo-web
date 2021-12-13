@@ -215,6 +215,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
       const cp = getCP(bs, [level, iv.atk, iv.def, iv.hp])
       const stats = calculateStats(bs, level, iv.atk, iv.def, iv.hp)
+      const gender = getGender(p.gender);
 
       return {
         speciesId,
@@ -229,7 +230,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         ...stats,
         cp,
         types: p.types,
-        sid: p.sid
+        sid: p.sid,
+        gender
       }
     }))
 
@@ -239,6 +241,13 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
       format: meta,
       members,
     }
+  }
+
+  const getGender = (gender: "M" | "F" | "N"): "M" | "F" | "N" => {
+    if(gender) {
+      return gender;
+    }
+    return ["M", "F"][Math.round(Math.random())] as "M" | "F";
   }
 
   const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -347,7 +356,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                         (member: TeamMember, index: number) => (
                           <img
                             key={index}
-                            src={imagesHandler.getMini(member.sid)}
+                            src={imagesHandler.getMini(member.sid, member.gender)}
                             alt={member.speciesName as string}
                           />
                         )

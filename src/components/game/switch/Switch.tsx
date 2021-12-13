@@ -42,7 +42,7 @@ const Selector: React.FC<SelectorProps> = ({
     onClick(index)
   }
 
-  const image = imageHandler.getMini(member.sid)
+  const image = imageHandler.getMini(member.sid, member.gender)
   const ratio = member.current!.hp
   const color = getColor(ratio)
 
