@@ -23,7 +23,7 @@ const Team: React.FC<TeamProps> = ({ team, isPlayer }) => {
             </label>
             <img
               className={style.sprite}
-              src={imageHandler.getImage(x.sid, x.shiny, isPlayer)}
+              src={imageHandler.getImage(x.sid, x.shiny, x.gender, isPlayer)}
               alt={x.speciesName as string}
             />
           </span>

@@ -35,7 +35,7 @@ const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
           {isRandom || team.map((member: any, index: number) => (
             <img
               key={index}
-              src={imagesHandler.getMini(member.sid)}
+              src={imagesHandler.getMini(member.sid, member.gender)}
               className={style.member}
               alt={member.speciesName}
             />

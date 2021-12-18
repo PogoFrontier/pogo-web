@@ -35,7 +35,7 @@ const TeamPreview = () => {
               <img
                 key={index}
                 className={style.member}
-                src={imagesHandler.getMini(member.sid)}
+                src={imagesHandler.getMini(member.sid, member.gender)}
                 alt={member.speciesName}
               />
             ))}

@@ -64,7 +64,7 @@ const Button: React.FC<ButtonProps> = ({ x, onRegister, i, value }) => {
       key={i}
     >
       <button className={style.select} type="button" onClick={onClick}>
-        <img src={imageHandler.getMini(x.sid)} alt={x.speciesName as string} />
+        <img src={imageHandler.getMini(x.sid, x.gender)} alt={x.speciesName as string} />
         {value > -1 && <div>{value}</div>}
       </button>
     </TriangleTooltip>

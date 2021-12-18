@@ -25,13 +25,8 @@ const metaMap: {
     movesetOption: 'original',
     random: true
   },
-  'Lunar Cup': {
-    name: 'Lunar Cup',
-    maxCP: 1500,
-    movesetOption: 'original',
-  },
-  'Brawler Cup': {
-    name: 'Brawler Cup',
+  'Glacial Cup': {
+    name: 'Glacial Cup',
     maxCP: 1500,
     movesetOption: 'original',
   },
