@@ -6,10 +6,14 @@ const sidsWithFemaleMini = [18944, 18976, 21376, 16672];
 
 class ImageHandler {
   baseUrl: string = CDN_BASE_URL
-  getImage(sid: number, shiny: boolean | undefined, gender: "M" | "F" | "N", back: boolean | undefined) {
+  getImage(sid: number, shiny: boolean | undefined, g: "M" | "F" | "N" | undefined, back: boolean | undefined) {
     let image = sid.toString()
     if (back) {
       image = image + '-b'
+    }
+    let gender = g
+    if (gender === undefined) {
+      gender = "M"
     }
     if (gender === "F" && sidsWithFemaleGif.includes(sid)) {
       image = image + '-f'
@@ -19,7 +23,7 @@ class ImageHandler {
     }
     return `${this.baseUrl}/models/${image}.gif`
   }
-  getMini(sid: number, gender: string) {
+  getMini(sid: number, gender?: string) {
     let image = sid.toString()
     if (sid > 15776 && sid <= 15793) {
       image = '15776' // Special Arceus Case

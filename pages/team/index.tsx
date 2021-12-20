@@ -243,7 +243,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     }
   }
 
-  const getGender = (gender: "M" | "F" | "N"): "M" | "F" | "N" => {
+  const getGender = (gender?: "M" | "F" | "N"): "M" | "F" | "N" => {
     if(gender) {
       return gender;
     }
@@ -356,7 +356,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                         (member: TeamMember, index: number) => (
                           <img
                             key={index}
-                            src={imagesHandler.getMini(member.sid, member.gender)}
+                            src={imagesHandler.getMini(member.sid, getGender(member.gender))}
                             alt={member.speciesName as string}
                           />
                         )
