@@ -15,10 +15,7 @@ const EndPage = () => {
   const { socket } = useContext(SocketContext)
   const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
-  const {
-    strings,
-    current: language
-  } = useContext(LanguageContext)
+  const { strings, current: language } = useContext(LanguageContext)
 
   async function validate(): Promise<boolean> {
     const r = await getValidateTeam(

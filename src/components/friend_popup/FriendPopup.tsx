@@ -21,21 +21,23 @@ interface FriendRequestPopupProps {
 const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
   friend,
   openUnfriendPopup,
-  onClose
+  onClose,
 }) => {
   const user = useContext(UserContext).user
   const { team, setTeam } = useContext(TeamContext)
   const strings = useContext(LanguageContext).strings
-  const [status, setStatus] = useState<"default" | "challenge" | "waiting" | "error" | "declined">("default")
-  const [err, setErr] = useState("")
-  const [room, setRoom] = useState("")
+  const [status, setStatus] = useState<
+    'default' | 'challenge' | 'waiting' | 'error' | 'declined'
+  >('default')
+  const [err, setErr] = useState('')
+  const [room, setRoom] = useState('')
   const { socket } = useContext(SocketContext)
   const router = useRouter()
 
   socket.onmessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$error')) {
       const data = msg.data.slice(6)
-      setStatus("error")
+      setStatus('error')
       setErr(data)
     } else if (msg.data.startsWith('$PROMT_JOIN')) {
       const roomId = msg.data.slice('$PROMT_JOIN'.length)
@@ -44,7 +46,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
     } else if (msg.data.startsWith('$start')) {
       router.push(`/matchup/${room}`)
     } else if (msg.data.startsWith('$challengeDeclined')) {
-      setStatus("declined")
+      setStatus('declined')
       setErr(`${friend.username} declined your challenge`)
     }
   }
@@ -68,22 +70,22 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
 
   const onSelect = (id: string) => {
     let newTeam = user.teams.find((x) => x.id === id)
-    if (id.startsWith("randomMeta:")) {
+    if (id.startsWith('randomMeta:')) {
       newTeam = {
-        name: "random",
-        id: id,
-        format: id.substr("randomMeta:".length),
-        members: []
+        name: 'random',
+        id,
+        format: id.substr('randomMeta:'.length),
+        members: [],
       }
     }
-    
+
     if (newTeam) {
       setTeam(newTeam)
     }
   }
 
   const close = () => {
-    if(status === "waiting") {
+    if (status === 'waiting') {
       quitChallenge()
     }
     onClose()
@@ -94,11 +96,11 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
   }
 
   const openChallenge = () => {
-    setStatus("challenge")
+    setStatus('challenge')
   }
 
   const cancelChallengeMode = () => {
-    setStatus("default")
+    setStatus('default')
   }
 
   const sendChallenge = () => {
@@ -106,79 +108,75 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
       type: CODE.challenge_open,
       payload: {
         opponentId: friend.id,
-        format: team.format
-      }
+        format: team.format,
+      },
     }
     socket.send(JSON.stringify(data))
-    setStatus("waiting")
+    setStatus('waiting')
   }
 
   const quitChallenge = () => {
     const data = {
       type: CODE.challenge_quit,
       payload: {
-        opponentId: friend.id
-      }
+        opponentId: friend.id,
+      },
     }
     socket.send(JSON.stringify(data))
-    setStatus("challenge")
+    setStatus('challenge')
   }
 
   if (err) {
-    return (<ErrorPopup error={err} onClose={close} title={status === "declined" ? strings.challenge_declined_title : ""}/>)
+    return (
+      <ErrorPopup
+        error={err}
+        onClose={close}
+        title={status === 'declined' ? strings.challenge_declined_title : ''}
+      />
+    )
   }
 
   return (
     <Modal title={friend.username} onClose={close}>
-      {status === "default" && <>
-        <button
-          className="btn btn-primary"
-          onClick={openChallenge}
-        >
-          {strings.challenge}
-        </button>
-        <hr />
-        <button
-          className="btn btn-negative"
-          onClick={unfriend}
-        >
-          {strings.unfriend}
-        </button>
-      </>}
+      {status === 'default' && (
+        <>
+          <button className="btn btn-primary" onClick={openChallenge}>
+            {strings.challenge}
+          </button>
+          <hr />
+          <button className="btn btn-negative" onClick={unfriend}>
+            {strings.unfriend}
+          </button>
+        </>
+      )}
 
-      {status === "challenge" && <>
-        <TeamPreview />
-        <div className={style.game}>
-          <TeamSelector onSelect={onSelect} />
-        </div>
-        <br />
-        <button
-          className="btn btn-primary"
-          onClick={sendChallenge}
-        >
-          {strings.challenge}
-        </button>
-        <button
-          className="btn btn-negative"
-          onClick={cancelChallengeMode}
-        >
-          {strings.cancel}
-        </button>
-      </>}
+      {status === 'challenge' && (
+        <>
+          <TeamPreview />
+          <div className={style.game}>
+            <TeamSelector onSelect={onSelect} />
+          </div>
+          <br />
+          <button className="btn btn-primary" onClick={sendChallenge}>
+            {strings.challenge}
+          </button>
+          <button className="btn btn-negative" onClick={cancelChallengeMode}>
+            {strings.cancel}
+          </button>
+        </>
+      )}
 
-      {status === "waiting" && <>
-        <TeamPreview />
-        <div className={style.game}>
-          <TeamSelector onSelect={onSelect} />
-        </div>
-        <button
-          className="btn btn-negative"
-          onClick={quitChallenge}
-        >
-          {strings.quit}
-        </button>
-      </>}
-
+      {status === 'waiting' && (
+        <>
+          <TeamPreview />
+          <div className={style.game}>
+            <TeamSelector onSelect={onSelect} />
+          </div>
+          <button className="btn btn-negative" onClick={quitChallenge}>
+            {strings.quit}
+          </button>
+        </>
+      )}
     </Modal>
   )
 }

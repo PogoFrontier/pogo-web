@@ -20,8 +20,8 @@ const LoginPage = () => {
   const strings = useContext(LanguageContext).strings
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
-  const [input, setInput] = useState(user?.username ? user.username : "")
-  const [usernameFeedback, setUsernameFeedback] = useState("")
+  const [input, setInput] = useState(user?.username ? user.username : '')
+  const [usernameFeedback, setUsernameFeedback] = useState('')
 
   useEffect(() => {
     if (user && user.username) {
@@ -32,11 +32,7 @@ const LoginPage = () => {
   useEffect(() => {
     getGoogleSignInRedirectResult().then((result) => {
       const googleUser = result.user
-      if (
-        googleUser &&
-        googleUser.uid &&
-        googleUser.email
-      ) {
+      if (googleUser && googleUser.uid && googleUser.email) {
         // try to load profile via google id
         signInWithGoogleId(googleUser.uid)
           .then((signInResult) => {
@@ -49,30 +45,30 @@ const LoginPage = () => {
                 // function can also save a username/teams, if local user, ask to transfer before this
                 uid: googleUser.uid,
                 email: googleUser.email,
-                displayName: googleUser.uid
+                displayName: googleUser.uid,
               })
-              .then((newUser) => {
-                setIsLoading(false)
-                // set user, save token, and store auth in local storage
-                const { userData, token } = newUser
-                setInput(userData.username)
-                if (userData && token) {
-                  setUser(userData)
-                  localStorage.setItem(
-                    'userToken',
-                    JSON.stringify({
-                      googleId: googleUser.uid,
-                      token,
-                    })
-                  )
-                } else {
-                  // corrupted data
-                }
-              })
-              .catch((/* err */) => {
-                // all errors here are server error, since we know the user does not already exist
-                setIsLoading(false)
-              })
+                .then((newUser) => {
+                  setIsLoading(false)
+                  // set user, save token, and store auth in local storage
+                  const { userData, token } = newUser
+                  setInput(userData.username)
+                  if (userData && token) {
+                    setUser(userData)
+                    localStorage.setItem(
+                      'userToken',
+                      JSON.stringify({
+                        googleId: googleUser.uid,
+                        token,
+                      })
+                    )
+                  } else {
+                    // corrupted data
+                  }
+                })
+                .catch((/* err */) => {
+                  // all errors here are server error, since we know the user does not already exist
+                  setIsLoading(false)
+                })
             } else {
               // set user, save token, and store auth in local storage
               const { userData, token } = signInResult
@@ -127,13 +123,15 @@ const LoginPage = () => {
       setUsernameFeedback(strings.username_unchanged)
       return
     }
-    setUsernameFeedback("")
+    setUsernameFeedback('')
 
-    setUsername(input).then(_ => {
-      setUsernameFeedback(strings.username_change_success)
-    }).catch(_ => {
-      setUsernameFeedback(strings.duplicate_username)
-    })
+    setUsername(input)
+      .then((_) => {
+        setUsernameFeedback(strings.username_change_success)
+      })
+      .catch((_) => {
+        setUsernameFeedback(strings.duplicate_username)
+      })
   }
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -146,62 +144,55 @@ const LoginPage = () => {
     <Layout>
       <main className={style.root}>
         <div className={style.container}>
-          <h1>
-            {isLoggedIn
-              ? strings.logged_in
-              : strings.join_battle}
-          </h1>
-          {
-            isLoading
-            ? (
-              <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
-            ) : (
-              <div>
-                {isLoggedIn ? (
-                  <div>
-                    <Input
-                      title="Logged In As:"
-                      type="text"
-                      placeholder="None"
-                      id="name"
-                      onChange={onInputChange}
-                      value={input}
-                    />
-                    {!!usernameFeedback && <div className={style.errormessage}>
-                      {usernameFeedback}
-                    </div>}
-                    <button
-                      className="btn btn-secondary"
-                      onClick={updateUsername}
-                    >
-                      Change Username
-                    </button>
-                    <hr />
-                    <button className="btn btn-primary" onClick={toHome}>
-                      {strings.start_battling}
-                    </button>
-                    {/* <button
+          <h1>{isLoggedIn ? strings.logged_in : strings.join_battle}</h1>
+          {isLoading ? (
+            <Loader type="TailSpin" color="#68BFF5" height={30} width={30} />
+          ) : (
+            <div>
+              {isLoggedIn ? (
+                <div>
+                  <Input
+                    title="Logged In As:"
+                    type="text"
+                    placeholder="None"
+                    id="name"
+                    onChange={onInputChange}
+                    value={input}
+                  />
+                  {!!usernameFeedback && (
+                    <div className={style.errormessage}>{usernameFeedback}</div>
+                  )}
+                  <button
+                    className="btn btn-secondary"
+                    onClick={updateUsername}
+                  >
+                    Change Username
+                  </button>
+                  <hr />
+                  <button className="btn btn-primary" onClick={toHome}>
+                    {strings.start_battling}
+                  </button>
+                  {/* <button
                         className="btn btn-negative"
                         onClick={logout}
                       >
                         strings.log_out
                       </button> */}
-                  </div>
-                ) : (
-                  <div>
-                    <button
-                      className="btn btn-primary"
-                      onClick={onSubmitGoogleSignIn}
-                    >
-                      {strings.login_button_google}
-                    </button>
-                    <br />
-                    <p>{strings.login_more_options}</p>
-                  </div>
-                )}
-              </div>
-            )
-         }
+                </div>
+              ) : (
+                <div>
+                  <button
+                    className="btn btn-primary"
+                    onClick={onSubmitGoogleSignIn}
+                  >
+                    {strings.login_button_google}
+                  </button>
+                  <br />
+                  <p>{strings.login_more_options}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </Layout>

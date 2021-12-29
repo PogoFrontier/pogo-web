@@ -27,7 +27,7 @@ interface Data {
   payload?: Payload
 }
 
-const INITIAL_COUNTER = 90;
+const INITIAL_COUNTER = 90
 
 const MatchupPage = () => {
   const router = useRouter()
@@ -175,7 +175,7 @@ const MatchupPage = () => {
           ) : (
             <p>{strings.waiting_for_player}</p>
           ))}
-        {(timerStarted || opponentTeam.length <= 0) || (
+        {timerStarted || opponentTeam.length <= 0 || (
           <button
             className={classnames([style.submit, 'btn', 'btn-primary'])}
             onClick={startTimer}

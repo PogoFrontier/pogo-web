@@ -32,7 +32,10 @@ const TeamSelector = (props: TeamSelectorProps) => {
     setUserInput(input)
   }
 
-  const right: ListboxPopoverProps['position'] = (targetRect: any, popoverRect: any) => {
+  const right: ListboxPopoverProps['position'] = (
+    targetRect: any,
+    popoverRect: any
+  ) => {
     const triggerCenter = targetRect!.left + targetRect!.width
     const left = triggerCenter - popoverRect!.width
     const maxLeft = window.innerWidth - popoverRect!.width - 2
@@ -46,7 +49,7 @@ const TeamSelector = (props: TeamSelectorProps) => {
     let filteredTeams: UserTeam[] = user.teams
     filteredTeams = filteredTeams.filter((team: UserTeam) => {
       // Does it not match the format fiter?
-      if (formatFilter && (team.format !== formatFilter)) {
+      if (formatFilter && team.format !== formatFilter) {
         return false
       }
 
@@ -104,17 +107,21 @@ const TeamSelector = (props: TeamSelectorProps) => {
         />
       )
     }
-    for (const randomMeta of Object.keys(metaMap).filter(meta => metaMap[meta].random)) {
+    for (const randomMeta of Object.keys(metaMap).filter(
+      (meta) => metaMap[meta].random
+    )) {
       elements.push(
         <MetaGroup
           key={randomMeta}
           meta={metaMap[randomMeta].name}
-          teams={[{
-            name: "random",
-            id: "randomMeta:" + randomMeta,
-            format: randomMeta,
-            members: []
-          }]}
+          teams={[
+            {
+              name: 'random',
+              id: 'randomMeta:' + randomMeta,
+              format: randomMeta,
+              members: [],
+            },
+          ]}
         />
       )
     }
