@@ -246,4 +246,6 @@ export default {
   used_chargemove_message: '%1 used %2!',
   it_was_shielded_message: 'It was shielded!',
   stat_change_message: "%1's stats were changed.",
+  autorekt_tooltip:
+    'In this gamemode you and your opponent both get random pokemon and moves.',
 }

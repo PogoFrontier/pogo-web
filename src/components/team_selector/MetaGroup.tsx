@@ -5,8 +5,10 @@ import { Icon } from '@components/icon/Icon'
 
 import style from './style.module.scss'
 import { UserTeam } from '@context/UserContext'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import metaMap from '@common/actions/metaMap'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
+import LanguageContext from '@context/LanguageContext'
 
 interface MetaGroupProps {
   meta: string
@@ -15,6 +17,7 @@ interface MetaGroupProps {
 
 const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
   const [visibility, setVisibility] = useState<boolean>(true)
+  const strings = useContext(LanguageContext).strings
   interface TeamOptionProps {
     team: TeamMember[]
     name: string
@@ -61,8 +64,25 @@ const MetaGroup: React.FC<MetaGroupProps> = ({ meta, teams }) => {
   return (
     <ListboxGroup className={style.metaGroup}>
       <div className={style.groupLabel} onClick={changeVisibility}>
-        <ListboxGroupLabel>{meta}</ListboxGroupLabel>
-        <Icon name={visibility ? 'up' : 'down'} />
+        <ListboxGroupLabel>
+          {// Show tooltip if the meta is autorekt
+          meta === 'Autorekt' ? (
+            <div className={style.metaGroupLabel}>
+              <span>{meta}</span>
+              <TriangleTooltip label={strings.autorekt_tooltip}>
+                <div>
+                  <Icon name={'question'} />
+                </div>
+              </TriangleTooltip>
+              <Icon name={visibility ? 'up' : 'down'} />
+            </div>
+          ) : (
+            <div className={style.metaGroupLabel}>
+              <span>{meta}</span>
+              <Icon name={visibility ? 'up' : 'down'} />
+            </div>
+          )}
+        </ListboxGroupLabel>
       </div>
       {teams.map((x: { members: TeamMember[]; name: string; id: string }) => (
         <TeamOption team={x.members} name={x.name} id={x.id} key={x.id} />
