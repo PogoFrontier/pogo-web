@@ -135,6 +135,7 @@ const LoginPage = () => {
 
     setUsername(input).then(_ => {
       setUsernameFeedback(strings.username_change_success)
+      loadUser();
     }).catch(_ => {
       setUsernameFeedback(strings.duplicate_username)
     })
