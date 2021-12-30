@@ -16,7 +16,7 @@ import {
 import style from './style.module.scss'
 
 const LoginPage = () => {
-  const { setUser, user, setUsername } = useContext(UserContext)
+  const { setUser, user, setUsername, loadUser } = useContext(UserContext)
   const strings = useContext(LanguageContext).strings
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
@@ -57,6 +57,7 @@ const LoginPage = () => {
                 const { userData, token } = newUser
                 setInput(userData.username)
                 if (userData && token) {
+                  console.log("Set UserData and token")
                   setUser(userData)
                   localStorage.setItem(
                     'userToken',
@@ -65,6 +66,7 @@ const LoginPage = () => {
                       token,
                     })
                   )
+                  loadUser();
                 } else {
                   // corrupted data
                 }
@@ -77,6 +79,7 @@ const LoginPage = () => {
               // set user, save token, and store auth in local storage
               const { userData, token } = signInResult
               if (userData && token) {
+                console.log("UserData and token")
                 setUser(userData)
                 localStorage.setItem(
                   'userToken',
@@ -85,6 +88,7 @@ const LoginPage = () => {
                     token,
                   })
                 )
+                loadUser();
               } else {
                 // corrupted data
               }
