@@ -93,7 +93,7 @@ const FriendsPage = () => {
         <div className={style.content}>
           <section className={classnames([style.container, style.info])}>
             <h1>
-              Friends
+              {strings.friends}
             </h1>
             {friends.map((friend, index) => {
               return (<FriendDisplay friend={friend} key={index} openPopup={openFriendPopup}/>)
@@ -122,7 +122,7 @@ const FriendsPage = () => {
 
             <section className={classnames([style.container, style.info])}>
               <h1>
-                Friend Requests
+                {strings.friend_requests}
               </h1>
               {user?.requests?.map(friendRequest => {
                 return (<FriendRequestDisplay request={friendRequest} key={friendRequest.id} removeRequest={removeRequest} />)
@@ -131,9 +131,9 @@ const FriendsPage = () => {
 
             <section className={classnames([style.container, style.info])}>
               <h1>
-                Recently played
+                {strings.recently_played}
               </h1>
-              {user?.battleHistory?.map((opponent, i) => {
+              {user?.battleHistory?.reverse().map((opponent, i) => {
                 return (<RecentOpponentDisplay opponent={opponent} send={sendFriendRequestTo} friends={friends} key={i}/>)
               })}
             </section>

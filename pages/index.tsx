@@ -171,7 +171,9 @@ const HomePage = () => {
           {!!user && (!!user.googleId || !!user.username) ? (
             <>
               <section className={classnames([style.container, style.info])}>
-                <h1>Challenges ({challenges.length})</h1>
+                <h1>
+                  {strings.challenges_header.replace("%1", challenges.length.toString())}
+                </h1>
                 {challenges.map((challenge, index) => {
                   return (
                     <ChallengeDisplay
@@ -184,7 +186,7 @@ const HomePage = () => {
                 })}
               </section>
               <section className={classnames([style.container, style.info])}>
-                <h1>Friends</h1>
+                <h1>{strings.friends}</h1>
                 Coming Soon!
               </section>
             </>
