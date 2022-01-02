@@ -247,5 +247,7 @@ export default {
   stat_change_message: "%1's stats were changed.",
   challenges_header: "Challenges (%1)",
   friend_requests: "Friend Requests",
-  recently_played: "Recently played"
+  recently_played: "Recently played",
+  new_friend_input_desc: "Type in the new friend's username",
+  go_to_friends_console: "More details"
 }

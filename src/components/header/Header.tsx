@@ -27,6 +27,11 @@ const Header: React.FunctionComponent = () => {
           </Link>
         </li>
         <li>
+          <Link href="/friends">
+            <a>{strings.friends}</a>
+          </Link>
+        </li>
+        <li>
           <Link href="/settings">
             <a>{strings.settings}</a>
           </Link>

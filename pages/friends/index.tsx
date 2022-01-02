@@ -104,8 +104,11 @@ const FriendsPage = () => {
               <h1>
                 {strings.send_friend_request}
               </h1>
+              <div>
+                {strings.new_friend_input_desc}
+              </div>
               <Input
-                title="Friend's Username"
+                title=""
                 type="text"
                 placeholder="None"
                 id="FRTarget"
