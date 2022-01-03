@@ -69,6 +69,10 @@ enum StatusTypes {
 
 type ClickEffectProps = { x: number; y: number }
 
+type PokemonNamesType = { 
+  [speciesId: string]: { speciesName: string } 
+}
+
 const addClickDiv = (e: ClickEffectProps) => {
   const clickDiv: HTMLDivElement = document.createElement('div')
   clickDiv.classList.add(style.clickEffect)
@@ -129,8 +133,6 @@ const GamePage = () => {
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
 
-  type PokemonNamesType = { [speciesId: string]: { speciesName: string } }
-
   const [pokemonNames, setPokemonNames] = useState<PokemonNamesType>()
 
   useEffect(() => {
@@ -159,8 +161,8 @@ const GamePage = () => {
     if (typeof input === 'string') {
       return input
     }
-    let translatedMessage = ''
 
+    let translatedMessage = ''
     input.forEach((messageToSubstitute: Message, index) => {
       if (index !== 0) {
         translatedMessage += ' '
@@ -169,8 +171,7 @@ const GamePage = () => {
       messageToSubstitute.substitutions.forEach(
         (sub: MessageSubsitution, subIndex) => {
           const needle = '%' + (subIndex + 1)
-          let replacement = sub.id
-          // TODO: Translate the replacement according to sub.type
+          let replacement = sub.id;
           switch (sub.type) {
             case 'moveId':
               replacement =
@@ -207,8 +208,6 @@ const GamePage = () => {
     if (typeof messageToTranslate === 'string') return messageToTranslate
     return translateMessage(messageToTranslate)
   }, [messageToTranslate, pokemonNames, strings, movesObj])
-
-  // const [currentType, setCurrentType] = useState('') TODO: Make this work on both perspectives
 
   const initGame = (payload: InitPayload) => {
     ReactDOM.unstable_batchedUpdates(() => {
@@ -509,41 +508,42 @@ const GamePage = () => {
     router.push('/')
   }
 
-  const fetchRoom = () => {
-    Promise.all([
-      axios.get(`${SERVER}api/room/data/${room}`).then((res) => {
-        const currentRoom: Room = res.data
-        const playerIndex = currentRoom.players.findIndex((x) => x?.id === id)
-        const player = currentRoom.players[playerIndex]
-        const oppon = currentRoom.players[playerIndex === 0 ? 1 : 0]
-        if (player && oppon && player.current && oppon.current) {
-          setActive(player.current.team as TeamMember[])
-          setOpponent(oppon.current.team as TeamMember[])
-          setCharacters((prevState) => {
-            prevState[0].char = player.current?.team[0]
-            prevState[1].char = oppon.current?.team[0]
-            return prevState
-          })
-          setShields(player.current.shields)
-          setRemaining(player.current.remaining)
-          setOppShields(oppon.current.shields)
-          setOppRemaining(oppon.current.remaining)
-        } else {
-          throw new Error()
-        }
-      }),
-    ])
-      .then(() => {
-        ws.send(
-          JSON.stringify({
-            type: CODE.ready_game,
-            payload: { room },
-          })
-        )
-        ws.onmessage = onMessage
-        setIsLoading(false)
+  const fetchRoom = async () => {
+    // Get room data from api
+    const res = await axios.get(`${SERVER}api/room/data/${room}`);
+    const currentRoom: Room = res.data
+    const playerIndex = currentRoom.players.findIndex((x) => x?.id === id)
+    const player = currentRoom.players[playerIndex]
+    const oppon = currentRoom.players[playerIndex === 0 ? 1 : 0]
+
+    // A player is missing. Go back.
+    if(!player?.current || !oppon?.current) {
+      toHome();
+      return;
+    }
+
+    // Use hooks to set data
+    setActive(player.current.team as TeamMember[])
+    setOpponent(oppon.current.team as TeamMember[])
+    setCharacters((prevState) => {
+      prevState[0].char = player.current?.team[0]
+      prevState[1].char = oppon.current?.team[0]
+      return prevState
+    })
+    setShields(player.current.shields)
+    setRemaining(player.current.remaining)
+    setOppShields(oppon.current.shields)
+    setOppRemaining(oppon.current.remaining)
+
+    // Notify server that this client is ready
+    ws.send(
+      JSON.stringify({
+        type: CODE.ready_game,
+        payload: { room },
       })
-      .catch(toHome)
+    )
+    ws.onmessage = onMessage
+    setIsLoading(false)
   }
 
   const pressSpaceRef = useRef<HTMLLabelElement>(null)
@@ -554,33 +554,38 @@ const GamePage = () => {
     if (e) {
       addClickDiv({ x: e.clientX, y: e.clientY })
     }
-    if (
-      status === StatusTypes.MAIN &&
-      active[charPointer].current?.hp &&
-      active[charPointer].current!.hp > 0 &&
-      wait <= -1 &&
-      currentMove === '' &&
-      bufferedMove === ''
-    ) {
-      if (!e) {
-        addClickFromRef(pressSpaceRef)
-      }
-      const data = '#fa:'
-      setCurrentMove(data)
-      ws.send(data)
-      setCharacters((prev) => {
-        prev[0].anim = {
-          move: moves[charPointer][0],
-          type: Actions.FAST_ATTACK,
-        }
-        return prev
-      })
-      setTimeout(() => {
-        nextCurrentMove()
-      }, moves[charPointer][0].cooldown)
-      return true
+
+    // If you can't use a fast move, don't do anything
+    if (status !== StatusTypes.MAIN ||
+      !active[charPointer].current?.hp ||
+      wait >= 0 ||
+      currentMove ||
+      bufferedMove) {
+      return false;
     }
-    return false
+
+    if (!e) {
+      addClickFromRef(pressSpaceRef)
+    }
+
+    // Send fast move command to server
+    const data = '#fa:';
+    setCurrentMove(data);
+    ws.send(data);
+
+    // Set own pokemon in motion
+    setCharacters((prev) => {
+      prev[0].anim = {
+        move: moves[charPointer][0],
+        type: Actions.FAST_ATTACK,
+      }
+      return prev
+    })
+    setTimeout(() => {
+      nextCurrentMove()
+    }, moves[charPointer][0].cooldown)
+
+    return true;
   }
 
   const onSwitchClick = (pos: number) => {

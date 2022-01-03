@@ -211,6 +211,7 @@ export default {
   login_more_options: 'More sign in options coming soon!',
   user_logged_in_name: 'Logged in as %1',
   logged_in: 'Logged in.',
+  logged_in_as: 'Logged In As:',
   start_battling: 'Start battling',
   no_username: 'Your account doesn\'t have a username.Please choose a unique name for your account.You may change it later in the settings.',
   duplicate_username: 'This username already exists. Please choose another one.',
@@ -243,5 +244,10 @@ export default {
   challenge_declined_message: "%1 declined your challenge.",
   used_chargemove_message: "%1 used %2!",
   it_was_shielded_message: "It was shielded!",
-  stat_change_message: "%1's stats were changed."
+  stat_change_message: "%1's stats were changed.",
+  challenges_header: "Challenges (%1)",
+  friend_requests: "Friend Requests",
+  recently_played: "Recently played",
+  new_friend_input_desc: "Type in the new friend's username",
+  go_to_friends_console: "More details"
 }
