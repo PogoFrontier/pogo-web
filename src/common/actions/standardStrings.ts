@@ -248,4 +248,8 @@ export default {
   stat_change_message: "%1's stats were changed.",
   autorekt_tooltip:
     'In this gamemode you and your opponent both get random pokemon and moves.',
+  challenges_tooltip: 'When a friend challenges you, it will appear here.',
+  timer_tooltip:
+    'Starts a timer of 90 seconds. If time runs out, the matchup ends.',
+  cleardata_tooltip: 'Clears all locally stored data and cookies.',
 }

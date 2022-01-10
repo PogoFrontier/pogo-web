@@ -23,6 +23,7 @@ import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import ChallengeDisplay from '@components/challenge_display/ChallengeDisplay'
 import metaMap from '@common/actions/metaMap'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 
 const myColor = '#FCAC89'
 const myProfile = 2
@@ -171,7 +172,14 @@ const HomePage = () => {
           {!!user && (!!user.googleId || !!user.username) ? (
             <>
               <section className={classnames([style.container, style.info])}>
-                <h1>Challenges ({challenges.length})</h1>
+                <h1 className={style.flexRow}>
+                  Challenges ({challenges.length})
+                  <TriangleTooltip label={strings.challenges_tooltip}>
+                    <div>
+                      <Icon name={'question'} />
+                    </div>
+                  </TriangleTooltip>
+                </h1>
                 {challenges.map((challenge, index) => {
                   return (
                     <ChallengeDisplay

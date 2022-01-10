@@ -5,6 +5,8 @@ import SettingsContext from '@context/SettingsContext'
 import LanguageContext from '@context/LanguageContext'
 import UserContext from '@context/UserContext'
 import Input from '@components/input/Input'
+import { Icon } from '@components/icon/Icon'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 
 const Account = () => {
   const settings = useContext(SettingsContext)
@@ -57,12 +59,19 @@ const Account = () => {
           </section>
         )}
         <section>
-          <button
-            className="btn btn-negative btn-block"
-            onClick={settings.clear}
-          >
-            {strings.clear_data}
-          </button>
+          <div className={style.flexRow}>
+            <button
+              className="btn btn-negative btn-block"
+              onClick={settings.clear}
+            >
+              {strings.clear_data}
+            </button>
+            <TriangleTooltip label={strings.cleardata_tooltip}>
+              <div>
+                <Icon name={'question'} />
+              </div>
+            </TriangleTooltip>
+          </div>
         </section>
       </div>
     </div>
