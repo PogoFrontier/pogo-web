@@ -252,4 +252,5 @@ export default {
   timer_tooltip:
     'Starts a timer of 90 seconds. If time runs out, the matchup ends.',
   cleardata_tooltip: 'Clears all locally stored data and cookies.',
+  language: 'Language',
 }
