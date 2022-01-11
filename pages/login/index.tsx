@@ -5,7 +5,7 @@ import {
 import Input from '@components/input/Input'
 import Layout from '@components/layout/Layout'
 import LanguageContext from '@context/LanguageContext'
-import UserContext from '@context/UserContext'
+import UserContext, { User } from '@context/UserContext'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react'
 import Loader from 'react-loader-spinner'
@@ -16,7 +16,7 @@ import {
 import style from './style.module.scss'
 
 const LoginPage = () => {
-  const { setUser, user, setUsername } = useContext(UserContext)
+  const { setUser, user, setUsername, loadUser } = useContext(UserContext)
   const strings = useContext(LanguageContext).strings
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
@@ -29,83 +29,64 @@ const LoginPage = () => {
     }
   }, [user && user.username])
 
+  const saveUserData = (userData: User, token: any, uid: string) => {
+    setUser(userData)
+    localStorage.setItem(
+      'userToken',
+      JSON.stringify({
+        googleId: uid,
+        token,
+      })
+    )
+    loadUser()
+  }
+
   useEffect(() => {
-    getGoogleSignInRedirectResult().then((result) => {
+    getGoogleSignInRedirectResult().then(async (result) => {
       const googleUser = result.user
-      if (googleUser && googleUser.uid && googleUser.email) {
-        // try to load profile via google id
-        signInWithGoogleId(googleUser.uid)
-          .then((signInResult) => {
-            if (
-              signInResult.error &&
-              signInResult.error === 'User not found.'
-            ) {
-              // make new user
-              postNewGoogleUser({
-                // function can also save a username/teams, if local user, ask to transfer before this
-                uid: googleUser.uid,
-                email: googleUser.email,
-                displayName: googleUser.uid,
-              })
-                .then((newUser) => {
-                  setIsLoading(false)
-                  // set user, save token, and store auth in local storage
-                  const { userData, token } = newUser
-                  setInput(userData.username)
-                  if (userData && token) {
-                    setUser(userData)
-                    localStorage.setItem(
-                      'userToken',
-                      JSON.stringify({
-                        googleId: googleUser.uid,
-                        token,
-                      })
-                    )
-                  } else {
-                    // corrupted data
-                  }
-                })
-                .catch((/* err */) => {
-                  // all errors here are server error, since we know the user does not already exist
-                  setIsLoading(false)
-                })
-            } else {
-              // set user, save token, and store auth in local storage
-              const { userData, token } = signInResult
-              if (userData && token) {
-                setUser(userData)
-                localStorage.setItem(
-                  'userToken',
-                  JSON.stringify({
-                    googleId: googleUser.uid,
-                    token,
-                  })
-                )
-              } else {
-                // corrupted data
-              }
-              setIsLoading(false)
-            }
+
+      setIsLoading(false)
+
+      if (!googleUser?.uid || !googleUser.email) {
+        return
+      }
+
+      // try to load profile via google id
+      try {
+        let signInResult = await signInWithGoogleId(googleUser.uid)
+
+        if (signInResult.error === 'User not found.') {
+          // make new user
+          signInResult = await postNewGoogleUser({
+            // function can also save a username/teams, if local user, ask to transfer before this
+            uid: googleUser.uid,
+            email: googleUser.email,
+            displayName: googleUser.uid,
           })
-          .catch((err) => {
-            // console.log(err)
-            setIsLoading(false)
-            if (err.response && err.response.status) {
-              switch (err.response.status) {
-                case 401:
-                  break
-                case 500:
-                  // internal server error, display error message
-                  break
-                default:
-                  // other unknown error, display error message
-                  break
-              }
-            }
-          })
-      } else {
-        // no redirect happened, I think
-        setIsLoading(false)
+        }
+
+        // User found
+        if (
+          !signInResult.error &&
+          signInResult.userData &&
+          signInResult.token
+        ) {
+          const { userData, token } = signInResult
+          saveUserData(userData, token, googleUser.uid)
+        }
+      } catch (err) {
+        if (err.response && err.response.status) {
+          switch (err.response.status) {
+            case 401:
+              break
+            case 500:
+              // internal server error, display error message
+              break
+            default:
+              // other unknown error, display error message
+              break
+          }
+        }
       }
     }) /* .catch(err => console.log(err)); */
   }, [])
@@ -128,6 +109,7 @@ const LoginPage = () => {
     setUsername(input)
       .then((_) => {
         setUsernameFeedback(strings.username_change_success)
+        loadUser()
       })
       .catch((_) => {
         setUsernameFeedback(strings.duplicate_username)
@@ -152,7 +134,7 @@ const LoginPage = () => {
               {isLoggedIn ? (
                 <div>
                   <Input
-                    title="Logged In As:"
+                    title={strings.logged_in_as}
                     type="text"
                     placeholder="None"
                     id="name"
@@ -166,7 +148,7 @@ const LoginPage = () => {
                     className="btn btn-secondary"
                     onClick={updateUsername}
                   >
-                    Change Username
+                    {strings.username_change_settings}
                   </button>
                   <hr />
                   <button className="btn btn-primary" onClick={toHome}>

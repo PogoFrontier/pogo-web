@@ -15,7 +15,7 @@ import LanguageContext from '@context/LanguageContext'
 interface FriendRequestPopupProps {
   friend: FriendInfo
   onClose: () => void
-  openUnfriendPopup: (friend: FriendInfo) => void
+  openUnfriendPopup?: (friend: FriendInfo) => void
 }
 
 const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
@@ -92,7 +92,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
   }
 
   const unfriend = () => {
-    openUnfriendPopup(friend)
+    if (openUnfriendPopup) openUnfriendPopup(friend)
   }
 
   const openChallenge = () => {
@@ -143,10 +143,14 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
           <button className="btn btn-primary" onClick={openChallenge}>
             {strings.challenge}
           </button>
-          <hr />
-          <button className="btn btn-negative" onClick={unfriend}>
-            {strings.unfriend}
-          </button>
+          {!!openUnfriendPopup && (
+            <>
+              <hr />
+              <button className="btn btn-negative" onClick={unfriend}>
+                {strings.unfriend}
+              </button>
+            </>
+          )}
         </>
       )}
 

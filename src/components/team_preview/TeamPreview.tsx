@@ -26,7 +26,7 @@ const TeamPreview = () => {
           <strong>
             {team.name ? truncateString(team.name, 8) : strings.your_team} /{' '}
           </strong>
-          {team.format ? metaMap[team.format].name : ''}
+          {team.format ? metaMap[team.format]?.name : ''}
         </p>
         <div className={style.members}>
           {team &&

@@ -99,13 +99,15 @@ const TeamSelector = (props: TeamSelectorProps) => {
     const elements = []
     const sortedTeams = getTeamsPerMeta()
     for (const meta of Object.keys(sortedTeams)) {
-      elements.push(
-        <MetaGroup
-          key={meta}
-          meta={metaMap[meta].name}
-          teams={sortedTeams[meta]}
-        />
-      )
+      if (metaMap[meta]) {
+        elements.push(
+          <MetaGroup
+            key={meta}
+            meta={metaMap[meta]?.name}
+            teams={sortedTeams[meta]}
+          />
+        )
+      }
     }
     for (const randomMeta of Object.keys(metaMap).filter(
       (meta) => metaMap[meta].random

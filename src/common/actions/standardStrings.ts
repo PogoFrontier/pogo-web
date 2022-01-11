@@ -211,6 +211,7 @@ export default {
   login_more_options: 'More sign in options coming soon!',
   user_logged_in_name: 'Logged in as %1',
   logged_in: 'Logged in.',
+  logged_in_as: 'Logged In As:',
   start_battling: 'Start battling',
   no_username:
     "Your account doesn't have a username.Please choose a unique name for your account.You may change it later in the settings.",
@@ -246,6 +247,11 @@ export default {
   used_chargemove_message: '%1 used %2!',
   it_was_shielded_message: 'It was shielded!',
   stat_change_message: "%1's stats were changed.",
+  challenges_header: 'Challenges (%1)',
+  friend_requests: 'Friend Requests',
+  recently_played: 'Recently played',
+  new_friend_input_desc: "Type in the new friend's username",
+  go_to_friends_console: 'More details',
   autorekt_tooltip:
     'In this gamemode you and your opponent both get random pokemon and moves.',
   challenges_tooltip: 'When a friend challenges you, it will appear here.',

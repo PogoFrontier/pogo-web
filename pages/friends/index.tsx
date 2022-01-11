@@ -92,7 +92,7 @@ const FriendsPage = () => {
       <main className={style.root}>
         <div className={style.content}>
           <section className={classnames([style.container, style.info])}>
-            <h1>Friends</h1>
+            <h1>{strings.friends}</h1>
             {friends.map((friend, index) => {
               return (
                 <FriendDisplay
@@ -106,8 +106,9 @@ const FriendsPage = () => {
           <div>
             <section className={classnames([style.container, style.info])}>
               <h1>{strings.send_friend_request}</h1>
+              <div>{strings.new_friend_input_desc}</div>
               <Input
-                title="Friend's Username"
+                title=""
                 type="text"
                 placeholder="None"
                 id="FRTarget"
@@ -123,7 +124,7 @@ const FriendsPage = () => {
             </section>
 
             <section className={classnames([style.container, style.info])}>
-              <h1>Friend Requests</h1>
+              <h1>{strings.friend_requests}</h1>
               {user?.requests?.map((friendRequest) => {
                 return (
                   <FriendRequestDisplay
@@ -136,8 +137,8 @@ const FriendsPage = () => {
             </section>
 
             <section className={classnames([style.container, style.info])}>
-              <h1>Recently played</h1>
-              {user?.battleHistory?.map((opponent, i) => {
+              <h1>{strings.recently_played}</h1>
+              {user?.battleHistory?.reverse().map((opponent, i) => {
                 return (
                   <RecentOpponentDisplay
                     opponent={opponent}
