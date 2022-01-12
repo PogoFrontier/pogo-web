@@ -114,6 +114,17 @@ export const sendFriendRequest = async (username: string, token: string | null) 
   return res.data
 }
 
+export const cancelFriendRequest = async (id: string, token: string | null) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    }
+  }
+  const res = await API.post(`api/users/request/cancel`, { googleId: id }, config)
+  return res.data
+}
+
 export const declineFriendRequest = async (id: string, token: string | null) => {
   const config = {
     headers: {

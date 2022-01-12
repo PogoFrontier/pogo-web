@@ -15,6 +15,7 @@ import {
   updateUsername,
   isFriendRequestPossible,
   sendFriendRequest,
+  cancelFriendRequest,
   declineFriendRequest,
   acceptFriendRequest,
   getFriendList,
@@ -88,7 +89,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
         setUserToken(parsedUserToken.token)
         getUserProfile(parsedUserToken.token)
           .then((authedUser) => {
-            // console.log(authedUser)
             if (authedUser.googleId === parsedUserToken.googleId) {
               setCurrentUser(authedUser)
               if (authedUser.teams && authedUser.teams.length > 0) {
@@ -376,6 +376,10 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
     return declineFriendRequest(_id, userToken)
   }
 
+  const cancelFR = (_id: string) => {
+    return cancelFriendRequest(_id, userToken)
+  }
+
   const acceptFR = (_id: string) => {
     return acceptFriendRequest(_id, userToken)
   }
@@ -442,6 +446,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                         value={{
                           isFriendRequestPossible: isFRPossible,
                           sendFriendRequest: sendFR,
+                          cancelFriendRequest: cancelFR,
                           declineFriendRequest: declineFR,
                           acceptFriendRequest: acceptFR,
                           getFriends,

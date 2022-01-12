@@ -19,6 +19,7 @@ export interface User {
   email?: string | null
   teams: UserTeam[]
   requests?: FriendRequest[]
+  requestsSent?: FriendRequest[]
   battleHistory?: {
     googleId: string
     username: string
