@@ -23,6 +23,7 @@ import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
 import ChallengeDisplay from '@components/challenge_display/ChallengeDisplay'
 import metaMap from '@common/actions/metaMap'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 import FriendDisplay from '@components/friend_display/FriendDisplay'
 import FriendContext, { FriendInfo } from '@context/FriendContext'
 import FriendPopup from '@components/friend_popup/FriendPopup'
@@ -56,7 +57,7 @@ const HomePage = () => {
 
   const loadFriends = () => {
     if (user) {
-      getFriends().then(response => {
+      getFriends().then((response) => {
         setFriends(response)
       })
     }
@@ -159,7 +160,6 @@ const HomePage = () => {
     return true
   }
 
-
   const openFriendPopup = (friend: FriendInfo) => {
     setFriendPopup(friend)
   }
@@ -195,8 +195,16 @@ const HomePage = () => {
           {!!user && (!!user.googleId || !!user.username) ? (
             <>
               <section className={classnames([style.container, style.info])}>
-                <h1>
-                  {strings.challenges_header.replace("%1", challenges.length.toString())}
+                <h1 className={style.flexRow}>
+                  {strings.challenges_header.replace(
+                    '%1',
+                    challenges.length.toString()
+                  )}
+                  <TriangleTooltip label={strings.challenges_tooltip}>
+                    <div>
+                      <Icon name={'question'} />
+                    </div>
+                  </TriangleTooltip>
                 </h1>
                 {challenges.map((challenge, index) => {
                   return (
@@ -212,11 +220,15 @@ const HomePage = () => {
               <section className={classnames([style.container, style.info])}>
                 <h1>{strings.friends}</h1>
                 {friends.slice(0, 10).map((friend, index) => {
-                  return (<FriendDisplay friend={friend} key={index} openPopup={openFriendPopup} />)
+                  return (
+                    <FriendDisplay
+                      friend={friend}
+                      key={index}
+                      openPopup={openFriendPopup}
+                    />
+                  )
                 })}
-                <Link href="/friends">
-                  {strings.go_to_friends_console}
-                </Link>
+                <Link href="/friends">{strings.go_to_friends_console}</Link>
               </section>
             </>
           ) : (
@@ -266,7 +278,9 @@ const HomePage = () => {
         {strings.cookies_description}
       </CookieConsent>
       {user && user.email && !user.username && <UsernamePopup />}
-      {friendPopup && <FriendPopup friend={friendPopup} onClose={closeFriendPopup}/>}
+      {friendPopup && (
+        <FriendPopup friend={friendPopup} onClose={closeFriendPopup} />
+      )}
     </Layout>
   )
 }

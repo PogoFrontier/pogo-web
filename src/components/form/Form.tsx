@@ -17,19 +17,23 @@ import metaMap from '@common/actions/metaMap'
 
 interface FormProps {
   joinRoom: (roomId?: string) => void
-  hooks: [string, (err: string) => void, string, (room: string) => void, string, (state: "quick" | "loading") => void]
+  hooks: [
+    string,
+    (err: string) => void,
+    string,
+    (room: string) => void,
+    string,
+    (state: 'quick' | 'loading') => void
+  ]
   validate: () => Promise<boolean>
 }
 
 const Form: React.FunctionComponent<FormProps> = ({
   joinRoom,
   hooks,
-  validate
+  validate,
 }) => {
-  const {
-    socket,
-    isSocketAuthenticated,
-  } = useContext(SocketContext)
+  const { socket, isSocketAuthenticated } = useContext(SocketContext)
   const team = useContext(TeamContext).team
   let teamMembers: TeamMember[]
   if (team) {
@@ -40,7 +44,7 @@ const Form: React.FunctionComponent<FormProps> = ({
   const [isMatchmaking, setIsMatchmaking] = useState(false)
   const [showUnauthenticatedPopup, setUnauthenticatedPopup] = useState(false)
   const [offerGuestUser, setOfferGuestUser] = useState(false)
-  const [ error, setError, room, setRoom, state, setState ] = hooks
+  const [error, setError, room, setRoom, state, setState] = hooks
 
   const [count, setCount] = useState(-1)
 

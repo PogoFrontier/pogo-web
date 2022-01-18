@@ -54,10 +54,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   )
   const [isImportLoading, setIsImportLoading] = useState(false)
 
-  const {
-    strings, 
-    current: language
-  } = useContext(LanguageContext)
+  const { strings, current: language } = useContext(LanguageContext)
 
   useEffect(() => {
     setIsLoading(false)
@@ -82,8 +79,8 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
   const getNewName = (action: string): string => {
     for (let iteration = 1; true; iteration++) {
-      const suggestion = action + "_" + iteration
-      if(!user.teams.map(_team => _team.name).includes(suggestion)) {
+      const suggestion = action + '_' + iteration
+      if (!user.teams.map((_team) => _team.name).includes(suggestion)) {
         return suggestion
       }
     }
@@ -112,7 +109,7 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
     setIsRandomTeamLoading(false)
 
     updateTeam({
-      name: getNewName("Random"),
+      name: getNewName('Random'),
       id: Math.random().toString(36).substring(7),
       format: meta,
       members,
@@ -138,7 +135,6 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
         setIsImportingTeam(false)
       }
       setIsImportLoading(false)
-
     } catch (error) {
       setError(strings.invalid_team_object)
       setPopupTitle(strings.invalid_team)
@@ -168,86 +164,105 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
   }
 
   const formatTeam = (t: UserTeam): string => {
-    return t.members.map((poke) => {
-      return  [
-        [poke.speciesId, poke.fastMove, ...poke.chargeMoves, poke.level, poke.iv.atk, poke.iv.def, poke.iv.hp].join(","),
-        poke.name || "",
-        poke.shiny ? "SHINY" : "NOTSHINY"
-      ].join("|")
-    }).join("\n");
+    return t.members
+      .map((poke) => {
+        return [
+          [
+            poke.speciesId,
+            poke.fastMove,
+            ...poke.chargeMoves,
+            poke.level,
+            poke.iv.atk,
+            poke.iv.def,
+            poke.iv.hp,
+          ].join(','),
+          poke.name || '',
+          poke.shiny ? 'SHINY' : 'NOTSHINY',
+        ].join('|')
+      })
+      .join('\n')
   }
 
   const unformatTeam = async (s: string): Promise<UserTeam> => {
-    const members: TeamMember[] = await Promise.all( s.split("\n").map(async line => {
-
-      const [prefix, nickname, isShinyString] = line.split("|")
-      const [_speciesId, fastMove, chargeMove1, chargeMove2, levelString, atkIvString, defIvString, hpIvString] = prefix.split(",")
-      let speciesId = _speciesId
-      if(speciesId?.endsWith("-shadow")) {
-        speciesId = speciesId.split("-shadow")[0]
-        if(!speciesId.endsWith("_shadow")) {
-          speciesId = speciesId + "_shadow"
+    const members: TeamMember[] = await Promise.all(
+      s.split('\n').map(async (line) => {
+        const [prefix, nickname, isShinyString] = line.split('|')
+        const [
+          _speciesId,
+          fastMove,
+          chargeMove1,
+          chargeMove2,
+          levelString,
+          atkIvString,
+          defIvString,
+          hpIvString,
+        ] = prefix.split(',')
+        let speciesId = _speciesId
+        if (speciesId?.endsWith('-shadow')) {
+          speciesId = speciesId.split('-shadow')[0]
+          if (!speciesId.endsWith('_shadow')) {
+            speciesId = speciesId + '_shadow'
+          }
         }
-      }
 
-      let iv
-      let level = 0
-      const p = await getPokemonData(speciesId, 'norestrictions')
-      const bs = p.baseStats as BaseStatsProps
+        let iv
+        let level = 0
+        const p = await getPokemonData(speciesId, 'norestrictions')
+        const bs = p.baseStats as BaseStatsProps
 
-      if (!levelString || !atkIvString || !defIvString || !hpIvString) {
-        const cap = metaMap[meta].maxCP
-        const ivs = getIVs({
-          pokemon: p,
-          targetCP: cap ? cap : 10000,
-        })[0]
-        iv = ivs.ivs
-        level = ivs.level
-        
-      } else {
-        iv = {
-          atk: +atkIvString,
-          def: +defIvString,
-          hp: +hpIvString
+        if (!levelString || !atkIvString || !defIvString || !hpIvString) {
+          const cap = metaMap[meta].maxCP
+          const ivs = getIVs({
+            pokemon: p,
+            targetCP: cap ? cap : 10000,
+          })[0]
+          iv = ivs.ivs
+          level = ivs.level
+        } else {
+          iv = {
+            atk: +atkIvString,
+            def: +defIvString,
+            hp: +hpIvString,
+          }
+          level = +levelString
         }
-        level = +levelString
-      }
 
-      const cp = getCP(bs, [level, iv.atk, iv.def, iv.hp])
-      const stats = calculateStats(bs, level, iv.atk, iv.def, iv.hp)
-      const gender = getGender(p.gender);
+        const cp = getCP(bs, [level, iv.atk, iv.def, iv.hp])
+        const stats = calculateStats(bs, level, iv.atk, iv.def, iv.hp)
+        const gender = getGender(p.gender)
 
-      return {
-        speciesId,
-        speciesName: p.speciesName[language],
-        name: nickname || undefined,
-        shiny: isShinyString === "SHINY",
-        fastMove,
-        chargeMoves: [chargeMove1, chargeMove2] as [string, string],
-        level,
-        iv,
-        baseStats: bs,
-        ...stats,
-        cp,
-        types: p.types,
-        sid: p.sid,
-        gender
-      }
-    }))
+        return {
+          speciesId,
+          speciesName: p.speciesName[language],
+          name: nickname || undefined,
+          shiny: isShinyString === 'SHINY',
+          fastMove,
+          chargeMoves: [chargeMove1, chargeMove2] as [string, string],
+          level,
+          iv,
+          baseStats: bs,
+          ...stats,
+          cp,
+          types: p.types,
+          sid: p.sid,
+          gender,
+        }
+      })
+    )
 
     return {
-      name: getNewName("Import"),
+      name: getNewName('Import'),
       id: Math.random().toString(36).substring(7),
       format: meta,
       members,
     }
   }
 
-  const getGender = (gender?: "M" | "F" | "N"): "M" | "F" | "N" => {
-    if(gender) {
-      return gender;
+  const getGender = (gender?: 'M' | 'F' | 'N'): 'M' | 'F' | 'N' => {
+    if (gender) {
+      return gender
     }
-    return ["M", "F"][Math.round(Math.random())] as "M" | "F";
+    return ['M', 'F'][Math.round(Math.random())] as 'M' | 'F'
   }
 
   const handleExport = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -356,7 +371,10 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
                         (member: TeamMember, index: number) => (
                           <img
                             key={index}
-                            src={imagesHandler.getMini(member.sid, getGender(member.gender))}
+                            src={imagesHandler.getMini(
+                              member.sid,
+                              getGender(member.gender)
+                            )}
                             alt={member.speciesName as string}
                           />
                         )
@@ -423,7 +441,9 @@ const Content: React.FC<ContentProps> = ({ meta }) => {
 
 const TeamPage = () => {
   // const { user } = useContext(UserContext)
-  const [metas] = useState(Object.keys(metaMap).filter(meta => !metaMap[meta].random))
+  const [metas] = useState(
+    Object.keys(metaMap).filter((meta) => !metaMap[meta].random)
+  )
   const [metaNames] = useState(metas.map((meta) => metaMap[meta].name))
   const [index, setIndex] = useState(0)
 

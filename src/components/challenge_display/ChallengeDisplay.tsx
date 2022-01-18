@@ -10,118 +10,119 @@ import style from './style.module.scss'
 import LanguageContext from '@context/LanguageContext'
 
 interface FriendRequestDisplayProps {
-    challenge: {
-        challenger: {
-            googleId: string
-            username: string
-        }
-        format: any
-    },
-    challengeHook: [any[], (challenges: any[]) => void],
-    setError: (error: string) => void
+  challenge: {
+    challenger: {
+      googleId: string
+      username: string
+    }
+    format: any
+  }
+  challengeHook: [any[], (challenges: any[]) => void]
+  setError: (error: string) => void
 }
 
 const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
-    challenge,
-    challengeHook,
-    setError
+  challenge,
+  challengeHook,
+  setError,
 }) => {
-    const { user } = useContext(UserContext)
-    const { socket } = useContext(SocketContext)
-    const [challenges, setChallenges] = challengeHook
-    const { team, setTeam } = useContext(TeamContext)
-    const strings = useContext(LanguageContext).strings
-    const [ modalOpen, setModalOpen ] = useState(false)
+  const { user } = useContext(UserContext)
+  const { socket } = useContext(SocketContext)
+  const [challenges, setChallenges] = challengeHook
+  const { team, setTeam } = useContext(TeamContext)
+  const strings = useContext(LanguageContext).strings
+  const [modalOpen, setModalOpen] = useState(false)
 
-    const decline = () => {
-        socket.send(JSON.stringify({
-            type: CODE.challenge_decline,
-            payload: {
-                challenger: challenge.challenger
-            }
-        }))
-        setChallenges(challenges.filter(c => c.challenger?.googleId !== challenge.challenger.googleId))
+  const decline = () => {
+    socket.send(
+      JSON.stringify({
+        type: CODE.challenge_decline,
+        payload: {
+          challenger: challenge.challenger,
+        },
+      })
+    )
+    setChallenges(
+      challenges.filter(
+        (c) => c.challenger?.googleId !== challenge.challenger.googleId
+      )
+    )
+  }
+
+  const accept = () => {
+    let defaultTeam: UserTeam | undefined = team
+    if (defaultTeam.format !== challenge.format) {
+      defaultTeam = user.teams.find((userTeam) => {
+        return userTeam.format === challenge.format
+      })
     }
 
-    const accept = () => {
-        let defaultTeam: UserTeam | undefined = team;
-        if(defaultTeam.format !== challenge.format) {
-            defaultTeam = user.teams.find(userTeam => {
-                return userTeam.format === challenge.format
-            })
-        }
-
-        if(!defaultTeam) {
-            setError(strings.no_team_with_format_error?.replace("%1", challenge.format))
-            return
-        }
-
-        setTeam(defaultTeam);
-        setModalOpen(true);
+    if (!defaultTeam) {
+      setError(
+        strings.no_team_with_format_error?.replace('%1', challenge.format)
+      )
+      return
     }
 
-    const confirmAccept = () => {
-        socket.send(JSON.stringify({
-            type: CODE.challenge_accept,
-            payload: {
-                challenger: challenge.challenger
-            }
-        }))
-    }
+    setTeam(defaultTeam)
+    setModalOpen(true)
+  }
 
-    const onSelect = (id: string) => {
-        const newTeam = user.teams.find((x) => x.id === id)
-        if (newTeam) {
-            setTeam(newTeam)
-        }
-    }
+  const confirmAccept = () => {
+    socket.send(
+      JSON.stringify({
+        type: CODE.challenge_accept,
+        payload: {
+          challenger: challenge.challenger,
+        },
+      })
+    )
+  }
 
-    const closeModal = () => {
-        setModalOpen(false)
+  const onSelect = (id: string) => {
+    const newTeam = user.teams.find((x) => x.id === id)
+    if (newTeam) {
+      setTeam(newTeam)
     }
+  }
 
-    return (<>
-        <div>
-            <strong>
-                {challenge.challenger.username}
-            </strong>
-            <div>
-                {challenge.format}
-            </div>
-        </div>
-        <button
-            className="btn btn-primary"
-            onClick={accept}
+  const closeModal = () => {
+    setModalOpen(false)
+  }
+
+  return (
+    <>
+      <div>
+        <strong>{challenge.challenger.username}</strong>
+        <div>{challenge.format}</div>
+      </div>
+      <button className="btn btn-primary" onClick={accept}>
+        {strings.accept}
+      </button>
+      <button className="btn btn-negative" onClick={decline}>
+        {strings.decline}
+      </button>
+
+      {modalOpen && (
+        <Modal
+          title={`Accept challenge from ${challenge.challenger.username}`}
+          onClose={closeModal}
         >
-            {strings.accept}
-        </button>
-        <button
-            className="btn btn-negative"
-            onClick={decline}
-        >
-            {strings.decline}
-        </button>
+          <button className="btn btn-negative" onClick={closeModal}>
+            {strings.cancel}
+          </button>
 
-        {modalOpen && <Modal title={`Accept challenge from ${challenge.challenger.username}`} onClose={closeModal}>
-            <button
-                className="btn btn-negative"
-                onClick={closeModal}
-            >
-                {strings.cancel}
-            </button>
-
-            <TeamPreview />
-            <div className={style.game}>
-                <TeamSelector onSelect={onSelect} formatFilter={challenge.format}/>
-            </div>
-            <button
-                className="btn btn-primary"
-                onClick={confirmAccept}
-            >
-                {strings.confirm}
-            </button>
-        </Modal>}
-    </>)
+          <TeamPreview />
+          <div className={style.game}>
+            <TeamSelector onSelect={onSelect} formatFilter={challenge.format} />
+          </div>
+          <button className="btn btn-primary" onClick={confirmAccept}>
+            {strings.confirm}
+          </button>
+        </Modal>
+      )}
+    </>
+  )
 }
 
 export default ChallengeDisplay
