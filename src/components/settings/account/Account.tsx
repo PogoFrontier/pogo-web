@@ -5,26 +5,30 @@ import SettingsContext from '@context/SettingsContext'
 import LanguageContext from '@context/LanguageContext'
 import UserContext from '@context/UserContext'
 import Input from '@components/input/Input'
+import { Icon } from '@components/icon/Icon'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
 
 const Account = () => {
   const settings = useContext(SettingsContext)
   const { user, setUsername } = useContext(UserContext)
   const strings = useContext(LanguageContext).strings
-  const [input, setInput] = useState(user?.username ? user.username : "")
-  const [usernameFeedback, setUsernameFeedback] = useState("")
+  const [input, setInput] = useState(user?.username ? user.username : '')
+  const [usernameFeedback, setUsernameFeedback] = useState('')
 
   const updateUsername = () => {
     if (user.username === input) {
       setUsernameFeedback(strings.username_unchanged)
       return
     }
-    setUsernameFeedback("")
+    setUsernameFeedback('')
 
-    setUsername(input).then(_ => {
-      setUsernameFeedback(strings.username_change_success)
-    }).catch(_ => {
-      setUsernameFeedback(strings.duplicate_username)
-    })
+    setUsername(input)
+      .then((_) => {
+        setUsernameFeedback(strings.username_change_success)
+      })
+      .catch((_) => {
+        setUsernameFeedback(strings.duplicate_username)
+      })
   }
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -35,33 +39,39 @@ const Account = () => {
     <div className={style.root}>
       <div>
         {user?.email && (
+          <section>
+            <div>{strings.username_change_settings}</div>
+            <Input
+              title="username"
+              type="text"
+              placeholder="None"
+              id="name"
+              onChange={onInputChange}
+              value={input}
+            />
+            {!!usernameFeedback && (
+              <div className={style.errormessage}>{usernameFeedback}</div>
+            )}
+            <button className="btn btn-secondary" onClick={updateUsername}>
+              {strings.username_change_confirm}
+            </button>
+            <hr />
+          </section>
+        )}
         <section>
-          <div >
-            {strings.username_change_settings}
+          <div className={style.flexRow}>
+            <button
+              className="btn btn-negative btn-block"
+              onClick={settings.clear}
+            >
+              {strings.clear_data}
+            </button>
+            <TriangleTooltip label={strings.cleardata_tooltip}>
+              <div>
+                <Icon name={'question'} />
+              </div>
+            </TriangleTooltip>
           </div>
-          <Input
-            title="username"
-            type="text"
-            placeholder="None"
-            id="name"
-            onChange={onInputChange}
-            value={input}
-          />
-          {!!usernameFeedback && <div className={style.errormessage}>
-            {usernameFeedback}
-          </div>}
-          <button
-            className="btn btn-secondary"
-            onClick={updateUsername}
-          >
-            {strings.username_change_confirm}
-          </button>
-          <hr />
-        </section>)}
-        <section>
-          <button className="btn btn-negative btn-block" onClick={settings.clear}>
-            {strings.clear_data}
-          </button>
         </section>
       </div>
     </div>

@@ -67,6 +67,7 @@ function TriangleTooltip({ children, label, ariaLabel }: TriangleTooltipProps) {
           border: 'none',
           borderRadius: '3px',
           padding: '0.5em 1em',
+          zIndex: 200,
         }}
         position={centered}
       />

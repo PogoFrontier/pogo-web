@@ -3,3 +3,13 @@
 .root {
   @include twocolumn;
 }
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  span, div {
+      margin-left: 0.25em;
+      vertical-align: baseline !important;
+  }
+}

@@ -69,8 +69,8 @@ enum StatusTypes {
 
 type ClickEffectProps = { x: number; y: number }
 
-type PokemonNamesType = { 
-  [speciesId: string]: { speciesName: string } 
+type PokemonNamesType = {
+  [speciesId: string]: { speciesName: string }
 }
 
 const addClickDiv = (e: ClickEffectProps) => {
@@ -171,7 +171,7 @@ const GamePage = () => {
       messageToSubstitute.substitutions.forEach(
         (sub: MessageSubsitution, subIndex) => {
           const needle = '%' + (subIndex + 1)
-          let replacement = sub.id;
+          let replacement = sub.id
           switch (sub.type) {
             case 'moveId':
               replacement =
@@ -510,16 +510,16 @@ const GamePage = () => {
 
   const fetchRoom = async () => {
     // Get room data from api
-    const res = await axios.get(`${SERVER}api/room/data/${room}`);
+    const res = await axios.get(`${SERVER}api/room/data/${room}`)
     const currentRoom: Room = res.data
     const playerIndex = currentRoom.players.findIndex((x) => x?.id === id)
     const player = currentRoom.players[playerIndex]
     const oppon = currentRoom.players[playerIndex === 0 ? 1 : 0]
 
     // A player is missing. Go back.
-    if(!player?.current || !oppon?.current) {
-      toHome();
-      return;
+    if (!player?.current || !oppon?.current) {
+      toHome()
+      return
     }
 
     // Use hooks to set data
@@ -556,12 +556,14 @@ const GamePage = () => {
     }
 
     // If you can't use a fast move, don't do anything
-    if (status !== StatusTypes.MAIN ||
+    if (
+      status !== StatusTypes.MAIN ||
       !active[charPointer].current?.hp ||
       wait >= 0 ||
       currentMove ||
-      bufferedMove) {
-      return false;
+      bufferedMove
+    ) {
+      return false
     }
 
     if (!e) {
@@ -569,9 +571,9 @@ const GamePage = () => {
     }
 
     // Send fast move command to server
-    const data = '#fa:';
-    setCurrentMove(data);
-    ws.send(data);
+    const data = '#fa:'
+    setCurrentMove(data)
+    ws.send(data)
 
     // Set own pokemon in motion
     setCharacters((prev) => {
@@ -585,7 +587,7 @@ const GamePage = () => {
       nextCurrentMove()
     }, moves[charPointer][0].cooldown)
 
-    return true;
+    return true
   }
 
   const onSwitchClick = (pos: number) => {

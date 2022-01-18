@@ -28,7 +28,7 @@
 	text-align: left;
 	overflow-y: scroll;
 	margin: auto;
-	z-index: 99991;
+	z-index: 2;
 	background-color: rgba(255, 255, 255, 1);
 
 	@include md() {
@@ -93,6 +93,14 @@
 
 .metaGroup {
 	margin-bottom: 0em;
+}
+
+.metaGroupLabel{
+	display:flex;
+	flex-direction: row;
+	span, div {
+		margin-right: 0.5em;
+	}
 }
 
 .option {

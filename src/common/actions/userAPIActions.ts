@@ -60,7 +60,10 @@ export const updateUserTeams = async (teams: any[], token: string | null) => {
   }
 }
 
-export const updateUsername = async (username: string, token: string | null) => {
+export const updateUsername = async (
+  username: string,
+  token: string | null
+) => {
   try {
     const config = {
       headers: {
@@ -75,7 +78,13 @@ export const updateUsername = async (username: string, token: string | null) => 
   }
 }
 
-export const isFriendRequestPossible: (username: string, token: string | null) => Promise<{ possible: boolean, error?: string }> = async (username: string, token: string | null) => { 
+export const isFriendRequestPossible: (
+  username: string,
+  token: string | null
+) => Promise<{ possible: boolean; error?: string }> = async (
+  username: string,
+  token: string | null
+) => {
   try {
     const config = {
       headers: {
@@ -84,31 +93,33 @@ export const isFriendRequestPossible: (username: string, token: string | null) =
       },
     }
     const res = await API.get(`api/users/request/possible/${username}`, config)
-    if(res.status === 200) {
+    if (res.status === 200) {
       return {
-        possible: true
+        possible: true,
       }
     }
 
     return {
       possible: false,
-      error: res.data.error
+      error: res.data.error,
     }
   } catch (err) {
     return {
       possible: false,
-      error: err.toString()
+      error: err.toString(),
     }
   }
 }
 
-
-export const sendFriendRequest = async (username: string, token: string | null) => {
+export const sendFriendRequest = async (
+  username: string,
+  token: string | null
+) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
-    }
+    },
   }
   const res = await API.post(`api/users/request/send`, { username }, config)
   return res.data
@@ -125,12 +136,16 @@ export const cancelFriendRequest = async (id: string, token: string | null) => {
   return res.data
 }
 
-export const declineFriendRequest = async (id: string, token: string | null) => {
+export const declineFriendRequest = async (
+  id: string,
+  token: string | null
+) => {
+
   const config = {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
-    }
+    },
   }
   const res = await API.post(`api/users/request/deny`, { googleId: id }, config)
   return res.data
@@ -141,9 +156,13 @@ export const acceptFriendRequest = async (id: string, token: string | null) => {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
-    }
+    },
   }
-  const res = await API.post(`api/users/request/accept`, { googleId: id }, config)
+  const res = await API.post(
+    `api/users/request/accept`,
+    { googleId: id },
+    config
+  )
   return res.data
 }
 
@@ -167,7 +186,7 @@ export const sendUnfriend = async (id: string, token: string | null) => {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
-    }
+    },
   }
   const res = await API.post(`api/users/unfriend`, { googleId: id }, config)
   return res.data
