@@ -25,8 +25,8 @@ const metaMap: {
     movesetOption: 'original',
     random: true
   },
-  'Glacial Cup': {
-    name: 'Glacial Cup',
+  'Forged Cup': {
+    name: 'Forged Cup',
     maxCP: 1500,
     movesetOption: 'original',
   },
