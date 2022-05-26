@@ -44,7 +44,7 @@ const UserContext = createContext({
   },
   loadUser: () => {
     return
-  }
+  },
 })
 
 export default UserContext

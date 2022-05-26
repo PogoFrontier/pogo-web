@@ -12,6 +12,8 @@ import style from './style.module.scss'
 import useWindowSize from '@common/actions/useWindowSize'
 import Loader from 'react-loader-spinner'
 import LanguageContext from '@context/LanguageContext'
+import TriangleTooltip from '@components/tooltip/TriangleTooltip'
+import { Icon } from '@components/icon/Icon'
 
 enum STATUS {
   CHOOSING,
@@ -27,7 +29,7 @@ interface Data {
   payload?: Payload
 }
 
-const INITIAL_COUNTER = 90;
+const INITIAL_COUNTER = 90
 
 const MatchupPage = () => {
   const router = useRouter()
@@ -175,14 +177,21 @@ const MatchupPage = () => {
           ) : (
             <p>{strings.waiting_for_player}</p>
           ))}
-        {(timerStarted || opponentTeam.length <= 0) || (
-          <button
-            className={classnames([style.submit, 'btn', 'btn-primary'])}
-            onClick={startTimer}
-            disabled={false}
-          >
-            {strings.start_teampreview_timer}
-          </button>
+        {timerStarted || opponentTeam.length <= 0 || (
+          <div className={style.flexRow}>
+            <button
+              className={classnames([style.submit, 'btn', 'btn-primary'])}
+              onClick={startTimer}
+              disabled={false}
+            >
+              {strings.start_teampreview_timer}
+            </button>
+            <TriangleTooltip label={strings.timer_tooltip}>
+              <div>
+                <Icon name={'question'} />
+              </div>
+            </TriangleTooltip>
+          </div>
         )}
         {timerStarted && <h1 style={{ margin: 0 }}>{counter}</h1>}
         {status === STATUS.WAITING && (

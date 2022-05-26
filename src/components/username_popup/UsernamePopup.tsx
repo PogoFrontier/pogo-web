@@ -10,23 +10,23 @@ interface UsernamePopupProps {
 }
 
 const UsernamePopup: React.FunctionComponent<UsernamePopupProps> = ({
-  onComplete
+  onComplete,
 }) => {
   const strings = useContext(LanguageContext).strings
   const setUsername = useContext(UserContext).setUsername
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState('')
   const [showDuplicateMessage, setShowDuplicateMessage] = useState(false)
 
   const updateUsername = () => {
     setUsername(input)
-    .then(() => {
-      if (onComplete) {
-        onComplete()
-      }
-    })
-    .catch(_ => {
-      setShowDuplicateMessage(true)
-    })
+      .then(() => {
+        if (onComplete) {
+          onComplete()
+        }
+      })
+      .catch((_) => {
+        setShowDuplicateMessage(true)
+      })
   }
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -35,9 +35,7 @@ const UsernamePopup: React.FunctionComponent<UsernamePopupProps> = ({
 
   return (
     <Modal title={"You don't have a username"}>
-      <div className={style.errormessage}>
-        {strings.no_username}
-      </div>
+      <div className={style.errormessage}>{strings.no_username}</div>
       <Input
         title=""
         type="text"
@@ -46,13 +44,10 @@ const UsernamePopup: React.FunctionComponent<UsernamePopupProps> = ({
         onChange={onInputChange}
         value={input}
       />
-      {showDuplicateMessage && <div className={style.errormessage}>
-        {strings.duplicate_username}
-      </div>}
-      <button
-        className="btn btn-primary"
-        onClick={updateUsername}
-      >
+      {showDuplicateMessage && (
+        <div className={style.errormessage}>{strings.duplicate_username}</div>
+      )}
+      <button className="btn btn-primary" onClick={updateUsername}>
         {strings.username_change_confirm}
       </button>
     </Modal>

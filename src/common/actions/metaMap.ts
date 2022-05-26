@@ -19,11 +19,11 @@ const metaMap: {
     movesetOption: 'original',
     unranked: true,
   },
-  'Autorekt': {
+  Autorekt: {
     name: 'Autorekt',
     maxCP: 1500,
     movesetOption: 'original',
-    random: true
+    random: true,
   },
   'Forged Cup': {
     name: 'Forged Cup',
