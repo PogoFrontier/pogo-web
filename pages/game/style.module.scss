@@ -124,6 +124,14 @@
   align-items: center;
 }
 
+.countdownlabel {
+  color: $color-neutral-dark;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: xxx-large;
+}
+
 .clickEffect {
   position: fixed;
   pointer-events: none;

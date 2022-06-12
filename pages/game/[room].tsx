@@ -779,6 +779,9 @@ const GamePage = () => {
           energy={current && current.current ? current.current.energy : 0}
           onClick={onChargeClick}
         />
+        {time <= 10 && <label className={style.countdownlabel}>
+          {time}
+          </label>}
         {showKeys && (
           <label ref={pressSpaceRef} className={style.keylabel}>
             {strings.hold_fastkey_button.replace(
