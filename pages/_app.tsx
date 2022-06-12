@@ -140,7 +140,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   useEffect(() => {
-    fetchStrings(language)
+    const savedLang: string = localStorage.getItem('language') ?? language
+    setLanguage1(savedLang)
+    fetchStrings(savedLang)
     const keysFromStorage: any = localStorage.getItem('settings')
     if (
       typeof window !== undefined &&
