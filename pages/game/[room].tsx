@@ -750,6 +750,9 @@ const GamePage = () => {
         </section>
         <section className={style.statuses}>
           <Status subject={current} shields={shields} remaining={remaining} />
+          {[StatusTypes.CHARGE, StatusTypes.SHIELD, StatusTypes.FAINT].includes(status) && <label className={style.countdownlabel}>
+            {wait}
+          </label>}
           <Status subject={opp} shields={oppShields} remaining={oppRemaining} />
         </section>
         <section className={style.info}>
@@ -781,7 +784,7 @@ const GamePage = () => {
         />
         {time <= 10 && <label className={style.countdownlabel}>
           {time}
-          </label>}
+        </label>}
         {showKeys && (
           <label ref={pressSpaceRef} className={style.keylabel}>
             {strings.hold_fastkey_button.replace(
