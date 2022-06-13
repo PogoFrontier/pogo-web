@@ -25,6 +25,7 @@ import Stepper from '@components/game/stepper/Stepper'
 import Switch from '@components/game/switch/Switch'
 import { Icon } from '@components/icon/Icon'
 import { SERVER } from '@config/index'
+import GameEndContext from '@context/GameEndContext'
 import IdContext from '@context/IdContext'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
@@ -102,6 +103,7 @@ const GamePage = () => {
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
   const { showKeys, keys, language } = useContext(SettingsContext)
+  const { setResult, setGameEndData } = useContext(GameEndContext)
   const {
     fastKey,
     charge1Key,
@@ -223,7 +225,9 @@ const GamePage = () => {
   }
 
   const endGame = (result: string, data: string) => {
-    router.push(`/end/${room}?result=${result}&data=${data}`)
+    setResult(result)
+    setGameEndData(JSON.parse(data))
+    router.push(`/end/${room}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {

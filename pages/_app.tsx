@@ -34,6 +34,7 @@ import getUserToken from '@common/actions/getUserToken'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import FriendContext from '@context/FriendContext'
 import PokemonMovesContextProvider from '../src/components/contexts/PokemonMovesContext'
+import GameEndContext, { MemberStatistics } from '@context/GameEndContext'
 
 /**
  * NextJS wrapper
@@ -62,6 +63,8 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [language, setLanguage1] = useState('English')
   const [strings, setStrings] = useState<StringsType>(standardStrings)
   const [authForced, forceAuth] = useState(false)
+  const [gameEndData, setGameEndData] = useState([] as MemberStatistics[])
+  const [result, setResult] = useState("")
 
   const fetchStrings = async (lang: string) => {
     lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
@@ -453,7 +456,14 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                           unfriend,
                         }}
                       >
-                        <Component {...pageProps} />
+                        <GameEndContext.Provider value={{
+                          data: gameEndData,
+                          result,
+                          setGameEndData,
+                          setResult
+                          }}>
+                          <Component {...pageProps} />
+                        </GameEndContext.Provider>
                       </FriendContext.Provider>
                     </HistoryContext.Provider>
                   </SocketContext.Provider>
