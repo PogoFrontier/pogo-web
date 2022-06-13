@@ -25,6 +25,7 @@ import Stepper from '@components/game/stepper/Stepper'
 import Switch from '@components/game/switch/Switch'
 import { Icon } from '@components/icon/Icon'
 import { SERVER } from '@config/index'
+import GameEndContext from '@context/GameEndContext'
 import IdContext from '@context/IdContext'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
@@ -102,6 +103,7 @@ const GamePage = () => {
   const ws: WebSocket = useContext(SocketContext).socket
   const id: string = useContext(IdContext).id
   const { showKeys, keys, language } = useContext(SettingsContext)
+  const { setResult, setGameEndData } = useContext(GameEndContext)
   const {
     fastKey,
     charge1Key,
@@ -223,7 +225,9 @@ const GamePage = () => {
   }
 
   const endGame = (result: string, data: string) => {
-    router.push(`/end/${room}?result=${result}&data=${data}`)
+    setResult(result)
+    setGameEndData(JSON.parse(data))
+    router.push(`/end/${room}`)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
@@ -750,6 +754,9 @@ const GamePage = () => {
         </section>
         <section className={style.statuses}>
           <Status subject={current} shields={shields} remaining={remaining} />
+          {[StatusTypes.CHARGE, StatusTypes.SHIELD, StatusTypes.FAINT].includes(status) && <label className={style.countdownlabel}>
+            {wait}
+          </label>}
           <Status subject={opp} shields={oppShields} remaining={oppRemaining} />
         </section>
         <section className={style.info}>
@@ -779,6 +786,9 @@ const GamePage = () => {
           energy={current && current.current ? current.current.energy : 0}
           onClick={onChargeClick}
         />
+        {time <= 10 && <label className={style.countdownlabel}>
+          {time}
+        </label>}
         {showKeys && (
           <label ref={pressSpaceRef} className={style.keylabel}>
             {strings.hold_fastkey_button.replace(
