@@ -18,10 +18,11 @@ import metaMap from '@common/actions/metaMap'
 interface TeamSelectorProps {
   onSelect: (id: string) => void
   formatFilter?: string
+  disabled: boolean
 }
 
 const TeamSelector = (props: TeamSelectorProps) => {
-  const { onSelect, formatFilter } = props
+  const { onSelect, formatFilter, disabled } = props
   const user = useContext(UserContext).user
   const strings = useContext(LanguageContext).strings
   const [metaVisibility, setMetaVisibility] = useState([])
@@ -136,6 +137,7 @@ const TeamSelector = (props: TeamSelectorProps) => {
       onChange={onSelect}
       className={style.listbox}
       defaultValue="defaultTeam"
+      disabled={disabled}
     >
       <div className={style.changeWrap}>
         <ListboxButton className={style.changeTeam}>

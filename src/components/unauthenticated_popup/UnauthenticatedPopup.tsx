@@ -7,7 +7,7 @@ import LanguageContext from '@context/LanguageContext'
 
 interface UnauthenticatedPopupProps {
   offerGuestUser: boolean
-  onClose: () => void
+  onClose: (guestSelected?: boolean) => void
 }
 
 const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> = ({
@@ -15,7 +15,7 @@ const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> =
   onClose,
 }) => {
   const strings = useContext(LanguageContext).strings
-  const { socket } = useContext(SocketContext)
+  const { socket, setIsSocketAuthenticated } = useContext(SocketContext)
 
   const router = useRouter()
 
@@ -38,7 +38,15 @@ const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> =
             asGuestUser: true,
           })
         )
-        onClose()
+        let interval = setInterval(() => {
+          setIsSocketAuthenticated((isIt: boolean) => {
+            if(isIt) {
+              clearInterval(interval);
+              onClose(true);
+            }
+            return isIt
+          })
+        }, 100)
       },
       className: 'btn btn-secondary',
     })
