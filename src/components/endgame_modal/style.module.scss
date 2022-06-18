@@ -1,0 +1,60 @@
+@import 'colors';
+@import 'variables';
+
+.root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 99990;
+    background-color:$color-white;
+    opacity: 1 !important;
+    @include md(){
+        width: 90vw;
+        height: 80vh;
+        top:10vh;
+        left:5vw;
+    }
+    width: 95vw;
+    height: 100%;
+    top: 2vh;
+    left: 2.5vw;
+}
+
+.title {
+    font-size: xxx-large;
+    font-weight: bold;
+}
+
+.modal {
+    background-color: $color-white;
+    overflow: hidden;
+}
+
+.body {
+    padding: 1em;
+    height: inherit;
+}
+
+.head{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+
+.button{
+    margin:1em;
+}
+
+.statistics{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 5em;
+}
+
+.details{
+    font-weight: bold;
+}

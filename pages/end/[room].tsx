@@ -76,7 +76,7 @@ const EndPage = () => {
       case 'tied':
         return strings.result_tie
       default:
-        break;
+        break
     }
   }
 

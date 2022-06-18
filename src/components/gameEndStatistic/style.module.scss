@@ -1,0 +1,23 @@
+.root{
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	flex-direction: row;
+}
+
+.stat{
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	flex-direction: column;
+	margin: 2em;
+}
+
+.statTitle{
+	font-weight: bold;
+}
+
+.sprite{
+	width: 40px;
+	height: 40px;
+}
