@@ -1,7 +1,7 @@
 import { createContext, Dispatch, SetStateAction } from 'react'
 
 export type SocketContextType = {
-    socket: WebSocket
+    socket: any
     isSocketAuthenticated: boolean
     setIsSocketAuthenticated: Dispatch<SetStateAction<boolean>>
     connect: () => void
