@@ -114,7 +114,7 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
 
           <TeamPreview />
           <div className={style.game}>
-            <TeamSelector onSelect={onSelect} formatFilter={challenge.format} />
+            <TeamSelector onSelect={onSelect} formatFilter={challenge.format} disabled={false} />
           </div>
           <button className="btn btn-primary" onClick={confirmAccept}>
             {strings.confirm}
