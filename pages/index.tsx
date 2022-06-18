@@ -184,7 +184,7 @@ const HomePage = () => {
                 className={style.profileImage}
               />
               <TeamPreview />
-              <TeamSelector onSelect={onSelect} />
+              <TeamSelector onSelect={onSelect} disabled={state === "loading"} />
             </div>
             <Form
               joinRoom={joinRoom}
