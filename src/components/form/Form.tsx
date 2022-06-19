@@ -14,6 +14,7 @@ import { SERVER } from '@config/index'
 import axios from 'axios'
 import LanguageContext from '@context/LanguageContext'
 import metaMap from '@common/actions/metaMap'
+import Router from 'next/router'
 
 interface FormProps {
   joinRoom: (roomId?: string) => void
@@ -126,6 +127,14 @@ const Form: React.FunctionComponent<FormProps> = ({
     setState('quick')
   }
 
+  // When you leave, quit
+  useEffect(() => {
+    Router.events.on('beforeHistoryChange', quitQuickPlay)
+    return function cleanup() {
+      Router.events.off('beforeHistoryChange', quitQuickPlay)
+    }
+  }, [team.format])
+
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
     setRoom(e.target.value)
   }
@@ -142,8 +151,23 @@ const Form: React.FunctionComponent<FormProps> = ({
     setError('')
   }
 
-  function closeUnauthenticatedPopup() {
+  function closeUnauthenticatedPopup(guestSelected?: boolean) {
     setUnauthenticatedPopup(false)
+    if (guestSelected) {
+      validate().then((isValid) => {
+        if (isValid) {
+          setIsMatchmaking(true)
+          setState('loading')
+          const data = {
+            type: CODE.matchmaking_search_battle,
+            payload: {
+              format: team.format,
+            },
+          }
+          socket.send(JSON.stringify(data))
+        }
+      })
+    }
   }
 
   function render() {

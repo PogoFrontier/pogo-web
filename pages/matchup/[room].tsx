@@ -84,32 +84,47 @@ const MatchupPage = () => {
     }
   }
 
+  // Ask the server every 5seconds about the teams
   useEffect(() => {
-    if (ws.readyState === ws.OPEN && ws.send) {
-      if (!routing) {
+    const interval = setInterval(() => {
+      // if we got the teams, stop
+      let gotOppTeam = false
+      setOpponentTeam((oppTeam) => {
+        gotOppTeam = !!oppTeam.length
+        return oppTeam
+      })
+      if (gotOppTeam) {
+        clearInterval(interval)
+      }
+
+      if (ws.readyState === ws.OPEN && ws.send) {
+        if (!routing) {
+          ws.send(
+            JSON.stringify({
+              type: CODE.get_opponent,
+              payload: {
+                room,
+              },
+            })
+          )
+        }
         ws.send(
           JSON.stringify({
-            type: CODE.get_opponent,
+            type: CODE.get_own_team,
             payload: {
               room,
             },
           })
         )
+        ws.onmessage = onMessage
+      } else {
+        toHome()
       }
-      ws.send(
-        JSON.stringify({
-          type: CODE.get_own_team,
-          payload: {
-            room,
-          },
-        })
-      )
-      ws.onmessage = onMessage
-    } else {
-      toHome()
-    }
+    }, 1000)
+
     return function cleanup() {
       ws.onmessage = null
+      clearInterval(interval)
     }
   }, [routing, prev])
 

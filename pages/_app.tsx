@@ -357,21 +357,17 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const isFRPossible = async (username: string) => {
-    const friendResult = await isFriendRequestPossible(username, userToken)
+    const res = await isFriendRequestPossible(username, userToken)
 
-    if (friendResult.error === 'Error: Request failed with status code 404') {
-      friendResult.error = strings.user_does_not_exist_error
-    } else if (
-      friendResult.error === 'Error: Request failed with status code 403'
-    ) {
-      friendResult.error = strings.fr_duplicate_error?.replace('%1', username)
-    } else if (
-      friendResult.error === 'Error: Request failed with status code 409'
-    ) {
-      friendResult.error = strings.fr_conflict_error?.replace('%1', username)
+    if (res.error === 'Error: Request failed with status code 404') {
+      res.error = strings.user_does_not_exist_error
+    } else if (res.error === 'Error: Request failed with status code 403') {
+      res.error = strings.fr_duplicate_error?.replace('%1', username)
+    } else if (res.error === 'Error: Request failed with status code 409') {
+      res.error = strings.fr_conflict_error?.replace('%1', username)
     }
 
-    return friendResult
+    return res
   }
 
   const sendFR = (username: string) => {
