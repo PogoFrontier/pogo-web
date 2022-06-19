@@ -43,6 +43,7 @@ const EndGameModal: React.FunctionComponent<ModalProps> = ({
         return strings.result_tie
     }
   }
+
   return (
     <div className={style.root}>
       <div className={style.modal}>

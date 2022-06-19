@@ -4,7 +4,7 @@
 .root {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     position: absolute;
     z-index: 99990;
     background-color:$color-white;
@@ -19,11 +19,16 @@
     height: 100%;
     top: 2vh;
     left: 2.5vw;
+    overflow-y:scroll;
+    @include md(){
+        overflow:hidden;
+    }
 }
 
 .title {
     font-size: xxx-large;
     font-weight: bold;
+    margin: 0.5em;
 }
 
 .modal {
@@ -47,12 +52,26 @@
     margin:1em;
 }
 
+.buttons{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    @include md(){
+        flex-direction: row;
+    }
+}
+
 .statistics{
     display:flex;
     justify-content: space-between;
     align-items: flex-start;
     flex-direction: column;
+    @include md(){
     margin-top: 5em;
+    }
+    margin: 1em;
+    
 }
 
 .details{
