@@ -163,9 +163,9 @@ export default {
   start: 'Start',
   hold_fastkey_button: 'Hold %1',
   knock_out: "It's a KO!",
-  result_win: 'You won the game',
-  result_loss: 'You lost the game',
-  result_tie: 'The game ended in a tie',
+  result_win: 'You won the game!',
+  result_loss: 'You lost the game!',
+  result_tie: 'The game ended in a tie!',
   team_verify_wrong_length: 'Wrong number of Pokemon %1. Should be 6.',
   team_verify_invalid_id: "Pokemon with id %1 doesn't exist.",
   team_verify_invalid_attack:
@@ -259,4 +259,8 @@ export default {
     'Starts a timer of 90 seconds. If time runs out, the matchup ends.',
   cleardata_tooltip: 'Clears all locally stored data and cookies.',
   language: 'Language',
+  time_spent_active: 'Time spent active',
+  abbr_seconds: 's',
+  charge_moves_used: 'Charge moves used',
+  damage_dealt: 'Damage dealt',
 }
