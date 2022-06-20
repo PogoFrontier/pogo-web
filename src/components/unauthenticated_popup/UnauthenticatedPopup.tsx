@@ -38,11 +38,11 @@ const UnauthenticatedPopup: React.FunctionComponent<UnauthenticatedPopupProps> =
             asGuestUser: true,
           })
         )
-        let interval = setInterval(() => {
+        const interval = setInterval(() => {
           setIsSocketAuthenticated((isIt: boolean) => {
-            if(isIt) {
-              clearInterval(interval);
-              onClose(true);
+            if (isIt) {
+              clearInterval(interval)
+              onClose(true)
             }
             return isIt
           })

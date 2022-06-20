@@ -129,9 +129,9 @@ const Form: React.FunctionComponent<FormProps> = ({
 
   // When you leave, quit
   useEffect(() => {
-    Router.events.on("beforeHistoryChange", quitQuickPlay);
+    Router.events.on('beforeHistoryChange', quitQuickPlay)
     return function cleanup() {
-      Router.events.off("beforeHistoryChange", quitQuickPlay);
+      Router.events.off('beforeHistoryChange', quitQuickPlay)
     }
   }, [team.format])
 
@@ -152,7 +152,7 @@ const Form: React.FunctionComponent<FormProps> = ({
   }
 
   function closeUnauthenticatedPopup(guestSelected?: boolean) {
-    setUnauthenticatedPopup(false);
+    setUnauthenticatedPopup(false)
     if (guestSelected) {
       validate().then((isValid) => {
         if (isValid) {
