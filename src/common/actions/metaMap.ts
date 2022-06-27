@@ -30,6 +30,11 @@ const metaMap: {
     maxCP: 1500,
     movesetOption: 'original',
   },
+  'Architect Cup': {
+    name: 'Architect Cup',
+    maxCP: 1500,
+    movesetOption: 'original',
+  },
   'Specialist Cup': {
     name: 'Specialist Cup',
     maxCP: 1500,
