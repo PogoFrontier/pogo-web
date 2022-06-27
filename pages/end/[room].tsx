@@ -8,7 +8,6 @@ import style from './style.module.scss'
 import Layout from '@components/layout/Layout'
 import LanguageContext from '@context/LanguageContext'
 import { getValidateTeam } from '@common/actions/pokemonAPIActions'
-import GameEndContext from '@context/GameEndContext'
 
 const EndPage = () => {
   const router = useRouter()
@@ -17,7 +16,6 @@ const EndPage = () => {
   const team: Team = useContext(TeamContext).team
   const [isLoading, setIsLoading] = useState(false)
   const { strings, current: language } = useContext(LanguageContext)
-  const { result } = useContext(GameEndContext)
 
   async function validate(): Promise<boolean> {
     const r = await getValidateTeam(
@@ -67,26 +65,11 @@ const EndPage = () => {
     router.push('/')
   }
 
-  const getResult = () => {
-    switch (result) {
-      case 'won':
-        return strings.result_win
-      case 'lost':
-        return strings.result_loss
-      case 'tied':
-        return strings.result_tie
-      default:
-        break;
-    }
-  }
-
   return (
     <Layout>
       <div className={style.content}>
         <h1>{strings.game_over}</h1>
-        {(result === 'won' || result === 'lost' || result === 'tied') && (
-          <h2>{getResult()}</h2>
-        )}
+        <h2>{'Game ended'}</h2>
         <div className={style.buttons}>
           <button onClick={join} className="btn btn-primary">
             {strings.play_again}
