@@ -8,6 +8,7 @@ import TeamSelector from '@components/team_selector/TeamSelector'
 import TeamPreview from '@components/team_preview/TeamPreview'
 import style from './style.module.scss'
 import LanguageContext from '@context/LanguageContext'
+import metaMap from '@common/actions/metaMap'
 
 interface FriendRequestDisplayProps {
   challenge: {
@@ -51,7 +52,15 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
 
   const accept = () => {
     let defaultTeam: UserTeam | undefined = team
-    if (defaultTeam.format !== challenge.format) {
+
+    if (metaMap[challenge.format].random) {
+      defaultTeam = {
+        name: 'random',
+        id: "Autorekt",
+        format: challenge.format,
+        members: [],
+      }
+    } else if (defaultTeam.format !== challenge.format) {
       defaultTeam = user.teams.find((userTeam) => {
         return userTeam.format === challenge.format
       })
@@ -114,11 +123,7 @@ const ChallengeDisplay: React.FunctionComponent<FriendRequestDisplayProps> = ({
 
           <TeamPreview />
           <div className={style.game}>
-            <TeamSelector
-              onSelect={onSelect}
-              formatFilter={challenge.format}
-              disabled={false}
-            />
+            <TeamSelector onSelect={onSelect} formatFilter={challenge.format} disabled={!!metaMap[challenge.format].random}/>
           </div>
           <button className="btn btn-primary" onClick={confirmAccept}>
             {strings.confirm}
