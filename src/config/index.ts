@@ -1,5 +1,5 @@
-// export const SERVER = 'http://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8080/'
-// export const WSS = 'ws://pogo-web-backend.eba-gjbsq2ui.us-east-2.elasticbeanstalk.com:8082/'
+// export const SERVER = 'https://backend.projectgrookey.com/'
+// export const WSS = 'wss://backend.projectgrookey.com:8082/'
 
 export const SERVER =
   process.env.NODE_ENV === 'production'

@@ -243,28 +243,73 @@ const HomePage = () => {
             <h1>{strings.links}</h1>
             <div className={style.links}>
               <a
-                className="btn btn-secondary"
+                className="btn btn-secondary block"
                 href="https://github.com/DeveloperKhan/pogo-web"
                 target="_blank"
                 rel="noreferrer nofollow"
+                style={{
+                  backgroundColor: '#171515',
+                  color: 'white',
+                  fill: 'white',
+                }}
               >
-                <Icon name="github" size="medium" /> Github (Frontend)
+                <Icon name="github" size="medium" /> Github
               </a>
               <a
-                className="btn btn-secondary"
-                href="https://github.com/DeveloperKhan/pogo-web-backend"
+                className="btn btn-secondary block"
+                href="https://twitter.com/ProjectGrookey"
                 target="_blank"
                 rel="noreferrer nofollow"
+                style={{
+                  backgroundColor: '#1DA1F2',
+                  color: 'white',
+                  fill: 'white',
+                }}
               >
-                <Icon name="github" size="medium" /> Github (Backend)
+                <Icon name="twitter" size="medium" /> Twitter
               </a>
               <a
-                className="btn btn-secondary"
+                className="btn btn-secondary block"
+                href="https://www.patreon.com/pogofrontier?fan_landing=true"
+                target="_blank"
+                rel="noreferrer nofollow"
+                style={{
+                  backgroundColor: '#FF424D',
+                  color: 'white',
+                  fill: 'white',
+                }}
+              >
+                <Icon name="patreon" size="medium" /> Patreon
+              </a>
+              <a
+                className="btn btn-secondary block"
+                href="https://medium.com/@PoGOFrontier"
+                target="_blank"
+                rel="noreferrer nofollow"
+                style={{
+                  backgroundColor: '#FEC016',
+                  color: 'black',
+                  fill: 'black',
+                }}
+              >
+                <Icon name="medium" size="medium" /> Medium
+              </a>
+              <a
+                className="btn btn-secondary block"
                 href="https://app.lokalise.com/public/991869486095447a82fab4.67696706/"
                 target="_blank"
                 rel="noreferrer nofollow"
+                style={{ backgroundColor: '#C9E8F2', color: 'black' }}
               >
                 <Icon name="lokalise" size="medium" /> Lokalise
+              </a>
+              <a
+                className="btn btn-secondary block"
+                href="https://d1bbfbaqrr54l0.cloudfront.net/documents/Privacy%20Policy%20of%20pogofrontier.pdf"
+                target="_blank"
+                rel="noreferrer nofollow"
+              >
+                Privacy Policy
               </a>
             </div>
           </section>

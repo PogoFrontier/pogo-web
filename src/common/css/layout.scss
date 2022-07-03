@@ -56,9 +56,14 @@ hr {
     border-radius: $border-radius;
     border: none;
     cursor: pointer;
+    text-align: center;
     @include md {
         font-size: 1.4rem;
         min-width: 10rem;
+    }
+    &.block {
+        display: block;
+        width: 100%;
     }
     &:active {
         transform: scale(0.95);
