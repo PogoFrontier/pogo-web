@@ -40,12 +40,12 @@ Credit to [Smogon](https://github.com/smogon/sprites) for all the Pokemon sprite
 Credit to [Lokalise](https://app.lokalise.com/public/991869486095447a82fab4.67696706/) for providing us with a localization platform. If you wish to help translate the project, click the link above.
 
 Credit to all the project contributors! They've shaved months off development and improved the project in ways I hadn't imagined:
-- [@jarthur22 ⭐](https://github.com/jarthur22)
-- [@theking465 ⭐](https://github.com/theking465)
 - [@FlorianKutz ⭐](https://github.com/FlorianKutz)
-- [@golu360 ⭐](https://github.com/golu360)
-- [@psianion ⭐](https://github.com/psianion)
+- [@theking465 ⭐](https://github.com/theking465)
+- [@jarthur22](https://github.com/jarthur22)
+- [@golu360](https://github.com/golu360)
+- [@psianion](https://github.com/psianion)
 - [@tony-xuyf](https://github.com/tony-xuyf)
 - [@debopamsengupta](https://github.com/debopamsengupta)
 
-⭐ Lead developer
+⭐ Project Owner
