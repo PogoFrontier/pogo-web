@@ -105,15 +105,16 @@ const FriendsPage = () => {
         <div className={style.content}>
           <section className={classnames([style.container, style.info])}>
             <h1>{strings.friends}</h1>
-            {friends.map((friend, index) => {
-              return (
-                <FriendDisplay
-                  friend={friend}
-                  key={index}
-                  openPopup={openFriendPopup}
-                />
-              )
-            })}
+            {friends &&
+              friends.map((friend, index) => {
+                return (
+                  <FriendDisplay
+                    friend={friend}
+                    key={index}
+                    openPopup={openFriendPopup}
+                  />
+                )
+              })}
           </section>
           <div>
             <section className={classnames([style.container, style.info])}>
