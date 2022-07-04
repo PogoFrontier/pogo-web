@@ -25,11 +25,6 @@ const metaMap: {
     movesetOption: 'original',
     random: true,
   },
-  'Forged Cup': {
-    name: 'Forged Cup',
-    maxCP: 1500,
-    movesetOption: 'original',
-  },
   'Architect Cup': {
     name: 'Architect Cup',
     maxCP: 1500,
