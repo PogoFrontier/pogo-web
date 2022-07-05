@@ -1,9 +1,11 @@
-import htmlConst from "./htmlConst"
+import PrivacyHTML from '@components/privacy_html'
 import style from './style.module.scss'
 
 const Privacy = () => {
     return (
-        <div className={style.root} dangerouslySetInnerHTML={{ __html: htmlConst }}/>
+        <div className={style.root}>
+            <PrivacyHTML />
+        </div>
     )
 }
 
