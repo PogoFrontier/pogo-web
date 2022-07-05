@@ -303,14 +303,7 @@ const HomePage = () => {
               >
                 <Icon name="lokalise" size="medium" /> Lokalise
               </a>
-              <a
-                className="btn btn-secondary block"
-                href="https://d1bbfbaqrr54l0.cloudfront.net/documents/Privacy%20Policy%20of%20pogofrontier.pdf"
-                target="_blank"
-                rel="noreferrer nofollow"
-              >
-                Privacy Policy
-              </a>
+              <Link href="/privacy">Privacy Policy</Link>
             </div>
           </section>
         </div>
