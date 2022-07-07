@@ -10,12 +10,14 @@ export interface CharacterProps {
   anim?: Anim
   char?: TeamMember
   back?: boolean
+  hp: number
 }
 
 const Character: React.FunctionComponent<CharacterProps> = ({
   char,
   back,
   anim,
+  hp
 }) => {
   const imagesHandler = new ImageHandler()
   const [s, setS] = useState('')
@@ -40,7 +42,7 @@ const Character: React.FunctionComponent<CharacterProps> = ({
     return <div />
   }
 
-  const ratio = char.current!.hp
+  const ratio = hp
   const color = getColor(ratio)
 
   return (

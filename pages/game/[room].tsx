@@ -134,6 +134,7 @@ const GamePage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [chargeMult, setChargeMult] = useState(0.25)
   const [toShield, setToShield] = useState(false)
+  const [hpBars, setHpBars] = useState([0,0] as [number, number])
 
   const [pokemonNames, setPokemonNames] = useState<PokemonNamesType>()
 
@@ -232,6 +233,19 @@ const GamePage = () => {
 
   const onTurn = (payload: ResolveTurnPayload) => {
     ReactDOM.unstable_batchedUpdates(() => {
+      // Set hp bars
+      setHpBars(hpBarsPrev => {
+        let hp0 = payload.update[0]?.hp
+        if (hp0 === undefined) {
+          hp0 = hpBarsPrev[0]
+        }
+        let hp1 = payload.update[1]?.hp
+        if (hp1 === undefined) {
+          hp1 = hpBarsPrev[1]
+        }
+        return [hp0, hp1];
+      })
+
       if (payload.update[0] !== null && payload.update[0].id === id) {
         const hp = payload.update[0]!.hp
         const isActive = payload.update[0].active
@@ -330,8 +344,8 @@ const GamePage = () => {
         setOpponent((prev1) => {
           setCharacters((prev3b) => {
             const prev3 = { ...prev3b }
-            if (hp !== undefined) {
-              prev1[0].current!.hp = hp
+            if (hp !== undefined && prev1[0].current) {
+              prev1[0].current.hp = hp
             }
             if (isShields !== undefined) {
               setOppShields(isShields)
@@ -488,6 +502,10 @@ const GamePage = () => {
           onFastMove(JSON.parse(payload))
           break
         case Actions.SWITCH:
+          const hp = getHpFromSwitchObject(payload);
+          setHpBars(prev => {
+            return [prev[0], hp];
+          })
           onSwitch(JSON.parse(payload))
           break
       }
@@ -538,6 +556,7 @@ const GamePage = () => {
     setRemaining(player.current.remaining)
     setOppShields(oppon.current.shields)
     setOppRemaining(oppon.current.remaining)
+    setHpBars([1, 1])
 
     // Notify server that this client is ready
     ws.send(
@@ -680,6 +699,12 @@ const GamePage = () => {
     toHome()
   }
 
+  const getHpFromSwitchObject = (obj: string) => {
+    const start = obj.lastIndexOf(":") + 1;
+    const hpString = obj.substring(start, obj.length - 2)
+    return +hpString
+  }
+
   const fastKeyClick = useKeyPress(fastKey)
   const charge1KeyClick = useKeyPress(charge1Key)
   const charge2KeyClick = useKeyPress(charge2Key)
@@ -767,7 +792,7 @@ const GamePage = () => {
           </div>
         </section>
 
-        <Field characters={characters} message={message} />
+        <Field characters={characters} message={message} hpBars={hpBars}/>
         <Switch
           team={active}
           pointer={charPointer}
