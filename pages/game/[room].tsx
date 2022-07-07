@@ -10,11 +10,16 @@ import {
   Message,
   MessageSubsitution,
 } from '@adibkhan/pogo-web-backend/handlers'
+import { Team } from '@adibkhan/pogo-web-backend/team'
 import getKeyDescription from '@common/actions/getKeyDescription'
-import { getPokemonNames } from '@common/actions/pokemonAPIActions'
+import {
+  getPokemonNames,
+  getValidateTeam,
+} from '@common/actions/pokemonAPIActions'
 import useKeyPress from '@common/actions/useKeyPress'
 import useWindowSize from '@common/actions/useWindowSize'
 import { useMoves } from '@components/contexts/PokemonMovesContext'
+import EndgameModal from '@components/endgame_modal/EndgameModal'
 import Charged from '@components/game/charged/Charged'
 import { CharacterProps } from '@components/game/field/Character'
 import Field from '@components/game/field/Field'
@@ -25,11 +30,11 @@ import Stepper from '@components/game/stepper/Stepper'
 import Switch from '@components/game/switch/Switch'
 import { Icon } from '@components/icon/Icon'
 import { SERVER } from '@config/index'
-import GameEndContext from '@context/GameEndContext'
 import IdContext from '@context/IdContext'
 import LanguageContext from '@context/LanguageContext'
 import SettingsContext from '@context/SettingsContext'
 import SocketContext from '@context/SocketContext'
+import TeamContext from '@context/TeamContext'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import {
@@ -101,9 +106,9 @@ const GamePage = () => {
   const router = useRouter()
   const { room } = router.query
   const ws: WebSocket = useContext(SocketContext).socket
+  const team: Team = useContext(TeamContext).team
   const id: string = useContext(IdContext).id
   const { showKeys, keys, language } = useContext(SettingsContext)
-  const { setResult, setGameEndData } = useContext(GameEndContext)
   const {
     fastKey,
     charge1Key,
@@ -137,6 +142,9 @@ const GamePage = () => {
   const [hpBars, setHpBars] = useState([0,0] as [number, number])
 
   const [pokemonNames, setPokemonNames] = useState<PokemonNamesType>()
+  const [gameEnded, setGameEnded] = useState(false)
+  const [gameEndData, setGameEndData] = useState(null)
+  const [result, setResult] = useState('Tie')
 
   useEffect(() => {
     ;(async () => {
@@ -158,6 +166,50 @@ const GamePage = () => {
       .split('_')
       .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
       .join(' ')
+  }
+
+  async function validate(): Promise<boolean> {
+    const r = await getValidateTeam(
+      JSON.stringify(team.members),
+      team.format,
+      language
+    )
+    if (r.message) {
+      alert(r.message)
+      return false
+    }
+    return true
+  }
+
+  function joinRoom() {
+    // Connected, let's sign-up for to receive messages for this room
+    const data = {
+      type: CODE.room,
+      payload: {
+        room,
+        format: team.format,
+        team: team.members,
+      },
+    }
+    ws.send(JSON.stringify(data))
+    router.push(`/matchup/${room}`)
+  }
+
+  function join() {
+    validate().then((isValid) => {
+      if (isValid) {
+        if (ws.readyState && ws.readyState === WebSocket.OPEN) {
+          joinRoom()
+        } else if (!isLoading) {
+          if (!ws.readyState || ws.readyState === WebSocket.CLOSED) {
+            const payload = { room, team: team.members }
+            setIsLoading(true)
+            const data = { type: CODE.room, payload }
+            ws.send(JSON.stringify(data))
+          }
+        }
+      }
+    })
   }
 
   const translateMessage = (input: string | Message[]) => {
@@ -225,10 +277,10 @@ const GamePage = () => {
     setStatus(StatusTypes.MAIN)
   }
 
-  const endGame = (result: string, data: string) => {
-    setResult(result)
+  const endGame = (endResult: string, data: string) => {
+    setResult(endResult)
     setGameEndData(JSON.parse(data))
-    router.push(`/end/${room}`)
+    setGameEnded(true)
   }
 
   const onTurn = (payload: ResolveTurnPayload) => {
@@ -490,8 +542,8 @@ const GamePage = () => {
 
   const onMessage = (msg: MessageEvent) => {
     if (msg.data.startsWith('$end')) {
-      const [result, data] = msg.data.slice(4).split('|')
-      endGame(result, data)
+      const [endResult, data] = msg.data.slice(4).split('|')
+      endGame(endResult, data)
     } else if (msg.data.startsWith('#')) {
       // Expected format: "#fa:Volt Switch"
       const data = msg.data.slice(1)
@@ -779,9 +831,9 @@ const GamePage = () => {
         </section>
         <section className={style.statuses}>
           <Status subject={current} shields={shields} remaining={remaining} />
-          {[StatusTypes.CHARGE, StatusTypes.SHIELD, StatusTypes.FAINT].includes(status) && <label className={style.countdownlabel}>
-            {wait}
-          </label>}
+          {[StatusTypes.CHARGE, StatusTypes.SHIELD, StatusTypes.FAINT].includes(
+            status
+          ) && <label className={style.countdownlabel}>{wait}</label>}
           <Status subject={opp} shields={oppShields} remaining={oppRemaining} />
         </section>
         <section className={style.info}>
@@ -811,9 +863,7 @@ const GamePage = () => {
           energy={current && current.current ? current.current.energy : 0}
           onClick={onChargeClick}
         />
-        {time <= 10 && <label className={style.countdownlabel}>
-          {time}
-        </label>}
+        {time <= 10 && <label className={style.countdownlabel}>{time}</label>}
         {showKeys && (
           <label ref={pressSpaceRef} className={style.keylabel}>
             {strings.hold_fastkey_button.replace(
@@ -848,6 +898,14 @@ const GamePage = () => {
           )}
         </Popover>
       </div>
+      {gameEnded && (
+        <EndgameModal
+          result={result}
+          gameEndData={gameEndData}
+          goHome={toHome}
+          rematch={join}
+        />
+      )}
     </main>
   )
 }

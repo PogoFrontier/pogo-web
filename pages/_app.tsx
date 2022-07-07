@@ -34,7 +34,6 @@ import getUserToken from '@common/actions/getUserToken'
 import { CODE } from '@adibkhan/pogo-web-backend/actions'
 import FriendContext from '@context/FriendContext'
 import PokemonMovesContextProvider from '../src/components/contexts/PokemonMovesContext'
-import GameEndContext, { MemberStatistics } from '@context/GameEndContext'
 
 /**
  * NextJS wrapper
@@ -63,8 +62,6 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   const [language, setLanguage1] = useState('English')
   const [strings, setStrings] = useState<StringsType>(standardStrings)
   const [authForced, forceAuth] = useState(false)
-  const [gameEndData, setGameEndData] = useState([] as MemberStatistics[])
-  const [result, setResult] = useState("")
 
   const fetchStrings = async (lang: string) => {
     lang = supportedLanguages.includes(lang) ? mapLanguage(lang) : 'en'
@@ -143,7 +140,9 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   useEffect(() => {
-    fetchStrings(language)
+    const savedLang: string = localStorage.getItem('language') ?? language
+    setLanguage1(savedLang)
+    fetchStrings(savedLang)
     const keysFromStorage: any = localStorage.getItem('settings')
     if (
       typeof window !== undefined &&
@@ -358,17 +357,17 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
   }
 
   const isFRPossible = async (username: string) => {
-    const result = await isFriendRequestPossible(username, userToken)
+    const res = await isFriendRequestPossible(username, userToken)
 
-    if (result.error === 'Error: Request failed with status code 404') {
-      result.error = strings.user_does_not_exist_error
-    } else if (result.error === 'Error: Request failed with status code 403') {
-      result.error = strings.fr_duplicate_error?.replace('%1', username)
-    } else if (result.error === 'Error: Request failed with status code 409') {
-      result.error = strings.fr_conflict_error?.replace('%1', username)
+    if (res.error === 'Error: Request failed with status code 404') {
+      res.error = strings.user_does_not_exist_error
+    } else if (res.error === 'Error: Request failed with status code 403') {
+      res.error = strings.fr_duplicate_error?.replace('%1', username)
+    } else if (res.error === 'Error: Request failed with status code 409') {
+      res.error = strings.fr_conflict_error?.replace('%1', username)
     }
 
-    return result
+    return res
   }
 
   const sendFR = (username: string) => {
@@ -456,14 +455,7 @@ const CustomApp: FC<AppProps> = ({ Component, router, pageProps }) => {
                           unfriend,
                         }}
                       >
-                        <GameEndContext.Provider value={{
-                          data: gameEndData,
-                          result,
-                          setGameEndData,
-                          setResult
-                          }}>
-                          <Component {...pageProps} />
-                        </GameEndContext.Provider>
+                        <Component {...pageProps} />
                       </FriendContext.Provider>
                     </HistoryContext.Provider>
                   </SocketContext.Provider>

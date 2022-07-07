@@ -86,15 +86,15 @@ const MatchupPage = () => {
 
   // Ask the server every 5seconds about the teams
   useEffect(() => {
-    let interval = setInterval(() => {
+    const interval = setInterval(() => {
       // if we got the teams, stop
-      let gotOppTeam = false;
-      setOpponentTeam(oppTeam => {
-        gotOppTeam = !!oppTeam.length;
-        return oppTeam;
+      let gotOppTeam = false
+      setOpponentTeam((oppTeam) => {
+        gotOppTeam = !!oppTeam.length
+        return oppTeam
       })
-      if(gotOppTeam) {
-        clearInterval(interval);
+      if (gotOppTeam) {
+        clearInterval(interval)
       }
 
       if (ws.readyState === ws.OPEN && ws.send) {
@@ -124,7 +124,7 @@ const MatchupPage = () => {
 
     return function cleanup() {
       ws.onmessage = null
-      clearInterval(interval);
+      clearInterval(interval)
     }
   }, [routing, prev])
 

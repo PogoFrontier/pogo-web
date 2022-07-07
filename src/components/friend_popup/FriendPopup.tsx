@@ -158,7 +158,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
         <>
           <TeamPreview />
           <div className={style.game}>
-            <TeamSelector onSelect={onSelect} />
+            <TeamSelector onSelect={onSelect} disabled={false} />
           </div>
           <br />
           <button className="btn btn-primary" onClick={sendChallenge}>
@@ -174,7 +174,7 @@ const FriendPopup: React.FunctionComponent<FriendRequestPopupProps> = ({
         <>
           <TeamPreview />
           <div className={style.game}>
-            <TeamSelector onSelect={onSelect} />
+            <TeamSelector onSelect={onSelect} disabled={false} />
           </div>
           <button className="btn btn-negative" onClick={quitChallenge}>
             {strings.quit}

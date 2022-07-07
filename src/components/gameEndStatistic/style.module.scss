@@ -1,0 +1,39 @@
+@import 'colors';
+@import 'variables';
+
+.root{
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	flex-direction: row;
+}
+
+.stat{
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	flex-direction: column;
+	margin: 1em;
+	@include md(){
+		margin:2em;
+	}
+}
+
+.stats{
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	flex-direction: column;
+	@include md(){
+		flex-direction: row;
+	}
+}
+
+.statTitle{
+	font-weight: bold;
+}
+
+.sprite{
+	width: 40px;
+	height: 40px;
+}

@@ -23,7 +23,10 @@ const FriendsPage = () => {
   const strings = useContext(LanguageContext).strings
   const [friendToSendFR, setFriendToSendFR] = useState('')
   const [frPopupTarget, setFrPopupTarget] = useState('')
-  const [, setRequests] = useState([...(user?.requests || []), ...(user?.requestsSent || [])])
+  const [, setRequests] = useState([
+    ...(user?.requests || []),
+    ...(user?.requestsSent || []),
+  ])
   const [friends, setFriends] = useState([] as FriendInfo[])
   const [friendPopup, setFriendPopup] = useState<FriendInfo | null>(null)
   const [unfriendPopup, setUnfriendPopup] = useState<FriendInfo | null>(null)
@@ -70,7 +73,7 @@ const FriendsPage = () => {
   }
 
   const removeOutgoingRequest = (req: FriendRequest) => {
-    user.requestsSent = user.requestsSent?.filter(r => r.id !== req.id)
+    user.requestsSent = user.requestsSent?.filter((r) => r.id !== req.id)
     setUser(user)
     setRequests([...(user.requests || []), ...(user.requestsSent || [])])
     loadUser()
@@ -135,17 +138,24 @@ const FriendsPage = () => {
             <section className={classnames([style.container, style.info])}>
               <h1>{strings.friend_requests}</h1>
               <h2>Incoming</h2>
-              {user?.requests?.map(friendRequest => {
+              {user?.requests?.map((friendRequest) => {
                 return (
                   <FriendRequestDisplay
                     request={friendRequest}
                     key={friendRequest.id}
                     removeRequest={removeRequest}
-                  />)
+                  />
+                )
               })}
               <h2>Outgoing</h2>
-              {user?.requestsSent?.map(friendRequest => {
-                return (<OutgoingFriendRequestDisplay request={friendRequest} key={friendRequest.id} removeRequest={removeOutgoingRequest} />)
+              {user?.requestsSent?.map((friendRequest) => {
+                return (
+                  <OutgoingFriendRequestDisplay
+                    request={friendRequest}
+                    key={friendRequest.id}
+                    removeRequest={removeOutgoingRequest}
+                  />
+                )
               })}
             </section>
 
