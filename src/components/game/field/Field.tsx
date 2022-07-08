@@ -10,6 +10,7 @@ import style from './field.module.scss'
 interface FieldProps {
   characters: [CharacterProps, CharacterProps]
   message?: string
+  hpBars: [number, number]
 }
 
 interface Message extends Anim {
@@ -107,6 +108,7 @@ const LogMessage: React.FunctionComponent<LogMessageProps> = ({ value }) => {
 const Field: React.FunctionComponent<FieldProps> = ({
   characters,
   message,
+  hpBars
 }) => {
   const [messages, setMessages] = useState<(Message | Anim)[]>([])
   useEffect(() => {
@@ -148,9 +150,13 @@ const Field: React.FunctionComponent<FieldProps> = ({
           char={characters[0].char}
           anim={characters[0].anim}
           back={true}
+          hp={hpBars[0]}
         />
       </div>
-      <Character char={characters[1].char} anim={characters[1].anim} />
+      <Character 
+        char={characters[1].char} 
+        anim={characters[1].anim}
+        hp={hpBars[1]}/>
     </section>
   )
 }
