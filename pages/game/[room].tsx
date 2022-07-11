@@ -310,7 +310,7 @@ const GamePage = () => {
               if (hp !== undefined) {
                 prev1[isActive].current!.hp = hp
               }
-              if (energy) {
+              if (energy !== undefined) {
                 prev1[isActive].current!.energy = energy
               }
               prev3[0].char = prev1[isActive]
