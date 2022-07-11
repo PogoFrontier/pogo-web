@@ -310,7 +310,7 @@ const GamePage = () => {
               if (hp !== undefined) {
                 prev1[isActive].current!.hp = hp
               }
-              if (energy) {
+              if (energy !== undefined) {
                 prev1[isActive].current!.energy = energy
               }
               prev3[0].char = prev1[isActive]
@@ -669,34 +669,22 @@ const GamePage = () => {
     const data = '#sw:' + pos
 
     ws.send(data)
-    if (
-      (status === StatusTypes.FAINT || status === StatusTypes.WAITING) &&
-      active[pos].current?.hp &&
-      active[pos].current!.hp > 0
-    ) {
-      setCharacters((prev) => {
-        prev[0].anim = {
-          type: Actions.SWITCH,
-        }
-        return prev
-      })
-    } else if (
-      status === StatusTypes.MAIN &&
-      swap <= 0 &&
-      wait <= -1 &&
-      active[pos]?.current?.hp &&
-      active[pos].current!.hp > 0 &&
-      currentMove === ''
-    ) {
-      setCharacters((prev) => {
-        prev[0].anim = {
-          type: Actions.SWITCH,
-        }
-        return prev
-      })
-    } else {
-      return
+
+    // Is the swapped in Pokémon alive? Are we in a game status that allows us to switch? Are all conditions fit for switching?
+    if (!active[pos].current?.hp || ![StatusTypes.FAINT, StatusTypes.WAITING, StatusTypes.MAIN].includes(status) ||
+    status === StatusTypes.MAIN && (swap > 0 || wait > -1 || currentMove !== "") ) {
+      return;
     }
+
+    setCharacters((prev) => {
+      prev[0].anim = {
+        type: Actions.SWITCH,
+      }
+      return prev
+    })
+    setHpBars(hpBarsBefore => {
+      return [active[pos].current!.hp, hpBarsBefore[1]];
+    })
 
     if (currentMove === '') {
       setCurrentMove(data)
